@@ -1,3 +1,4 @@
+//-----undum config-----//
 /**
  * IFID
  * 
@@ -21,9 +22,32 @@ undum.game.fadeSpeed = 1500
 /* A variable that changes the slide up speed after clicking on an
  * option. */
 undum.game.slideUpSpeed = 500
+//-----end undum config-----//
 
+//-----undum extension-----//
+/* A specialization of WordScaleQuality that uses the standard mole burrowing ordinal 
+    * adjective scale (from 'surfacer' at -3 to 'delver' at +3). 
+    */
+   var BurrowAdjectivesQuality = function(title, opts) {
+    undum.WordScaleQuality.call(this, title, [
+        "surfacer".l(), "noodler".l(), "wornclawed".l(),
+        "porpoise of the earth".l(), "tunnelfish".l(), "digger".l(), "delver".l()
+    ], opts);
+    if (!('offset' in opts)) this.offset = -3;
+};
+BurrowAdjectivesQuality.inherits(undum.WordScaleQuality);
+
+//export API with undum
+undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
+//-----end undum extension-----//
+
+//-----game logic-----//
 undum.game.situations = {
- // todo: stub
+    main: new undum.SimpleSituation(
+        "<h1>Of Moles and Holes</h1>\
+        <img src='media/img/mole-opening.png' class='float_right'>\
+        <p>The morning sun warms your snoot wonderfully as you breach shyly from your beloved burrow in The Humans' yard.</p>"
+    )
 }
 
 /* The Id of the starting situation. */
@@ -40,22 +64,10 @@ undum.game.qualities = {
         "Stamina", {priority:"0002", group:'stats'}
     ),
     moleWhole: new BurrowAdjectivesQuality( 
-        "<span title='One\'s ability to dig is not measured in kilograms of displaced dirt -- rather, it must take into account all the courage, curiosity, and tenacity required of tunnelers of all stripes.  What can your claws do?  Where can they take you?  We shall see!'>Mole Whole</span>",
+        "<span title='One&apos;s ability to dig is not measured in kilograms of displaced dirt -- rather, it must take into account all the courage, curiosity, and tenacity required of tunnelers of all stripes.  What can your claws do?  Where can they take you?  We shall see!'>Mole Whole</span>",
         {priority:"0003", group:'stats'}
     )
 };
-
-/* A specialization of WordScaleQuality that uses the standard mole burrowing ordinal 
-    * adjective scale (from 'surfacer' at -3 to 'delver' at +3). 
-    */
-var BurrowAdjectivesQuality = function(title, opts) {
-    WordScaleQuality.call(this, title, [
-        "surfacer".l(), "noodler".l(), "wornclawed".l(),
-        "porpoise of the earth".l(), "tunnelfish".l(), "digger".l(), "delver".l()
-    ], opts);
-    if (!('offset' in opts)) this.offset = -3;
-};
-BurrowAdjectivesQuality.inherits(WordScaleQuality);
 
 // ---------------------------------------------------------------------------
 /* The qualities are displayed in groups in the character bar. This
@@ -73,6 +85,7 @@ undum.game.qualityGroups = {
 undum.game.init = function(character, system) {
     character.qualities.health = 10;
     character.qualities.stamina = 10;
-    character.qualities.aptitude = 0;
+    character.qualities.moleWhole = 0;
     system.setCharacterText("<p>You are starting on an exciting journey beneath the earth and beyond all reason.</p>");
 };
+//-----end game logic-----//
