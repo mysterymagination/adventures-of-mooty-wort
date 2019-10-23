@@ -47,6 +47,12 @@ undum.game.situations = {
         "<h1>Of Moles and Holes</h1>\
         <img src='media/img/mole-opening.png' class='float_right'>\
         <p>The morning sun warms your snoot wonderfully as you breach shyly from your beloved burrow in The Humans' yard.</p>"
+    ),
+    credits: new undum.SimpleSituation(
+        "<ul>\
+            <li>undum: https://github.com/idmillington/undum</li>\
+            <li>mole-opening.png: https://pixabay.com/users/Beeki-2666/</li>\
+        </ul>"
     )
 }
 
