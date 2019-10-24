@@ -43,22 +43,42 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 
 //-----game logic-----//
 undum.game.situations = {
-    main: new undum.SimpleSituation(
-        "<h1>Of Moles and Holes</h1>\
-        <img src='media/img/mole-opening.png' class='float_right'>\
-        <p>The morning sun warms your snoot as you breach shyly from your beloved burrow in The Humans' yard.  They're not great fans of yours because something something lawncare, but you're not troubled -- some folks have silly priorities and you know what matters: digging.  As it happens, though, The Big Human is approaching now, and he looks sort of grimly determined... and he's wielding a shovel like a club.  Perverting a sacred digging implement with the taint of violence is the darkest profanity, but you probably won't live long enough to lecture if you stick around here much longer.</p>\
-        <p>What's your move?</p>\
+    /* hardcoded link choice -- I wanna figure out how to use Undum's awesome System.writeChoices() and System.getSituationIdChoices() to gen up these same options with literal style
+    <p>What's your move?</p>\
         <p class='transient'><a href='./fight-humans'>Fight the belligerent human!</a></p>\
         <p class='transient'><a href='dig-escape-human'>Dive and burrow!</a></p>\
-        ",
+    */
+    main: new undum.SimpleSituation(
+        "",
         {
+            enter: function(character, system, from) {
+                system.write("<h1>Of Moles and Holes</h1>\
+                <img src='media/img/mole-opening.png' class='float_right'>\
+                <p>The morning sun warms your snoot as you breach shyly from your beloved burrow in The Humans' yard.  They're not great fans of yours because something something lawncare, but you're not troubled -- some folks have silly priorities and you know what matters: digging.</p>\
+                <p>As it happens, though, The Big Human is approaching now, and he looks sort of grimly determined... and he's wielding a shovel like a club.  Perverting a sacred digging implement with the taint of violence is the darkest profanity, but you probably won't live long enough to lecture if you stick around here much longer.</p>\
+                ");
+                system.writeChoices(["dig-escape-human"]);
+            },
             actions: {
-                'fight-humans': "<p>With all the fury a 100g velvety-fuzzed body can muster, you leap directly at The Human.  Of course, all animals have the firmware necessary to calculate the most efficient vector to a Human face for face-offs such as this, and you take his sight with your great digging claws before he pulls you off and smashes you to squelchy flinders on the merciless pavement of his driveway.</p>"
+                'fight-humans': function(character, system, action) {
+                    system.write(
+                        "<p>With all the fury a 100g velvety-fuzzed body can muster, you leap directly at The Human.  Of course, all animals have the firmware necessary to calculate the most efficient vector to a Human face for face-offs such as this, and you take his sight with your great digging claws before he pulls you off and smashes you to squelchy flinders on the merciless pavement of his driveway.</p>"
+                    );
+                    system.doLink('death');
+                }
             }
         }
     ),
     "dig-escape-human": new undum.SimpleSituation(
-        "<p>Tunnel for all you're worth!</p>"
+        "<p>Tunnel for all you're worth!</p>",
+        {
+            optionText: "Dig, dig! Escape!"
+        }
+    ),
+    death: new undum.SimpleSituation(
+        "<strong>💀 IT IS A SAD THING THAT YOUR ADVENTURES HAVE ENDED HERE 💀</strong>\
+        <div class='transient'><a href='main'>Leave no mole behind!  Try Again?</a></div>\
+        "
     ),
     credits: new undum.SimpleSituation(
         "<ul>\
