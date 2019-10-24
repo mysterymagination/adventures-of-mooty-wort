@@ -46,21 +46,18 @@ undum.game.situations = {
     main: new undum.SimpleSituation(
         "<h1>Of Moles and Holes</h1>\
         <img src='media/img/mole-opening.png' class='float_right'>\
-        <p>The morning sun warms your snoot wonderfully as you breach shyly from your beloved burrow in The Humans' yard.  They're not great fans of yours because something something lawncare, but you're not troubled -- some folks have silly priorities and you know what matters: digging.  As it happens, though, The Big Human is approaching now, and he looks sort of grimly determined... and he's wielding a shovel like a club.  Perverting a sacred digging implement with the taint of violence is the darkest profanity, but you probably won't live long enough to lecture if you stick around here much longer.</p>\
-        <p>What's your move?\
-        <ul>\
-            <li><a href='./fightHumans'>Fight the belligerent human!</a></li>\
-            <li><a href='digEscapeHuman'>Dive and burrow!</a></li>\
-        </ul>\
-        </p>\
+        <p>The morning sun warms your snoot as you breach shyly from your beloved burrow in The Humans' yard.  They're not great fans of yours because something something lawncare, but you're not troubled -- some folks have silly priorities and you know what matters: digging.  As it happens, though, The Big Human is approaching now, and he looks sort of grimly determined... and he's wielding a shovel like a club.  Perverting a sacred digging implement with the taint of violence is the darkest profanity, but you probably won't live long enough to lecture if you stick around here much longer.</p>\
+        <p>What's your move?</p>\
+        <p class='transient'><a href='./fight-humans'>Fight the belligerent human!</a></p>\
+        <p class='transient'><a href='dig-escape-human'>Dive and burrow!</a></p>\
         ",
         {
             actions: {
-                'fightHumans': "<p>With all the fury a gram velvety-fuzzed body can muster, you leap directly at The Human.  Of course, all animals have the firmware necessary to calculate the most efficient vector to a Human face for face-offs such as this, and you take his sight with your great digging claws before he pulls you off and smashes you to squelchy flinders on the merciless pavement of his driveway.</p>"
+                'fight-humans': "<p>With all the fury a 100g velvety-fuzzed body can muster, you leap directly at The Human.  Of course, all animals have the firmware necessary to calculate the most efficient vector to a Human face for face-offs such as this, and you take his sight with your great digging claws before he pulls you off and smashes you to squelchy flinders on the merciless pavement of his driveway.</p>"
             }
         }
     ),
-    digEscapeHuman: new undum.SimpleSituation(
+    "dig-escape-human": new undum.SimpleSituation(
         "<p>Tunnel for all you're worth!</p>"
     ),
     credits: new undum.SimpleSituation(

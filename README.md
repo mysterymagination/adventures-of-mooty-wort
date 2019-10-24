@@ -1,2 +1,2 @@
 # adventures-of-mooty-wort
-An Undum eval tale, short and sweet
+An Undum eval tale, short and sweet, of a mole in search of quiet coziness who stumbles upon uncoziness incarnate...
