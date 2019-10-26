@@ -51,18 +51,21 @@ undum.game.situations = {
     main: new undum.SimpleSituation(
         "",
         {
+            // todo: hmm, seems you can't generate choices that are actions or situations with an action arg; it would be nice
+            // to be able to do anything you can do with links with choice sets.
             enter: function(character, system, from) {
                 system.write("<h1>Of Moles and Holes</h1>\
                 <img src='media/img/mole-opening.png' class='float_right'>\
                 <p>The morning sun warms your snoot as you breach shyly from your beloved burrow in The Humans' yard.  They're not great fans of yours because something something lawncare, but you're not troubled -- some folks have silly priorities and you know what matters: digging.</p>\
-                <p>As it happens, though, The Big Human is approaching now, and he looks sort of grimly determined... and he's wielding a shovel like a club.  Perverting a sacred digging implement with the taint of violence is the darkest profanity, but you probably won't live long enough to lecture if you stick around here much longer.</p>\
+                <p>As it happens, though, The Big Human is approaching now, and he looks sort of grimly determined... and he's wielding a shovel like a club.  Perverting a sacred digging implement with the taint of violence is the darkest profanity, but you probably won't live long enough to lecture if you stick around here much longer.  Still, you feel compelled to <a href='./fight-humans'>stand up for yourself and all creatures of the deep</a>.</p>\
                 ");
                 system.writeChoices(["dig-escape-human"]);
             },
             actions: {
                 'fight-humans': function(character, system, action) {
                     system.write(
-                        "<p>With all the fury a 100g velvety-fuzzed body can muster, you leap directly at The Human.  Of course, all animals have the firmware necessary to calculate the most efficient vector to a Human face for face-offs such as this, and you take his sight with your great digging claws before he pulls you off and smashes you to squelchy flinders on the merciless pavement of his driveway.</p>"
+                        "<p>You cock your snout at the approaching human questioningly, crossing your little paws with their giant claws in a peaceful but steadfast manner.  As the human reaches you and raises his shovel to strike, you realize he cares nothing for diplomacy and is intent on bringing violence to your non-violent protest. You must defend yourself!</p>\
+                        <p>With all the fury a 100g velvety-fuzzed body can muster, you leap directly at The Human.  Of course, all animals have the firmware necessary to calculate the most efficient vector to a human face for face-offs such as this, and you take his sight with your great digging claws before he pulls you off and smashes you to squelchy flinders on the merciless pavement of his driveway.</p>"
                     );
                     system.doLink('death');
                 }
@@ -70,14 +73,14 @@ undum.game.situations = {
         }
     ),
     "dig-escape-human": new undum.SimpleSituation(
-        "<p>Tunnel for all you're worth!</p>",
+        "<p>Tunnel for all you're worth!  Fast as a bolt of velvety black lightning and three times as smooth, you turn 'round and disappear into your burrow before the human can attack.  The sound of curses and the smashing of a shovel upon dirt chase you down, and the light from the surface abruptly vanishes.  This severance of light and the tether to surface matters (mundane but usually safe) that it represents is no problem for you; your people are built for the darkness that suffuses the deep places of this and all worlds.  The humans can keep their familiar sunny routines -- yours is a destiny of discovery!</p>",
         {
             optionText: "Dig, dig! Escape!"
         }
     ),
     death: new undum.SimpleSituation(
         "<strong>💀 IT IS A SAD THING THAT YOUR ADVENTURES HAVE ENDED HERE 💀</strong>\
-        <div class='transient'><a href='main'>Leave no mole behind!  Try Again?</a></div>\
+        <div class='transient'><a href='main'>Oh, Mother of Moles!  Try Again?</a></div>\
         "
     ),
     credits: new undum.SimpleSituation(
