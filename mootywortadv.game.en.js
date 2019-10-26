@@ -52,7 +52,9 @@ undum.game.situations = {
         "",
         {
             // todo: hmm, seems you can't generate choices that are actions or situations with an action arg; it would be nice
-            // to be able to do anything you can do with links with choice sets.
+            // to be able to do anything you can do with links with choice sets.  It looks like system.writeChoices() basically just 
+            // makes links out of the situation ids anyway, so maybe write alternate functions that check for action link syntax
+            // and format the link appropriately?  Maybe also add canChoose etc. functions to action...
             enter: function(character, system, from) {
                 system.write("<h1>Of Moles and Holes</h1>\
                 <img src='media/img/mole-opening.png' class='float_right'>\
