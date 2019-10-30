@@ -75,9 +75,35 @@ undum.game.situations = {
         }
     ),
     "dig-escape-human": new undum.SimpleSituation(
-        "<p>Tunnel for all you're worth!  Fast as a bolt of velvety black lightning and three times as smooth, you turn 'round and disappear into your burrow before the human can attack.  The sound of curses and the smashing of a shovel upon dirt chase you down, and the light from the surface abruptly vanishes.  This severance of light and the tether to surface matters (mundane but usually safe) that it represents is no problem for you; your people are built for the darkness that suffuses the deep places of this and all worlds.  The humans can keep their familiar sunny routines -- yours is a destiny of discovery!</p>",
+        "",
         {
+            enter: function(character, system, from) {
+            system.write(
+                "<p>Tunnel for all you're worth!  Fast as a bolt of velvety black lightning and three times as smooth, you turn 'round and disappear into your burrow before the human can attack.  The sound of curses and the smashing of a shovel upon dirt chase you down, and the light from the surface abruptly vanishes.  This severance of light and the tether to surface matters (mundane but usually safe) that it represents is no problem for you; your people are built for the darkness that suffuses the deep places of this and all worlds.  The humans can keep their familiar sunny routines -- yours is a destiny of discovery!</p>"
+                );
+                system.writeChoices(["basement1_fuzzy_caterpillar"]);
+                system.writeChoices(["basement1_bulbous_spider"]);
+                system.writeChoices(["basement1_ochre_ooze"]);
+            },
             optionText: "Dig, dig! Escape!"
+        }
+    ),
+    "basement1_fuzzy_caterpillar": new undum.SimpleSituation(
+        "<p>Almost as soon as your claws begin shoveling the slightly more acidic soil in this direction away from your path and behind your rump, your tunnel converges with that of one fuzzy caterpillar.  He wiggles wonderingly, clearly gripped by some fascination.</p>",
+        {
+            optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body with fuzz on to southwest"
+        }
+    ),
+    "basement1_bulbous_spider": new undum.SimpleSituation(
+        "",
+        {
+            optionText: "The *scritch* *skitter* *scurry* *boink* of a an oblong arachnid sounds from the east"
+        }
+    ),
+    "basement1_ochre_ooze": new undum.SimpleSituation(
+        "",
+        {
+            optionText: "With a *squelch* and a *fizz*, an ooze creature of some sort calls out from due south"
         }
     ),
     death: new undum.SimpleSituation(
