@@ -18,7 +18,7 @@ Layout
         ---nakedest mole rat 
         ---grumpy grue (odditine obol)
     --basement3
-        ---The Encounter.  Carapace is here, epicenter of Rapturous Rumble
+        ---The Encounter.  Carapace is here, epicenter of Rapturous Rumble.  If mole gets here with enough sanity to keep his head before its majesty, he can choose to either adopt the power and exact revenge on humans who deny their yards to diggers, adopt the power and banish it, or flee.  Else, he is enthralled like all the rest and it uses him as it sees fit; basically this will be the apocalypse, mole-style. 
 -can move back and forth between layers as hubs, and then between the leaf tunnels from those hubs
 
 Puzzles
