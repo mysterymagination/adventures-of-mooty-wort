@@ -89,9 +89,26 @@ undum.game.situations = {
         }
     ),
     "basement1_fuzzy_caterpillar": new undum.SimpleSituation(
-        "<p>Almost as soon as your claws begin shoveling the slightly more acidic soil in this direction away from your path and behind your rump, your tunnel converges with that of one fuzzy caterpillar.  He wiggles wonderingly, clearly gripped by some fascination.</p>",
+        "<p>Almost as soon as your claws begin shoveling the slightly more acidic soil in this direction away from your path and behind your rump, your tunnel converges with that of one fuzzy caterpillar.  He wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-tickle-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with sickly black veins.</p>",
         {
-            optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body with fuzz on to southwest"
+            optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body with fuzz on to southwest",
+            actions: {
+                'take-tickle-fuzz': function(character, system, action) {
+                    system.write(
+                        "<p>As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!"
+                    )
+                    character.qualities.health -= 10;
+                    if(character.qualities.health > 0) {
+                        system.write(
+                            "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>"
+                        )
+                        // todo: add the fuzz to inventory
+                    } else {
+                        system.write("</p>")
+                        system.doLink('death');
+                    }
+                }
+            }
         }
     ),
     "basement1_bulbous_spider": new undum.SimpleSituation(
@@ -126,10 +143,11 @@ undum.game.start = "main";
  * possess. We don't have to be exhaustive, but if we miss one out then
  * that quality will never show up in the character bar in the UI. */
 undum.game.qualities = {
+    // todo: add inventory quality that renders as a nice unordered list and can ideally by clicked to effect a 'use clicked item' action
     health: new undum.NumericQuality(
         "Health", {priority:"0001", group:'stats'}
     ),
-    stamina: new undum.NumericQuality(
+    sanity: new undum.NumericQuality(
         "Stamina", {priority:"0002", group:'stats'}
     ),
     moleWhole: new BurrowAdjectivesQuality( 
@@ -152,8 +170,8 @@ undum.game.qualityGroups = {
 /* This function gets run before the game begins. It is normally used
  * to configure the character at the start of play. */
 undum.game.init = function(character, system) {
-    character.qualities.health = 10;
-    character.qualities.stamina = 10;
+    character.qualities.health = 100;
+    character.qualities.sanity = 100;
     character.qualities.moleWhole = 0;
     system.setCharacterText("<p>You are starting on an exciting journey beneath the earth and beyond all reason.</p>");
 };
