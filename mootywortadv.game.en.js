@@ -91,19 +91,19 @@ undum.game.situations = {
     "basement1_fuzzy_caterpillar": new undum.SimpleSituation(
         "<p>Almost as soon as your claws begin shoveling the slightly more acidic soil in this direction away from your path and behind your rump, your tunnel converges with that of one fuzzy caterpillar.  He wiggles wonderingly, clearly gripped by some fascination.</p>",
         {
-            optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body with fuzz on to southwest"
+            optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body a few mole-lengths behind a patch of musty loam your whiskers just brushed against"
         }
     ),
     "basement1_bulbous_spider": new undum.SimpleSituation(
         "",
         {
-            optionText: "The *scritch* *skitter* *scurry* *boink* of a an oblong arachnid sounds from the east"
+            optionText: "The *scritch* *skitter* *scurry* *boink* of a an oblong arachnid sounds from beyond a small pebblefall by your rump"
         }
     ),
     "basement1_ochre_ooze": new undum.SimpleSituation(
         "",
         {
-            optionText: "With a *squelch* and a *fizz*, an ooze creature of some sort calls out from due south"
+            optionText: "With a *squelch* and a *fizz*, an ooze creature of some sort bubbles up from cracks in the soil beneath your paws"
         }
     ),
     death: new undum.SimpleSituation(
