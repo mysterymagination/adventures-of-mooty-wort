@@ -78,20 +78,37 @@ undum.game.situations = {
         "",
         {
             enter: function(character, system, from) {
-            system.write(
-                "<p>Tunnel for all you're worth!  Fast as a bolt of velvety black lightning and three times as smooth, you turn 'round and disappear into your burrow before the human can attack.  The sound of curses and the smashing of a shovel upon dirt chase you down, and the light from the surface abruptly vanishes.  This severance of light and the tether to surface matters (mundane but usually safe) that it represents is no problem for you; your people are built for the darkness that suffuses the deep places of this and all worlds.  The humans can keep their familiar sunny routines -- yours is a destiny of discovery!</p>"
-                );
-                system.writeChoices(["basement1_fuzzy_caterpillar"]);
-                system.writeChoices(["basement1_bulbous_spider"]);
-                system.writeChoices(["basement1_ochre_ooze"]);
+                system.write(
+                    "<p>Tunnel for all you're worth!  Fast as a bolt of velvety black lightning and three times as smooth, you turn 'round and disappear into your burrow before the human can attack.  The sound of curses and the smashing of a shovel upon dirt chase you down, and the light from the surface abruptly vanishes.  This severance of light and the tether to surface matters (mundane but usually safe) that it represents is no problem for you; your people are built for the darkness that suffuses the deep places of this and all worlds.  The humans can keep their familiar sunny routines -- yours is a destiny of discovery!</p>"
+                    );
+                    system.writeChoices(["basement1_fuzzy_caterpillar"]);
+                    system.writeChoices(["basement1_bulbous_spider"]);
+                    system.writeChoices(["basement1_ochre_ooze"]);
             },
             optionText: "Dig, dig! Escape!"
         }
     ),
     "basement1_fuzzy_caterpillar": new undum.SimpleSituation(
-        "<p>Almost as soon as your claws begin shoveling the slightly more acidic soil in this direction away from your path and behind your rump, your tunnel converges with that of one fuzzy caterpillar.  He wiggles wonderingly, clearly gripped by some fascination.</p>",
+        "<p>Almost as soon as your claws begin shoveling the slightly more acidic soil in this direction away from your path and behind your rump, your tunnel converges with that of one fuzzy caterpillar.  He wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with sickly black veins.</p>",
         {
-            optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body a few mole-lengths behind a patch of musty loam your whiskers just brushed against"
+            optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body a few mole-lengths behind a patch of musty loam your whiskers just brushed against",
+
+            actions: {
+                'take-fuzz': function(character, system, action) {
+                    sFuzzMessage = "<p>As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!  "
+                    
+                   // character.qualities.health -= 10;
+                    if(character.qualities.health > 0) {
+                        system.write(sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
+                        
+                        // todo: add the fuzz to inventory
+                    } else {
+                        system.write(sFuzzMessage+"</p>");
+                        system.doLink('death');
+                    }
+                    
+                }
+            }
         }
     ),
     "basement1_bulbous_spider": new undum.SimpleSituation(
@@ -126,11 +143,12 @@ undum.game.start = "main";
  * possess. We don't have to be exhaustive, but if we miss one out then
  * that quality will never show up in the character bar in the UI. */
 undum.game.qualities = {
+    // todo: add inventory quality that renders as a nice unordered list and can ideally by clicked to effect a 'use clicked item' action
     health: new undum.NumericQuality(
         "Health", {priority:"0001", group:'stats'}
     ),
-    stamina: new undum.NumericQuality(
-        "Stamina", {priority:"0002", group:'stats'}
+    sanity: new undum.NumericQuality(
+        "Sanity", {priority:"0002", group:'stats'}
     ),
     moleWhole: new BurrowAdjectivesQuality( 
         "<span title='One&apos;s ability to dig is not measured in kilograms of displaced dirt -- rather, it must take into account all the courage, curiosity, and tenacity required of tunnelers of all stripes.  What can your claws do?  Where can they take you?  We shall see!'>Mole Whole</span>",
@@ -152,8 +170,8 @@ undum.game.qualityGroups = {
 /* This function gets run before the game begins. It is normally used
  * to configure the character at the start of play. */
 undum.game.init = function(character, system) {
-    character.qualities.health = 10;
-    character.qualities.stamina = 10;
+    character.qualities.health = 100;
+    character.qualities.sanity = 100;
     character.qualities.moleWhole = 0;
     system.setCharacterText("<p>You are starting on an exciting journey beneath the earth and beyond all reason.</p>");
 };
