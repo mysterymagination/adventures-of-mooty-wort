@@ -89,7 +89,7 @@ undum.game.situations = {
         }
     ),
     "basement1_fuzzy_caterpillar": new undum.SimpleSituation(
-        "<p>Almost as soon as your claws begin shoveling the slightly more acidic soil in this direction away from your path and behind your rump, your tunnel converges with that of one fuzzy caterpillar.  He wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with sickly black veins.</p>",
+        "<p>Almost as soon as your claws begin shoveling the slightly more acidic soil away from your path and behind your rotund rump, your tunnel converges with that of one fuzzy caterpillar.  He wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with <a href='./look-substance'>sickly black veins</a>.</p>",
         {
             optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body a few mole-lengths behind a patch of musty loam your whiskers just brushed against",
 
@@ -97,7 +97,9 @@ undum.game.situations = {
                 'take-fuzz': function(character, system, action) {
                     sFuzzMessage = "<p>As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!  "
                     
-                   // character.qualities.health -= 10;
+                    character.qualities.health -= 10;
+                    system.setQuality("health", character.qualities.health-10);
+                    console.log("health is "+character.qualities.health);
                     if(character.qualities.health > 0) {
                         system.write(sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
                         
@@ -107,6 +109,9 @@ undum.game.situations = {
                         system.doLink('death');
                     }
                     
+                },
+                'look-substance': function(character, system, action) {
+                    system.write("<p>The veins appear to be both above and below the epidermis. They're filled with an oily substance that pulses feverishly when you look upon it, as if sensing your attention and eager to know you; you're almost certain that's not what caterpillars normally look like naked.</p>")
                 }
             }
         }
