@@ -81,9 +81,7 @@ undum.game.situations = {
                 system.write(
                     "<p>Tunnel for all you're worth!  Fast as a bolt of velvety black lightning and three times as smooth, you turn 'round and disappear into your burrow before the human can attack.  The sound of curses and the smashing of a shovel upon dirt chase you down, and the light from the surface abruptly vanishes.  This severance of light and the tether to surface matters (mundane but usually safe) that it represents is no problem for you; your people are built for the darkness that suffuses the deep places of this and all worlds.  The humans can keep their familiar sunny routines -- yours is a destiny of discovery!</p>"
                     );
-                    system.writeChoices(["basement1_fuzzy_caterpillar"]);
-                    system.writeChoices(["basement1_bulbous_spider"]);
-                    system.writeChoices(["basement1_ochre_ooze"]);
+                    system.writeChoices(["basement1_fuzzy_caterpillar", "basement1_bulbous_spider", "basement1_ochre_ooze"]);
             },
             optionText: "Dig, dig! Escape!"
         }
@@ -91,6 +89,9 @@ undum.game.situations = {
     "basement1_fuzzy_caterpillar": new undum.SimpleSituation(
         "<p>Almost as soon as your claws begin shoveling the slightly more acidic soil away from your path and behind your rotund rump, your tunnel converges with that of one fuzzy caterpillar.  He wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with <a href='./look-substance'>sickly black veins</a>.</p>",
         {
+            enter: function(character, system, from) {
+                system.writeChoices("basement1_fuzzy_caterpillar_you_ok", "basement1_fuzzy_caterpillar_whats_so_interesting");
+            },
             optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body a few mole-lengths behind a patch of musty loam your whiskers just brushed against",
 
             actions: {
@@ -114,6 +115,18 @@ undum.game.situations = {
                     system.write("<p>The veins appear to be both above and below the epidermis. They're filled with an oily substance that pulses feverishly when you look upon it, as if sensing your attention and eager to know you; you're almost certain that's not what caterpillars normally look like naked.</p>")
                 }
             }
+        }
+    ),
+    "basement1_fuzzy_caterpillar_you_ok": new undum.SimpleSituation(
+        "",
+        {
+            optionText: "You OK, buddy?"
+        }
+    ),
+    "basement1_fuzzy_caterpillar_whats_so_interesting": new undum.SimpleSituation(
+        "",
+        {
+            optionText: "Heya.  What's so interesting?"
         }
     ),
     "basement1_bulbous_spider": new undum.SimpleSituation(
