@@ -100,6 +100,16 @@ undum.game.situations = {
             tags: ["tunnel_hub_basement1"]
         }
     ),
+    "test_action_forwarding_situation": new undum.SimpleSituation(
+        "",
+        {
+            enter: function(character, system, from) {
+                system.doLink("basement1_fuzzy_caterpillar/look-substance");
+            },
+            optionText: "testing forwarded action",
+            tags: ["test_forwarded_action"]
+        }
+    ),
     "basement1_fuzzy_caterpillar": new undum.SimpleSituation(
         "",
         {
@@ -114,7 +124,7 @@ undum.game.situations = {
                 system.write(
                     "<p>" + sDesc + "  He wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with <a href='./look-substance'>sickly black veins</a>.</p>"
                 );
-                system.writeChoices(system.getSituationIdChoices(["#caterpillar_queries", "#tunnel_hub_basement"+this.iDeepnessLevel]));
+                system.writeChoices(system.getSituationIdChoices(["#caterpillar_queries", "#tunnel_hub_basement"+this.iDeepnessLevel, "#test_forwarded_action"]));
             },
             optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body a few mole-lengths behind a patch of musty loam your whiskers just brushed against",
 
@@ -193,6 +203,11 @@ undum.game.situations = {
     "basement1_bulbous_spider": new undum.SimpleSituation(
         "",
         {
+            enter: function(character, system, from) {
+                system.write(
+                    "<p>As you shovel pebbles away from your questing snout, the vision of a rolly-polly spider struggling with some sort of urn enters your reality.  The urn is sealed by a stone stopper that glows red as the heart of all magma when the spider strains against it.  Before you can speak, she slips on the slick soil and rolls onto her voluminous backside... and keeps rolling: the tunnel you've entered has a gentle but insistent curvature that seems just right to keep the poor arachnid rolling forever.  Well, not forever of course, as that would be physically impossible, but longer than a spider's lifespan so the point is kinda moot.  Her thicket of frantically scrabbling legs is strangely hypnotic.</p>"
+                );
+            },
             optionText: "The *scritch* *skitter* *scurry* *boink* of a an oblong arachnid sounds from beyond a small pebblefall by your rump",
             tags: ["basement1_creatures"]
         }
