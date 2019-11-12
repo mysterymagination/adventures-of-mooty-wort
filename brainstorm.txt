@@ -12,8 +12,8 @@ Layout
 -3 layers
     --basement1
         ---not-so fuzzy caterpillar (tickle fuzz)
-        ---bulbous spider
-        ---ochre ooze
+        ---bulbous spider (wiggly gray jar)
+        ---ochre ooze (acid claws)
     --basement2
         ---nakedest mole rat 
         ---grumpy grue (odditine obol)

@@ -56,6 +56,7 @@ undum.game.situations = {
             // makes links out of the situation ids anyway, so maybe write alternate functions that check for action link syntax
             // and format the link appropriately?  Maybe also add canChoose etc. functions to action...
             enter: function(character, system, from) {
+                character.stringArrayInventory = [];
                 system.write("<h1>Of Moles and Holes</h1>\
                 <img src='media/img/mole-opening.png' class='float_right'>\
                 <p>The morning sun warms your snoot as you breach shyly from your beloved burrow in The Humans' yard.  They're not great fans of yours because something something lawncare, but you're not troubled -- some folks have silly priorities and you know what matters: digging.</p>\
@@ -81,64 +82,126 @@ undum.game.situations = {
                 system.write(
                     "<p>Tunnel for all you're worth!  Fast as a bolt of velvety black lightning and three times as smooth, you turn 'round and disappear into your burrow before the human can attack.  The sound of curses and the smashing of a shovel upon dirt chase you down, and the light from the surface abruptly vanishes.  This severance of light and the tether to surface matters (mundane but usually safe) that it represents is no problem for you; your people are built for the darkness that suffuses the deep places of this and all worlds.  The humans can keep their familiar sunny routines -- yours is a destiny of discovery!</p>"
                     );
-                    system.writeChoices(["basement1_fuzzy_caterpillar", "basement1_bulbous_spider", "basement1_ochre_ooze"]);
+                    system.writeChoices(["basement1_hub"]);
             },
             optionText: "Dig, dig! Escape!"
         }
     ),
+    "basement1_hub": new undum.SimpleSituation(
+        "",
+        {
+            optionText: "Burrow towards the Upper Layers of The Deepness",
+            enter: function(character, system, from) {
+                system.write(
+                    "<p>The surface-adjacent soil of the Upper Layers lacks the true warmth of the earth's molten core; its sun-bleached strangeness fills you with unease.</p>"
+                );
+                system.writeChoices(system.getSituationIdChoices("#basement1_creatures"));
+            },
+            tags: ["tunnel_hub_basement1"]
+        }
+    ),
     "basement1_fuzzy_caterpillar": new undum.SimpleSituation(
-        "<p>Almost as soon as your claws begin shoveling the slightly more acidic soil away from your path and behind your rotund rump, your tunnel converges with that of one fuzzy caterpillar.  He wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with <a href='./look-substance'>sickly black veins</a>.</p>",
+        "",
         {
             enter: function(character, system, from) {
-                system.writeChoices("basement1_fuzzy_caterpillar_you_ok", "basement1_fuzzy_caterpillar_whats_so_interesting");
+                this.iDeepnessLevel = 1;
+                var sDesc = "Almost as soon as your claws begin shoveling the slightly more acidic soil away from your path and behind your rotund rump, your tunnel converges with that of one fuzzy caterpillar.";
+                if(!this.bVisited) {
+                    this.bVisited = true;
+                } else {
+                    sDesc = "Here again we find ourselves snout to mandibles with a fairly unfuzzy caterpillar.";
+                }
+                system.write(
+                    "<p>" + sDesc + "  He wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with <a href='./look-substance'>sickly black veins</a>.</p>"
+                );
+                system.writeChoices(system.getSituationIdChoices(["#caterpillar_queries", "#tunnel_hub_basement"+this.iDeepnessLevel]));
             },
             optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body a few mole-lengths behind a patch of musty loam your whiskers just brushed against",
 
             actions: {
                 'take-fuzz': function(character, system, action) {
-                    sFuzzMessage = "<p>As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!  "
+                    sFuzzMessage = "As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!  "
                     
-                    character.qualities.health -= 10;
+                    // system.setQuality() will update the value and its UI representation together
                     system.setQuality("health", character.qualities.health-10);
                     console.log("health is "+character.qualities.health);
-                    if(character.qualities.health > 0) {
-                        system.write(sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
-                        
-                        // todo: add the fuzz to inventory
+                    if(!character.stringArrayInventory.includes("fuzz")) {
+                        if(character.qualities.health > 0) {
+                            system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
+                            
+                            character.stringArrayInventory.push("fuzz");
+                        } else {
+                            system.write(sFuzzMessage+"</p>");
+                            system.doLink('death');
+                        }
                     } else {
-                        system.write(sFuzzMessage+"</p>");
-                        system.doLink('death');
+                        system.write("<p>The fuzz already in your pack is vibrating in a worrisome manner; you don't need more of the stuff.</p>");
                     }
+
                     
                 },
                 'look-substance': function(character, system, action) {
                     system.write("<p>The veins appear to be both above and below the epidermis. They're filled with an oily substance that pulses feverishly when you look upon it, as if sensing your attention and eager to know you; you're almost certain that's not what caterpillars normally look like naked.</p>")
                 }
-            }
+            },
+            tags: ["basement1_creatures", "character_interaction_hub"]
         }
     ),
     "basement1_fuzzy_caterpillar_you_ok": new undum.SimpleSituation(
         "",
         {
-            optionText: "You OK, buddy?"
+            optionText: "You OK, buddy?",
+            enter: function(character, system, from) {
+                system.printBuffer = "The caterpillar stops wiggling when you speak and his head twisssssts ever so slowly around to face you... 270 degrees.  He's an invertebrate and all, but that's not really a thing caterpillars usually do, right?  \"Greetings, moleson.  I am better than ever before, for today I know the glory of the Rapturous Rumble!\"";
+                /* so the problem with this is that I wanna say similar stuff in multiple branches of questioning.  Best way to handle that is to fork at diffs and then merge back into a mainline when the situation becomes common again.  If we write out at each point however, our formatting will be awful so I'm going to see how annoying using a printBuffer in the system object is.
+                system.write(
+                    "<p>The caterpillar stops wiggling when you speak and his head twisssssts ever so slowly around to face you... 270 degrees.  He's an invertebrate and all, but that's not really a thing caterpillars usually do, right?  \"Greetings, moleson.  I am better than ever before, for today I know the glory of the Rapturous Rumble!\"  He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
+                );
+                */
+
+                // in this case, since it's really sort of a forked helper situation that has no standalone capabilities and is short, it makes sense to hop right over to the merge point
+                system.doLink("basement1_fuzzy_caterpillar_rapture");
+            },
+            tags: ["caterpillar_queries"]
         }
     ),
     "basement1_fuzzy_caterpillar_whats_so_interesting": new undum.SimpleSituation(
         "",
         {
-            optionText: "Heya.  What's so interesting?"
+            optionText: "Heya.  What's so interesting?",
+            enter: function(character, system, from) {
+                system.printBuffer = "\"Why the rumbliest rumbly rumble, of course!  Can't you feel it calling? The Rapturous Rumble is calling us all, but it wants you most of all.  You must feel the scintillating harmonics!\"  The caterpillar taps several dozen feet in time with some sort you cannot hear and clacks his mandibles at you in a smile that suggests murderous envy.";
+
+                // in this case, since it's really sort of a forked helper situation that has no standalone capabilities and is short, it makes sense to hop right over to the merge point
+                system.doLink("basement1_fuzzy_caterpillar_rapture");
+            },
+            tags: ["caterpillar_queries"]
+        }
+    ),
+    "basement1_fuzzy_caterpillar_rapture": new undum.SimpleSituation(
+        "",
+        {
+            enter: function(character, system, from) {
+                system.write(
+                    "<p>"+system.printBuffer+"  He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
+                );
+                system.doLink("basement1_fuzzy_caterpillar");
+            },
+            tags: ["convo_tree_leaf"]
         }
     ),
     "basement1_bulbous_spider": new undum.SimpleSituation(
         "",
         {
-            optionText: "The *scritch* *skitter* *scurry* *boink* of a an oblong arachnid sounds from beyond a small pebblefall by your rump"
+            optionText: "The *scritch* *skitter* *scurry* *boink* of a an oblong arachnid sounds from beyond a small pebblefall by your rump",
+            tags: ["basement1_creatures"]
         }
     ),
     "basement1_ochre_ooze": new undum.SimpleSituation(
         "",
         {
-            optionText: "With a *squelch* and a *fizz*, an ooze creature of some sort bubbles up from cracks in the soil beneath your paws"
+            optionText: "With a *squelch* and a *fizz*, an ooze creature of some sort bubbles up from cracks in the soil beneath your paws",
+            tags: ["basement1_creatures"]
         }
     ),
     death: new undum.SimpleSituation(
