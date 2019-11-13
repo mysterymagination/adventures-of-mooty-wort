@@ -207,9 +207,54 @@ undum.game.situations = {
                 system.write(
                     "<p>As you shovel pebbles away from your questing snout, the vision of a rolly-polly spider struggling with some sort of urn enters your reality.  The urn is sealed by a stone stopper that glows red as the heart of all magma when the spider strains against it.  Before you can speak, she slips on the slick soil and rolls onto her voluminous backside... and keeps rolling: the tunnel you've entered has a gentle but insistent curvature that seems just right to keep the poor arachnid rolling forever.  Well, not forever of course, as that would be physically impossible, but longer than a spider's lifespan so the point is kinda moot.  Her thicket of frantically scrabbling legs is strangely hypnotic.</p>"
                 );
+                system.writeChoices(system.getSituationIdChoices("#spider_sayings"));
             },
             optionText: "The *scritch* *skitter* *scurry* *boink* of a an oblong arachnid sounds from beyond a small pebblefall by your rump",
             tags: ["basement1_creatures"]
+        }
+    ),
+    "basement1_bulbous_spider_hub": new undum.SimpleSituation(
+        "",
+        {
+            bVisited: false,
+            bRolling: true,
+            /**
+             * Determines and returns the appropriate option text (choice title) for this situation
+             */
+            getOptionText: function() {
+                if(this.bRolling) {
+                    return "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...";
+                } else {
+                    return "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...";
+                }
+            },
+            enter: function(character, system, from) {
+                var sDesc = "";
+                if(this.bRolling) {
+                    sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
+                } else {
+                    sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two.";
+                }
+                system.write(
+                    "<p>"+sDesc+"</p>"
+                );
+                system.writeChoices(system.getSituationIdChoices("#spider_sayings"));
+            },
+            optionText: getOptionText(),
+            tags: ["character_interaction_hub"]
+        }
+    ),
+    "basement1_bulbous_spider_stop_rolling": new undum.SimpleSituation(
+        "",
+        {
+            enter: function(character, system, from) {
+                system.write(
+                    "<p></p>"
+                );
+                system.writeChoices("basement1_bulbous_spider_hub");
+            },
+            optionText: "Step in and lend a massive digging claw to interrupt the cycle (she's a little thicc so it could be painful)",
+            tags: ["spider_sayings"]
         }
     ),
     "basement1_ochre_ooze": new undum.SimpleSituation(
