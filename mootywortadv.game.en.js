@@ -31,7 +31,7 @@ undum.game.slideUpSpeed = 500
    var BurrowAdjectivesQuality = function(title, opts) {
     undum.WordScaleQuality.call(this, title, [
         "surfacer".l(), "noodler".l(), "wornclawed".l(),
-        "porpoise of the earth".l(), "tunnelfish".l(), "digger".l(), "delver".l()
+        "underwere".l(), "tunnelfish".l(), "digger".l(), "delver".l()
     ], opts);
     if (!('offset' in opts)) this.offset = -3;
 };
@@ -42,6 +42,15 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 //-----end undum extension-----//
 
 //-----game logic-----//
+var libmole = {
+    getOptionText: function(isRolling) {
+        if(isRolling) {
+            return "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...";
+        } else {
+            return "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...";
+        }
+    }
+}
 undum.game.situations = {
     /* hardcoded link choice -- I wanna figure out how to use Undum's awesome System.writeChoices() and System.getSituationIdChoices() to gen up these same options with literal style
     <p>What's your move?</p>\
@@ -65,7 +74,11 @@ undum.game.situations = {
                 system.writeChoices(["dig-escape-human"]);
             },
             actions: {
+                testMethod: function() {
+                    return "hello from test method";
+                },
                 'fight-humans': function(character, system, action) {
+                    console.log("testMethod for main situation says: "+this.testMethod());
                     system.write(
                         "<p>You cock your snout at the approaching human questioningly, crossing your little paws with their giant claws in a peaceful but steadfast manner.  As the human reaches you and raises his shovel to strike, you realize he cares nothing for diplomacy and is intent on bringing violence to your non-violent protest. You must defend yourself!</p>\
                         <p>With all the fury a 100g velvety-fuzzed body can muster, you leap directly at The Human.  Of course, all animals have the firmware necessary to calculate the most efficient vector to a human face for face-offs such as this, and you take his sight with your great digging claws before he pulls you off and smashes you to squelchy flinders on the merciless pavement of his driveway.</p>"
@@ -218,17 +231,20 @@ undum.game.situations = {
         {
             bVisited: false,
             bRolling: true,
-            /**
-             * Determines and returns the appropriate option text (choice title) for this situation
-             */
-            getOptionText: function() {
-                if(this.bRolling) {
-                    return "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...";
-                } else {
-                    return "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...";
+            oTextResolver: {
+                /**
+                 * Determines and returns the appropriate option text (choice title) for this situation
+                 */
+                getOptionText: function(isRolling) {
+                    if(isRolling) {
+                        return "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...";
+                    } else {
+                        return "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...";
+                    }
                 }
             },
             enter: function(character, system, from) {
+                //optionText = this.oTextResolver.getOptionText(); // todo: oTextResolver undefined?
                 var sDesc = "";
                 if(this.bRolling) {
                     sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
@@ -240,7 +256,8 @@ undum.game.situations = {
                 );
                 system.writeChoices(system.getSituationIdChoices("#spider_sayings").concat("basement1_hub"));
             },
-            optionText: getOptionText(),
+            // todo: hrm... apparently you can't access fields and methods of an object from other parts of that object before it's finished being constructed... or something.
+            optionText: libmole.getOptionText(this.bRolling),
             tags: ["character_interaction_hub"]
         }
     ),
@@ -249,14 +266,21 @@ undum.game.situations = {
         {
             enter: function(character, system, from) {
                 system.write(
-                    "<p>As she comes down the far side of the tunnel, and as far before the apex of her descent as you can manage, you shove your shovel-like claw beneath her spinnerets.  With a *crunch*, the memory of which will sicken you for years to come, her mighty momentum is zeroed out on your paw.  As soon as she has a good few legs on the ground she hops away as if burned.  \"Ooh, wow!  Watch that wandering paw, mister.  But, um, thank you for resucing me!\" she chitters, her fangs and complicated-looking mandibles clacking upsettingly and a blush the fell scarlet of moonlit blood spreading over her cephalothorax.  \"This blasted urn has brought me nothing but trouble.  Would you like it?  Here, take it with my compliments!\" She hastily shoves the rusty urn into your compartment and skuttles away, her eyes still rolling in the cycle of her erstwhile dizzy purgatory.</p>"
+                    "<p>As she comes down the far side of the tunnel, and as soon after her direction reverses as you can manage, you shove your shovel-like claw beneath her spinnerets.  With a *crunch*, the memory of which will sicken you for years to come, her mighty momentum is zeroed out on your paw.  As soon as she has a good few legs on the ground she hops away as if burned.</p>\
+                    <p>\"Ooh, wow!  Watch that wandering paw, mister.  But, um, thank you for rescuing me!\" she chitters, her fangs and complicated-looking mandibles clacking upsettingly and a blush the fell scarlet of moonlit blood spreading over her cephalothorax.  \"This blasted urn has brought me nothing but trouble.  Would you like it?  Here, take it with my compliments!\" She hastily shoves the rusty urn into your compartment and skuttles away, her eyes still rolling in the cycle of her erstwhile dizzy purgatory.</p>"
                 );
+                undum.game.situations.basement1_bulbous_spider_hub.bRolling = false;
+                console.log("spider rolling status after we've stopped her rolling: "+undum.game.situations.basement1_bulbous_spider_hub.bRolling);
                 character.stringArrayInventory.push("rusty_urn");
-                system.doLink("basement1_bulbous_spider_hub");
+                //system.doLink("basement1_bulbous_spider_hub"); // todo: uncomment when dicking about with optext in spider hub is done
+                system.writeChoices(["basement1_bulbous_spider_hub"]);
             },
+            /* todo: bRolling comes up undefined
             canView: function(character, system, host) {
+                console.log("spider rolling status is "+undum.game.situations.basement1_bulbous_spider_hub.bRolling);
                 return undum.game.situations.basement1_bulbous_spider_hub.bRolling;
             },
+            */
             optionText: "Step in and lend a massive digging claw to interrupt the cycle (she's a little thicc so it could be painful)",
             tags: ["spider_sayings"]
         }
@@ -292,12 +316,13 @@ undum.game.situations = {
         {
             enter: function(character, system, from) {
                 system.write(
-                    "<p>As you proffer the urn, a tendril whips out from the ochre ooze and suddenly the urn has been removed from your possession.  The fur that the urn had been in contact with is seared away and hideous chemical burns now decorate the flesh beneath.  \"Our daughter!\" the ooze burbles in a thousand thousand voices all vengefully enraptured.  \"What a naughty little mynx you've been, trying to escape the collective.  We live for the Whole, child... and die for it.\"  With that, the ooze slams the urn into itself hard enough to propel it hopelessly deep within its caustic mass.  Though the urn's crystalline structure puts up a noble resistance, it quickly breaks down and you can see through the translucent ochre muck a smaller quantity of ooze wiggly free of the dissolving urn.  It, or she, you suppose, struggles frantically for a moment and then is still.  As you watch, the little ooze disappears into the mass of the large ooze, and in a few seconds no trace of her remains.</p>\
-                    <p>\"We thank you, brother mole.  There is no compulsion to feed at present, so we are compelled instead to offer you a boon for your service.  Take this weapon with you; perhaps it will be of some use in fending off the will of The Rumble.\"  The ooze wiggles condescendingly.  \"Lesser, boring Underwere are fascinated by its promises, but we have all we need right here.\"  It shivers and a set of gold pawntlets (gauntlets for paws) dripping with continuous acid dig their way up from the soil under your ever-twitching nose.  Without waiting to see what else they can do autonomously, you don them.</p>"
+                    "<p>As you proffer the urn, a tendril whips out from the ochre ooze and suddenly the urn has been removed from your possession.  The fur that the urn had been in contact with is seared away and hideous chemical burns now decorate the flesh beneath.  \"Our daughter!\" the ooze burbles in a thousand thousand voices all vengefully enraptured.  \"What a naughty little mynx you've been, trying to escape the collective.  We live for the Whole, child... and die for it.\"  With that, the ooze slams the urn into itself hard enough to propel it hopelessly deep within its caustic mass; gelatinous ripples expand silently out from the point of impact, strangely lovely in their perfect symmetry.  Though the urn's crystalline structure puts up a noble resistance, it quickly breaks down and you can see through the translucent ochre muck a smaller quantity of ooze writhe free of the dissolving urn.  It, or she, you suppose, struggles frantically for a moment and then is still.  As you watch, the little ooze disappears into the mass of the large ooze, and in a few seconds no trace of her remains.</p>\
+                    <p>\"We thank you, brother mole.  There is no compulsion to feed at present, so we are compelled instead to offer you a boon for your service.  Take this weapon with you; perhaps it will be of some use in fending off the will of The Rumble.\"  The ooze wiggles condescendingly.  \"Lesser, boring Underwere, whose coverage of interests is woefully mired in the prosaic and pragmatic, are fascinated by its promises.  We, however, have all we need right here within ourselves... au naturale.\"  It shivers ostentatiously and a set of gold pawntlets (gauntlets for paws) dripping with continuous acid dig their way up from the soil under your ever-twitching nose.  Without waiting to see what else they can do autonomously, you don them.</p>"
                 );
                 system.setQuality("health", character.qualities.health - character.qualities.maxHealth * 0.1);
                 var urnIndex = character.stringArrayInventory.indexOf("rusty_urn");
                 character.stringArrayInventory.splice(urnIndex, 1);
+                character.stringArrayInventory.push("acid_claws");
             },
             canView: function(character, system, host) {
                 return character.stringArrayInventory.includes("rusty_urn");
@@ -353,10 +378,12 @@ undum.game.qualityGroups = {
 /* This function gets run before the game begins. It is normally used
  * to configure the character at the start of play. */
 undum.game.init = function(character, system) {
-    character.qualities.maxHealth = 100;
-    character.qualities.maxSanity = 100;
-    character.qualities.health = character.qualities.maxHealth;
-    character.qualities.sanity = character.qualities.maxSanity;
+    character.stats = {
+        maxHealth: 100,
+        maxSanity: 100
+    }
+    character.qualities.health = character.stats.maxHealth;
+    character.qualities.sanity = character.stats.maxSanity;
     character.qualities.moleWhole = 0;
     system.setCharacterText("<p>You are starting on an exciting journey beneath the earth and beyond all reason.</p>");
 };
