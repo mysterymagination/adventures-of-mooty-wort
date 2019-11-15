@@ -80,7 +80,7 @@ undum.game.situations = {
         {
             enter: function(character, system, from) {
                 system.write(
-                    "<p>Tunnel for all you're worth!  Fast as a bolt of velvety black lightning and three times as smooth, you turn 'round and disappear into your burrow before the human can attack.  The sound of curses and the smashing of a shovel upon dirt chase you down, and the light from the surface abruptly vanishes.  This severance of light and the tether to surface matters (mundane but usually safe) that it represents is no problem for you; your people are built for the darkness that suffuses the deep places of this and all worlds.  The humans can keep their familiar sunny routines -- yours is a destiny of discovery!</p>"
+                    "<p>Tunnel for all you're worth!  Fast as a bolt of velvety black lightning and three times as smooth, you turn 'round and disappear into your burrow before the human can attack.  The sound of curses and the smashing of a shovel upon dirt chase you down, and the light from the surface abruptly vanishes.  This severance of light and the tether to surface matters (mundane but usually safe) that it represents is no problem for you; your people, the Underwere, are built for the darkness that suffuses the deep places of this and all worlds.  The Deepness.  The humans can keep their familiar sunny routines -- yours is a destiny of discovery!</p>"
                     );
                     system.writeChoices(["basement1_hub"]);
             },
@@ -133,7 +133,7 @@ undum.game.situations = {
                     sFuzzMessage = "As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!  "
                     
                     // system.setQuality() will update the value and its UI representation together
-                    system.setQuality("health", character.qualities.health-10);
+                    system.setQuality("health", character.qualities.health - character.qualities.maxHealth * 0.1);
                     console.log("health is "+character.qualities.health);
                     if(!character.stringArrayInventory.includes("fuzz")) {
                         if(character.qualities.health > 0) {
@@ -200,12 +200,12 @@ undum.game.situations = {
             tags: ["convo_tree_leaf"]
         }
     ),
-    "basement1_bulbous_spider": new undum.SimpleSituation(
+    "basement1_bulbous_spider_first_entry": new undum.SimpleSituation(
         "",
         {
             enter: function(character, system, from) {
                 system.write(
-                    "<p>As you shovel pebbles away from your questing snout, the vision of a rolly-polly spider struggling with some sort of urn enters your reality.  The urn is sealed by a stone stopper that glows red as the heart of all magma when the spider strains against it.  Before you can speak, she slips on the slick soil and rolls onto her voluminous backside... and keeps rolling: the tunnel you've entered has a gentle but insistent curvature that seems just right to keep the poor arachnid rolling forever.  Well, not forever of course, as that would be physically impossible, but longer than a spider's lifespan so the point is kinda moot.  Her thicket of frantically scrabbling legs is strangely hypnotic.</p>"
+                    "<p>As you shovel pebbles away from your questing snout, the vision of a rolly-polly spider struggling with some sort of urn enters your reality.  The urn is transparent and you can see a viscous rusty liquid sloshing lazily about inside.  It's sealed by a stone stopper that glows red as the heart of all magma when the spider strains against it.  Before you can speak, she slips on the slick soil and rolls onto her voluminous backside... and keeps rolling: the tunnel you've entered has a gentle but insistent curvature that seems just right to keep the poor arachnid rolling forever.  Well, not forever of course, as that would be physically impossible, but longer than a spider's lifespan so the point is kinda moot.  Her thicket of frantically scrabbling legs is strangely hypnotic.</p>"
                 );
                 system.writeChoices(system.getSituationIdChoices("#spider_sayings"));
             },
@@ -233,12 +233,12 @@ undum.game.situations = {
                 if(this.bRolling) {
                     sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
                 } else {
-                    sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two.";
+                    sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two, from a safe and creepingly increasing distance from the urn in your compartment.";
                 }
                 system.write(
                     "<p>"+sDesc+"</p>"
                 );
-                system.writeChoices(system.getSituationIdChoices("#spider_sayings"));
+                system.writeChoices(system.getSituationIdChoices("#spider_sayings").concat("basement1_hub"));
             },
             optionText: getOptionText(),
             tags: ["character_interaction_hub"]
@@ -249,19 +249,61 @@ undum.game.situations = {
         {
             enter: function(character, system, from) {
                 system.write(
-                    "<p></p>"
+                    "<p>As she comes down the far side of the tunnel, and as far before the apex of her descent as you can manage, you shove your shovel-like claw beneath her spinnerets.  With a *crunch*, the memory of which will sicken you for years to come, her mighty momentum is zeroed out on your paw.  As soon as she has a good few legs on the ground she hops away as if burned.  \"Ooh, wow!  Watch that wandering paw, mister.  But, um, thank you for resucing me!\" she chitters, her fangs and complicated-looking mandibles clacking upsettingly and a blush the fell scarlet of moonlit blood spreading over her cephalothorax.  \"This blasted urn has brought me nothing but trouble.  Would you like it?  Here, take it with my compliments!\" She hastily shoves the rusty urn into your compartment and skuttles away, her eyes still rolling in the cycle of her erstwhile dizzy purgatory.</p>"
                 );
-                system.writeChoices("basement1_bulbous_spider_hub");
+                character.stringArrayInventory.push("rusty_urn");
+                system.doLink("basement1_bulbous_spider_hub");
+            },
+            canView: function(character, system, host) {
+                return undum.game.situations.basement1_bulbous_spider_hub.bRolling;
             },
             optionText: "Step in and lend a massive digging claw to interrupt the cycle (she's a little thicc so it could be painful)",
             tags: ["spider_sayings"]
         }
     ),
-    "basement1_ochre_ooze": new undum.SimpleSituation(
+    "basement1_ochre_ooze_first_entry": new undum.SimpleSituation(
         "",
         {
-            optionText: "With a *squelch* and a *fizz*, an ooze creature of some sort bubbles up from cracks in the soil beneath your paws",
+            enter: function(character, system, from) {
+                system.write(
+                    "<p>As you snuffle at the cracks to calculate their stability, the point rapidly renders itself moot when the floor collapses!  You tumble gracefully as a subterranean ballerina into a large cavern, landing solidly on your mighty rump and seamlessly rolling down onto all fours ready for action.  It seems you've dropped into the antechamber of an ooze warren; these creatures are notorious amongst Underwere for being voracious and none-too-particular about their diet.  Kind of eat first and consider indigestion-adjacent consequences later sort of fellows.  Lucky for you, this warren is mostly deserted, save for one massive blob of an ochre ooze bubbling away idly atop a dais of sorts made of pulsing rainbow crystal.  Considering the fact that you're still alive, it's likely this one isn't terribly hungry at the moment.</p>"
+                );
+                system.doLink("basement1_ochre_ooze_hub");
+            },
+            optionText: "With a *squelch* and a *fizz*, an ooze creature of some sort bubbles ponderously on the far side of some cracks in the soil beneath your paws",
             tags: ["basement1_creatures"]
+        }
+    ),
+    "basement1_ochre_ooze_hub": new undum.SimpleSituation(
+        "",
+        {
+            enter: function(character, system, from) {
+                system.write(
+                    "<p>Atop its crystal platform, the ochre ooze quivers and bubbles with interest.  Hunger will erode its curiosity, however, and with it will go civility.  Best hurry up and get gone from here.</p>"
+                );
+                system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
+            },
+            optionText: "The ooze oozes, patiently (at least for so long as it isn't hungry)...",
+            tags: ["character_interaction_hub"]
+        }
+    ),
+    "basement1_ochre_ooze_give_urn": new undum.SimpleSituation(
+        "",
+        {
+            enter: function(character, system, from) {
+                system.write(
+                    "<p>As you proffer the urn, a tendril whips out from the ochre ooze and suddenly the urn has been removed from your possession.  The fur that the urn had been in contact with is seared away and hideous chemical burns now decorate the flesh beneath.  \"Our daughter!\" the ooze burbles in a thousand thousand voices all vengefully enraptured.  \"What a naughty little mynx you've been, trying to escape the collective.  We live for the Whole, child... and die for it.\"  With that, the ooze slams the urn into itself hard enough to propel it hopelessly deep within its caustic mass.  Though the urn's crystalline structure puts up a noble resistance, it quickly breaks down and you can see through the translucent ochre muck a smaller quantity of ooze wiggly free of the dissolving urn.  It, or she, you suppose, struggles frantically for a moment and then is still.  As you watch, the little ooze disappears into the mass of the large ooze, and in a few seconds no trace of her remains.</p>\
+                    <p>\"We thank you, brother mole.  There is no compulsion to feed at present, so we are compelled instead to offer you a boon for your service.  Take this weapon with you; perhaps it will be of some use in fending off the will of The Rumble.\"  The ooze wiggles condescendingly.  \"Lesser, boring Underwere are fascinated by its promises, but we have all we need right here.\"  It shivers and a set of gold pawntlets (gauntlets for paws) dripping with continuous acid dig their way up from the soil under your ever-twitching nose.  Without waiting to see what else they can do autonomously, you don them.</p>"
+                );
+                system.setQuality("health", character.qualities.health - character.qualities.maxHealth * 0.1);
+                var urnIndex = character.stringArrayInventory.indexOf("rusty_urn");
+                character.stringArrayInventory.splice(urnIndex, 1);
+            },
+            canView: function(character, system, host) {
+                return character.stringArrayInventory.includes("rusty_urn");
+            },
+            optionText: "The rusty urn you got from the spider vibrates violently in your compartment; it strikes you that the color was similar to the massive ooze before you.  Maybe you should offer it up?",
+            tags: ["ooze_oratory"]
         }
     ),
     death: new undum.SimpleSituation(
@@ -311,8 +353,10 @@ undum.game.qualityGroups = {
 /* This function gets run before the game begins. It is normally used
  * to configure the character at the start of play. */
 undum.game.init = function(character, system) {
-    character.qualities.health = 100;
-    character.qualities.sanity = 100;
+    character.qualities.maxHealth = 100;
+    character.qualities.maxSanity = 100;
+    character.qualities.health = character.qualities.maxHealth;
+    character.qualities.sanity = character.qualities.maxSanity;
     character.qualities.moleWhole = 0;
     system.setCharacterText("<p>You are starting on an exciting journey beneath the earth and beyond all reason.</p>");
 };

@@ -12,7 +12,7 @@ Layout
 -3 layers
     --basement1
         ---not-so fuzzy caterpillar (tickle fuzz)
-        ---bulbous spider (wiggly gray jar)
+        ---bulbous spider (wiggly Rusty Urn)
         ---ochre ooze (acid claws)
     --basement2
         ---nakedest mole rat 
@@ -26,8 +26,8 @@ Puzzles
 -Inventory Object
     1. Tickle Fuzz: The fuzzy caterpillar sheds fuzz that can be used to tickle the nakedest mole rat, which will dislodge him from the tunnel he's standing over while paralyzed by rapture.  This grants access to the tunnel leading to the grumpy grue.
     2. Odditine Obol: The grumpy grue recognizes the stalwart determination in the mole and decides to gift him with a coin from a lost civilization that can serve as a focus that will help ward off the allure of the Rapturous Rumble; this allows the mole to reduce the sanity damage from The Encounter by 25%.
-    3. Wiggly Gray Jar: the bulbous spider is fiddling with a strange gray jar that wiggles of its own accord.  He's having trouble righting himself after an overly energetic attempt to open the jar set him rolling back and forth over the tunnel floor's curvature.  He won't move perpetually because that's physically impossible, but he will roll long after his lifespan expires, so... the mole can help him, and in exchange the tired corpulent arachnid hands over the jar to be rid of it.
-    4. Acid Claws: the ochre ooze will trade a set of acid claw sheathes to help the mole defend himself for the gray jar, which holds the ooze's mother.  It promptly eats the mother if provided.  These will reduce the sanity damage from The Encounter by 10%.
+    3. Wiggly Rusty Urn: the bulbous spider is fiddling with a strange gray jar that wiggles of its own accord.  He's having trouble righting himself after an overly energetic attempt to open the jar set him rolling back and forth over the tunnel floor's curvature.  He won't move perpetually because that's physically impossible, but he will roll long after his lifespan expires, so... the mole can help him, and in exchange the tired corpulent arachnid hands over the jar to be rid of it.
+    4. Acid Claws: the ochre ooze will trade a set of acid claw sheathes to help the mole defend himself for the gray jar, which holds the ooze's daughter.  It promptly eats the daughter if provided.  These will reduce the sanity damage from The Encounter by 10%, but it costs 10% health to interact with the ooze.
 -System Build/Hack/Use
     1. Elevator shaft through stone between basement2 and basement3 is borken and the mole needs to repair it to travel deeper; the strata is too hard for his claws.
         ->the heavy stone that lifts the elevator has snapped off its tether.  The mole must find a way to reconnect the tether himself or get a smaller creature to travel down the tether tunnel to do it for him.
