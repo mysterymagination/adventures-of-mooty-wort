@@ -44,6 +44,7 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 //-----game logic-----//
 var libmole = {
     getOptionText: function(isRolling) {
+        console.log("is rolling from dubious this says: "+isRolling);
         if(isRolling) {
             return "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...";
         } else {
@@ -60,6 +61,11 @@ undum.game.situations = {
     main: new undum.SimpleSituation(
         "",
         {
+            // at the point when we set optintext for the first time, the situation hasn't yet been added (I think) and thus comes up undefined.
+            sTitle: "mainSit",
+            //optionText: undum.game.situations.main.sTitle,
+            optionText: this.sTitle, // todo: so since the optiontext is getting set before the situation object is even added to Undum's awareness, does that imply its this would refer to itself? UPDATE: I'm having trouble even getting at the optionText field -- it isn't copied over to the SimpleSituation object's fields during ctor, and the opts object is dropped after ctor (there is no obvious SimpleSituation.opts field that stores 'em all).
+            //
             // todo: hmm, seems you can't generate choices that are actions or situations with an action arg; it would be nice
             // to be able to do anything you can do with links with choice sets.  It looks like system.writeChoices() basically just 
             // makes links out of the situation ids anyway, so maybe write alternate functions that check for action link syntax
@@ -74,11 +80,21 @@ undum.game.situations = {
                 system.writeChoices(["dig-escape-human"]);
             },
             actions: {
+                // at the point when we set optintext for the first time, the situation hasn't yet been added (I think) and thus comes up undefined.
+                sTitle: "mainSitActions",
+                oSelf: this,
                 testMethod: function() {
-                    return "hello from test method";
+                    // this example works
+                    return "hello from test method; our title is "+undum.game.situations.main.actions.sTitle;
+                   /* this example does not work; apparently the this keyword in the context of defining an object in key:value form points to the Window object.
+                    return "hello from test method; our title is "+oSelf.sTitle;
+                   */
                 },
                 'fight-humans': function(character, system, action) {
-                    console.log("testMethod for main situation says: "+this.testMethod());
+                    // problem was that in the context in which our action functions is called,
+                    // keyword this apparently refers to Window object.  So basically we need to fully qualify the object and method we want to call in this case.
+                    //console.log("testMethod for main situation says: "+this.testMethod());
+                    console.log("testMethod for main situation says: "+undum.game.situations.main.actions.testMethod());
                     system.write(
                         "<p>You cock your snout at the approaching human questioningly, crossing your little paws with their giant claws in a peaceful but steadfast manner.  As the human reaches you and raises his shovel to strike, you realize he cares nothing for diplomacy and is intent on bringing violence to your non-violent protest. You must defend yourself!</p>\
                         <p>With all the fury a 100g velvety-fuzzed body can muster, you leap directly at The Human.  Of course, all animals have the firmware necessary to calculate the most efficient vector to a human face for face-offs such as this, and you take his sight with your great digging claws before he pulls you off and smashes you to squelchy flinders on the merciless pavement of his driveway.</p>"
@@ -205,6 +221,11 @@ undum.game.situations = {
         "",
         {
             enter: function(character, system, from) {
+                // from is given as the string id of the situation we came from
+                if(from === "basement1_fuzzy_caterpillar_you_ok") {
+                    // the cost of befriending madness is... fairly predictable
+                    system.setQuality("Sanity", character.qualities.sanity - character.stats.maxSanity * 0.25);
+                }
                 system.write(
                     "<p>"+system.printBuffer+"  He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
                 );
@@ -231,20 +252,22 @@ undum.game.situations = {
         {
             bVisited: false,
             bRolling: true,
-            oTextResolver: {
-                /**
-                 * Determines and returns the appropriate option text (choice title) for this situation
-                 */
-                getOptionText: function(isRolling) {
-                    if(isRolling) {
-                        return "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...";
-                    } else {
-                        return "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...";
-                    }
+            sRollingDesc: "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...",
+            sUnrolledDesc: "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...",
+            oSelf: this, // todo: does the self assignment trick work around the global this context issue from Undum lib stuff?  If not, why not?
+            /**
+             * Determines and returns the appropriate option text (choice title) for this situation
+             */
+            updateOptionText: function() {
+                console.log("getOptionText; oSelf.bRolling says: "+oSelf.bRolling);
+                console.log("getOptionText; this.bRolling says: "+this.bRolling);
+                if(this.bRolling) {
+                    return sRollingDesc;
+                } else {
+                    return sUnrolledDesc;
                 }
             },
             enter: function(character, system, from) {
-                //optionText = this.oTextResolver.getOptionText(); // todo: oTextResolver undefined?
                 var sDesc = "";
                 if(this.bRolling) {
                     sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
@@ -256,8 +279,7 @@ undum.game.situations = {
                 );
                 system.writeChoices(system.getSituationIdChoices("#spider_sayings").concat("basement1_hub"));
             },
-            // todo: hrm... apparently you can't access fields and methods of an object from other parts of that object before it's finished being constructed... or something.
-            optionText: libmole.getOptionText(this.bRolling),
+            optionText: this.sRollingDesc,
             tags: ["character_interaction_hub"]
         }
     ),
@@ -269,8 +291,13 @@ undum.game.situations = {
                     "<p>As she comes down the far side of the tunnel, and as soon after her direction reverses as you can manage, you shove your shovel-like claw beneath her spinnerets.  With a *crunch*, the memory of which will sicken you for years to come, her mighty momentum is zeroed out on your paw.  As soon as she has a good few legs on the ground she hops away as if burned.</p>\
                     <p>\"Ooh, wow!  Watch that wandering paw, mister.  But, um, thank you for rescuing me!\" she chitters, her fangs and complicated-looking mandibles clacking upsettingly and a blush the fell scarlet of moonlit blood spreading over her cephalothorax.  \"This blasted urn has brought me nothing but trouble.  Would you like it?  Here, take it with my compliments!\" She hastily shoves the rusty urn into your compartment and skuttles away, her eyes still rolling in the cycle of her erstwhile dizzy purgatory.</p>"
                 );
+
+                // now that she's bee unrolled, we want to update the flag and option text
                 undum.game.situations.basement1_bulbous_spider_hub.bRolling = false;
+                undum.game.situations.basement1_bulbous_spider_hub.updateOptionText();
                 console.log("spider rolling status after we've stopped her rolling: "+undum.game.situations.basement1_bulbous_spider_hub.bRolling);
+
+                // player now has the ooze urn... hooray?
                 character.stringArrayInventory.push("rusty_urn");
                 //system.doLink("basement1_bulbous_spider_hub"); // todo: uncomment when dicking about with optext in spider hub is done
                 system.writeChoices(["basement1_bulbous_spider_hub"]);
