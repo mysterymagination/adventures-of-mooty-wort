@@ -61,16 +61,19 @@ undum.game.situations = {
     main: new undum.SimpleSituation(
         "",
         {
-            // at the point when we set optintext for the first time, the situation hasn't yet been added (I think) and thus comes up undefined.
-            sTitle: "mainSit",
-            //optionText: undum.game.situations.main.sTitle,
-            optionText: this.sTitle, // todo: so since the optiontext is getting set before the situation object is even added to Undum's awareness, does that imply its this would refer to itself? UPDATE: I'm having trouble even getting at the optionText field -- it isn't copied over to the SimpleSituation object's fields during ctor, and the opts object is dropped after ctor (there is no obvious SimpleSituation.opts field that stores 'em all).
+            // at the point when we set optionText for the first time, the situation hasn't yet been added (I think) and thus comes up undefined.
+            //sTitle: "mainSit",
+            //optionText: undum.game.situations.main.opts.sTitle, // opts doesn't get stored, nor does optiontext
+            //optionText: undum.game.situations.main.actions.sTitle, // actions is copied over.  TODO: does this work for whenever/however optiontext gets set? UPDATE: nope, main situation is not defined yet at that point.
+            //optionText: this.sTitle, // todo: so since the optiontext is getting set before the situation object is even added to Undum's awareness, does that imply its this would refer to itself? UPDATE: I'm having trouble even getting at the optionText field -- it isn't copied over to the SimpleSituation object's fields during ctor, and the opts object is dropped after ctor (there is no obvious SimpleSituation.opts field that stores 'em all). 
+            // UPDATE2: apparently keyword this in the context of creating key:value objects like this points to global object for some reason.  We actually do get a value in optionText via this.sTitle, but it's the function from undum that determines optionText rather than mainSit.  Setting optionText to a string literal gives the same result, since again this is actually the main.opts object which isn't stored and its optionText field isn't directly extracted.
             //
             // todo: hmm, seems you can't generate choices that are actions or situations with an action arg; it would be nice
             // to be able to do anything you can do with links with choice sets.  It looks like system.writeChoices() basically just 
             // makes links out of the situation ids anyway, so maybe write alternate functions that check for action link syntax
             // and format the link appropriately?  Maybe also add canChoose etc. functions to action...
             enter: function(character, system, from) {
+                //console.log("in main.opts.enter; main's optionText is "+undum.game.situations.main.optionText); // just the optionText boilerplate function
                 character.stringArrayInventory = [];
                 system.write("<h1>Of Moles and Holes</h1>\
                 <img src='media/img/mole-opening.png' class='float_right'>\
@@ -91,8 +94,16 @@ undum.game.situations = {
                    */
                 },
                 'fight-humans': function(character, system, action) {
-                    // problem was that in the context in which our action functions is called,
-                    // keyword this apparently refers to Window object.  So basically we need to fully qualify the object and method we want to call in this case.
+                    // problem was that in the context in which our action functions is called, keyword this apparently refers to Window object.  So basically we need to fully qualify the object and method we want to call in this case. The key thing to remember is JS is all about the calling context rather than the called context:
+                    /*
+                    var obj = {
+                        sExample: "test",
+                        testMethod: function() {
+                            console.log("our example member string says "+this.sExample);
+                        }
+                    }
+                    obj.testMethod(); // this is OK because we are calling the testMethod fn on an instance of the object for which we expect it to be a method; that calling context is what makes it a method and specifically sets keyword this to point to the object instance.  If the testMethod function were invoked in another way though, keyword this could be different depending on the details.
+                    */
                     //console.log("testMethod for main situation says: "+this.testMethod());
                     console.log("testMethod for main situation says: "+undum.game.situations.main.actions.testMethod());
                     system.write(
