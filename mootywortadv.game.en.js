@@ -261,23 +261,14 @@ undum.game.situations = {
     "basement1_bulbous_spider_hub": new undum.SimpleSituation(
         "",
         {
+            /* this is the opts object anyway, which is discarded during SimpleSituation construction
             bVisited: false,
             bRolling: true,
             sRollingDesc: "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...",
             sUnrolledDesc: "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...",
-            oSelf: this, // todo: does the self assignment trick work around the global this context issue from Undum lib stuff?  If not, why not?
-            /**
-             * Determines and returns the appropriate option text (choice title) for this situation
-             */
-            updateOptionText: function() {
-                console.log("getOptionText; oSelf.bRolling says: "+oSelf.bRolling);
-                console.log("getOptionText; this.bRolling says: "+this.bRolling);
-                if(this.bRolling) {
-                    return sRollingDesc;
-                } else {
-                    return sUnrolledDesc;
-                }
-            },
+            oSelf: this, // todo: does the self assignment trick work around the global this context issue from Undum lib stuff?  If not, why not? UPDATE: nope, keyword this in the calling context of defining an object will point to Window.  Interestingly, in a ctor function keyword this actually will point to the object instance I guess because the calling context is always the instance being constructed.
+            */
+
             enter: function(character, system, from) {
                 var sDesc = "";
                 if(this.bRolling) {
@@ -290,7 +281,44 @@ undum.game.situations = {
                 );
                 system.writeChoices(system.getSituationIdChoices("#spider_sayings").concat("basement1_hub"));
             },
-            optionText: this.sRollingDesc,
+            actions: {
+                bVisited: false,
+                bRolling: true,
+                sRollingDesc: "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...",
+                sUnrolledDesc: "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...",
+                /**
+                 * Determines and returns the appropriate option text (choice title) for this situation
+                 */
+                calculateOptionText: function() {
+                    console.log("calcOptionText; this.bRolling says: "+this.bRolling);
+                    if(this.bRolling) {
+                        return this.sRollingDesc;
+                    } else {
+                        return this.sUnrolledDesc;
+                    }
+                },
+                /**
+                 * Updates the host situation's optionText field
+                 */
+                updateOptionText: function() {
+                    console.log("updateOptionText; this.bRolling says: "+this.bRolling);
+                    if(this.bRolling) {
+                        undum.game.situations.basement1_bulbous_spider_hub.optionText = this.sRollingDesc;
+                    } else {
+                        undum.game.situations.basement1_bulbous_spider_hub.optionText = this.sUnrolledDesc;
+                    }
+                }
+            },
+            heading: function() {
+                return undum.game.situations.basement1_bulbous_spider_hub.actions.calculateOptionText();
+            },
+            //optionText: updateOptionText(), // can't do this, updateOptionText() comes up as undefined
+            optionText: function(character, system, hostSituation) {
+                //return hostSituation.actions.calculateOptionText(); // todo: error here "cannot read property calculateOptionText of undefined" ... so it hostSituation not actually our SimpleSituation object? UPDATE: double checked the API and hostSituation is the SimpleSituation who is asking the choice text to be displayed, i.e. the guy we'd be coming to this situation FROM if the user clicked the choice whose text we're determining here.
+
+                // this actually works
+                return undum.game.situations.basement1_bulbous_spider_hub.actions.calculateOptionText(); 
+            },
             tags: ["character_interaction_hub"]
         }
     ),
@@ -304,25 +332,24 @@ undum.game.situations = {
                 );
 
                 // now that she's bee unrolled, we want to update the flag and option text
-                undum.game.situations.basement1_bulbous_spider_hub.bRolling = false;
-                undum.game.situations.basement1_bulbous_spider_hub.updateOptionText();
+                undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling = false;
+                //undum.game.situations.basement1_bulbous_spider_hub.actions.updateOptionText();
                 console.log("spider rolling status after we've stopped her rolling: "+undum.game.situations.basement1_bulbous_spider_hub.bRolling);
 
                 // player now has the ooze urn... hooray?
                 character.stringArrayInventory.push("rusty_urn");
-                //system.doLink("basement1_bulbous_spider_hub"); // todo: uncomment when dicking about with optext in spider hub is done
-                system.writeChoices(["basement1_bulbous_spider_hub"]);
+                system.doLink("basement1_bulbous_spider_hub"); 
+                //system.writeChoices(["basement1_bulbous_spider_hub"]);
             },
-            /* todo: bRolling comes up undefined
             canView: function(character, system, host) {
-                console.log("spider rolling status is "+undum.game.situations.basement1_bulbous_spider_hub.bRolling);
-                return undum.game.situations.basement1_bulbous_spider_hub.bRolling;
+                console.log("spider rolling status is "+undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling);
+                return undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling;
             },
-            */
             optionText: "Step in and lend a massive digging claw to interrupt the cycle (she's a little thicc so it could be painful)",
             tags: ["spider_sayings"]
         }
     ),
+    // todo: add some more spider sayings so we can see the hooves heading
     "basement1_ochre_ooze_first_entry": new undum.SimpleSituation(
         "",
         {
