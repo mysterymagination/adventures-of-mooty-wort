@@ -7,6 +7,12 @@ body {
     overflow-y: scroll;
 }
 
+bg_spacer {
+    background: #000000;
+    width: 6em;
+    height: 2em;
+}
+
 /* Basic structure */
 #page {
     margin: 0 auto;

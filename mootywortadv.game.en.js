@@ -135,7 +135,7 @@ undum.game.situations = {
                 system.write(
                     "<p>The surface-adjacent soil of the Upper Layers lacks the true warmth of the earth's molten core; its sun-bleached strangeness fills you with unease.</p>"
                 );
-                system.writeChoices(system.getSituationIdChoices("#basement1_creatures"));
+                system.writeChoices(system.getSituationIdChoices("#basement1_creatures").concat("basement2_hub"));
             },
             tags: ["tunnel_hub_basement1"]
         }
@@ -388,12 +388,32 @@ undum.game.situations = {
                 var urnIndex = character.stringArrayInventory.indexOf("rusty_urn");
                 character.stringArrayInventory.splice(urnIndex, 1);
                 character.stringArrayInventory.push("acid_claws");
+                character.stats.atk += 10;
+                // todo: push acid claw ability?
             },
             canView: function(character, system, host) {
                 return character.stringArrayInventory.includes("rusty_urn");
             },
             optionText: "The rusty urn you got from the spider vibrates violently in your compartment; it strikes you that the color was similar to the massive ooze before you.  Maybe you should offer it up?",
             tags: ["ooze_oratory"]
+        }
+    ),
+    "basement2_hub": new undum.SimpleSituation(
+        "",
+        {
+            enter: function(character, system, from) {
+                system.writeChoices(["basement1_hub", "basement3_encounter"]);
+            },
+            optionText: "Burrow towards the Middlin Layers of The Deepness"
+        }
+    ),
+    "basement3_encounter": new undum.SimpleSituation(
+        "",
+        {
+            enter: function(character, system, from) {
+                // todo: boss fight hyyyyype!  Give a combat UI within the transcript main content window; I'm thinking a relatively simple table plus some text and image output divs
+            },
+            optionText: "Burrow towards the Deepest Deepness"
         }
     ),
     death: new undum.SimpleSituation(
@@ -443,10 +463,17 @@ undum.game.qualityGroups = {
 /* This function gets run before the game begins. It is normally used
  * to configure the character at the start of play. */
 undum.game.init = function(character, system) {
+    // todo: how should attack and defense stats interoperate?  Obviously a straight subtraction of defense from attack stat leaves us with 0 effect for two baseline characters...
     character.stats = {
         maxHealth: 100,
-        maxSanity: 100
+        maxSanity: 100,
+        atk: 10,
+        def: 10,
+        img: 10, /*imagination, magic attack*/
+        wil: 10 /*willpower, magic defense*/ 
     }
+
+    // inform UI viewmodel 
     character.qualities.health = character.stats.maxHealth;
     character.qualities.sanity = character.stats.maxSanity;
     character.qualities.moleWhole = 0;

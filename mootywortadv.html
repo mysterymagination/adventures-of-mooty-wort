@@ -70,8 +70,19 @@
               <div id="character_text_content"></div>
             </div>
             <div id="qualities"></div>
+
+            <!-- doesn't work for some reason? <div class="bg_spacer">test</div>-->
+            
+            <!-- Abs CSS positioning scheme means our tools class elements will be positioned relative to their immediate ancestor.  Since the document flows from top to bottom implicitly, we only need to make the inv panel a child of character panel to get it directly below character panel. -->
+            <div id="inventory_panel">
+              <h1>Inventory</h1>
+              <div id="inventory">
+                <div id="items"></div>
+              </div>
+            </div>
           </div>
         </div>
+        
       </div> <!-- End of div.tools_wrapper -->
 
       <div id="mid_panel">

@@ -1,17 +1,17 @@
 Brainstorming:
 Tale
 -inspired by and loosely follows the count from Deep Down Underground
-    1. 1 wee moudiewort digging
-    2. 2 pink earthworms wriggle wrangle
-    3. 3 big blk beetles scurry scamper
-    4. 4 furry caterpillars scooch and scrunch
+    1. wee moudiewort digging
+    2. pink earthworms wriggle wrangle
+    3. big black beetles scurry scamper
+    4. furry caterpillars scooch and scrunch
     5. fat spiders dance prance
     6. cold toads burrow scrape
     7. gray mice patter chatter
     8. green garter snakes slide glide
     9. armored snow bugs run and roll
     10. red ants march stamp
-    ...all stop when they hear moudiewort sneeze
+    ...all stop when they hear moudiewort sneeze.  I'ma go off rails almost immediately since I don't particularly want to write interactions for all 10 things for this demo.  Plus the counting thing falls away pretty quickly in the face of eldritch horror.  It'd be better to take inspiration from the pictures in the book of all sorts of neat weirdo stuff underground, like that awesome pointed crimson bone wand with a fused serpent wrapped 'round it.
 -a gargantuan carapace has been unearthed by delving critters, and something has awakened
 -the various counting creatures that the mooty wort meets, after the fashion of the moudiewort in Deep Down Underground, are cute but subtley tainted and changed by cosmic horror-y vibes
 -all the creatures of the underdark feel compelled to travel towards a siren song set of gentle vibrations through the ground called The Rapturous Rumble, which began shortly after the carapace was discovered
