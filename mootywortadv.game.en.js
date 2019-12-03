@@ -399,12 +399,35 @@ undum.game.situations = {
         }
     ),
     "basement2_hub": new undum.SimpleSituation(
+        "TODO: twitchy molerat",
+        {
+            enter: function(character, system, from) {
+                var stringArrayChoices = ["basement1_hub", "basement3_encounter"];
+                if(undum.game.situations.basement2_hub.actions.bTickled) {
+                    stringArrayChoices.concat("basement2_grue");
+                }
+                system.writeChoices(stringArrayChoices);
+            },
+            actions: {
+                bTickled: false
+            },
+            optionText: "Burrow towards the Middlin Layers of The Deepness"
+        }
+    ),
+    "basement2_grue": new undum.SimpleSituation(
         "",
         {
             enter: function(character, system, from) {
-                system.writeChoices(["basement1_hub", "basement3_encounter"]);
+                system.writeChoices(system.getSituationIdChoices("#grue_gab_root"));
             },
-            optionText: "Burrow towards the Middlin Layers of The Deepness"
+            optionText: "An ominous darkness pulses beyond the pit-beneath-a-molerat..."
+        }
+    ),
+    "basement2_grue_convo_darkness_reward": new undum.SimpleSituation(
+        "",
+        {
+            optionText: "The darkness is its own reward",
+            tags: ["grue_gab_root"]
         }
     ),
     "basement3_encounter": new undum.SimpleSituation(
@@ -464,6 +487,7 @@ undum.game.qualityGroups = {
  * to configure the character at the start of play. */
 undum.game.init = function(character, system) {
     // todo: how should attack and defense stats interoperate?  Obviously a straight subtraction of defense from attack stat leaves us with 0 effect for two baseline characters...
+    // The FF wiki has a total damage formula of f{attack damage * rand(1,1.5) - defense} with min set to 1, so maybe lean on a slightly randomized coefficient to juice attack?
     character.stats = {
         maxHealth: 100,
         maxSanity: 100,
