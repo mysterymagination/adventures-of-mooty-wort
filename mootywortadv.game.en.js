@@ -424,7 +424,7 @@ undum.game.situations = {
         }
     ),
     "basement2_grue_convo_darkness_reward": new undum.SimpleSituation(
-        "",
+        "Like a thorned vine twisting about its host with agonizing languidness to meet sunlight with savagery, a smile all of teeth tears a meandering line of brightness across the creature's abyssal face. \"You are beginning to understand.  Know that there are some here who would put themselves above the darkness, a deluded few who would dare to profess that it is born of them and not the other way 'round.  They will name themselves gods -- beware of such charlatans.\"",
         {
             optionText: "The darkness is its own reward",
             tags: ["grue_gab_root"]
