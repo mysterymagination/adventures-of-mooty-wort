@@ -20,6 +20,12 @@ Tale
         ---use said power to banish The Rapturous Rumble and the dead god from the world, which mooty senses will also remove the power from him and make him a normal mole again
         ---embrace the darkness, embarking on a rampage and takes back the yard from The Humans... all the yards.   
 
+UI
+-Undum tutorial layout fundamentally
+-add inventory panel below character qualities
+    --clicking item in inventory should activate a custom handler for that item that will check the next item/word clicked?
+        ---realistically, the way to do something like that within what Undum and HTML give you more or less out of the box would be to make key subject words in content text Undum action links whose action function checks for a global pending item handler flag, which will be associated with the item handler function for the last item clicked.  Said item handler would check the subject word and if it has a thing to do for that subject will do it, else will print a default 'cannot use X on Y' type message.
+
 Layout
 -3 layers
     --basement1
