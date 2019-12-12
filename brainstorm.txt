@@ -43,4 +43,5 @@ Puzzles
 -System Build/Hack/Use
     1. Elevator shaft through stone between basement2 and basement3 is borken and the mole needs to repair it to travel deeper; the strata is too hard for his claws.
         ->the heavy stone that lifts the elevator has snapped off its tether.  The mole must find a way to reconnect the tether himself or get a smaller creature to travel down the tether tunnel to do it for him.
-        ->once the tether is reconnected, the mole must pull on his end of the tether and bring it all the way to the basement1 hook. 
+        ->once the tether is reconnected, the mole must pull on his end of the tether and bring it all the way to the basement1 hook.
+-Sliding puzzle world at basement3?  Maze of all that is?  Basically have to assert your presence into various physically confused sections of cave and magma that move out of your way into the one space that is void. 

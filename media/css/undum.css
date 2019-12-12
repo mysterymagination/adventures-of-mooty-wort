@@ -361,3 +361,8 @@ img.float_left {
 #menu {
     display: none;
 }
+
+.featured_text_centered {
+    text-align: center;
+    border: 3px solid green;
+}

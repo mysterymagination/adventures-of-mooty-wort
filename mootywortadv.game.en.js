@@ -399,17 +399,32 @@ undum.game.situations = {
         }
     ),
     "basement2_hub": new undum.SimpleSituation(
-        "TODO: twitchy molerat",
+        "",
         {
             enter: function(character, system, from) {
                 var stringArrayChoices = ["basement1_hub", "basement3_encounter"];
                 if(undum.game.situations.basement2_hub.actions.bTickled) {
                     stringArrayChoices.concat("basement2_grue");
+                } else {
+                    system.write(
+                        "<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a naked mole rat, perhaps the nakedest you've seen, twitching and clawing feebly at a <a href='./examine_oracle_emerald'>massive carved emerald</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
+                    );
                 }
                 system.writeChoices(stringArrayChoices);
             },
             actions: {
-                bTickled: false
+                bTickled: false,
+                "examine_oracle_emerald": function(character, system, action) {
+                    system.write(
+                        "<p>Beneath the nakedest molerat's pathetic pawing and the resultant trails of dried blood you can make out an archaic script carved into the gem.  You could have sworn at first glance that it was unintelligible, but as you gaze longer it seems to resolve into the familiar common script of Underwere, if a bit more formal and stuffy than you're used to. It reads: </p>\
+                        <div class='feautred_text_centered'>\
+                            Seek me in the darkest ways<br />\
+                            Were all that is twists into a maze<br />\
+                            Take of my flesh a horned crown<br />\
+                            'Neath sea of night all light shall drown\
+                        </div>"
+                        );
+                }
             },
             optionText: "Burrow towards the Middlin Layers of The Deepness"
         }
