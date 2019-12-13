@@ -77,7 +77,13 @@
             <div id="inventory_panel">
               <h1>Inventory</h1>
               <div id="inventory">
-                <div id="items"></div>
+                <div id="items">
+                  <ul>
+                    <!-- so here's a way we could call through to Situations/actions from inventory items, simply by exposing the processClick() Undum fn in the API.  Probably better just to call some mole lib function here instead, however, since in most cases we're probably not going to want selecting an item to transition Situations or activate Actions within a Situation.  Although, activating actions might eventually be the thing to do, we'll want that to come down from clicking a subject word link rather than from the item link to effect a 'use X on Y' command -->
+                    <li><a onclick="window.undum.processClick('basement2_hub');">Thing</a></li>
+                    <li>thing 2</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
