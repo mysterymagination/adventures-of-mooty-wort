@@ -404,10 +404,16 @@ undum.game.situations = {
             enter: function(character, system, from) {
                 var stringArrayChoices = ["basement1_hub", "basement3_encounter"];
                 if(undum.game.situations.basement2_hub.actions.bTickled) {
+                    // todo: add room desc now that rat is tickled
+                    system.write(
+                        "placeholder for tickled rat"
+                    );
                     stringArrayChoices.concat("basement2_grue");
+                } else if(character.stringArrayInventory.includes("fuzz")) {
+                    stringArrayChoices.concat("basement2_molerat_tickle");
                 } else {
                     system.write(
-                        "<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a naked mole rat, perhaps the nakedest you've seen, twitching and clawing feebly at a <a href='./examine_oracle_emerald'>massive carved emerald</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
+                        "<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a naked mole rat, perhaps the nakedest you've seen, twitching and clawing feebly at the gently convex surface of a <a href='./examine_oracle_emerald'>massive carved emerald</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
                     );
                 }
                 system.writeChoices(stringArrayChoices);
@@ -419,14 +425,31 @@ undum.game.situations = {
                         "<p>Beneath the nakedest molerat's pathetic pawing and the resultant trails of dried blood you can make out an archaic script carved into the gem.  You could have sworn at first glance that it was unintelligible, but as you gaze longer it seems to resolve into the familiar common script of Underwere, if a bit more formal and stuffy than you're used to. It reads: </p>\
                         <div class='feautred_text_centered'>\
                             Seek me in the darkest ways<br />\
-                            Were all that is twists into a maze<br />\
+                            Where all that is twists into a maze<br />\
                             Take of my flesh a horned crown<br />\
                             'Neath sea of night all light shall drown\
-                        </div>"
+                        </div>\
+                        <p>A quiver runs down your spine as you read these words, and something atavistic in your innermost being stirs.  Peering at the edges of the gem, where it is hidden again by impassable slate, you can make out what could be a fold of flesh with minute slots that suggest hair follicles.  An eyelid, perhaps, and the gem itself a gargantuan eye?  A lone gossamer strand of cultivated amethyst remains as its <a href='./take_eyelash'>last eyelash</a>.</p>"
                         );
-                }
+                },
+                "take_eyelash": function(character, system, action) {
+                    system.write(
+                        "<p>You carefully pluck the impossibly delicate crystal from its socket and place it snunggly in your compartment.</p>"
+                    );
+                    character.stringArrayInventory.push("crystal_lash");
+                } 
             },
             optionText: "Burrow towards the Middlin Layers of The Deepness"
+        }
+    ),
+    "basement2_molerat_tickle": new undum.SimpleSituation(
+        "As you touch the caterpillar's fuzz (still pulsing with an oily darkness) to the molerat's toes and wiggle it about, he goes totally rigid.  A wheezing whistle coughs into being and in the next moment your newest friend is rolling on his back in fits of laughter, the menacing emerald evidently forgotten.",
+        {
+            enter: function(character, system, from) {
+                undum.game.situations.basement2_hub.actions.bTickled = true;
+                system.doLink("basement2_hub");               
+            },
+            optionText: "Use the caterpillar fuzz to tickle some sense into him!"
         }
     ),
     "basement2_grue": new undum.SimpleSituation(
