@@ -184,26 +184,30 @@ undum.game.situations = {
                     sFuzzMessage = "As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!  "
                     
                     // system.setQuality() will update the value and its UI representation together
-                    system.setQuality("health", character.qualities.health - character.qualities.maxHealth * 0.1);
+                    system.setQuality("health", character.qualities.health - character.stats.maxHealth * 0.1);
                     console.log("health is "+character.qualities.health);
                     if(!character.stringArrayInventory.includes("fuzz")) {
                         if(character.qualities.health > 0) {
                             system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
                             // push the fuzz item to the item UI element, a ul HTML tag called items_list, and install fuzz handler
                             // todo: can we check current situation id?  It'll get really awkward trying to call through to another situation without making sure we're coming from the right place -- in this particular case we only have the molerat as a player-accessible target in basement2_hub, but that's not always going to be the case.  Other approach would be to avoid situation transition from these floating handlers since we don't implicitly know where we are when calling them
+                            // todo: it would be nice to change the clicked item's li to css class highlight so the player gets feedback about what is active
                             $("#items_list").append("\
                                 <li>\
-                                    <a onclick='\
+                                    <div id='item_fuzz'>\
+                                    <a id='item_fuzz_anchor' onclick='\
+                                        undum.showHighlight($(\"#item_fuzz_anchor\"));\
                                         window.libifels.bUsingItem = true;\
                                         window.libifels.sUsedItemName = \"fuzz\";\
-                                        window.libifels.fnUsedItemHandler = function(itemName, targetName) {\
+                                        window.libifels.fnUsedItemHandler = function(system, itemName, targetName) {\
                                             if(targetName === \"nakedest molerat\") {\
                                                 system.doLink(\"basement2_molerat_tickle\");\
                                             } else {\
-                                                system.write(\"<p>You can't use the fuzz on \"+targetName+\"</p>\");\
+                                                system.write(\"<p>You cannot use the fuzz on \"+targetName+\"</p>\");\
                                             }\
                                         }\
-                                    '></a>\
+                                    '>Gently Pulsating Fuzz</a>\
+                                    </div>\
                                 </li>");
                             character.stringArrayInventory.push("fuzz");
                         } else {
@@ -410,7 +414,7 @@ undum.game.situations = {
                     "<p>As you proffer the urn, a tendril whips out from the ochre ooze and suddenly the urn has been removed from your possession.  The fur that the urn had been in contact with is seared away and hideous chemical burns now decorate the flesh beneath.  \"Our daughter!\" the ooze burbles in a thousand thousand voices all vengefully enraptured.  \"What a naughty little mynx you've been, trying to escape the collective.  We live for the Whole, child... and die for it.\"  With that, the ooze slams the urn into itself hard enough to propel it hopelessly deep within its caustic mass; gelatinous ripples expand silently out from the point of impact, strangely lovely in their perfect symmetry.  Though the urn's crystalline structure puts up a noble resistance, it quickly breaks down and you can see through the translucent ochre muck a smaller quantity of ooze writhe free of the dissolving urn.  It, or she, you suppose, struggles frantically for a moment and then is still.  As you watch, the little ooze disappears into the mass of the large ooze, and in a few seconds no trace of her remains.</p>\
                     <p>\"We thank you, brother mole.  There is no compulsion to feed at present, so we are compelled instead to offer you a boon for your service.  Take this weapon with you; perhaps it will be of some use in fending off the will of The Rumble.\"  The ooze wiggles condescendingly.  \"Lesser, boring Underwere, whose coverage of interests is woefully mired in the prosaic and pragmatic, are fascinated by its promises.  We, however, have all we need right here within ourselves... au naturale.\"  It shivers ostentatiously and a set of gold pawntlets (gauntlets for paws) dripping with continuous acid dig their way up from the soil under your ever-twitching nose.  Without waiting to see what else they can do autonomously, you don them.</p>"
                 );
-                system.setQuality("health", character.qualities.health - character.qualities.maxHealth * 0.1);
+                system.setQuality("health", character.qualities.health - character.stats.maxHealth * 0.1);
                 var urnIndex = character.stringArrayInventory.indexOf("rusty_urn");
                 character.stringArrayInventory.splice(urnIndex, 1);
                 character.stringArrayInventory.push("acid_claws");
@@ -432,7 +436,7 @@ undum.game.situations = {
                 if(undum.game.situations.basement2_hub.actions.bTickled) {
                     // todo: add room desc now that rat is tickled
                     system.write(
-                        "placeholder for tickled rat"
+                        "<p>placeholder for tickled rat</p>"
                     );
                     stringArrayChoices.concat("basement2_grue");
                 } else {
@@ -465,7 +469,7 @@ undum.game.situations = {
                 "check_molerat_target": function(character, system, action) {
                     if(window.libifels.bUsingItem) {
                         // call item handler with the second and final piece of information, the target being nakedest molerat!
-                        window.libifels.fnUsedItemHandler(window.libifels.sUsedItemName, "nakedest molerat");
+                        window.libifels.fnUsedItemHandler(system, window.libifels.sUsedItemName, "nakedest molerat");
                     } else {
                         system.write("<p>Examining this nakedest of molerats yields little but subtle nausea.</p>");
                     }
@@ -475,7 +479,7 @@ undum.game.situations = {
         }
     ),
     "basement2_molerat_tickle": new undum.SimpleSituation(
-        "As you touch the caterpillar's fuzz (still pulsing with an oily darkness) to the molerat's toes and wiggle it about, he goes totally rigid.  A wheezing whistle coughs into being and in the next moment your newest friend is rolling on his back in fits of laughter, the menacing emerald evidently forgotten.",
+        "<p>As you touch the caterpillar's fuzz (still pulsing with an oily darkness) to the molerat's toes and wiggle it about, he goes totally rigid.  A wheezing whistle coughs into being and in the next moment your newest friend is rolling on his back in fits of laughter, the menacing emerald evidently forgotten.</p>",
         {
             enter: function(character, system, from) {
                 undum.game.situations.basement2_hub.actions.bTickled = true;
@@ -494,7 +498,7 @@ undum.game.situations = {
         }
     ),
     "basement2_grue_convo_darkness_reward": new undum.SimpleSituation(
-        "Like a thorned vine twisting about its host with agonizing languidness to meet sunlight with savagery, a smile all of teeth tears a meandering line of brightness across the creature's abyssal face. \"You are beginning to understand.  Know that there are some here who would put themselves above the darkness, a deluded few who would dare to profess that it is born of them and not the other way 'round.  They will name themselves gods -- beware of such charlatans.\"",
+        "<p>Like a thorned vine twisting about its host with agonizing languidness to meet sunlight with savagery, a smile all of teeth tears a meandering line of brightness across the creature's abyssal face. \"You are beginning to understand.  Know that there are some here who would put themselves above the darkness, a deluded few who would dare to profess that it is born of them and not the other way 'round.  They will name themselves gods -- beware of such charlatans.\"</p>",
         {
             optionText: "The darkness is its own reward",
             tags: ["grue_gab_root"]
