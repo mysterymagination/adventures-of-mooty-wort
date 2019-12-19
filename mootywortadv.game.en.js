@@ -42,14 +42,25 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 //-----end undum extension-----//
 
 //-----game logic-----//
-var libmole = {
-    getOptionText: function(isRolling) {
-        console.log("is rolling from dubious this says: "+isRolling);
-        if(isRolling) {
-            return "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...";
-        } else {
-            return "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...";
-        }
+/**
+ * libifels, as in lib Interactive Fiction Entity Logic System, provides utility functions and hypertext adventure framework elements for Undum
+ */
+window.libifels = {
+    /**
+     * Boolean flag to be set when the user clicks an item, indicating that a usage on something is pending
+     */
+    bUsingItem: false,
+    /**
+     * The string name of the last item activated
+     */
+    sUsedItemName: "",
+    /**
+     * Item usage handler function; it gets installed when the player clicks on an item to activate it (and bUsingItem flag is raised and sUsedItemName is set), and gets called on this libifels object when the target of the item usage is selected (meaning we have all the info we need) with the activated item name (retrieved from sUsedItemName here) and the target name we just learned 
+     * @param {*} itemName the item the player is trying to use
+     * @param {*} targetName the object the player is trying to use the item on
+     */
+    fnUsedItemHandler: function(itemName, targetName) {
+        system.write("<p>You can't use "+itemName+" on "+targetName+"</p>");
     }
 }
 undum.game.situations = {
@@ -178,7 +189,22 @@ undum.game.situations = {
                     if(!character.stringArrayInventory.includes("fuzz")) {
                         if(character.qualities.health > 0) {
                             system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
-                            
+                            // push the fuzz item to the item UI element, a ul HTML tag called items_list, and install fuzz handler
+                            // todo: can we check current situation id?  It'll get really awkward trying to call through to another situation without making sure we're coming from the right place -- in this particular case we only have the molerat as a player-accessible target in basement2_hub, but that's not always going to be the case.  Other approach would be to avoid situation transition from these floating handlers since we don't implicitly know where we are when calling them
+                            $("#items_list").append("\
+                                <li>\
+                                    <a onclick='\
+                                        window.libifels.bUsingItem = true;\
+                                        window.libifels.sUsedItemName = \"fuzz\";\
+                                        window.libifels.fnUsedItemHandler = function(itemName, targetName) {\
+                                            if(targetName === \"nakedest molerat\") {\
+                                                system.doLink(\"basement2_molerat_tickle\");\
+                                            } else {\
+                                                system.write(\"<p>You can't use the fuzz on \"+targetName+\"</p>\");\
+                                            }\
+                                        }\
+                                    '></a>\
+                                </li>");
                             character.stringArrayInventory.push("fuzz");
                         } else {
                             system.write(sFuzzMessage+"</p>");
@@ -409,11 +435,9 @@ undum.game.situations = {
                         "placeholder for tickled rat"
                     );
                     stringArrayChoices.concat("basement2_grue");
-                } else if(character.stringArrayInventory.includes("fuzz")) {
-                    stringArrayChoices.concat("basement2_molerat_tickle");
                 } else {
                     system.write(
-                        "<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a naked mole rat, perhaps the nakedest you've seen, twitching and clawing feebly at the gently convex surface of a <a href='./examine_oracle_emerald'>massive carved emerald</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
+                        "<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a <a href='./check_molerat_target'>naked molerat</a>, perhaps the nakedest you've seen, twitching and clawing feebly at the gently convex surface of a <a href='./examine_oracle_emerald'>massive carved emerald</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
                     );
                 }
                 system.writeChoices(stringArrayChoices);
@@ -437,6 +461,14 @@ undum.game.situations = {
                         "<p>You carefully pluck the impossibly delicate crystal from its socket and place it snunggly in your compartment.</p>"
                     );
                     character.stringArrayInventory.push("crystal_lash");
+                },
+                "check_molerat_target": function(character, system, action) {
+                    if(window.libifels.bUsingItem) {
+                        // call item handler with the second and final piece of information, the target being nakedest molerat!
+                        window.libifels.fnUsedItemHandler(window.libifels.sUsedItemName, "nakedest molerat");
+                    } else {
+                        system.write("<p>Examining this nakedest of molerats yields little but subtle nausea.</p>");
+                    }
                 } 
             },
             optionText: "Burrow towards the Middlin Layers of The Deepness"

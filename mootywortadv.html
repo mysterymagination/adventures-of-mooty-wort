@@ -76,12 +76,17 @@
             <!-- Abs CSS positioning scheme means our tools class elements will be positioned relative to their immediate ancestor.  Since the document flows from top to bottom implicitly, we only need to make the inv panel a child of character panel to get it directly below character panel. -->
             <div id="inventory_panel">
               <h1>Inventory</h1>
-              <div id="inventory">
-                <div id="items">
-                  <ul>
+              <div id="inventory_div">
+                <div id="items_div">
+                  <ul id="items_list">
                     <!-- so here's a way we could call through to Situations/actions from inventory items, simply by exposing the processClick() Undum fn in the API.  Probably better just to call some mole lib function here instead, however, since in most cases we're probably not going to want selecting an item to transition Situations or activate Actions within a Situation.  Although, activating actions might eventually be the thing to do, we'll want that to come down from clicking a subject word link rather than from the item link to effect a 'use X on Y' command -->
                     <li><a onclick="window.undum.processClick('basement2_hub');">Thing</a></li>
-                    <li>thing 2</li>
+                    <li><a onclick="window.libifels.fnUsedItemHandler = function(itemName, targetName){console.log(itemName+' stuffs '+targetName);}; window.libifels.fnUsedItemHandler('stuff', 'things')">Thing Function Define</a></li>
+                    <!-- guess you can't do line continuations in HTML?
+                    <li><a onclick="window.libifels.fnUsedItemHandler = function(itemName, targetName) {\
+                          console.log('stuff');\
+                          }">Thing 2</a></li>
+                          -->
                   </ul>
                 </div>
               </div>
