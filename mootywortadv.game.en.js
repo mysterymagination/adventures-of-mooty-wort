@@ -46,6 +46,7 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
  * libifels, as in lib Interactive Fiction Entity Logic System, provides utility functions and hypertext adventure framework elements for Undum
  */
 window.libifels = {
+    // todo: this global function handler business is weird and (I'm fairly certain) unnecessary.  Might be cleaner make a custom Item class in JS that derives from something that can be the content of an anchor tag (HTML text element?) and has a name property and an onUse handler function, and then add those to the item_list ul.  Alternatively, maybe just shove a handler function into the li or div containing the text describing an item.  Regardless, we'd at least need a global CSS ID selector value for the currently active item, but otherwise could lose the weird global stuff here as well as ability to cleanly package up a particular item's behavior in an object instance so that items can be removed and re-added without having to copy-paste a mostly boilerplate handler function each time or naming a hundred different global handler functions that new item instances would refer back to.
     /**
      * Boolean flag to be set when the user clicks an item, indicating that a usage on something is pending
      */
@@ -191,15 +192,16 @@ undum.game.situations = {
                             system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
                             // push the fuzz item to the item UI element, a ul HTML tag called items_list, and install fuzz handler
                             // todo: can we check current situation id?  It'll get really awkward trying to call through to another situation without making sure we're coming from the right place -- in this particular case we only have the molerat as a player-accessible target in basement2_hub, but that's not always going to be the case.  Other approach would be to avoid situation transition from these floating handlers since we don't implicitly know where we are when calling them
-                            // todo: it would be nice to change the clicked item's li to css class highlight so the player gets feedback about what is active
                             $("#items_list").append("\
                                 <li>\
-                                    <div id='item_fuzz'>\
-                                    <a id='item_fuzz_anchor' onclick='\
-                                        undum.showHighlight($(\"#item_fuzz_anchor\"));\
+                                    <div class='item' id='item_fuzz'>\
+                                    <a onclick='\
+                                        undum.removeHighlight($(\".item\"));\
+                                        undum.addHighlight($(\"#item_fuzz\"));\
                                         window.libifels.bUsingItem = true;\
                                         window.libifels.sUsedItemName = \"fuzz\";\
                                         window.libifels.fnUsedItemHandler = function(system, itemName, targetName) {\
+                                            undum.removeHighlight($(\"#item_fuzz\"));\
                                             if(targetName === \"nakedest molerat\") {\
                                                 system.doLink(\"basement2_molerat_tickle\");\
                                             } else {\
@@ -367,6 +369,17 @@ undum.game.situations = {
                 console.log("spider rolling status after we've stopped her rolling: "+undum.game.situations.basement1_bulbous_spider_hub.bRolling);
 
                 // player now has the ooze urn... hooray?
+                $("#items_list").append("\
+                                <li>\
+                                    <div class='item' id='item_urn'>\
+                                    <a onclick='\
+                                        undum.removeHighlight($(\".item\"));\
+                                        undum.addHighlight($(\"#item_urn\"));\
+                                        window.libifels.bUsingItem = true;\
+                                        window.libifels.sUsedItemName = \"urn\";\
+                                    '>Rusty Urn of Ooze</a>\
+                                    </div>\
+                                </li>");
                 character.stringArrayInventory.push("rusty_urn");
                 system.doLink("basement1_bulbous_spider_hub"); 
                 //system.writeChoices(["basement1_bulbous_spider_hub"]);
@@ -417,6 +430,17 @@ undum.game.situations = {
                 system.setQuality("health", character.qualities.health - character.stats.maxHealth * 0.1);
                 var urnIndex = character.stringArrayInventory.indexOf("rusty_urn");
                 character.stringArrayInventory.splice(urnIndex, 1);
+                $("#items_list").append("\
+                                <li>\
+                                    <div class='item' id='item_claws'>\
+                                    <a onclick='\
+                                        undum.removeHighlight($(\".item\"));\
+                                        undum.addHighlight($(\"#item_claws\"));\
+                                        window.libifels.bUsingItem = true;\
+                                        window.libifels.sUsedItemName = \"claws\";\
+                                    '>Dripping Caustic Claws</a>\
+                                    </div>\
+                                </li>");
                 character.stringArrayInventory.push("acid_claws");
                 character.stats.atk += 10;
                 // todo: push acid claw ability?
@@ -451,7 +475,7 @@ undum.game.situations = {
                 "examine_oracle_emerald": function(character, system, action) {
                     system.write(
                         "<p>Beneath the nakedest molerat's pathetic pawing and the resultant trails of dried blood you can make out an archaic script carved into the gem.  You could have sworn at first glance that it was unintelligible, but as you gaze longer it seems to resolve into the familiar common script of Underwere, if a bit more formal and stuffy than you're used to. It reads: </p>\
-                        <div class='feautred_text_centered'>\
+                        <div class='featured_text_centered'>\
                             Seek me in the darkest ways<br />\
                             Where all that is twists into a maze<br />\
                             Take of my flesh a horned crown<br />\
@@ -462,8 +486,19 @@ undum.game.situations = {
                 },
                 "take_eyelash": function(character, system, action) {
                     system.write(
-                        "<p>You carefully pluck the impossibly delicate crystal from its socket and place it snunggly in your compartment.</p>"
+                        "<p>You carefully pluck the impossibly delicate crystal from its socket and place it snuggly in your compartment.</p>"
                     );
+                    $("#items_list").append("\
+                                <li>\
+                                    <div class='item' id='item_lash'>\
+                                    <a onclick='\
+                                        undum.removeHighlight($(\".item\"));\
+                                        undum.addHighlight($(\"#item_lash\"));\
+                                        window.libifels.bUsingItem = true;\
+                                        window.libifels.sUsedItemName = \"lash\";\
+                                    '>Crystalline Last Lash</a>\
+                                    </div>\
+                                </li>");
                     character.stringArrayInventory.push("crystal_lash");
                 },
                 "check_molerat_target": function(character, system, action) {

@@ -315,6 +315,11 @@ img.float_left {
     top: 0;
     bottom: 0;
 }
+
+.highlight_simple {
+    background: rgba(255, 255, 0, 0.75);
+}
+
 #qualities h2 {
     margin: 0.5em 0 0.25em 0;
     font-size: 1.0em;
@@ -354,6 +359,9 @@ img.float_left {
 }
 .progress_bar .right_label {
     float: right;
+}
+.shrink_wrapped {
+    display: inline-block;
 }
 #content_library, #ui_library {
     display: none;
