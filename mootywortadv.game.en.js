@@ -156,13 +156,13 @@ undum.game.situations = {
         "",
         {
             enter: function(character, system, from) {
-                system.doLink("basement1_fuzzy_caterpillar/look-substance");
+                system.doLink("basement1_fuzzy_caterpillar_hub/look-substance");
             },
             optionText: "testing forwarded action",
             tags: ["test_forwarded_action"]
         }
     ),
-    "basement1_fuzzy_caterpillar": new undum.SimpleSituation(
+    "basement1_fuzzy_caterpillar_hub": new undum.SimpleSituation(
         "",
         {
             enter: function(character, system, from) {
@@ -224,7 +224,13 @@ undum.game.situations = {
                 },
                 'look-substance': function(character, system, action) {
                     system.write("<p>The veins appear to be both above and below the epidermis. They're filled with an oily substance that pulses feverishly when you look upon it, as if sensing your attention and eager to know you; you're almost certain that's not what caterpillars normally look like naked.</p>")
+                },
+                calculateHeading: function() {
+                    return "A somewhat fuzzy caterpillar scooches and scrunches rhythmically here";
                 }
+            },
+            heading: function() {
+                return undum.game.situations.basement1_fuzzy_caterpillar_hub.actions.calculateHeading();
             },
             tags: ["basement1_creatures", "character_interaction_hub"]
         }
@@ -272,45 +278,29 @@ undum.game.situations = {
                 system.write(
                     "<p>"+system.printBuffer+"  He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
                 );
-                system.doLink("basement1_fuzzy_caterpillar");
+                system.doLink("basement1_fuzzy_caterpillar_hub");
             },
             tags: ["convo_tree_leaf"]
-        }
-    ),
-    "basement1_bulbous_spider_first_entry": new undum.SimpleSituation(
-        "",
-        {
-            enter: function(character, system, from) {
-                system.write(
-                    "<p>As you shovel pebbles away from your questing snout, the vision of a rolly-polly spider struggling with some sort of urn enters your reality.  The urn is transparent and you can see a viscous rusty liquid sloshing lazily about inside.  It's sealed by a stone stopper that glows red as the heart of all magma when the spider strains against it.  Before you can speak, she slips on the slick soil and rolls onto her voluminous backside... and keeps rolling: the tunnel you've entered has a gentle but insistent curvature that seems just right to keep the poor arachnid rolling forever.  Well, not forever of course, as that would be physically impossible, but longer than a spider's lifespan so the point is kinda moot.  Her thicket of frantically scrabbling legs is strangely hypnotic.</p>"
-                );
-                system.writeChoices(system.getSituationIdChoices("#spider_sayings"));
-            },
-            optionText: "The *scritch* *skitter* *scurry* *boink* of a an oblong arachnid sounds from beyond a small pebblefall by your rump",
-            tags: ["basement1_creatures"]
         }
     ),
     "basement1_bulbous_spider_hub": new undum.SimpleSituation(
         "",
         {
-            /* this is the opts object anyway, which is discarded during SimpleSituation construction
-            bVisited: false,
-            bRolling: true,
-            sRollingDesc: "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...",
-            sUnrolledDesc: "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...",
-            oSelf: this, // todo: does the self assignment trick work around the global this context issue from Undum lib stuff?  If not, why not? UPDATE: nope, keyword this in the calling context of defining an object will point to Window.  Interestingly, in a ctor function keyword this actually will point to the object instance I guess because the calling context is always the instance being constructed.
-            */
-
             enter: function(character, system, from) {
                 var sDesc = "";
-                if(this.bRolling) {
-                    sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
+                // if we just entered for the first time, give the full deal
+                if(!undum.game.situations.basement1_bulbous_spider_hub.actions.bVisited) {
+                    sDesc = "As you shovel pebbles away from your questing snout, the vision of a rolly-polly spider struggling with some sort of urn enters your reality.  The urn is transparent and you can see a viscous rusty liquid sloshing lazily about inside.  It's sealed by a stone stopper that glows red as the heart of all magma when the spider strains against it.  Before you can speak, she slips on the slick soil and rolls onto her voluminous backside... and keeps rolling: the tunnel you've entered has a gentle but insistent curvature that seems just right to keep the poor arachnid rolling forever.  Well, not forever of course, as that would be physically impossible, but longer than a spider's lifespan so the point is kinda moot.";
                 } else {
-                    sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two, from a safe and creepingly increasing distance from the urn in your compartment.";
+                    if(this.bRolling) {
+                        sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
+                    } else {
+                        sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two, from a safe and creepingly increasing distance from the urn in your compartment.";
+                    }
+                    system.write(
+                        "<p>"+sDesc+"</p>"
+                    );
                 }
-                system.write(
-                    "<p>"+sDesc+"</p>"
-                );
                 system.writeChoices(system.getSituationIdChoices("#spider_sayings").concat("basement1_hub"));
             },
             actions: {
@@ -321,12 +311,15 @@ undum.game.situations = {
                 /**
                  * Determines and returns the appropriate option text (choice title) for this situation
                  */
-                calculateOptionText: function() {
-                    console.log("calcOptionText; this.bRolling says: "+this.bRolling);
-                    if(this.bRolling) {
-                        return this.sRollingDesc;
+                calculateHeading: function() {
+                    if(!this.bVisited) {
+                        return "A massive spider rolls back and forth across the curve of the tunnel; her thicket of frantically scrabbling legs is strangely hypnotic.";
                     } else {
-                        return this.sUnrolledDesc;
+                        if(this.bRolling) {
+                            return this.sRollingDesc;
+                        } else {
+                            return this.sUnrolledDesc;
+                        }
                     }
                 },
                 /**
@@ -342,16 +335,10 @@ undum.game.situations = {
                 }
             },
             heading: function() {
-                return undum.game.situations.basement1_bulbous_spider_hub.actions.calculateOptionText();
+                return undum.game.situations.basement1_bulbous_spider_hub.actions.calculateHeading();
             },
-            //optionText: updateOptionText(), // can't do this, updateOptionText() comes up as undefined
-            optionText: function(character, system, hostSituation) {
-                //return hostSituation.actions.calculateOptionText(); // todo: error here "cannot read property calculateOptionText of undefined" ... so it hostSituation not actually our SimpleSituation object? UPDATE: double checked the API and hostSituation is the SimpleSituation who is asking the choice text to be displayed, i.e. the guy we'd be coming to this situation FROM if the user clicked the choice whose text we're determining here.
-
-                // this actually works
-                return undum.game.situations.basement1_bulbous_spider_hub.actions.calculateOptionText(); 
-            },
-            tags: ["character_interaction_hub"]
+            optionText: "The *scritch* *skitter* *scurry* *boink* of a an oblong arachnid sounds from beyond a small pebblefall by your rump",
+            tags: ["basement1_creatures", "character_interaction_hub"]
         }
     ),
     "basement1_bulbous_spider_stop_rolling": new undum.SimpleSituation(
@@ -411,9 +398,22 @@ undum.game.situations = {
         {
             enter: function(character, system, from) {
                 system.write(
-                    "<p>Atop its crystal platform, the ochre ooze quivers and bubbles with interest.  Hunger will erode its curiosity, however, and with it will go civility.  Best hurry up and get gone from here.</p>"
+                    "<p>Atop its crystal platform, the ochre ooze quivers and bubbles and burbles with interest.  Hunger will erode its curiosity, however, and with it will go civility.  Best hurry up and get gone from here.</p>"
                 );
                 system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
+            },
+            actions: {
+                bDaughterSacrified: false,
+                calculateHeading: function() {
+                    if(this.bDaughterSacrified) {
+                        return "The monstrous amalgamate ooze swells and contracts contentedly, ignoring you";
+                    } else {
+                        return "An ochre ooze quivers nearby, somehow looking at your hungrily despite lacking eyes";
+                    }
+                }
+            },
+            heading: function() {
+                return undum.game.situations.basement1_fuzzy_caterpillar_hub.actions.calculateHeading();
             },
             optionText: "The ooze oozes, patiently (at least for so long as it isn't hungry)...",
             tags: ["character_interaction_hub"]
@@ -443,6 +443,9 @@ undum.game.situations = {
                                 </li>");
                 character.stringArrayInventory.push("acid_claws");
                 character.stats.atk += 10;
+
+                // flip the sac switch
+                undum.game.situations.basement1_ochre_ooze_hub.actions.bDaughterSacrified = true;
                 // todo: push acid claw ability?
             },
             canView: function(character, system, host) {
@@ -452,15 +455,16 @@ undum.game.situations = {
             tags: ["ooze_oratory"]
         }
     ),
+    // todo: add headings like for the spider situation where each new situation has a sentence or two introducing the current context
     "basement2_hub": new undum.SimpleSituation(
         "",
         {
             enter: function(character, system, from) {
                 var stringArrayChoices = ["basement1_hub", "basement3_encounter"];
                 if(undum.game.situations.basement2_hub.actions.bTickled) {
-                    // todo: add room desc now that rat is tickled
+                    // todo: change heading to reflect rolling rat
                     system.write(
-                        "<p>placeholder for tickled rat</p>"
+                        "<p>As the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the emerald eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.</p>"
                     );
                     stringArrayChoices.concat("basement2_grue");
                 } else {
@@ -508,9 +512,20 @@ undum.game.situations = {
                     } else {
                         system.write("<p>Examining this nakedest of molerats yields little but subtle nausea.</p>");
                     }
-                } 
+                }, 
+                calculateHeading: function() {
+                    if(this.bTickled) {
+                        return "The nakedest molerat rolls about in the musty dust, desperately euphoric in the throes of tickles";
+                    } else {
+                        return "A naked molerat scrabbles furiously at an emerald nearby, a decoration of broken claw bits and streaks of blood his only impact on it";
+                    }
+                }
             },
-            optionText: "Burrow towards the Middlin Layers of The Deepness"
+            heading: function() {
+                return undum.game.situations.basement2_hub.actions.calculateHeading();
+            },
+            optionText: "Burrow towards the Middlin Layers of The Deepness",
+            tags: ["character_interaction_hub"]
         }
     ),
     "basement2_molerat_tickle": new undum.SimpleSituation(
