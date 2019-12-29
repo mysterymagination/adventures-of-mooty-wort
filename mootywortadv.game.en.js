@@ -176,7 +176,7 @@ undum.game.situations = {
                 system.write(
                     "<p>" + sDesc + "  He wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with <a href='./look-substance'>sickly black veins</a>.</p>"
                 );
-                system.writeChoices(system.getSituationIdChoices(["#caterpillar_queries", "#tunnel_hub_basement"+this.iDeepnessLevel, "#test_forwarded_action"]));
+                system.writeChoices(system.getSituationIdChoices(["#caterpillar_queries", "#tunnel_hub_basement"+this.iDeepnessLevel]));
             },
             optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body a few mole-lengths behind a patch of musty loam your whiskers just brushed against",
 
@@ -297,10 +297,10 @@ undum.game.situations = {
                     } else {
                         sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two, from a safe and creepingly increasing distance from the urn in your compartment.";
                     }
-                    system.write(
-                        "<p>"+sDesc+"</p>"
-                    );
                 }
+                system.write(
+                    "<p>"+sDesc+"</p>"
+                );
                 system.writeChoices(system.getSituationIdChoices("#spider_sayings").concat("basement1_hub"));
             },
             actions: {
@@ -413,7 +413,7 @@ undum.game.situations = {
                 }
             },
             heading: function() {
-                return undum.game.situations.basement1_fuzzy_caterpillar_hub.actions.calculateHeading();
+                return undum.game.situations.basement1_ochre_ooze_hub.actions.calculateHeading();
             },
             optionText: "The ooze oozes, patiently (at least for so long as it isn't hungry)...",
             tags: ["character_interaction_hub"]
@@ -455,7 +455,6 @@ undum.game.situations = {
             tags: ["ooze_oratory"]
         }
     ),
-    // todo: add headings like for the spider situation where each new situation has a sentence or two introducing the current context
     "basement2_hub": new undum.SimpleSituation(
         "",
         {
@@ -466,7 +465,7 @@ undum.game.situations = {
                     system.write(
                         "<p>As the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the emerald eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.</p>"
                     );
-                    stringArrayChoices.concat("basement2_grue");
+                    stringArrayChoices.concat("basement2_grue_hub");
                 } else {
                     system.write(
                         "<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a <a href='./check_molerat_target'>naked molerat</a>, perhaps the nakedest you've seen, twitching and clawing feebly at the gently convex surface of a <a href='./examine_oracle_emerald'>massive carved emerald</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
@@ -538,20 +537,41 @@ undum.game.situations = {
             optionText: "Use the caterpillar fuzz to tickle some sense into him!"
         }
     ),
-    "basement2_grue": new undum.SimpleSituation(
+    "basement2_grue_hub": new undum.SimpleSituation(
         "",
         {
             enter: function(character, system, from) {
-                system.writeChoices(system.getSituationIdChoices("#grue_gab_root"));
+                // so the idea here is that we'll have various convo trees to traverse with one root at a time (I guess?).  Each leaf will send us back here, and the convo topic will change based on response details or maybe just be advanced.  
+                if(undum.game.situations.basement2_grue_hub.actions.sQuestionTopic === "darkness") {
+                    system.write(
+                        "<p>As you touch the tip of your snuffly pink nose to the darkness, you are instantly enveloped.  Your entire life has been submerged in dank shadow, but this is more than the absence of light -- the darkness here pulses with nothing made manifest, like the beat of a missing heart.  You wiggle and scooch, but the world seems to have condensed to a single point in space.  Even still, something detaches itself from the gloom and creates space ahead of you from which to slither ever nearer.</p><p>\"Greetings, Deepness Scion.  Tell me, what is the purpose of deep places?\"</p>"
+                    )
+                    system.writeChoices(system.getSituationIdChoices("#grue_gab_purpose_deeps"));
+                }
             },
-            optionText: "An ominous darkness pulses beyond the pit-beneath-a-molerat..."
+            actions: {
+                sQuestionTopic: "darkness"
+            },
+            optionText: "An ominous darkness pulses beyond the pit-beneath-a-molerat...",
+            tags: ["character_interaction_hub"]
         }
     ),
     "basement2_grue_convo_darkness_reward": new undum.SimpleSituation(
         "<p>Like a thorned vine twisting about its host with agonizing languidness to meet sunlight with savagery, a smile all of teeth tears a meandering line of brightness across the creature's abyssal face. \"You are beginning to understand.  Know that there are some here who would put themselves above the darkness, a deluded few who would dare to profess that it is born of them and not the other way 'round.  They will name themselves gods -- beware of such charlatans.\"</p>",
         {
+            enter: function(character, system, from) {
+                // todo: mod something to reflect the moleson's villainy
+                system.doLink("basement2_grue_hub");
+            },
             optionText: "The darkness is its own reward",
-            tags: ["grue_gab_root"]
+            tags: ["grue_gab_purpose_deeps"]
+        }
+    ),
+    "basement2_grue_convo_true_warmth": new undum.SimpleSituation(
+        "<p>A deep humming vibrates the very marrow in your bones as the creature contemplates your answer.  \"Intriguing.  A bit saccharine for my taste, but appropriately loyal to the twisted depths.\"</p>",
+        {
+            optionText: "The comfy throbbing blanket laid over all Underwere by the magma at the planet's core is the only true warmth",
+            tags: ["grue_gab_purpose_deeps"]
         }
     ),
     "basement3_encounter": new undum.SimpleSituation(
