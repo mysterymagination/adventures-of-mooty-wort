@@ -537,6 +537,9 @@ undum.game.situations = {
             optionText: "Use the caterpillar fuzz to tickle some sense into him!"
         }
     ),
+    /**
+     * The grue is like a more evil cheschire cat entity, whimsical and ambivalent, but with a definite agenda -- it wants The God to be toppled that its own dominion might expand throughout The Deepness.  It cares nothing for the surface world, and while dark ambition is its core motivator it does experience a sort of muted empathy for other Underwere.  This means it appreciates amiability indicators as well as resonant curiosity about The Deepness and its nature. 
+     */
     "basement2_grue_hub": new undum.SimpleSituation(
         "",
         {
@@ -544,7 +547,7 @@ undum.game.situations = {
                 // so the idea here is that we'll have various convo trees to traverse with one root at a time (I guess?).  Each leaf will send us back here, and the convo topic will change based on response details or maybe just be advanced.  
                 if(undum.game.situations.basement2_grue_hub.actions.sQuestionTopic === "darkness") {
                     system.write(
-                        "<p>As you touch the tip of your snuffly pink nose to the darkness, you are instantly enveloped.  Your entire life has been submerged in dank shadow, but this is more than the absence of light -- the darkness here pulses with nothing made manifest, like the beat of a missing heart.  You wiggle and scooch, but the world seems to have condensed to a single point in space.  Even still, something detaches itself from the gloom and creates space ahead of you from which to slither ever nearer.</p><p>\"Greetings, Deepness Scion.  Tell me, what is the purpose of deep places?\"</p>"
+                        "<p>As you touch the tip of your snuffly pink nose to the darkness, and snuffle it, you are instantly enveloped.  Your entire life has been submerged in dank shadow, but this is more than the absence of light -- the darkness here pulses with nothing made manifest, like the beat of a missing heart.  You wiggle and scooch, but the world seems to have condensed to a single point in space.  Even still, something detaches itself from the gloom and creates space ahead of you from which to slither ever nearer.</p><p>\"Greetings, Deepness Scion.  Tell me, what is the purpose of deep places?\"</p>"
                     )
                     system.writeChoices(system.getSituationIdChoices("#grue_gab_purpose_deeps"));
                 }
@@ -570,7 +573,22 @@ undum.game.situations = {
     "basement2_grue_convo_true_warmth": new undum.SimpleSituation(
         "<p>A deep humming vibrates the very marrow in your bones as the creature contemplates your answer.  \"Intriguing.  A bit saccharine for my taste, but appropriately loyal to the twisted depths.\"</p>",
         {
+            enter: function(character, system, from) {
+                // todo: mod something to reflect the moleson's cozy friendliness
+                system.doLink("basement2_grue_hub");
+            },
             optionText: "The comfy throbbing blanket laid over all Underwere by the magma at the planet's core is the only true warmth",
+            tags: ["grue_gab_purpose_deeps"]
+        }
+    ),
+    "basement2_grue_convo_grow_secrets": new undum.SimpleSituation(
+        "<p>A carronade of sound like the weaponized wail of tearing metal surrounded by a thunderclap rolls over you, presumably a bark of laughter.  \"Secrets, eh?  You'll find more than enough of those down here, to be sure.\"  Something slithers 'round your rump and casually rips a clump of fur free, then uses it to tickle your footpaws as it retracts back into the void.  \"Lost am I now, amidst wandrous wondering and wondrous wandering of a cerebral nature.  Does he hunt secret things to expand esotericism, casting shadows longer than ever, or to burn them all away with some such light of <i>truth</i>?  And which of these serves me?  Functional truth is whatever we choose to believe, after all, and as such light can be an infection vector as easily as a sterilizer...\"</p>",
+        {
+            enter: function(character, system, from) {
+                // todo: mod something to reflect the moleson's curious mystery
+                system.doLink("basement2_grue_hub");
+            },
+            optionText: "Deep places, dark corners, out-of-the-way alleys -- these are the soil in which secrets grow best",
             tags: ["grue_gab_purpose_deeps"]
         }
     ),
