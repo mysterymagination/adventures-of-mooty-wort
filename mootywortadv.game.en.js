@@ -586,10 +586,43 @@ undum.game.situations = {
         {
             enter: function(character, system, from) {
                 // todo: mod something to reflect the moleson's curious mystery
-                system.doLink("basement2_grue_hub");
+                system.getSituationIdChoices("#basement2_grue_convo_grow_secrets_elaboration_on_usage");
             },
             optionText: "Deep places, dark corners, out-of-the-way alleys -- these are the soil in which secrets grow best",
             tags: ["grue_gab_purpose_deeps"]
+        }
+    ),
+    "basement2_grue_convo_grow_secrets_elaboration_on_usage_shadowscape": new undum.SimpleSituation(
+        "",
+        {
+            enter: function(character, system, from) {
+                // todo: mod something to reflect the moleson's curious mystery focused on preserving and deepening secrets
+                system.doLink("basement2_grue_hub");
+            },
+            optionText: "I would have our secrets be an impenetrable shadowscape to all who have not burrowed the deep paths personally",
+            tags: ["basement2_grue_convo_grow_secrets_elaboration_on_usage"]
+        }
+    ),
+    "basement2_grue_convo_grow_secrets_elaboration_on_usage_illuminate": new undum.SimpleSituation(
+        "",
+        {
+            enter: function(character, system, from) {
+                // todo: mod something to reflect the moleson's curious mystery focused on demystifying deepness
+                system.doLink("basement2_grue_hub");
+            },
+            optionText: "We should share the wonders of our glorious depths with the Surfacers; maybe if they understood our world, we'd have fewer conflicts?",
+            tags: ["basement2_grue_convo_grow_secrets_elaboration_on_usage"]
+        }
+    ),
+    "basement2_grue_convo_grow_secrets_elaboration_on_usage_tingly": new undum.SimpleSituation(
+        "",
+        {
+            enter: function(character, system, from) {
+                // todo: mod something to reflect the moleson's curious mystery focused on appreciation of secrets for secretism's sake
+                system.doLink("basement2_grue_hub");
+            },
+            optionText: "To be honest, I just like knowing secret things because it makes me feel all tingly",
+            tags: ["basement2_grue_convo_grow_secrets_elaboration_on_usage"]
         }
     ),
     "basement3_encounter": new undum.SimpleSituation(
