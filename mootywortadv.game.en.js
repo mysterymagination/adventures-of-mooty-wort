@@ -544,6 +544,8 @@ undum.game.situations = {
         "",
         {
             enter: function(character, system, from) {
+                // install a reference to our character object so we can track the mods that will occur throughout or conversation here
+                undum.game.situations.basement2_grue_hub.actions.oCharacterHandler = character;
                 // so the idea here is that we'll have various convo trees to traverse with one root at a time (I guess?).  Each leaf will send us back here, and the convo topic will change based on response details or maybe just be advanced.  
                 if(undum.game.situations.basement2_grue_hub.actions.sQuestionTopic === "darkness") {
                     system.write(
@@ -553,7 +555,8 @@ undum.game.situations = {
                 }
             },
             actions: {
-                sQuestionTopic: "darkness"
+                sQuestionTopic: "darkness",
+                oCharacterHandler: undefined
             },
             optionText: "An ominous darkness pulses beyond the pit-beneath-a-molerat...",
             tags: ["character_interaction_hub"]
@@ -563,7 +566,8 @@ undum.game.situations = {
         "<p>Like a thorned vine twisting about its host with agonizing languidness to meet sunlight with savagery, a smile all of teeth tears a meandering line of brightness across the creature's abyssal face. \"You are beginning to understand.  Know that there are some here who would put themselves above the darkness, a deluded few who would dare to profess that it is born of them and not the other way 'round.  They will name themselves gods -- beware of such charlatans.\"</p>",
         {
             enter: function(character, system, from) {
-                // todo: mod something to reflect the moleson's villainy
+                // mod character to reflect the moleson's villainy
+                undum.game.situations.basement2_grue_hub.actions.oCharacterHandle.sMoleType = "eldritch villain";
                 system.doLink("basement2_grue_hub");
             },
             optionText: "The darkness is its own reward",
@@ -574,7 +578,8 @@ undum.game.situations = {
         "<p>A deep humming vibrates the very marrow in your bones as the creature contemplates your answer.  \"Intriguing.  A bit saccharine for my taste, but appropriately loyal to the twisted depths.\"</p>",
         {
             enter: function(character, system, from) {
-                // todo: mod something to reflect the moleson's cozy friendliness
+                // mod character to reflect the moleson's cozy friendliness
+                undum.game.situations.basement2_grue_hub.actions.oCharacterHandle.sMoleType = "cozy friend";
                 system.doLink("basement2_grue_hub");
             },
             optionText: "The comfy throbbing blanket laid over all Underwere by the magma at the planet's core is the only true warmth",
@@ -585,18 +590,21 @@ undum.game.situations = {
         "<p>A carronade of sound like the weaponized wail of tearing metal surrounded by a thunderclap rolls over you, presumably a bark of laughter.  \"Secrets, eh?  You'll find more than enough of those down here, to be sure.\"  Something slithers 'round your rump and casually rips a clump of fur free, then uses it to tickle your footpaws as it retracts back into the void.  \"Lost am I now, amidst wandrous wondering and wondrous wandering of a cerebral nature.  Does he hunt secret things to expand esotericism, casting shadows longer than ever, or to burn them all away with some such light of <i>truth</i>?  And which of these serves me?  Functional truth is whatever we choose to believe, after all, and as such light can be an infection vector as easily as a sterilizer...\"</p>",
         {
             enter: function(character, system, from) {
-                // todo: mod something to reflect the moleson's curious mystery
+                // mod character to reflect the moleson's curious mystery
+                undum.game.situations.basement2_grue_hub.actions.oCharacterHandle.sMoleType = "eldritch delver";
                 system.getSituationIdChoices("#basement2_grue_convo_grow_secrets_elaboration_on_usage");
             },
             optionText: "Deep places, dark corners, out-of-the-way alleys -- these are the soil in which secrets grow best",
             tags: ["grue_gab_purpose_deeps"]
         }
     ),
+    // todo: maybe add quantified qualities such as secretiveness where the quantity is simply defined as the number of responses the mole has given indicating the quality in himself?
     "basement2_grue_convo_grow_secrets_elaboration_on_usage_shadowscape": new undum.SimpleSituation(
         "",
         {
             enter: function(character, system, from) {
-                // todo: mod something to reflect the moleson's curious mystery focused on preserving and deepening secrets
+                // mod character to reflect the moleson's curious mystery focused on preserving and deepening secrets
+                undum.game.situations.basement2_grue_hub.actions.oCharacterHandle.sMoleType = "eldritch delver, shadowscaper";
                 system.doLink("basement2_grue_hub");
             },
             optionText: "I would have our secrets be an impenetrable shadowscape to all who have not burrowed the deep paths personally",
@@ -607,7 +615,8 @@ undum.game.situations = {
         "",
         {
             enter: function(character, system, from) {
-                // todo: mod something to reflect the moleson's curious mystery focused on demystifying deepness
+                // mod character to reflect the moleson's curious mystery focused on demystifying deepness
+                undum.game.situations.basement2_grue_hub.actions.oCharacterHandle.sMoleType = "eldritch delver, enlightener";
                 system.doLink("basement2_grue_hub");
             },
             optionText: "We should share the wonders of our glorious depths with the Surfacers; maybe if they understood our world, we'd have fewer conflicts?",
@@ -618,7 +627,8 @@ undum.game.situations = {
         "",
         {
             enter: function(character, system, from) {
-                // todo: mod something to reflect the moleson's curious mystery focused on appreciation of secrets for secretism's sake
+                // mod character to reflect the moleson's curious mystery focused on appreciation of secrets for secretism's sake
+                undum.game.situations.basement2_grue_hub.actions.oCharacterHandle.sMoleType = "eldritch delver, tingler";
                 system.doLink("basement2_grue_hub");
             },
             optionText: "To be honest, I just like knowing secret things because it makes me feel all tingly",
