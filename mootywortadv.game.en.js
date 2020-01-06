@@ -539,6 +539,8 @@ undum.game.situations = {
     ),
     /**
      * The grue is like a more evil cheschire cat entity, whimsical and ambivalent, but with a definite agenda -- it wants The God to be toppled that its own dominion might expand throughout The Deepness.  It cares nothing for the surface world, and while dark ambition is its core motivator it does experience a sort of muted empathy for other Underwere.  This means it appreciates amiability indicators as well as resonant curiosity about The Deepness and its nature. 
+     * 
+     * The purpose of the conversation, in addition to flavor, is to decide whether the grue will give the mole his Odditine Obol.  This item reduces the sanity damage from The Encounter by 25%, and the grue will only gift it to one he believes will help him achieve his own end -- namely to remove The God and NOT take its place.  He's looking for a stalwart mole unafraid of eldritch horror but for whom such things hold at most a passing interest, who is also strong enough to vanquish The God.
      */
     "basement2_grue_hub": new undum.SimpleSituation(
         "",
@@ -548,10 +550,20 @@ undum.game.situations = {
                 undum.game.situations.basement2_grue_hub.actions.oCharacterHandler = character;
                 // so the idea here is that we'll have various convo trees to traverse with one root at a time (I guess?).  Each leaf will send us back here, and the convo topic will change based on response details or maybe just be advanced.  
                 if(undum.game.situations.basement2_grue_hub.actions.sQuestionTopic === "darkness") {
-                    system.write(
-                        "<p>As you touch the tip of your snuffly pink nose to the darkness, and snuffle it, you are instantly enveloped.  Your entire life has been submerged in dank shadow, but this is more than the absence of light -- the darkness here pulses with nothing made manifest, like the beat of a missing heart.  You wiggle and scooch, but the world seems to have condensed to a single point in space.  Even still, something detaches itself from the gloom and creates space ahead of you from which to slither ever nearer.</p><p>\"Greetings, Deepness Scion.  Tell me, what is the purpose of deep places?\"</p>"
-                    )
-                    system.writeChoices(system.getSituationIdChoices("#grue_gab_purpose_deeps"));
+                    if(character.sMoleType === undefined) {
+                        // default inititial handling and question
+                        system.write(
+                            "<p>As you touch the tip of your snuffly pink nose to the darkness, and snuffle it, you are instantly enveloped.  Your entire life has been submerged in dank shadow, but this is more than the absence of light -- the darkness here pulses with nothing made manifest, like the beat of a missing heart.  You wiggle and scooch, but the world seems to have condensed to a single point in space.  Even still, something detaches itself from the gloom and creates space ahead of you from which to slither ever nearer.</p><p>\"Greetings, Deepness Scion.  Tell me, what is the purpose of deep places?\"</p>"
+                        )
+                        system.writeChoices(system.getSituationIdChoices("#grue_gab_purpose_deeps"));
+                    } else if(character.sMoleType === "king of the deep") {
+                        // grue follow-up for king of the deep
+                        system.write(
+                            "<p>A sigh like a deflating bellows ruffles your fur, from all possible angles surrounding you simultaneously, and the Grue queries, \"Tell me -- if you found a crown in these depths, what sort of king would you be?\"</p>"
+                        )
+                        undum.game.situations.basement2_grue_hub.actions.sQuestionTopic = "crown";
+                        system.writeChoices(system.getSituationIdChoices("#grue_gab_crown"));
+                    }
                 }
             },
             actions: {
@@ -567,7 +579,7 @@ undum.game.situations = {
         {
             enter: function(character, system, from) {
                 // mod character to reflect the moleson's villainy
-                undum.game.situations.basement2_grue_hub.actions.oCharacterHandle.sMoleType = "eldritch villain";
+                undum.game.situations.basement2_grue_hub.actions.oCharacterHandle.sMoleType = "king of the deep";
                 system.doLink("basement2_grue_hub");
             },
             optionText: "The darkness is its own reward",

@@ -34,7 +34,7 @@ Layout
         ---ochre ooze (in: Rusty Urn -> out: acid claws)
     --basement2
         ---nakedest mole rat (in: tickle fuzz -> out: grants access to grumpy grue)
-        ---grumpy grue (in: 3 conversation choices indicating Deepness -> out: odditine obol)
+        ---grumpy grue (in: 3 conversation choices indicating Deepness feelings and general brand of Underwere -> out: odditine obol)
     --basement3
         ---The Encounter.  God's Carapace is here, epicenter of the Rapturous Rumble.  If mole gets here with enough sanity to keep his head before its majesty, he can choose to either adopt the power and exact revenge on humans who deny their yards to diggers or fight with every fiber of his being against the rotting remnants of divinity.  Else, he is enthralled like all the rest and it uses him as it sees fit; basically this will be the apocalypse, mole-style. 
             ----Combat: try to come up with a good combat system in Undum -- maybe the UI could be a relatively simple HTML table like we did with Twine but good and some nice little open animal art plus GIMP image effects and terrible drawing for images, channeling the howling tortured spirit of the unicorn games.
