@@ -178,16 +178,17 @@ undum.game.situations = {
                 );
                 system.writeChoices(system.getSituationIdChoices(["#caterpillar_queries", "#tunnel_hub_basement"+this.iDeepnessLevel]));
             },
-            optionText: "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body a few mole-lengths behind a patch of musty loam your whiskers just brushed against",
+            optionText: function() { return "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body a few mole-lengths behind a patch of musty loam your whiskers just brushed " + undum.game.situations.basement1_fuzzy_caterpillar_hub.actions.sSuffixTest},
 
             actions: {
+                sSuffixTest: "against",
                 'take-fuzz': function(character, system, action) {
                     sFuzzMessage = "As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!  "
                     
-                    // system.setQuality() will update the value and its UI representation together
-                    system.setQuality("health", character.qualities.health - character.stats.maxHealth * 0.1);
-                    console.log("health is "+character.qualities.health);
                     if(!character.stringArrayInventory.includes("fuzz")) {
+                        // system.setQuality() will update the value and its UI representation together
+                        system.setQuality("health", character.qualities.health - character.stats.maxHealth * 0.1);
+                        console.log("health is "+character.qualities.health);
                         if(character.qualities.health > 0) {
                             system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
                             // push the fuzz item to the item UI element, a ul HTML tag called items_list, and install fuzz handler
@@ -645,6 +646,18 @@ undum.game.situations = {
             },
             optionText: "To be honest, I just like knowing secret things because it makes me feel all tingly",
             tags: ["basement2_grue_convo_grow_secrets_elaboration_on_usage"]
+        }
+    ),
+    "basement2_grue_convo_crown_ruthless": new undum.SimpleSituation(
+        "<p></p>",
+        {
+            enter: function(character, system, from) {
+                // mod character to reflect the moleson's desire for tyrant status
+                undum.game.situations.basement2_grue_hub.actions.oCharacterHandle.sMoleType = "king of the deep, tyrant";
+                system.doLink("basement2_grue_hub");
+            },
+            optionText: "I would rule with an iron claw",
+            tags: ["grue_gab_purpose_deeps"]
         }
     ),
     "basement3_encounter": new undum.SimpleSituation(
