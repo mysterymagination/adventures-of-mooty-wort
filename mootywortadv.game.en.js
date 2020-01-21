@@ -541,8 +541,9 @@ undum.game.situations = {
     /**
      * The grue is like a more evil cheschire cat entity, whimsical and ambivalent, but with a definite agenda -- it wants The God to be toppled that its own dominion might expand throughout The Deepness.  It cares nothing for the surface world, and while dark ambition is its core motivator it does experience a sort of muted empathy for other Underwere.  This means it appreciates amiability indicators as well as resonant curiosity about The Deepness and its nature. 
      * 
-     * The purpose of the conversation, in addition to flavor, is to decide whether the grue will give the mole his Odditine Obol.  This item reduces the sanity damage from The Encounter by 25%, and the grue will only gift it to one he believes will help him achieve his own end -- namely to remove The God and NOT take its place.  He's looking for a stalwart mole unafraid of eldritch horror but for whom such things hold at most a passing interest, who is also strong enough to vanquish The God.  If the mole seems either a fan of keeping the crown for himself OR too good for his own good, the grue will attack him after he vanquishes The God (easter egg finaler boss!).
+     * The purpose of the conversation, in addition to flavor, is to decide whether the grue will give the mole his Odditine Obol.  This item reduces the sanity damage from The Encounter by 25%, and the grue will only gift it to one he believes will help him achieve his own end -- namely to remove The God without taking its place, and not proccing as a credible threat to the Grue's reign.  He's looking for a stalwart mole unafraid of eldritch horror but for whom such things hold at most a passing interest, who is also strong enough to vanquish The God.  If the mole seems either a fan of keeping the crown for himself OR too good for his own good, the grue will attack him after he vanquishes The God (easter egg finaler boss!).
      */
+    // todo: at the end of Grue convo that either gets the Grue as the finaler boss and/or gets the Odditine Obol, moleWhole increments
     "basement2_grue_hub": new undum.SimpleSituation(
         "",
         {
@@ -656,8 +657,38 @@ undum.game.situations = {
                 undum.game.situations.basement2_grue_hub.actions.oCharacterHandle.sMoleType = "king of the deep, tyrant";
                 system.doLink("basement2_grue_hub");
             },
-            optionText: "I would rule with an iron claw",
-            tags: ["grue_gab_purpose_deeps"]
+            optionText: function(character, system, situation) {
+                return "I would rule with an "+(character.stringArrayInventory.includes("acid_claws") ? "acidic" : "iron")+" digging claw -- I would suffer no compromises with the surfacers, snuffing out their precious sun if they encroach upon The Deepness."
+            },
+            tags: ["grue_gab_crown"]
+        }
+    ),
+    "basement2_grue_convo_crown_groovy": new undum.SimpleSituation(
+        "<p></p>",
+        {
+            enter: function(character, system, from) {
+                // mod character to reflect the moleson's desire for a calm and peaceful Deepness
+                undum.game.situations.basement2_grue_hub.actions.oCharacterHandle.sMoleType = "king of the deep, groovy";
+                system.doLink("basement2_grue_hub");
+            },
+            optionText: function(character, system, situation) {
+                return "I'm not one for rulership; kinda too much trouble TBH.  If I had to tho, I guess I'd strive for peaceful diplomatic relations between the Layers of The Deepness and the surface.  Cooler heads should always prevail!"
+            },
+            tags: ["grue_gab_crown"]
+        }
+    ),
+    "basement2_grue_convo_crown_paladin": new undum.SimpleSituation(
+        "<p></p>",
+        {
+            enter: function(character, system, from) {
+                // mod character to reflect the moleson's desire for peace and readiness for war
+                undum.game.situations.basement2_grue_hub.actions.oCharacterHandle.sMoleType = "king of the deep, paladin";
+                system.doLink("basement2_grue_hub");
+            },
+            optionText: function(character, system, situation) {
+                return "There is a difference between darkness and Darkness -- I would prefer to see more of the former in The Deepness.  Some creeping evil has infected these lands and turned my beloved cozy shadows, once veils of pure possibility just begging imagination to actualize their contents, into fearful portents of ever-more-horrifying doom.  Even if it means temporarily leveraging the light of the surfacers, I would see kindness and warmth rule our burrows again."
+            },
+            tags: ["grue_gab_crown"]
         }
     ),
     "basement3_encounter": new undum.SimpleSituation(
