@@ -565,14 +565,16 @@ undum.game.situations = {
                         )
                         undum.game.situations.basement2_grue_hub.actions.sQuestionTopic = "crown";
                         system.writeChoices(system.getSituationIdChoices("#grue_gab_crown"));
-                    } else if(character.sMoleType === "king of the deep, groovy") {
+                    } else if(character.sMoleType === "king of the deep, tyrant") {
                         // grue follow-up for a rival king of the deep
                         system.write(
-                            "<p></p>"
+                            "<p>Howling laughter buffest your from all angles, reminiscent of the fearsome sound of a tree tearing loose from its desperate grip on the earth before the relentless fury of a tornado.  \"What an intriguing specimen you are!  We will have much work to do together when the immediate threat is past.  Take this trinket and go, moleson.  It will anchor your mind to this world; the inexorable pull of all possible Elsewheres may consume you all the same, but this will give you a chance.\"  A heavy weight drops into your compartment, and in the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
                         )
                         // todo: flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The God
-                        system.writeChoices(system.getSituationIdChoices
+                        // send the mole back to molerat hub
+                        system.doLink("basement2_hub");
                     }
+                    // todo: other crown cases
                 }
             },
             actions: {
