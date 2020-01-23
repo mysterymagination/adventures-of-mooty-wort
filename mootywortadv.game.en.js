@@ -565,6 +565,13 @@ undum.game.situations = {
                         )
                         undum.game.situations.basement2_grue_hub.actions.sQuestionTopic = "crown";
                         system.writeChoices(system.getSituationIdChoices("#grue_gab_crown"));
+                    } else if(character.sMoleType === "king of the deep, groovy") {
+                        // grue follow-up for a rival king of the deep
+                        system.write(
+                            "<p></p>"
+                        )
+                        // todo: flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The God
+                        system.writeChoices(system.getSituationIdChoices
                     }
                 }
             },
