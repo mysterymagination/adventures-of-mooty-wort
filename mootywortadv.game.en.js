@@ -568,18 +568,52 @@ undum.game.situations = {
                     } else if(character.sMoleType === "king of the deep, tyrant") {
                         // grue follow-up for a rival king of the deep
                         system.write(
-                            "<p>Howling laughter buffest your from all angles, reminiscent of the fearsome sound of a tree tearing loose from its desperate grip on the earth before the relentless fury of a tornado.  \"What an intriguing specimen you are!  We will have much work to do together when the immediate threat is past.  Take this trinket and go, moleson.  It will anchor your mind to this world; the inexorable pull of all possible Elsewheres may consume you all the same, but this will give you a chance.\"  A heavy weight drops into your compartment, and in the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
+                            "<p>Howling laughter buffets your from all angles, reminiscent of the fearsome sound of a tree tearing loose from its desperate grip on the earth before the relentless fury of a tornado.  \"What an intriguing specimen you are!  We will have much work to do together when the immediate threat is past.  Take this trinket and go, moleson.  It will anchor your mind to this world; the inexorable pull of all possible Elsewheres may consume you all the same, but this will give you a chance.\"</p><p>A heavy weight drops into your compartment, and in the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
                         )
-                        // todo: flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The God
+                        // flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The God
+                        undum.game.situations.basement2_grue_hub.actions.bGrueChallengeActivated = true;
+                        // give character the obol
+                        libifels.addItem("Odditine Obol");
+                        // send the mole back to molerat hub
+                        system.doLink("basement2_hub");
+                    } else if(character.sMoleType === "king of the deep, groovy") {
+                        // grue follow-up for a puppet/prey king of the deep
+                        system.write(
+                            "<p>Silence reigns for an uncomfortable span.  Soon your fur stands on end as you get the distinct impression that you are being heavily considered by an unknown and likely dangerous observer; it's the same feeling you get when passing a serpent's den.  Finally, a humid sigh issuing from much, much too close passes over you and frizzes your fur 'til you're a spherical fluffball.  \"How interesting, moleson.  Well, they always say those who do not desire leadership are the best leaders; don't pass up the opportunity too lightly if it comes your way... Take this coin with you -- it will help you to ground your mind even when psychic gravity turns off!\"</p><p>A heavy weight drops into your compartment, and in the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
+                        )
+                        // flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The God
+                        undum.game.situations.basement2_grue_hub.actions.bGrueChallengeActivated = false;
+                        // give character the obol
+                        libifels.addItem("Odditine Obol");
+                        // send the mole back to molerat hub
+                        system.doLink("basement2_hub");
+                    } else if(character.sMoleType === "king of the deep, paladin") {
+                        // grue follow-up for a righteous warrior king of the deep
+                        system.write(
+                            "<p>The ground beneath your paws shakes and the darkness itself vibrates with a sort of furious intensity when you finish speaking.  Abruptly the quaking stillness is shattered by a roar so abundantly malicious you can hear the glistening bared fangs in it.  \"The Deepness has no room for the likes of you, Sun-Servant!  You mistake the will of The God for contagion, fomenting weakness in your fool friends when in fact this weakness IS the contagion.  Your beloved kindness and warmth have softened the combat instincts and cruel curiosity that ought to be inherent in Deep things, dulling our darkness and leaving us mere gray Underwere.  Forgettable.  Only exemplars of Underwere, those that shimmer with absolute blackness and provide through their very being a sheer veil between an observer and beautiful madness, belong in MY Deepness.  The God's Rumble is a siren song for pawns and prey and little more; it will cease when The God is sated or its mantle passed, and may all your fuzzy fellows be consumed before it does!  Whatever the case, I fully expect to meet you down there at the heart of All Depth.  Do not disappoint.  Until then, moleson...\"</p><p>A heavy weight drops into your compartment, and in the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
+                        )
+                        // flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The God
+                        // No obol this time since the Grue will recognize the mole as a dangerous enemy and would prefer that he go mad and fail 
+                        // to inherit The God's power rather than become a potentially insurmountable foe
+                        undum.game.situations.basement2_grue_hub.actions.bGrueChallengeActivated = true;
                         // send the mole back to molerat hub
                         system.doLink("basement2_hub");
                     }
-                    // todo: other crown cases
                 }
             },
             actions: {
+                /**
+                 * String representation of Grue's current line of questioning of the mole
+                 */
                 sQuestionTopic: "darkness",
-                oCharacterHandler: undefined
+                /**
+                 * Character handle set in onEnter
+                 */
+                oCharacterHandler: undefined,
+                /**
+                 * Flag indicating whether or not the Grue will be the finaler boss
+                 */
+                bGrueChallengeActivated: false
             },
             optionText: "An ominous darkness pulses beyond the pit-beneath-a-molerat...",
             tags: ["character_interaction_hub"]
