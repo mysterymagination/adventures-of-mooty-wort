@@ -1,3 +1,6 @@
+// imports
+import libifels_undum from libifels_undum.js;
+
 //-----undum config-----//
 /**
  * IFID
@@ -177,9 +180,9 @@ undum.game.situations = {
                                     <a onclick='\
                                         undum.removeHighlight($(\".item\"));\
                                         undum.addHighlight($(\"#item_fuzz\"));\
-                                        window.libifels.bUsingItem = true;\
-                                        window.libifels.sUsedItemName = \"fuzz\";\
-                                        window.libifels.fnUsedItemHandler = function(system, itemName, targetName) {\
+                                        libifels_undum.bUsingItem = true;\
+                                        libifels_undum.sUsedItemName = \"fuzz\";\
+                                        libifels_undum.fnUsedItemHandler = function(system, itemName, targetName) {\
                                             undum.removeHighlight($(\"#item_fuzz\"));\
                                             if(targetName === \"nakedest molerat\") {\
                                                 system.doLink(\"basement2_molerat_tickle\");\
@@ -341,8 +344,8 @@ undum.game.situations = {
                                     <a onclick='\
                                         undum.removeHighlight($(\".item\"));\
                                         undum.addHighlight($(\"#item_urn\"));\
-                                        window.libifels.bUsingItem = true;\
-                                        window.libifels.sUsedItemName = \"urn\";\
+                                        libifels_undum.bUsingItem = true;\
+                                        libifels_undum.sUsedItemName = \"urn\";\
                                     '>Rusty Urn of Ooze</a>\
                                     </div>\
                                 </li>");
@@ -415,8 +418,8 @@ undum.game.situations = {
                                     <a onclick='\
                                         undum.removeHighlight($(\".item\"));\
                                         undum.addHighlight($(\"#item_claws\"));\
-                                        window.libifels.bUsingItem = true;\
-                                        window.libifels.sUsedItemName = \"claws\";\
+                                        libifels_undum.bUsingItem = true;\
+                                        libifels_undum.sUsedItemName = \"claws\";\
                                     '>Dripping Caustic Claws</a>\
                                     </div>\
                                 </li>");
@@ -476,17 +479,17 @@ undum.game.situations = {
                                     <a onclick='\
                                         undum.removeHighlight($(\".item\"));\
                                         undum.addHighlight($(\"#item_lash\"));\
-                                        window.libifels.bUsingItem = true;\
-                                        window.libifels.sUsedItemName = \"lash\";\
+                                        libifels_undum.bUsingItem = true;\
+                                        libifels_undum.sUsedItemName = \"lash\";\
                                     '>Crystalline Last Lash</a>\
                                     </div>\
                                 </li>");
                     character.stringArrayInventory.push("crystal_lash");
                 },
                 "check_molerat_target": function (character, system, action) {
-                    if (window.libifels.bUsingItem) {
+                    if (libifels_undum.bUsingItem) {
                         // call item handler with the second and final piece of information, the target being nakedest molerat!
-                        window.libifels.fnUsedItemHandler(system, window.libifels.sUsedItemName, "nakedest molerat");
+                        libifels_undum.fnUsedItemHandler(system, libifels_undum.sUsedItemName, "nakedest molerat");
                     } else {
                         system.write("<p>Examining this nakedest of molerats yields little but subtle nausea.</p>");
                     }
