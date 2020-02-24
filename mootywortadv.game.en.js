@@ -1,5 +1,5 @@
 // imports
-import libifels_undum from libifels_undum.js;
+import libifels_undum from 'libifels_undum';
 
 //-----undum config-----//
 /**
