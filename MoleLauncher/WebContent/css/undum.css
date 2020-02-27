@@ -1,5 +1,5 @@
 body {
-    background: #170804 url("../img/page_bg.jpg") repeat-x left top;
+    background: #170804 url("../images/page_bg.jpg") repeat-x left top;
     font-family: Palatino, Times, "Times New Roman", serif;
     font-size: 18px;
     line-height: 1.6em;
@@ -28,7 +28,7 @@ bg_spacer {
 }
 #title {
     max-width: 28em;
-    background: #e6e6c6 url("../img/title_bg.jpg") repeat -1.1em -1.1em;
+    background: #e6e6c6 url("../images/title_bg.jpg") repeat -1.1em -1.1em;
     margin: 2.2em auto 1.1em auto;
     padding: 1.7em;
     border: 1.1em solid rgba(0,0,0,0.25);
@@ -36,7 +36,7 @@ bg_spacer {
 }
 #title .label {
     overflow: hidden;
-    background: #e6e6c6 url("../img/text_bg.jpg") repeat left top;
+    background: #e6e6c6 url("../images/text_bg.jpg") repeat left top;
     padding: 2.0em;
     margin: auto;
     max-width: 18em;
@@ -102,7 +102,7 @@ bg_spacer {
 #content_wrapper {
     max-width: 28em;
     position: relative;
-    background: #e6e6c6 url("../img/text_bg.jpg") repeat left top;
+    background: #e6e6c6 url("../images/text_bg.jpg") repeat left top;
     margin: 0.6em auto 1.1em auto;
     padding: 2.8em;
     display: none; /* Shown by Javascript */
@@ -184,7 +184,7 @@ a {
 }
 a.raw {
     padding-right: 14px;
-    background: transparent url("../img/external_link.png") no-repeat right 4px;
+    background: transparent url("../images/external_link.png") no-repeat right 4px;
 }
 a:hover {
     border-bottom: 1px dotted #900;
@@ -216,7 +216,7 @@ img.float_left {
 .tools {
     padding: 0.6em;
     width: 8.9em;
-    background: #cec3ae url("../img/tools_bg.jpg") repeat left top;
+    background: #cec3ae url("../images/tools_bg.jpg") repeat left top;
     position: absolute;
 }
 .tools p {

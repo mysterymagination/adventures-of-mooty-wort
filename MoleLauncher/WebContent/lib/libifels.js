@@ -1,44 +1,37 @@
-/*
-libifels, as in lib Interactive Fiction Entity Logic System, provides utility functions and classes for Interactive Fiction in JS
-*/
-
 /**
- * exported API of libifels for Undum and hypertext adventure framework elements for Undum
+ * Libifels, as in lib Interactive Fiction Entity Logic System, provides utility functions and classes for Interactive Fiction in JS
  */
-libifels = {
+function Libifels() { 
     /**
      * Adds the given element to an array iff its string rep is not present in the array yet
      * @param array the array we're modifying
      * @param element the string (or object whose string rep) will be searched for using Array.prototype.includes()
      */
-    addUniqueStringToArray: function (array, element) {
+    this.addUniqueStringToArray = function (array, element) {
         if (!array.includes(element)) {
             array.push(element);
         }
-    },
-
+    }
     /**
      * Adds an object to an array, but only if it would be unique
      * @param array the array we're modifying
      * @param element the candidate to be pushed to the array
      * @param filterFn the boolean function used by Array.prototype.some() as the criterion in determining if any current elements of the array already match the incoming element
      */
-    addUniqueToArray: function (array, element, filterFn) {
+    this.addUniqueToArray = function (array, element, filterFn) {
         if (!array.some(filterFn)) {
             array.push(element);
         }
-    },
-
+    }
     /**
     Get a random Character object from an array of Character objects that can't have the given Character ID
     */
-    randoCharacterFromArrayExceptId: function (characterArray, exceptCharacterId) {
+    this.randoCharacterFromArrayExceptId = function (characterArray, exceptCharacterId) {
         var eligibleCharacters = characterArray.filter(characterUnderTest => characterUnderTest.id != exceptCharacterId);
         var unluckyIndex = Math.floor(Math.random() * eligibleCharacters.length);
         return eligibleCharacters[unluckyIndex];
 
-    },
-
+    }
     /**
     Applies the combat status effect to the given character, adding it to their list of statuses and triggering its effect fn
     @param character the recipient of the effect

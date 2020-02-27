@@ -1,5 +1,5 @@
 // imports
-import libifels_undum from 'libifels_undum';
+import cube from '../lib/libifels_undum.js';
 
 //-----undum config-----//
 /**
@@ -69,7 +69,7 @@ undum.game.situations = {
                 //console.log("in main.opts.enter; main's optionText is "+undum.game.situations.main.optionText); // just the optionText boilerplate function
                 character.stringArrayInventory = [];
                 system.write("<h1>Of Moles and Holes</h1>\
-                <img src='media/img/mole-opening.png' class='float_right'>\
+                <img src='images/mole-opening.png' class='float_right'>\
                 <p>The morning sun warms your snoot as you breach shyly from your beloved burrow in The Humans' yard.  They're not great fans of yours because something something lawncare, but you're not troubled -- some folks have silly priorities and you know what matters: digging.</p>\
                 <p>As it happens, though, The Big Human is approaching now, and he looks sort of grimly determined... and he's wielding a shovel like a club.  Perverting a sacred digging implement with the taint of violence is the darkest profanity, but you probably won't live long enough to lecture if you stick around here much longer.  Still, you feel compelled to <a href='./fight-humans'>stand up for yourself and all creatures of the deep</a>.</p>\
                 ");
