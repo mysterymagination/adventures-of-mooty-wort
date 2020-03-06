@@ -6,7 +6,7 @@ function MootWortRpgMech() {
 	var lib = new Libifels();
 	this.characters = {
 	        "mole": new Player({ id: "mole", name: "Mooty Wort" }),
-	        "thegod": new Character({ id: "thegod", name: "The God" }),
+	        "the_god": new Character({ id: "the_god", name: "The God" }),
 	        "grue": new Character({ id: "grue", name: "Grue" })
 	}
 	// establish Player party
@@ -86,21 +86,6 @@ function MootWortRpgMech() {
     regenStatusEffect.reverseEffect = function (targetChar) { }
 
     /**
-    Doubt halves a character's attributes that are driven by presence and self-confidence: STR and CHA.
-    */
-    var doubtStatusEffect = this.statusEffectsDict["doubt"];
-    doubtStatusEffect.isBuff = false;
-    doubtStatusEffect.descriptors.push("debuff", "offense");
-    doubtStatusEffect.effect = function (targetChar) {
-        targetChar.stats["atk"] *= 0.5;
-        targetChar.stats["pwr"] *= 0.5;
-    }
-    doubtStatusEffect.reverseEffect = function (targetChar) {
-        targetChar.stats["atk"] *= 2;
-        targetChar.stats["pwr"] *= 2;
-    }
-
-    /**
     Bloodlust quadruples STR in exchange for halving all mental attributes
     */
     var bloodlustStatusEffect = this.statusEffectsDict["bloodlust"];
@@ -132,48 +117,7 @@ function MootWortRpgMech() {
         targetChar.stats["atk"] *= 2;
         targetChar.stats["def"] *= 2;
     }
-
-    // public spells
-
-    // from Splinter of Serpentarius
-    /**
-    Debilitate lowers all defensive attributes of the target, and inflicts currHp*0.1 dmg
-    */
-    var debilitate = lib.spellsDict["debilitate"];
-    debilitate.targetType = lib.Ability.TargetTypesEnum.singleEnemy;
-    debilitate.cost = { "mp": 25 };
-    debilitate.calcDmg = function (sourceChar, targetChar) {
-        return targetChar.stats.hp * 0.1;
-    }
-    debilitate.effect = function (sourceChar, targetChar) {
-        window.addUniqueStatusEffect(targetChar, defenselessStatusEffect);
-
-        // MP cost
-        this.processCost(sourceChar);
-    }
-    debilitate.generateFlavorText = function (sourceChar, targetChar) {
-        return sourceChar.name + " narrows " + sourceChar.getPronoun_gen() + " eyes, shining with cruel malice, at " + targetChar.name + ".  Space distorts mildly, constricting around and through " + targetChar.name + ", and " + targetChar.getPronoun_gen() + " presence seems to diminish substantially!";
-    }
-    /**
-    Pierce is a physical strike for which atk bypasses def
-    */
-    var pierceSpell = lib.spellsDict["pierce"];
-    pierceSpell.targetType = window.Ability.TargetTypesEnum.singleEnemy;
-    pierceSpell.cost = { "hp": 10 };
-    pierceSpell.calcDmg = function (sourceChar, targetChar) {
-        return sourceChar.stats["atk"] * 2 + Math.random() * 10;
-    }
-    pierceSpell.effect = function (sourceChar, targetChar) {
-        this.dmg = this.calcDmg(sourceChar, targetChar);
-        targetChar.stats["hp"] -= this.dmg;
-
-        // HP cost
-        this.processCost(sourceChar);
-    }
-    pierceSpell.generateFlavorText = function (sourceChar, targetChar) {
-        return sourceChar.name + " smoothly reaches directly into " + targetChar.name + "'s soul, and just kinda... fiddles around a little.  " + targetChar.name + " does not appreciate this, emphatically, to the tune of " + this.dmg + " delicious damages!";
-    }
-
+    
     var toxinSpell = lib.spellsDict["toxin"];
     toxinSpell.targetType = window.Ability.TargetTypesEnum.singleEnemy;
     toxinSpell.cost = { "mp": 15 };
@@ -190,24 +134,6 @@ function MootWortRpgMech() {
     }
     toxinSpell.generateFlavorText = function (sourceChar, targetChar) {
         return "An aura of gleaming electric purple light, striated with the cheerily deadly greenish glow of radioactivity, surrounds " + sourceChar.name + " as " + sourceChar.getPronoun_gen() + " fevered will infects " + targetChar.name + ".  The insidious infection quickly overwhelms " + targetChar.name + "'s immune system totally, dealing " + this.dmg + " damage, and promising more...";
-    }
-
-    // from Splinter of Violet
-    /**
-    Shadowform makes the character immune to physical damage.  
-    TODO: add a physical/magic damage typing system.  For now, we'll just make def infinite.
-    */
-    var shadowFormSpell = lib.spellsDict["shadowform"];
-    shadowFormSpell.targetType = window.Ability.TargetTypesEnum.allAllies; // actually self-only, but this will have the same effect in the UI
-    shadowFormSpell.cost = { "mp": 30 };
-    shadowFormSpell.effect = function (sourceChar, targetChar) {
-        lib.addUniqueStatusEffect(sourceChar, shadowStatusEffect);
-
-        // MP cost
-        this.processCost(sourceChar);
-    }
-    shadowFormSpell.generateFlavorText = function (sourceChar, targetChar) {
-        return "Shadows dance free of their source lights, and embrace " + sourceChar.name + " warmly.  Velvet darkness spreads over " + sourceChar.getPronoun_gen() + " body, and " + sourceChar.getPronoun_nom() + " relaxes into oneness with the infinite possibilities of undefinition; " + sourceChar.getPronoun_nom() + " seems almost ethereal now.";
     }
 
     /**
@@ -233,28 +159,6 @@ function MootWortRpgMech() {
         return sourceChar.name + " extends " + sourceChar.getPronoun_gen() + " arms slowly towards " + targetChar.name + ", almost as if inviting a hug.  Suddenly, a rolling torrent of absolute serenity and silence, so profoundly vaccuous that it forces all in attendance to take a step back as from an overwhelming physical force, explodes forth from " + sourceChar.getPronoun_obj() + ".  Both folks are rocked by the violence of the peace, and " + targetChar.name + " is driven to " + targetChar.getPronoun_nom() + " knees by " + this.dmg + " chilling damage!";
     }
 
-    /**
-    Savage Sympathy deals more damage the greater the difference between the wielder and the target's ATK, and heals the wielder
-    */
-    var savageSympathySpell = lib.spellsDict["savage_sympathy"];
-    savageSympathySpell.targetType = window.Ability.TargetTypesEnum.singleEnemy;
-    savageSympathySpell.cost = { "mp": 20 };
-    savageSympathySpell.calcDmg = function (sourceChar, targetChar) {
-        return Math.abs(targetChar.stats["atk"] - sourceChar.stats["atk"]) * 2;
-    }
-    savageSympathySpell.effect = function (sourceChar, targetChar) {
-        this.dmg = this.calcDmg(sourceChar, targetChar);
-        targetChar.stats["hp"] -= this.dmg;
-        sourceChar.stats["hp"] += this.dmg / 2;
-
-        // MP cost
-        this.processCost(sourceChar);
-    }
-    savageSympathySpell.generateFlavorText = function (sourceChar, targetChar) {
-        return sourceChar.name + " is no fan of natural privilege.  In fact, " + sourceChar.getPronoun_nom() + " takes ecstatic pleasure in balancing the old scales, with blood if necessary.  To wit, blood from " + targetChar.name + "'s orificeses begins slowly spiraling through the air and into " + sourceChar.name + "'s snarling mouth.  This gruesome spectacle illustrates a whopping " + this.dmg + " damage!";
-    }
-
-    // from Splinter of Snugg-lor
     /**
     Warmest hug heals self and other with ATK
     */
@@ -316,166 +220,56 @@ function MootWortRpgMech() {
     maenadFrenzySpell.generateFlavorText = function (sourceChar, targetChar) {
         return "A manic gleam shines in " + sourceChar.name + "'s eyes as they reflect the brilliant light of the lunatic moon suddenly huge in the sky above.  " + sourceChar.getPronoun_nom() + " embraces " + targetChar.name + " with a violent longing, pleasure driven through to pain before the fires of wild need.  " + targetChar.getPronoun_nom() + " wriggles and tries to escape as " + sourceChar.name + " squeezes " + targetChar.getPronoun_obj() + ", but there is no way out.  The embrace tightens and the whipcrack of snapping bone makes the night itself cower.  " + this.dmg + " damage is dealt around the world's unhappiest hug.";
     }
+    
+    // todo: gear up mole character for battle
+    var mootyChar = this.characters["mole"];
+    mootyChar.gender = "male";
+    mootyChar.stats["maxHP"] = 65;
+    mootyChar.stats["maxMP"] = 50;
+    mootyChar.stats["hp"] = mootyChar.stats["maxHP"];
+    mootyChar.stats["mp"] = mootyChar.stats["maxMP"];
+    mootyChar.stats["atk"] = 10;
+    mootyChar.stats["def"] = 10;
+    mootyChar.stats["pwr"] = 10;
+    mootyChar.stats["res"] = 10;
+    mootyChar.entity = new window.Entity({ name: "Burrower" });
 
-    var puckChar = lib.characters["puck"];
-    puckChar.gender = "male";
-    puckChar.attributes["strength"] = 4;
-    puckChar.attributes["dexterity"] = 20;
-    puckChar.attributes["constitution"] = 10;
-    puckChar.attributes["intelligence"] = 22;
-    puckChar.attributes["wisdom"] = 6;
-    puckChar.attributes["charisma"] = 20;
-    puckChar.stats["hp"] = 200;
-    puckChar.stats["mp"] = Infinity;
-    puckChar.stats["maxHP"] = 150;
-    puckChar.stats["maxMP"] = Infinity;
-    // todo: these assignments could be replaced with a recompute fn
-    puckChar.stats["atk"] = puckChar.attributes["strength"];
-    puckChar.stats["def"] = puckChar.attributes["constitution"];
-    puckChar.stats["pwr"] = puckChar.getMagicAttributeScore();
-    puckChar.stats["res"] = puckChar.getMagicAttributeScore();
-    // todo: equip Puck?
-    puckChar.entity = new this.Entity({ name: "Vicious Mockery" });
-    var rapierWit = new this.Spell({ id: "rapier_wit", name: "Rapier Wit" });
-    rapierWit.cost = { "mp": 15 };
-    rapierWit.generateFlavorText = function (sourceChar, targetChar) {
-        if (targetChar) {
-            // todo: randomly selected insults based on descriptor tags
-
-            var percentage = this.rollPercentage();
-            var flavorText = "";
-            if (targetChar.gender === "female") {
-                if (percentage <= 20) {
-                    var hairWord = "hair";
-                    if (targetChar.descriptors.body.hair.includes("fur")) {
-                        hairWord = "fur";
-                    }
-                    flavorText = sourceChar.name + " accuses " + targetChar.name + " of having " + hairWord + " extensions!  She blushes and bristles with unnatural incapacitating rage, the engineered emotion practically coruscating with Spell.";
-                }// end 1-20%
-                else if (percentage > 20 && percentage <= 70) {
-                    flavorText = "Looking down " + (sourceChar.gender === "female" ? "her" : "his") + " nose at " + targetChar.name + ", " + sourceChar.name + " sniffs and conjectures that the once-sinuous curves of her body have become somewhat oblong... and lumpy!  She reels in bizarre anguish as the taunt burrows into her psyche.";
-                }//end 21-70%
-                else if (percentage > 70 && percentage <= 100) {
-                    flavorText = sourceChar.name + " sniffs the air and then wrinkles " + (sourceChar.gender === "female" ? "her" : "his") + " nose in disgust, accusing " + targetChar.name + " of stinking like a bog.  Incarnate self-consciousness floods her neurons and she can't be sure of herself!"
-                }//end 71-100%
-            } else if (targetChar.gender === "male") {
-                if (percentage <= 50) {
-                    flavorText = sourceChar.name + " sizes up " + targetChar.name + " and smirks, informing " + targetChar.name + " that his musculature is reminiscent of a doddering and decrepit elder.  His eyes burn cherry-red as Incarnate rage strangles his mind.";
-                } else {
-                    flavorText = sourceChar.name + " takes a long hard look below " + targetChar.name + "'s belt and then scoffs, clearly underwhelmed.  Venemous doubt Incarnate seeps into the cracks of his self-image and harden there, shattering it!";
-                }
-            } else {
-                flavorText = sourceChar.name + " points and laughs in a literally cutting fashion!";
-            }
-            return flavorText + "  The terrible insult leaves tangible scars upon " + targetChar.name + "'s poor soul to the tune of " + this.dmg + " damage!";
-        }// end if a targetChar is given
-        else {
-            return sourceChar.name + " points and laughs in a literally cutting fashion!"
-        }
-
-
-    }
-    rapierWit.targetType = this.Ability.TargetTypesEnum.singleEnemy;
-    rapierWit.calcDmg = function (sourceChar, targetChar) {
-        // highly variable damage sourced from source CHA and resisted slightly by target CHA
-        return window.rollDie(6) * window.calcMod(sourceChar.attributes["charisma"]) - window.calcMod(targetChar.attributes["charisma"]);
-    }
-    rapierWit.effect = function (sourceChar, targetChar) {
-        this.dmg = this.calcDmg(sourceChar, targetChar);
-        targetChar.stats.hp -= this.dmg;
-        window.addUniqueStatusEffect(targetChar, window.statusEffectsDict["doubt"]);
-
-        // possible player death processing
-        // todo: move this and similar common abl processes to a common abl I/O
-        if (targetChar.stats.hp <= 0) {
-            targetChar.living = false;
-        }
-
-        // MP cost
-        this.processCost(sourceChar);
-    }
-    puckChar.spells["rapier_wit"] = rapierWit;
-
-    var rainOfRadiance = new this.Spell({ id: "rain_of_radiance", name: "Rain of Radiance" });
-    rainOfRadiance.cost = { "mp": 50 };
-    rainOfRadiance.generateFlavorText = function (sourceChar, targetChars) {
-        return sourceChar.name + " thrusts a hand towards the heavens, muscles quivering with equal parts strain and anticipation.  The first few glittering droplets of liquid blue-white starlight are beautiful, but their virtue is quickly eclipsed by a tide of agony that grips the entire party as their flesh/fur is scorched/singed by celestial fire!  " + this.dmg + " horrifically burning damages to the whole party!";
-    }
-    rainOfRadiance.targetType = this.Ability.TargetTypesEnum.allEnemies;
-    rainOfRadiance.calcDmg = function (sourceChar, targetChar) {
-        // 'starlight dmg' cuts through defenses and thus cannot be reduced by targetChar attrs... sure.
-        var sourcePower = sourceChar.stats["pwr"];
-        //alert(sourceChar.name+"'s pwr is "+sourcePower);
-        console.log("Power of " + sourceChar.name + " is " + sourcePower);
-        return 5 * window.calcMod(sourcePower);
-    }
-    /**
-    Rain of Radiance expects an array of target chars since it hits all enemies
-    */
-    rainOfRadiance.effect = function (sourceChar, targetChars) {
-        // note: most of the time you can't have a single dmg calculated for a group abl since usually the source and target char are taken into account in the calcDmg().  Not for this one, though!
-        this.dmg = this.calcDmg(sourceChar, targetChars);
-        for (let target of targetChars) {
-            target.stats.hp -= this.dmg;
-            console.log(this.dmg + " damage dealt to " + target.name);
-            // possible player death processing
-            if (target.stats.hp <= 0) {
-                target.living = false;
-            }
-        }
-
-        // mp cost
-        this.processCost(sourceChar);
-    }
-    puckChar.spells["rain_of_radiance"] = rainOfRadiance;
-
-    var swordsDance = new window.Spell({ id: "swords_dance", name: "Swords Dance" });
-    swordsDance.cost = { "mp": 15 };
-    swordsDance.generateFlavorText = function (sourceChar, targetChar) {
-        var flavorString = "Cruel cold light gleams in " + targetChar.name + "'s eyes as warrior spirits torn directly from the savagery of the Wild Hunt meld with " + (targetChar.gender === "female" ? "her" : "his") + " spirit!";
-        if (targetChar.descriptors.body.size === "fun_sized") {
-            flavorString += "  You didn't think such a petite individual could strike terror in your heart with mere physical presence, but it seems you were wrong."
-        } else if (targetChar.descriptors.body.size === "party_sized") {
-            flavorString += "  You didn't think " + (targetChar.gender === "female" ? "her" : "his") + " physical presence could loom any larger, but it seems you were wrong."
-        }
-
-        return flavorString;
-    }
-    swordsDance.targetType = window.Ability.TargetTypesEnum.singleAlly;
-    swordsDance.effect = function (sourceChar, targetChar) {
-        window.addUniqueStatusEffect(targetChar, window.statusEffectsDict["bloodlust"]);
-
-        // mp cost
-        this.processCost(sourceChar);
-    }
-    theGodChar.spells["swords_dance"] = swordsDance;
+    var theGodChar = this.characters["the_god"];
+    theGodChar.gender = "male";
+    theGodChar.stats["maxHP"] = 500;
+    theGodChar.stats["maxMP"] = Infinity;
+    theGodChar.stats["hp"] = theGodChar.stats["maxHP"];
+    theGodChar.stats["mp"] = theGodChar.stats["maxMP"];
+    theGodChar.stats["atk"] = 100;
+    theGodChar.stats["def"] = 50;
+    theGodChar.stats["pwr"] = 100;
+    theGodChar.stats["res"] = 50;
+    theGodChar.entity = new this.Entity({ name: "Eldritch Horror" });
+    
+    // todo: cthulhu-y abilities
 
     theGodChar.runAI = function (combat, role) {
         console.log("reached The God runAI fn... have fn!");
         if (role) {
             if (role === "enemy") {
                 var chosenAbility = undefined;
-                var chosenTarget = undefined;
-
-                /* todo: The God enemy AI behavior	
-                     
-                */
+                var chosenTarget = this.characters["mole"];
 
                 var playerParty = [];
                 for (let playerCharacter of combat.playerParty) {
-                    playerParty.push(State.variables.characters[playerCharacter.id]);
+                    playerParty.push(this.characters[playerCharacter.id]);
                     console.log("attempting to add character with id " + playerCharacter.id);
-                    console.log("added " + State.variables.characters[playerCharacter.id].name + " to playerParty");
+                    console.log("added " + this.characters[playerCharacter.id].name + " to playerParty");
                 }
-                // playerParty[0] = State.variables.characters["player"]; // draw out the PLayer from Characters dictionary to see if that makes a difference in UI showing damage from Puck abls UPDATE: yup, that did it for some reason.
+                // playerParty[0] = this.characters["mole"]; // draw out the PLayer from Characters dictionary to see if that makes a difference in UI showing damage from Puck abls UPDATE: yup, that did it for some reason.
                 var enemyParty = [];
                 for (let enemyCharacter of combat.enemyParty) {
-                    enemyParty.push(State.variables.characters[enemyCharacter.id]);
+                    enemyParty.push(this.characters[enemyCharacter.id]);
                 }
 
                 // outliers and statistical points of interest
-                var playerLeastDefense = State.variables.characters["player"];
-                var playerLeastHP = State.variables.characters["player"];
+                var playerLeastDefense = this.characters["mole"];
+                var playerLeastHP = this.characters["mole"];
                 var playerWithTargetBuff = undefined;
                 var anyPlayerOffenseBuffed = false;
                 var maxHealth = true; // assume true and let contradiction flip it
@@ -520,48 +314,7 @@ function MootWortRpgMech() {
                 /// end gathering data + maybe buff balancing ///
 
                 /// begin story scenario modifier processing ///
-                if (State.variables.godling_strat_chosen === window.godling_strat_viral_violence) {
-                    if (playerLeastDefense.stats.hp < playerLeastDefense.stats.maxHP / 2) {
-                        // if the player char with least def is bloodied...
-                        if (window.hasStatusEffect(this, window.statusEffectsDict["bloodlust"])) {
-                            // if Puck already has bloodlust, go ahead and clobber the poor sucker with lowest defense and HP < 50%
-
-                            chosenAbility = this.abilities["attack"];
-                            chosenTarget = playerLeastDefense;
-                        } else {
-                            // Puck doesn't have bloodlust yet, so get it!
-
-                            chosenAbility = this.spells["swords_dance"];
-                            chosenTarget = this;
-                        }
-                    }
-                } else if (State.variables.godling_strat_chosen === window.godling_strat_surgical_system) {
-                    // hit the latest player with a buff with debuff to balance the ol' scales
-                    if (playerWithTargetBuff) {
-                        if (!window.hasStatusEffect(playerWithTargetBuff, window.statusEffectsDict["doubt"])) {
-
-
-                            chosenAbility = this.spells["rapier_wit"];
-                            chosenTarget = playerWithTargetBuff;
-                        }// end if player with target buff does not already have doubt
-                        else if (anyPlayerOffenseBuffed) {
-                            // presumably in this case every character with an offensive buff already has doubt.  With our scale balancing work done, just fry 'em with Rain of Radiance!
-
-
-                            chosenAbility = this.spells["rain_of_radiance"];
-                            chosenTarget = playerParty;
-                        }
-                    }
-                } else if (State.variables.godling_strat_chosen === window.godling_strat_diplomancy) {
-                    // if everyone is at max HP, use Rain of Radiance to fix that little problem
-                    if (maxHealth) {
-
-
-                        chosenAbility = this.spells["rain_of_radiance"];
-                        chosenTarget = playerParty;
-                    }
-                }
-
+                // todo: check mole type and maybe modify attack choice accordingly
                 /// end story scenario mod proc ///
 
                 /// begin defaults block -- at this point in the script, if Puck has not already picked an abl he will either do one mostly at random OR spam Rain of Radiance if his health is below 50% ///
@@ -691,7 +444,7 @@ function MootWortRpgMech() {
                             console.log("target " + targets[0] + " with name " + targets[0].name + " has prop: " + targetKey);
                         }
 
-                        console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp + " and specifically the human's HP is " + State.variables.characters["player"].stats.hp);
+                        console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp + " and specifically the human's HP is " + this.characters["mole"].stats.hp);
 
                     } else {
                         // single target attack, expects only single character as target
@@ -702,7 +455,7 @@ function MootWortRpgMech() {
                             console.log("target " + targets[0] + " with name " + targets[0].name + " has prop: " + targetKey);
                         }
 
-                        console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp + " and specifically the human's HP is " + State.variables.characters["player"].stats.hp);
+                        console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp + " and specifically the human's HP is " + this.characters["mole"].stats.hp);
                     }
                 } else {
                     // abl cost is an object map with keys that match the mutable resource stats... completely on purpose and by design, that was.
@@ -715,23 +468,5 @@ function MootWortRpgMech() {
             }// if role is enemy
         }// if role is defined
     }//end Puck AI def
-
-    var mootyChar = State.variables.characters["mooty"];
-    mootyChar.gender = "male";
-    mootyChar.stats["hp"] = 65;
-    mootyChar.stats["mp"] = 50;
-    mootyChar.stats["maxHP"] = 65;
-    mootyChar.stats["maxMP"] = 50;
-    mootyChar.attributes["strength"] = 18;
-    mootyChar.attributes["dexterity"] = 8;
-    mootyChar.attributes["constitution"] = 14;
-    mootyChar.attributes["intelligence"] = 12;
-    mootyChar.attributes["wisdom"] = 20;
-    mootyChar.attributes["charisma"] = 13;
-    mootyChar.stats["atk"] = mootyChar.attributes["strength"];
-    mootyChar.stats["def"] = mootyChar.attributes["constitution"];
-    mootyChar.stats["pwr"] = mootyChar.getMagicAttributeScore();
-    mootyChar.stats["res"] = mootyChar.getMagicAttributeScore();
-    mootyChar.entity = new window.Entity({ name: "Burrower" });
 }
 export {MootyWortRpgMech};
