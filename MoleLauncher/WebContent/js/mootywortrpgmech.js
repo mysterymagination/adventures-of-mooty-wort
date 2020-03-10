@@ -1,7 +1,7 @@
 // imports
 import Libifels from '../lib/libifels.js';
 
-function MootWortRpgMech() {
+function MootyWortRpgMech() {
 	// instantiate library
 	var lib = new Libifels();
 	this.characters = {
@@ -317,124 +317,70 @@ function MootWortRpgMech() {
                 // todo: check mole type and maybe modify attack choice accordingly
                 /// end story scenario mod proc ///
 
-                /// begin defaults block -- at this point in the script, if Puck has not already picked an abl he will either do one mostly at random OR spam Rain of Radiance if his health is below 50% ///
+                // begin defaults block -- at this point in the script, 
+                // if The God has not already picked an abl he will either 
+                // do one mostly at random OR spam Dark Star if his health is below 25%
                 if (chosenAbility === undefined && chosenTarget === undefined) {
-                    if (this.stats.hp > this.stats.maxHP / 2) {
-                        // rando time!
-                        var percentageRandoAbl = window.rollPercentage();
-
+                    if (this.stats.hp > this.stats.maxHP * 0.25) {
+                        var percentageRandoAbl = lib.rollPercentage();
                         // choose a player party index randomly and pull the poor person from it for targeting
                         var playerRandoTarget = playerParty[Math.floor(Math.random() * playerParty.length)];
-
+                        // all The God's special abilities are pretty punishing, so make basic atk most probably
                         if (percentageRandoAbl <= 35) {
-                            // todo: maybe consider targeting player with least HP if the least HPness is relatively greater than the least defenseness (relative standing)?
-
-                            /*					this.abilities["attack"].effect(this,playerLeastDefense);
-                                                combat.combatLogContent = this.abilities["attack"].generateFlavorText();
-                                                return;
-                                                */
+                        	// basic attack
                             chosenAbility = this.abilities["attack"];
                             chosenTarget = playerLeastDefense;
-                        } else if (percentageRandoAbl > 35 && percentageRandoAbl <= 65) {
-
-                            /*					this.spells["rapier_wit"].effect(this,playerRandoTarget);
-                                                combat.combatLogContent = this.spells["rapier_wit"].generateFlavorText();
-                                                return;
-                                                */
-                            chosenAbility = this.spells["rapier_wit"];
+                        } else if (percentageRandoAbl > 36 && percentageRandoAbl <= 60) {
+                        	// hug if possible for maximum damage output
+                        	if(this.canAffordCost(this.spells["manyfold_embrace"])) {
+                        		chosenAbility = this.spells["manyfold_embrace"];
+                        	} else {
+                        		chosenAbility = this.abilities["attack"];
+                        	}
                             chosenTarget = playerRandoTarget;
-                        } else if (percentageRandoAbl > 65 && percentageRandoAbl <= 85) {
-
-                            if (!window.hasStatusEffect(this, window.statusEffectsDict["bloodlust"])) {
-
-                                chosenAbility = this.spells["swords_dance"];
+                        } else if (percentageRandoAbl > 61 && percentageRandoAbl <= 85) {
+                        	// either apply bloodlust to increase attack, or attack to benefit from it
+                        	if (!lib.hasStatusEffect(this, lib.statusEffectsDict["bloodlust"])) {
+                        		chosenAbility = this.spells["primordial_mandate"];
                                 chosenTarget = this;
                             } else {
-
-                                // Puck already has Bloodlust, so do the atk strat
-
-
-                                chosenAbility = this.abilities["attack"];
+                            	// hug if possible for maximum damage output
+                            	if(this.canAffordCost(this.spells["manyfold_embrace"])) {
+                            		chosenAbility = this.spells["manyfold_embrace"];
+                            	} else {
+                            		chosenAbility = this.abilities["attack"];
+                            	}
+                            	// regardless, hit the weakest opponent
                                 chosenTarget = playerLeastDefense;
                             }
                         } else {
-
-
-                            chosenAbility = this.spells["rain_of_radiance"];
+                        	chosenAbility = this.spells["putrefaction"];
                             chosenTarget = playerParty;
-                        }// end rando time
-                    }// end Puck HP > 50%
+                        }// end rando block
+                    }// end The God HP > 25%
                     else {
-                        // being severely injured, Puck now starts to spam Rain of Radiance if no earlier behaviors were proced
-                        chosenAbility = this.spells["rain_of_radiance"];
+                        // being severely injured, The God now starts to spam Dark Star if no earlier behaviors were proced
+                        chosenAbility = this.spells["dark_star"];
                         chosenTarget = playerParty;
                     }
                 } // end if abl and target are not yet chosen, landing us in defaults
                 /// end defaults block ///
 
-                // todo: consider finding a way to wrap specific AI in common AI handling, such that confusion/charm etc. handling like this can be common to all characters' AI scripts.
-
-                // todo: if confused, reassign chosenTarget with 50% self-target and 50% original target(s)
-                // todo: this reassignment would ideally take ability target types into account
-                if (window.hasStatusEffect(this, window.statusEffectsDict["confuse"])) {
-
-                    // confuse's effect is to roll percentage and return true if value is > 50, basically the pokemon card game version of confusion :)
-                    if (window.getStatusEffect(this, "confuse").effect()) {
-                        chosenTarget = this;
-                    }
-                }
-                else if (window.hasStatusEffect(this, window.statusEffectsDict["charm"])) {
-                    var charmStatusInstance = window.getStatusEffect(this, "charm");
-                    var charmingCharacterId = charmStatusInstance.sourceCharacterId;
-                    if (chosenTarget.id === charmingCharacterId) {
-                        // rando reassign to someone other than charming character
-                        chosenTarget = randoCharacterFromArrayExceptId(combat.getAllCombatants(), charmingCharacterId);
-                    }
-                }
-
-                // todo: how should individual potential target combat flags work together with abilities whose effect API expects an entire party of targets?  One target with wonder wall should not stop the abl from hitting others on the one hand, and on the other the walled character needs to not have the abl effect applied to them and should proc the wall of wonder reprisal.
-                // UPDATE: create a set of chosen targets, even if only one.  Then step through and check for wall of wonder protection.  If found, remove the walled character from the set of targets and apply wall reprisal.  After iteration is complete, send the remaining target set into the chosen ability.
-                // since chosen target could be one or more, create an array if there is only one and then we can still just iterate over it
+                // normalize input chosen targets to array form
                 var targets = undefined;
                 if (chosenAbility.targetType === window.Ability.TargetTypesEnum.allEnemies) {
                     console.log("setting AI targets to array " + chosenTarget + " which starts with " + chosenTarget[0].name);
                     targets = chosenTarget;
                 } else {
-                    // in this case there is only one target, but by wrapping it in an array we can proceed with equivalent loop code below
+                    // in this case there is only one target, but by wrapping it in an array we can proceed with equivalent loop code used for multi-target scenario
                     console.log("setting AI target to array wrapping the single target " + chosenTarget + " with name " + chosenTarget.name);
                     targets = [chosenTarget];
                 }
 
-                // process combat flags on the chosen target(s)
-                for (let target of targets) {
-                    if (target.combatFlags & window.Character.CombatFlags.FLAG_WONDER_WALLED === window.Character.CombatFlags.FLAG_WONDER_WALLED) {
-                        // lower the wonder wall flag
-                        target.combatFlags &= ~window.Character.CombatFlags.FLAG_WONDER_WALLED;
-
-                        // the combat log content should reflect the bounce off the wall and any and all reprisals concatenated
-                        combat.combatLogContent = "BZZzzzrrr--SHING!\n";
-
-                        // remove the walled character from the chosenTarget array
-                        window.removeCharacterFromArray(target, targets);
-
-                        // generate a random effect, dmg or status, to direct back at Puck
-                        var spellKeys = Object.keys(window.spellsDict);
-                        var randoSpellIndex = Math.floor(Math.random() * spellKeys.length);
-
-                        // apply the effect to Puck
-                        var randoReprisalAbility = window.spellsDict[spellKeys[randoSpellIndex]];
-                        randoReprisalAbility.effect(this);
-                        // todo: need support for abilities going off without a caster/target.  For the demo, simply saying Miss Fortune for wielder and Puck for target of rando wall of wonder effect is fine.
-                        combat.combatLog += randoReprisalAbility.generateFlavorText(new Character({ id: "miss_fortune", name: "Miss Fortune" }), this);
-
-                    }// end wall of wonder flag processing
-                }// end combat flag processing loop for target(s)
-
                 console.log("AI chose the ability " + chosenAbility.name);
-                // todo: easiest way to have cost still applied to the ability even if there are now 0 targets is to fire off the effect over an empty array.  Trouble is that most abl effect functions were not written expecting an array of targets, and even those that do don't check for an empty array explicitly which might matter depending on how we use the array in effect().  May want to re-write those APIs to make it a standard array of target chars, but for the moment simply sourcing the target type of the chosen ability should suffice.  However, that still procs undefined ref errors since effect() doesn't check for undefined target(s).  Way around that is to apply the cost of the ability separately and then skip the effect() call and the usual flavor text if the targets array is empty.
                 if (targets.length > 0) {
                     // there are still targets, so go forward with them as per usual
-                    if (chosenAbility.targetType === window.Ability.TargetTypesEnum.allEnemies) {
+                    if (chosenAbility.targetType === lib.Ability.TargetTypesEnum.allEnemies) {
 
                         // multi-target attack, expects an array of chars as target	
                         chosenAbility.effect(this, targets);
@@ -464,9 +410,9 @@ function MootWortRpgMech() {
                     }
                 }// end if no targets left after flag processing, so only abl cost is applied
 
-                console.log("Puck's chosen abl is " + chosenAbility.name + " with first target named " + targets[0].name);
+                console.log("The God's chosen abl is " + chosenAbility.name + " with first target named " + targets[0].name);
             }// if role is enemy
         }// if role is defined
-    }//end Puck AI def
+    }//end The God AI def
 }
 export {MootyWortRpgMech};
