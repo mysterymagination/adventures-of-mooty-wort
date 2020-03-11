@@ -119,7 +119,7 @@ function MootyWortRpgMech() {
     }
     
     var toxinSpell = lib.spellsDict["toxin"];
-    toxinSpell.targetType = window.Ability.TargetTypesEnum.singleEnemy;
+    toxinSpell.targetType = lib.Ability.TargetTypesEnum.singleEnemy;
     toxinSpell.cost = { "mp": 15 };
     toxinSpell.calcDmg = function (sourceChar, targetChar) {
         return sourceChar.stats["pwr"] - targetChar.stats["res"];
@@ -127,7 +127,7 @@ function MootyWortRpgMech() {
     toxinSpell.effect = function (sourceChar, targetChar) {
         this.dmg = this.calcDmg(sourceChar, targetChar);
         targetChar.stats["hp"] -= this.dmg;
-        window.addUniqueStatusEffect(targetChar, poisonStatusEffect);
+        lib.addUniqueStatusEffect(targetChar, poisonStatusEffect);
 
         // MP cost
         this.processCost(sourceChar);
@@ -204,8 +204,8 @@ function MootyWortRpgMech() {
     Maenad Frenzy deals ATK+CHA to self and (ATK+CHA)*2 to target
     */
     var maenadFrenzySpell = lib.spellsDict["maenad_frenzy"];
-    maenadFrenzySpell.targetType = window.Ability.TargetTypesEnum.singleEnemy;
-    maenadFrenzySpell.cost = { "mp": 10 };//,"hp":maenadFrenzySpell.dmg/2}; // todo: interesting idea, but won't work without proper abl I/O, since we'd need source and target char for calcDmg() to get an accurate readout
+    maenadFrenzySpell.targetType = lib.Ability.TargetTypesEnum.singleEnemy;
+    maenadFrenzySpell.cost = { "mp": 10, "hp":maenadFrenzySpell.dmg/2}; 
     maenadFrenzySpell.calcDmg = function (sourceChar, targetChar) {
         return 2 * (sourceChar.stats["atk"] + sourceChar.attributes["charisma"]);
     }
@@ -237,7 +237,7 @@ function MootyWortRpgMech() {
     var theGodChar = this.characters["the_god"];
     theGodChar.gender = "male";
     theGodChar.stats["maxHP"] = 500;
-    theGodChar.stats["maxMP"] = Infinity;
+    theGodChar.stats["maxMP"] = 100;
     theGodChar.stats["hp"] = theGodChar.stats["maxHP"];
     theGodChar.stats["mp"] = theGodChar.stats["maxMP"];
     theGodChar.stats["atk"] = 100;
@@ -246,7 +246,58 @@ function MootyWortRpgMech() {
     theGodChar.stats["res"] = 50;
     theGodChar.entity = new this.Entity({ name: "Eldritch Horror" });
     
-    // todo: cthulhu-y abilities
+    /**
+    Manyfold Embrace damages the user slightly but combines their ATK and PWR to generate massive damage to the enemy
+    */
+    var manyFoldEmbraceSpell = new lib.Spell({ id: "manyfold_embrace", name: "Manyfold Embrace" });
+    manyFoldEmbraceSpell.targetType = lib.Ability.TargetTypesEnum.singleEnemy;
+    manyFoldEmbraceSpell.cost = { "mp": 20, "hp": 50};//manyFoldEmbraceSpell.dmg/2}; // todo: trouble with this is that we haven't set the dmg yet when this obj literal is defined; we'd need to put a lambda here instead and have provisions to call it in processCost?
+    manyFoldEmbraceSpell.calcDmg = function (sourceChar, targetChar) {
+        // idea is the source is transforming tentacles into mighty spiked cudgels
+    	// using magic and then buffeting the target with them
+    	return 1.5 * (sourceChar.stats["atk"] + sourceChar.attributes["pwr"]) 
+        	   - 0.5 * targetChar.stats["def"];
+    }
+    manyFoldEmbraceSpell.effect = function (sourceChar, targetChar) {
+        this.dmg = this.calcDmg(sourceChar, targetChar);
+        targetChar.stats["hp"] -= this.dmg;
+
+        // MP cost
+        this.processCost(sourceChar);
+    }
+    manyFoldEmbraceSpell.generateFlavorText = function (sourceChar, targetChar) {
+        return "An oily blackness like the surface of an unfathomable lake on a moonless night oozes over The God's spongy fishbelly-white flesh, and in a blinding flash of electric purple a series of serrated spikes have materialized in its wake!  With all the looming inevitability of death itself, he descends upon "+targetChar.name+" and wraps  his innumerable tentacles about "+targetChar.getPronoun_obj()+" in a crushing embrace."; 
+    }
+    // todo: define putrefaction spell (mid MP cost for low damage and poison status)
+    /**
+    Pestilence damages all enemies and has 50% to poison each
+    */
+    var pestilenceSpell = new lib.Spell({ id: "pestilence", name: "Pestilence" });
+    pestilenceSpell.targetType = lib.Ability.TargetTypesEnum.allEnemies;
+    pestilenceSpell.cost = { "mp": 50 };
+    pestilenceSpell.calcDmg = function (sourceChar, targetChar) {
+    	return sourceChar.attributes["pwr"] - 0.5 * targetChar.stats["res"];
+    }
+    pestilenceSpell.effect = function (sourceChar, targetChars) {
+        for(let index = 0; index < targetChars.length; index++) {
+        	// apply damage to target
+        	this.dmg = this.calcDmg(sourceChar, targetChars[index]);
+        	targetChars[index].stats["hp"] -= this.dmg;
+        	// possibly apply poison
+        	let roll = lib.rollPercentage();
+        	if(roll >= 50) {
+        		lib.addUniqueStatusEffect(targetChars[index], poisonStatusEffect);
+        	}
+        }
+
+        // MP cost
+        this.processCost(sourceChar);
+    }
+    pestilenceSpell.generateFlavorText = function (sourceChar, targetChar) {
+        return "With a tortured wailing wheeze, The God draws in a mighty breath; the resulting vortex whipping the parties hair and fur and whiskers into a frazzled chaos that seems to sustain him.  When the hurricane winds calm at last, silence reigns for a moment before a deafening roar quashes the quiet out of existence: plumes of putrescent purple and bruised black smoke snake their way out of The God's maw, their very presence infecting the air with malice, and encompass everyone in choking fog!"; 
+    }
+    // todo: define primordial_mandate (MP cost, basically just grants bloodlust status)
+    // todo: define dark_star (high MP cost for big damage)
 
     theGodChar.runAI = function (combat, role) {
         console.log("reached The God runAI fn... have fn!");
@@ -286,24 +337,6 @@ function MootyWortRpgMech() {
                     if (player.stats.hp < playerLeastHP.stats.hp) {
                         playerLeastHP = player;
                     }
-
-                    if (player.statusEffects.length > 0) {
-                        var statuses = player.statusEffects;
-                        for (let status of statuses) {
-                            if (status.buffity === "buffins") {
-                                // buff discovered on this player!  Get 'im!
-                                // todox: consider removing or deprioritizing this exit cond since it trumps the story scenario checks currently and those can't be moved above basic data gathering
-
-
-                                if (status.descriptors.includes("offense")) {
-                                    anyPlayerOffenseBuffed = true;
-                                    if (!window.hasStatusEffect(player, window.statusEffectsDict["doubt"])) {
-                                        playerWithTargetBuff = player;
-                                    }
-                                }
-                            }
-                        }// end for each status on current player char
-                    }// end if current player has statuses
 
                     // check for max health scenario flip
                     if (player.stats.hp < player.stats.maxHP) {
