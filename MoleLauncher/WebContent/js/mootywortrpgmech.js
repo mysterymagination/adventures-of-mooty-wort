@@ -268,7 +268,7 @@ function MootyWortRpgMech() {
     manyFoldEmbraceSpell.generateFlavorText = function (sourceChar, targetChar) {
         return "An oily blackness like the surface of an unfathomable lake on a moonless night oozes over The God's spongy fishbelly-white flesh, and in a blinding flash of electric purple a series of serrated spikes have materialized in its wake!  With all the looming inevitability of death itself, he descends upon "+targetChar.name+" and wraps  his innumerable tentacles about "+targetChar.getPronoun_obj()+" in a crushing embrace."; 
     }
-    // todo: define putrefaction spell (mid MP cost for low damage and poison status)
+    // define pestilence spell (mid MP cost for low damage and poison status)
     /**
     Pestilence damages all enemies and has 50% to poison each
     */
@@ -296,8 +296,47 @@ function MootyWortRpgMech() {
     pestilenceSpell.generateFlavorText = function (sourceChar, targetChar) {
         return "With a tortured wailing wheeze, The God draws in a mighty breath; the resulting vortex whipping the parties hair and fur and whiskers into a frazzled chaos that seems to sustain him.  When the hurricane winds calm at last, silence reigns for a moment before a deafening roar quashes the quiet out of existence: plumes of putrescent purple and bruised black smoke snake their way out of The God's maw, their very presence infecting the air with malice, and encompass everyone in choking fog!"; 
     }
-    // todo: define primordial_mandate (MP cost, basically just grants bloodlust status)
+    // define primordial_mandate (MP cost, basically just grants bloodlust status)
+    /**
+    Primordial Mandate grants the Bloodlust status to the target
+    */
+    var primordialMandateSpell = new lib.Spell({ id: "primordial_mandate", name: "Primordial Mandate" });
+    primordialMandateSpell.targetType = lib.Ability.TargetTypesEnum.singleAlly;
+    primordialMandateSpell.cost = { "mp": 15 };
+    primordialMandateSpell.effect = function (sourceChar, targetChar) {
+        // bloodlust on target
+        lib.addUniqueStatusEffect(targetChar, bloodlustStatusEffect);
+        	
+        // MP cost
+        this.processCost(sourceChar);
+    }
+    primordialMandateSpell.generateFlavorText = function (sourceChar, targetChar) {
+        return "The God thrusts his tentacles into the earth and the ground begins to quake.  A deep rumble like the visceral warning growl of an intractable force of nature resonates with your spirit, awakening atavistic awe.  Auras of pulsing magma and wild verdancy course up and down The God's flesh in a violently unstoppable current, infusing every fiber of his being with all the might of this world!  The eyes of The God roll wildly, as if even the boundaries of his conception of all realities is being harshly tested by overwhelming new horizons."; 
+    }
     // todo: define dark_star (high MP cost for big damage)
+    /**
+    Dark Star deals massive non-elemental damage to all enemies
+    */
+    var darkStarSpell = new lib.Spell({ id: "dark_star", name: "Dark Star" });
+    darkStarSpell.targetType = lib.Ability.TargetTypesEnum.allEnemies;
+    darkStarSpell.cost = { "mp": 25 };
+    darkStarSpell.calcDmg = function (sourceChar, targetChar) {
+    	return 2 * sourceChar.stats["pwr"] 
+        	   - 0.5 * targetChar.stats["res"];
+    }
+    darkStarSpell.effect = function (sourceChar, targetChars) {
+    	for(let index = 0; index < targetChars.length; index++) {
+        	// apply damage to target
+        	this.dmg = this.calcDmg(sourceChar, targetChars[index]);
+        	targetChars[index].stats["hp"] -= this.dmg;
+        }
+
+        // MP cost
+        this.processCost(sourceChar);
+    }
+    darkStarSpell.generateFlavorText = function (sourceChar, targetChar) {
+        return "The burning chill of moonless midnight wrapped in Lady Winter's empty embrace casts a pall of hoarfrost over your fur as the light drains out of the world.  When all is naught but silence and dark, a muted gray pinprick of light appears before you; an offering of hope.  Unable to help yourself, you reach out to it -- the very instant you give over the focus of your mind to its power, it explodes into a blinding nova whose insatiable devouring flames crawl into and over every atom of your being!"; 
+    }
 
     theGodChar.runAI = function (combat, role) {
         console.log("reached The God runAI fn... have fn!");
@@ -312,7 +351,7 @@ function MootyWortRpgMech() {
                     console.log("attempting to add character with id " + playerCharacter.id);
                     console.log("added " + this.characters[playerCharacter.id].name + " to playerParty");
                 }
-                // playerParty[0] = this.characters["mole"]; // draw out the PLayer from Characters dictionary to see if that makes a difference in UI showing damage from Puck abls UPDATE: yup, that did it for some reason.
+            
                 var enemyParty = [];
                 for (let enemyCharacter of combat.enemyParty) {
                     enemyParty.push(this.characters[enemyCharacter.id]);
@@ -325,7 +364,7 @@ function MootyWortRpgMech() {
                 var anyPlayerOffenseBuffed = false;
                 var maxHealth = true; // assume true and let contradiction flip it
 
-                /// begin gathering data and potentially exiting to Rapier Wit on any buffed player character ///
+                /// begin gathering data ///
                 for (let player of playerParty) {
 
                     // overwrite player with least defense if applicable
