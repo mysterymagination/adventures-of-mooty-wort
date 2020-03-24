@@ -1,5 +1,6 @@
 // imports
-import cube from '../lib/libifels_undum.js';
+import RpgMech from 'mootywortrpgmech.js';
+import MoleUndum from '../lib/libifels_undum.js';
 
 //-----undum config-----//
 /**
@@ -820,19 +821,12 @@ undum.game.qualityGroups = {
 undum.game.init = function (character, system) {
     // todo: how should attack and defense stats interoperate?  Obviously a straight subtraction of defense from attack stat leaves us with 0 effect for two baseline characters...
     // The FF wiki has a total damage formula of f{attack damage * rand(1,1.5) - defense} with min set to 1, so maybe lean on a slightly randomized coefficient to juice attack?
-    character.stats = {
-        maxHealth: 100,
-        maxSanity: 100,
-        atk: 10,
-        def: 10,
-        img: 10, /*imagination, magic attack*/
-        wil: 10 /*willpower, magic defense*/
-    }
+    character.mole = new MoleUndum.MoleCharacter();
 
     // inform UI viewmodel 
-    character.qualities.health = character.stats.maxHealth;
-    character.qualities.sanity = character.stats.maxSanity;
-    character.qualities.moleWhole = 0;
+    character.qualities.health = character.mole.stats.maxHP;
+    character.qualities.sanity = character.mole.stats.maxSanity;
+    character.qualities.moleWhole = character.mole.ordinalUnderwere;
     system.setCharacterText("<p>You are starting on an exciting journey beneath the earth and beyond all reason.</p>");
 };
 //-----end game logic-----//

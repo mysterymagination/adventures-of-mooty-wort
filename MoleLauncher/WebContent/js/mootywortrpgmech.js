@@ -1,9 +1,9 @@
 // imports
-import Libifels from '../lib/libifels.js';
+import LibifelsUndum from '../lib/libifels_undum.js';
 
 function MootyWortRpgMech() {
 	// instantiate library
-	var lib = new Libifels();
+	var lib = new LibifelsUndum();
 	this.characters = {
 	        "mole": new Player({ id: "mole", name: "Mooty Wort" }),
 	        "the_god": new Character({ id: "the_god", name: "The God" }),
@@ -221,19 +221,7 @@ function MootyWortRpgMech() {
         return "A manic gleam shines in " + sourceChar.name + "'s eyes as they reflect the brilliant light of the lunatic moon suddenly huge in the sky above.  " + sourceChar.getPronoun_nom() + " embraces " + targetChar.name + " with a violent longing, pleasure driven through to pain before the fires of wild need.  " + targetChar.getPronoun_nom() + " wriggles and tries to escape as " + sourceChar.name + " squeezes " + targetChar.getPronoun_obj() + ", but there is no way out.  The embrace tightens and the whipcrack of snapping bone makes the night itself cower.  " + this.dmg + " damage is dealt around the world's unhappiest hug.";
     }
     
-    // todo: gear up mole character for battle
-    var mootyChar = this.characters["mole"];
-    mootyChar.gender = "male";
-    mootyChar.stats["maxHP"] = 65;
-    mootyChar.stats["maxMP"] = 50;
-    mootyChar.stats["hp"] = mootyChar.stats["maxHP"];
-    mootyChar.stats["mp"] = mootyChar.stats["maxMP"];
-    mootyChar.stats["atk"] = 10;
-    mootyChar.stats["def"] = 10;
-    mootyChar.stats["pwr"] = 10;
-    mootyChar.stats["res"] = 10;
-    mootyChar.entity = new window.Entity({ name: "Burrower" });
-
+    
     var grueChar = this.characters["grue"];
     grueChar.gender = "male";
     grueChar.stats["maxHP"] = 250;
@@ -244,7 +232,7 @@ function MootyWortRpgMech() {
     grueChar.stats["def"] = 100;
     grueChar.stats["pwr"] = 100;
     grueChar.stats["res"] = 25;
-    grueChar.entity = new this.Entity({ name: "Heart of Darkness" });
+    grueChar.entity = new lib.Entity({ name: "Heart of Darkness" });
     
     /**
     Touch of the Void deals moderate HP and MP damage if the target has any MP remaining, and the MP is absorbed by Grue. Else, it deals heavy HP damage.  Only usable once every 3-5 turns, and there's a tell in the log when it recharges.
@@ -329,38 +317,39 @@ function MootyWortRpgMech() {
     brassLanternSpell.generateFlavorText = function (sourceChar, targetChar) {
         return "A fierce gold light burns its way out of the darkness, revealing a small brass lantern.  Inside, a flame flickers violently, tauntingly, before flaring into a raging inferno that rolls over you like a blanket of elemental destruction!  You can feel thoughts and emotions swirl in your mind as you burn, dreams flitting past your mind's eye and feeding the conflagration.  "+(targetChar["hp"] > 0 ? "As the flames roll over you, through the crippling agony you feel a resonant power welling up ever higher..." : ""); 
     }
-    // todo: placeholder define dark_star (high MP cost for big damage)
+    
     /**
-    Dark Star deals massive non-elemental damage to all enemies
-    */
-    var darkStarSpell = new lib.Spell({ id: "dark_star", name: "Dark Star" });
-    darkStarSpell.targetType = lib.Ability.TargetTypesEnum.allEnemies;
-    darkStarSpell.cost = { "mp": 25 };
-    darkStarSpell.calcDmg = function (sourceChar, targetChar) {
-    	return 2 * sourceChar.stats["pwr"] 
+     * Chill of the Beyond deals minor cold damage and freezes the target 
+     */
+    var chillBeyondSpell = new lib.Spell({ id: "chill_beyond", name: "Chill of the Beyond" });
+    chillBeyondSpell.targetType = lib.Ability.TargetTypesEnum.allEnemies;
+    chillBeyondSpell.cost = { "mp": 50 };
+    chillBeyondSpell.calcDmg = function (sourceChar, targetChar) {
+    	return sourceChar.stats["pwr"] 
         	   - 0.5 * targetChar.stats["res"];
     }
-    darkStarSpell.effect = function (sourceChar, targetChars) {
-    	for(let index = 0; index < targetChars.length; index++) {
-        	// apply damage to target
-        	this.dmg = this.calcDmg(sourceChar, targetChars[index]);
-        	targetChars[index].stats["hp"] -= this.dmg;
-        }
+    chillBeyondSpell.effect = function (sourceChar, targetChar) {
+    	
+    	// apply damage to target
+    	this.dmg = this.calcDmg(sourceChar, targetChar);
+    	targetChar.stats["hp"] -= this.dmg;
+        
+    	// apply Freeze status
+    	lib.addUniqueStatusEffect(targetChar, freezeStatusEffect);
 
         // MP cost
         this.processCost(sourceChar);
     }
-    darkStarSpell.generateFlavorText = function (sourceChar, targetChar) {
-        return "The burning chill of moonless midnight wrapped in Lady Winter's empty embrace casts a pall of hoarfrost over your fur as the light drains out of the world.  When all is naught but silence and dark, a muted gray pinprick of light appears before you; an offering of hope.  Unable to help yourself, you reach out to it -- the very instant you give over the focus of your mind to its power, it explodes into a blinding nova whose insatiable devouring flames crawl into and over every atom of your being!"; 
+    chillBeyondSpell.generateFlavorText = function (sourceChar, targetChar) {
+        return "While the darkness in your beloved Deepness gets warmer as it closes in thanks to the proximity to magma, the darkness of the infinite Void beyond all worlds is a place of unfathomable cold.  With all the gentleness and decorum of a voratious graveworm, this alien darkness wriggles into the comforting blanket of blackness surrounding you.  Its inception robs your world of warmth entirely and in an instant you are frozen solid!  Refracted through the glacial translucence is a rictus grin bursting with fangs..."; 
     }
+    
+    // todo: these flavor texts really need some random variations to keep things interesting
 
     grueChar.runAI = function (combat, role) {
         console.log("reached grue runAI fn... have fn!");
         if (role) {
             if (role === "enemy") {
-                var chosenAbility = undefined;
-                var chosenTarget = this.characters["mole"];
-
                 var playerParty = [];
                 for (let playerCharacter of combat.playerParty) {
                     playerParty.push(this.characters[playerCharacter.id]);
@@ -372,10 +361,14 @@ function MootyWortRpgMech() {
                 for (let enemyCharacter of combat.enemyParty) {
                     enemyParty.push(this.characters[enemyCharacter.id]);
                 }
+                
+                // defaults for action to be taken
+                var chosenAbility = undefined;
+                var chosenTarget = playerParty[0];
 
-                // outliers and statistical points of interest
-                var playerLeastDefense = this.characters["mole"];
-                var playerLeastHP = this.characters["mole"];
+                // defaults for outliers and statistical points of interest
+                var playerLeastDefense = chosenTarget;
+                var playerLeastHP = chosenTarget;
                 var playerWithTargetBuff = undefined;
                 var anyPlayerOffenseBuffed = false;
                 var maxHealth = true; // assume true and let contradiction flip it
