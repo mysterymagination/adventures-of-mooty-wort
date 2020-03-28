@@ -27,7 +27,7 @@ class MoleUndum extends Libifels{
 /**
  * A class representing The Mole character
  */
-MoleUndum.MoleCharacter = class MoleCharacter extends Libifels.Player {
+MoleUndum.MoleCharacter = class MoleCharacter extends Libifels.Character {
 	constructor() {
 		/**
 		 * Gender of the mole

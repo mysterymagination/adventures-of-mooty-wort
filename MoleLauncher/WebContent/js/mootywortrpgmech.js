@@ -1,12 +1,25 @@
 // imports
-import LibifelsUndum from '../lib/libifels_undum.js';
+import MoleUndum from '../lib/libifels_undum.js';
 
-function MootyWortRpgMech() {
+/*
+ * todo: Add Lunar inspired telegraph hint (1:many, but not all) and induction (many similar:1) systems:
+ * 1. (hint) "The grue sharpens its claws in a sliver of moonlight" -> he might use Quicksilver Cut, Shadow Slash, or Rake.
+ * 2. (induction) "Crystalline shadow swirls around the grue", "Jagged amethyst thrusts through the grue's flesh, flashing in the firelight", and "Frost and stone come together to form a complicated lattice structure around the grue, which pulses ominously" -> these all mean that he's about to use Diamond Dust.
+ * 
+ * I love the Lunar 1:1 situation where one animation always indicates one ability, but a little uncertainty and/or complexity could really add to it.  Probably best place to shove this system into our current combat model would be at the top of a new round, after the Ai has decided what it's doing and before we process player input such that player can see the telegraph text before choosing their action.
+ */
+
+/**
+ * Class responsible for defining the RPG mechanics of the Mooty Wort adventure
+ */
+class MootyWortRpgMech {
+	
+	constructor() {
 	// instantiate library
-	var lib = new LibifelsUndum();
+	var lib = new MoleUndum();
 	this.characters = {
-	        "mole": new Player({ id: "mole", name: "Mooty Wort" }),
-	        "the_god": new Character({ id: "the_god", name: "The God" }),
+	        "mole": new MoleUndum.MoleCharacter({ id: "mole", name: "Mooty Wort" }),
+	        "yawning_god": new Character({ id: "yawning_god", name: "The Yawning God" }),
 	        "grue": new Character({ id: "grue", name: "Grue" })
 	}
 	// establish Player party
@@ -16,7 +29,7 @@ function MootyWortRpgMech() {
     /**
     Defenseless halves a character's defensive attributes 
     */
-    var defenselessStatusEffect = this.statusEffectsDict["defenseless"];
+    var defenselessStatusEffect = lib.statusEffectsDict["defenseless"];
     defenselessStatusEffect.isBuff = false;
     defenselessStatusEffect.descriptors.push("debuff", "defense");
     defenselessStatusEffect.effect = function (targetChar) {
@@ -33,7 +46,7 @@ function MootyWortRpgMech() {
     /**
     Temper provides a simple ATK*2 for 3 turns
     */
-    var temperStatusEffect = this.statusEffectsDict["temper"];
+    var temperStatusEffect = lib.statusEffectsDict["temper"];
     temperStatusEffect.isBuff = true;
     temperStatusEffect.descriptors.push("buff", "offense");
     temperStatusEffect.effect = function (targetChar) {
@@ -46,7 +59,7 @@ function MootyWortRpgMech() {
     /**
     Focus provides a simple PWR*2 for 3 turns
     */
-    var focusStatusEffect = this.statusEffectsDict["focus"];
+    var focusStatusEffect = lib.statusEffectsDict["focus"];
     focusStatusEffect.isBuff = true;
     focusStatusEffect.descriptors.push("buff", "offense");
     focusStatusEffect.effect = function (targetChar) {
@@ -59,7 +72,7 @@ function MootyWortRpgMech() {
     /**
     Third Eye provides a PWR*4 at cost of ATK/2 and DEF/2 for 3 turns
     */
-    var thirdEyeStatusEffect = this.statusEffectsDict["third_eye"];
+    var thirdEyeStatusEffect = lib.statusEffectsDict["third_eye"];
     thirdEyeStatusEffect.isBuff = true;
     thirdEyeStatusEffect.descriptors.push("buff", "offense");
     thirdEyeStatusEffect.effect = function (targetChar) {
@@ -76,7 +89,7 @@ function MootyWortRpgMech() {
     /**
     Regen heals a character by their RES each turn
     */
-    var regenStatusEffect = this.statusEffectsDict["regen"];
+    var regenStatusEffect = lib.statusEffectsDict["regen"];
     regenStatusEffect.isBuff = true;
     regenStatusEffect.descriptors.push("buff", "health");
     regenStatusEffect.effect = function (targetChar) {
@@ -88,7 +101,7 @@ function MootyWortRpgMech() {
     /**
     Bloodlust quadruples STR in exchange for halving all mental attributes
     */
-    var bloodlustStatusEffect = this.statusEffectsDict["bloodlust"];
+    var bloodlustStatusEffect = lib.statusEffectsDict["bloodlust"];
     bloodlustStatusEffect.isBuff = true;
     bloodlustStatusEffect.descriptors.push("buff", "offense");
     bloodlustStatusEffect.effect = function (targetChar) {
@@ -101,7 +114,23 @@ function MootyWortRpgMech() {
         targetChar.stats["pwr"] *= 2;
         targetChar.stats["res"] *= 2;
     }
-
+    
+    /**
+     * Frozen status immobilizes the player for 3 rounds, and each round the player can choose to burst out at the cost of a penalty to physical stats.  Mechanically, we treat the effect like poison except it only applies if the player chooses to break out; else the player's turn is skipped. 
+     */
+    var frozenStatusEffect = lib.statusEffectsDict["frozen"];
+    frozenStatusEffect.isBuff = false;
+    frozenStatusEffect.descriptors.push("debuff", "physical", "atk", "def");
+    frozenStatusEffect.effect = function (targetChar) {
+    	this.cachedAtk = targetChar.stats["atk"];
+    	this.cachedDef = targetChar.stats["def"];
+        targetChar.stats["atk"] *= 0.5;
+        targetChar.stats["def"] *= 0.5;
+    }
+    frozenStatusEffect.reverseEffect = function (targetChar) {
+        targetChar.stats["atk"] = this.cachedAtk;
+        targetChar.stats["def"] = this.cachedDef;
+    }
 
     /**
     Poison deals dmg each turn and halves atk/def stats
@@ -441,7 +470,7 @@ function MootyWortRpgMech() {
                     }// end The God HP > 25%
                     else {
                         // being severely injured, The God now starts to spam Dark Star if no earlier behaviors were proced and he can afford it
-                    	if(theGodChar.canAffordCost(darkStarSpell)) {
+                    	if(theYawningGodChar.canAffordCost(darkStarSpell)) {
                     		chosenAbility = this.spells["dark_star"];
                     		chosenTarget = playerParty;
                     	} else {
@@ -501,17 +530,17 @@ function MootyWortRpgMech() {
         }// if role is defined
     }//end grue AI def
     
-    var theGodChar = this.characters["the_god"];
-    theGodChar.gender = "male";
-    theGodChar.stats["maxHP"] = 500;
-    theGodChar.stats["maxMP"] = 100;
-    theGodChar.stats["hp"] = theGodChar.stats["maxHP"];
-    theGodChar.stats["mp"] = theGodChar.stats["maxMP"];
-    theGodChar.stats["atk"] = 100;
-    theGodChar.stats["def"] = 50;
-    theGodChar.stats["pwr"] = 100;
-    theGodChar.stats["res"] = 50;
-    theGodChar.entity = new this.Entity({ name: "Eldritch Horror" });
+    var theYawningGodChar = this.characters["yawning_god"];
+    theYawningGodChar.gender = "male";
+    theYawningGodChar.stats["maxHP"] = 500;
+    theYawningGodChar.stats["maxMP"] = 100;
+    theYawningGodChar.stats["hp"] = theYawningGodChar.stats["maxHP"];
+    theYawningGodChar.stats["mp"] = theYawningGodChar.stats["maxMP"];
+    theYawningGodChar.stats["atk"] = 100;
+    theYawningGodChar.stats["def"] = 50;
+    theYawningGodChar.stats["pwr"] = 100;
+    theYawningGodChar.stats["res"] = 50;
+    theYawningGodChar.entity = new this.Entity({ name: "Eldritch Horror" });
     
     /**
     Manyfold Embrace damages the user slightly but combines their ATK and PWR to generate massive damage to the enemy
@@ -605,38 +634,46 @@ function MootyWortRpgMech() {
         return "The burning chill of moonless midnight wrapped in Lady Winter's empty embrace casts a pall of hoarfrost over your fur as the light drains out of the world.  When all is naught but silence and dark, a muted gray pinprick of light appears before you; an offering of hope.  Unable to help yourself, you reach out to it -- the very instant you give over the focus of your mind to its power, it explodes into a blinding nova whose insatiable devouring flames crawl into and over every atom of your being!"; 
     }
 
-    theGodChar.runAI = function (combat, role) {
-        console.log("reached The God runAI fn... have fn!");
+    theYawningGodChar.runAI = function (combat, role) {
+        console.log("reached The Yawning God runAI fn... have fn!");
         if (role) {
             if (role === "enemy") {
+                // defaults for targeting and ability
+            	var moleHandle = undefined;
                 var chosenAbility = undefined;
-                var chosenTarget = this.characters["mole"];
+                var chosenTarget = undefined;
 
-                var playerParty = [];
-                for (let playerCharacter of combat.playerParty) {
-                    playerParty.push(this.characters[playerCharacter.id]);
-                    console.log("attempting to add character with id " + playerCharacter.id);
-                    console.log("added " + this.characters[playerCharacter.id].name + " to playerParty");
-                }
-            
-                var enemyParty = [];
-                for (let enemyCharacter of combat.enemyParty) {
-                    enemyParty.push(this.characters[enemyCharacter.id]);
-                }
-
-                // outliers and statistical points of interest
-                var playerLeastDefense = this.characters["mole"];
-                var playerLeastHP = this.characters["mole"];
-                var playerWithTargetBuff = undefined;
+                // defaults for outliers and statistical points of interest
+                var playerLeastDefense = combat.playerParty[0];
+                var playerLeastRes = combat.playerParty[0];
+                var playerLeastHP = combat.playerParty[0];
+                var playerGreatestPwr = combat.playerParty[0];
                 var anyPlayerOffenseBuffed = false;
                 var maxHealth = true; // assume true and let contradiction flip it
 
-                /// begin gathering data ///
-                for (let player of playerParty) {
+                /// begin gathering player data ///
+                for (let player of combat.playerParty) {
+                	
+                	console.log("looking at player character with id " + player.id);
+                    // set our mole handle
+                	if(player.id === "mole") {
+                		console.log("the mole snuffles off to undefined...");
+                    	moleHandle = player;
+                    }
 
                     // overwrite player with least defense if applicable
                     if (player.stats["def"] < playerLeastDefense.stats["def"]) {
                         playerLeastDefense = player;
+                    }
+                    
+                    // overwrite player with least resistance if applicable
+                    if (player.stats["res"] < playerLeastRes.stats["res"]) {
+                        playerLeastRes = player;
+                    }
+                    
+                    // overwrite player with greatest power if applicable
+                    if (player.stats["pwr"] > playerGreatestPwr.stats["pwr"]) {
+                        playerGreatestPwr = player;
                     }
 
                     // overwrite player with least HP if applicable
@@ -644,20 +681,28 @@ function MootyWortRpgMech() {
                         playerLeastHP = player;
                     }
 
-                    // check for max health scenario flip
+                    // check for max health scenario flip, wherein any player is at less than max
                     if (player.stats.hp < player.stats.maxHP) {
                         maxHealth = false;
                     }
 
                 }// end for each player
-                /// end gathering data + maybe buff balancing ///
-
+                
+                // ensure we found our mole friend
+                if(!moleHandle) {
+                	throw "Exception running Yawning God AI: where's the mole?  You can't have a game without a mole!";
+                }
+                /// end gathering player data ///
+        
                 /// begin story scenario modifier processing ///
                 // todo: check mole type and maybe modify attack choice accordingly
+                //  e.g. var moleMajorType = moleHandle.sMoleMajorDestiny;
                 /// end story scenario mod proc ///
+                
+                // todo: abl and target selection based on gathered metrics
 
                 // begin defaults block -- at this point in the script, 
-                // if The God has not already picked an abl he will either 
+                // if The Yawning God has not already picked an abl he will either 
                 // do one mostly at random OR spam Dark Star if his health is below 25%
                 if (chosenAbility === undefined && chosenTarget === undefined) {
                     if (this.stats.hp > this.stats.maxHP * 0.25) {
@@ -699,7 +744,7 @@ function MootyWortRpgMech() {
                     }// end The God HP > 25%
                     else {
                         // being severely injured, The God now starts to spam Dark Star if no earlier behaviors were proced and he can afford it
-                    	if(theGodChar.canAffordCost(darkStarSpell)) {
+                    	if(theYawningGodChar.canAffordCost(darkStarSpell)) {
                     		chosenAbility = this.spells["dark_star"];
                     		chosenTarget = playerParty;
                     	} else {
@@ -758,5 +803,6 @@ function MootyWortRpgMech() {
             }// if role is enemy
         }// if role is defined
     }//end The God AI def
+    }
 }
 export {MootyWortRpgMech};
