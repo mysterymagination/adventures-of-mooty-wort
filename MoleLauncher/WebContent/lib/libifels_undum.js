@@ -64,10 +64,11 @@ MoleUndum.MoleCharacter = class MoleCharacter extends Libifels.Character {
 		this.stats["hp"] = this.stats["maxHP"];
 		this.stats["mp"] = this.stats["maxMP"];
 		this.stats["sanity"] = this.stats["maxSanity"];
-		this.stats["atk"] = 10;
-		this.stats["def"] = 10;
-		this.stats["pwr"] = 10;
-		this.stats["res"] = 10;
+		this.stats["atk"] = 15;
+		this.stats["def"] = 8;
+		this.stats["pwr"] = 5;
+		this.stats["res"] = 20; // eldritch things know better than to mess with moles
+		this.stats["spd"] = 1; // the mole is not fast
 		this.entity = new Libifels.Entity({ name: "Burrower" });
 	}
 	

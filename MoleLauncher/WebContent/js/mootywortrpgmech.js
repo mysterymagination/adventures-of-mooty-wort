@@ -694,16 +694,41 @@ class MootyWortRpgMech {
                 }
                 /// end gathering player data ///
         
-                /// begin story scenario modifier processing ///
-                // todo: check mole type and maybe modify attack choice accordingly
-                //  e.g. var moleMajorType = moleHandle.sMoleMajorDestiny;
-                /// end story scenario mod proc ///
+                // set abl probabilities as floating point percentages; default to mostly buffing and hugging to death
+                var ablProbsConfig = {
+                	"primordial_mandate": 0.3,
+                	"manyfold_embrace": 0.4,
+                	"pestilence": 0.2,
+                	"dark_star": 0.1
+                }
+                if(this.stats.hp <= this.stats.maxHP * 0.75 && 
+                		this.stats.hp > this.stats.maxHP * 0.5) {
+                	// now we wanna increase chances pestilence
+                	ablProbsConfig["primordial_mandate"] = 0.2;
+                	ablProbsConfig["manyfold_embrace"] = 0.3;
+                	ablProbsConfig["pestilence"] = 0.3;
+                	ablProbsConfig["dark_star"] = 0.2;
+                } else if (this.stats.hp <= this.stats.maxHP * 0.5 &&
+                		this.stats.hp > this.stats.maxHP * 0.25) {
+                	// never mind buffing, just hit hard
+                	ablProbsConfig["primordial_mandate"] = 0.0;
+                	ablProbsConfig["manyfold_embrace"] = 0.3;
+                	ablProbsConfig["pestilence"] = 0.4;
+                	ablProbsConfig["dark_star"] = 0.3;
+                } else if (this.stats.hp <= this.stats.maxHP * 0.25) {
+                	// PANIC!1!
+                	ablProbsConfig["primordial_mandate"] = 0.0;
+                	ablProbsConfig["manyfold_embrace"] = 0.4;
+                	ablProbsConfig["pestilence"] = 0.0;
+                	ablProbsConfig["dark_star"] = 0.6;
+                }
                 
-                // todo: abl and target selection based on gathered metrics
-
-                // begin defaults block -- at this point in the script, 
-                // if The Yawning God has not already picked an abl he will either 
-                // do one mostly at random OR spam Dark Star if his health is below 25%
+                // todo: particular mole attributes or status effects we wanna sniff for?
+                // only actually the one player in this case
+                chosenTarget = combat.playerParty[0];
+                chosenAbility = lib.chooseRandomAbility(ablProbsConfig)
+                
+                /// defaults block ///
                 if (chosenAbility === undefined && chosenTarget === undefined) {
                     if (this.stats.hp > this.stats.maxHP * 0.25) {
                         var percentageRandoAbl = lib.rollPercentage();
@@ -743,8 +768,10 @@ class MootyWortRpgMech {
                         }// end rando block
                     }// end The God HP > 25%
                     else {
-                        // being severely injured, The God now starts to spam Dark Star if no earlier behaviors were proced and he can afford it
-                    	if(theYawningGodChar.canAffordCost(darkStarSpell)) {
+                        // being severely injured, The Yawning God now starts to spam Dark Star if no earlier behaviors were proced and he can afford it,
+                    	// with a 35% chance of variance to simple attack so that the player has a little breathing room
+                    	if(theYawningGodChar.canAffordCost(darkStarSpell) &&
+                    			lib.rollPercentage() > 35) {
                     		chosenAbility = this.spells["dark_star"];
                     		chosenTarget = playerParty;
                     	} else {
@@ -754,6 +781,11 @@ class MootyWortRpgMech {
                     }
                 } // end if abl and target are not yet chosen, landing us in defaults
                 /// end defaults block ///
+                
+                // todo: refactor to have this fn return a chosen move and target for the enemy
+                // which will be performed at a later stage -- I want the combat manager to
+                // generate a prompt for the user suggesting what the enemy plans to do and then
+                // once player has chosen their action spd stat will determine what happens when.
 
                 // normalize input chosen targets to array form
                 var targets = undefined;

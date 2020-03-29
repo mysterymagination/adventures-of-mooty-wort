@@ -1,7 +1,28 @@
 /**
  * Libifels, as in lib Interactive Fiction Entity Logic System, provides utility functions and classes for Interactive Fiction in JS
  */
-function Libifels() { 
+class Libifels {
+	constructor() {
+		/**
+		 * Selects an ability name pseudo-randomly based on the given probability weights
+		 * @param probConfigObj an object literal with ability name string keys paired with 
+		 * 	 	  floating point percentage values e.g. 0.3 => 30%.  These should total 1.
+		 */
+		this.chooseRandomAbility(probConfigObj) {
+			// todo: determine ranges of a d100 roll appropriate for each ability based on weights
+			// track where our range has raised to, starting from 0% and ending at 100%
+			var currentFloor = 0.0;
+			rangesObj = {};
+			for(let probKey in probConfigObj) {
+				// transform a probability like 0.3 into the range 0,30 
+				rangesObj.probKey = [currentFloor, currentFloor + probConfigObj[probKey] * 100];
+				// raise the floor now that more range has been allocated by the amount allocated
+				currentFloor += rangesObj.probKey[1] - rangesObj.probKey[0];
+			}
+			console.log(rangesObj);
+			var roll = this.rollPercentage();
+			
+		}
     /**
      * Adds the given element to an array iff its string rep is not present in the array yet
      * @param array the array we're modifying
@@ -352,18 +373,17 @@ function Libifels() {
             }
 
             // basic stats, representing character vitality as resources.
-            // In the absence of clear classes, went with ~ avg d10s for level 10
-            // TODO: at least some of these and other consumeable resources should show in a HUD drawer
             this.stats = {
                 "hp": 50,
                 "maxHP": 50,
                 "mp": 50,
                 "maxMP": 50,
-                // standard jRPG stuff; I'm thinking these will be used as modifiers in dmg formulae, and will be modified by inherent attributes plus equipment
-                "atk": this.attributes["strength"],
-                "def": this.attributes["constitution"],
-                "pwr": this.getMagicAttributeScore(),
-                "res": this.getMagicAttributeScore()
+                // standard jRPG stuff
+                "atk": 10,
+                "def": 10,
+                "pwr": 10,
+                "res": 10,
+                "spd": 10
             }
 
             // a character's spells is an object-map of 'magic' ability names to Spell objects that define their effects/cost etc. The available spells are based
