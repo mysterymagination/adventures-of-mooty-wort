@@ -7,22 +7,29 @@ class Libifels {
 		 * Selects an ability name pseudo-randomly based on the given probability weights
 		 * @param probConfigObj an object literal with ability name string keys paired with 
 		 * 	 	  floating point percentage values e.g. 0.3 => 30%.  These should total 1.
+		 * @return the string name of the ability chosen, as specified in the input probConfigObj
 		 */
 		this.chooseRandomAbility(probConfigObj) {
-			// todo: determine ranges of a d100 roll appropriate for each ability based on weights
-			// track where our range has raised to, starting from 0% and ending at 100%
-			var currentFloor = 0.0;
-			rangesObj = {};
-			for(let probKey in probConfigObj) {
-				// transform a probability like 0.3 into the range 0,30 
-				rangesObj.probKey = [currentFloor, currentFloor + probConfigObj[probKey] * 100];
-				// raise the floor now that more range has been allocated by the amount allocated
-				currentFloor += rangesObj.probKey[1] - rangesObj.probKey[0];
+			  // determine ranges of a d100 roll appropriate for each ability based on weights
+			  // track where our range has raised to, starting from 0% and ending at 100%
+			  var currentFloor = 0.0;
+			  rangesObj = {};
+			  for (let probKey in probConfigObj) {
+			    // transform a probability like 0.3 into the range 0,30 
+			    rangesObj[probKey] = [currentFloor, currentFloor + probConfigObj[probKey] * 100];
+			    // raise the floor now that more range has been allocated by the amount allocated
+			    currentFloor += rangesObj[probKey][1] - rangesObj[probKey][0];
+			  }
+			  console.log(JSON.stringify(rangesObj));
+			  var roll = this.rollPercentage();
+			  // look up match
+			  for (let range in rangesObj) {
+			    if (roll >= rangesObj[range][0] && roll <= rangesObj[range][1]) {
+			      return "" + range;
+			    }
+			  }
+			  throw "chooseRandomAbility exception: range not found for roll " + roll + " in range table " + JSON.stringify(rangesObj);
 			}
-			console.log(rangesObj);
-			var roll = this.rollPercentage();
-			
-		}
     /**
      * Adds the given element to an array iff its string rep is not present in the array yet
      * @param array the array we're modifying
