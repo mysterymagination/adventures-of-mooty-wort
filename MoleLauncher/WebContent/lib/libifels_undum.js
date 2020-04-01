@@ -21,6 +21,41 @@ class MoleUndum extends Libifels{
 	    this.fnUsedItemHandler = function (itemName, targetName) {
 	        system.write("<p>You can't use " + itemName + " on " + targetName + "</p>");
 	    }
+	    // todo: add actual spell definitions, ideally here
+	    this.spellsDict = {
+	    	/**
+	    	 * Not many realize that mole are venomous, because, being peaceful and lovey creatures, they so often choose not to employ it.  Most are willing even to die rather than risk killing, and thus will not use venom when fighting back against predators and similar common foebeasts.  When the sanctity of The Deepness is threatened and the ancient things from dark corners of mole memory stir, however...   
+	    	 */
+	        "mole_venom": new this.Spell({ id: "mole_venom", name: "Mole Venom" }),
+	        /**
+	         * It can do a body good to hug itself.  Go on, try it now.  This spell heals the mole by his 20+(1.5*pwr)
+	         */
+	        "warmest_hug": new this.Spell({ id: "warmest_hug", name: "Warmest Hug" }),
+	        /**
+	         * By bunching up his fur and concentrating so hard on its fundamental protections that it actually become armor, the mole is able to grant himself Mage Armor
+	         */
+	        "woolly_shield": new this.Spell({ id: "woolly_shield", name: "Woolly Shield" }),
+	        /**
+	         * With a fuzzy furrowed brow, the mole grants himself the Temper status
+	         */
+	        "burrow_furrow": new this.Spell({ id: "burrow_furrow", name: "Burrow Furrowed Brow" }),
+	        /**
+	         * By considering the complexities of The Deepness, the mole is able to grant himself Third Eye status
+	         */
+	        "deep_meditation": new this.Spell({ id: "deep_meditation", name: "Meditation Upon The Deepness" }),
+	        /**
+	         * Calling upon all the wisdom of his forebears, who were moles and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  This spell deals moderate fire damage based on the mole's pwr.
+	         */
+	        "shadowflare": new this.Spell({ id: "shadowflare", name: "Shadowflare" }),
+	        /**
+	         * Thrusting his mighty digging claw into the earth and calling out for aid with all his spirit, the mole summons up a wash of magma from the planet's molten core to engulf his foe.  This spell light fire damage based on mole's pwr and burns the target.
+	         */
+	        "magma_blast": new this.Spell({ id: "magma_blast", name: "Magma Blast" }),
+	        /**
+	         * Shuffling his little paws rapidly, the mole generates a bolt of static electricity; the density of his fur is quite shocking!  This deal light electric damage and also inflicts Stun.
+	         */
+	        "static_bolt": new this.Spell({ id: "static_bolt", name: "Static Bolt" }),
+	    }
 	}
 }
 
@@ -28,7 +63,11 @@ class MoleUndum extends Libifels{
  * A class representing The Mole character
  */
 MoleUndum.MoleCharacter = class MoleCharacter extends Libifels.Character {
-	constructor() {
+	constructor(moleUndumLib) {
+		/**
+		 * Reference to MoleUndum instance 
+		 */
+		this.libHandle = moleUndumLib;
 		/**
 		 * Gender of the mole
 		 */
@@ -70,6 +109,15 @@ MoleUndum.MoleCharacter = class MoleCharacter extends Libifels.Character {
 		this.stats["res"] = 20; // eldritch things know better than to mess with moles
 		this.stats["spd"] = 1; // the mole is not fast
 		this.entity = new Libifels.Entity({ name: "Burrower" });
+		
+		// loadout of spells and abilities
+		this.incarnations["warmest_hug"] = this.libHandle.spellsDict["warmest_hug"];
+		this.incarnations["woolly_shield"] = this.libHandle.spellsDict["woolly_shield"];
+		this.incarnations["burrow_furrow"] = this.libHandle.spellsDict["burrow_furrow"];
+		this.incarnations["deep_meditation"] = this.libHandle.spellsDict["deep_meditation"];
+		this.incarnations["shadowflare"] = this.libHandle.spellsDict["shadowflare"];
+		this.incarnations["magma_blast"] = this.libHandle.spellsDict["magma_blast"];
+		this.incarnations["static_bolt"] = this.libHandle.spellsDict["static_bolt"];
 	}
 	
 }

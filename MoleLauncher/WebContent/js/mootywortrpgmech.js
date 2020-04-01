@@ -165,28 +165,6 @@ class MootyWortRpgMech {
         return "An aura of gleaming electric purple light, striated with the cheerily deadly greenish glow of radioactivity, surrounds " + sourceChar.name + " as " + sourceChar.getPronoun_gen() + " fevered will infects " + targetChar.name + ".  The insidious infection quickly overwhelms " + targetChar.name + "'s immune system totally, dealing " + this.dmg + " damage, and promising more...";
     }
 
-    /**
-    Perfect Stillness deals mild cold damage to the wielder and massive cold damage to the target
-    */
-    var perfectStillnessSpell = lib.spellsDict["perfect_stillness"];
-    perfectStillnessSpell.targetType = window.Ability.TargetTypesEnum.singleEnemy;
-    // by the time the HP cost is being evaluated, the selfDmg property should have been set in effect().  Would this be bound to perfectStillnessSpell inside the newly inline cost object map?
-    perfectStillnessSpell.cost = { "mp": 15 };//,"hp":perfectStillnessSpell.selfDmg};
-    perfectStillnessSpell.calcDmg = function (sourceChar, targetChar) {
-        return 5 * sourceChar.stats["pwr"] - targetChar.stats["res"] / 4;
-    }
-    perfectStillnessSpell.effect = function (sourceChar, targetChar) {
-        this.dmg = this.calcDmg(sourceChar, targetChar);
-        this.selfDmg = this.calcDmg(sourceChar, sourceChar);
-        targetChar.stats["hp"] -= this.dmg;
-        sourceChar.stats["hp"] -= this.selfDmg / 5; // todo: move to cost so that it is transparent to user via UI display of abl costs; make sure calcDmg() can peek at the dmg from that point
-
-        // MP cost
-        this.processCost(sourceChar);
-    }
-    perfectStillnessSpell.generateFlavorText = function (sourceChar, targetChar) {
-        return sourceChar.name + " extends " + sourceChar.getPronoun_gen() + " arms slowly towards " + targetChar.name + ", almost as if inviting a hug.  Suddenly, a rolling torrent of absolute serenity and silence, so profoundly vaccuous that it forces all in attendance to take a step back as from an overwhelming physical force, explodes forth from " + sourceChar.getPronoun_obj() + ".  Both folks are rocked by the violence of the peace, and " + targetChar.name + " is driven to " + targetChar.getPronoun_nom() + " knees by " + this.dmg + " chilling damage!";
-    }
 
     /**
     Warmest hug heals self and other with ATK

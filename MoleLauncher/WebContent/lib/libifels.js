@@ -763,6 +763,10 @@ class Libifels {
     /// begin lib dicts ///
     // Global Object mapping of prefab StatusEffects
     this.statusEffectsDict = {
+    	/**
+    	 * Mage armored raises DEF by RES
+    	 */	
+    	"mage_armor": new this.StatusEffect	({id: "mage_armor", name: "Mage Armor", duration: 3})
         /**
         Bloodlust raises STR at the expense of all mental attributes
         */
@@ -808,30 +812,18 @@ class Libifels {
         */
         "third_eye": new window.StatusEffect({ id: "third_eye", name: "Third Eye", duration: 3 }),
         /**
+         * Burn deals damage over time (slightly less than poison) and halves the afflicted Character's str
+         */
+        "burn": new this.StatusEffect({id: "burn", name: "Burn", duration: 3}),
+        /**
+         * Stun causes a Character in Combat to miss its next turn
+         */
+        "stun": new this.StatusEffect({id: "stun", name: "Stun", duration: 1}),
+        /**
         Defenseless reduces the target's defensive stats by half for 3 turns
         */
         "defenseless": new window.StatusEffect({ id: "defenseless", name: "Defenseless", duration: 3 })
     }
-
-    /**
-    Global dictionary object of public spells.  Since The Human can learn any Spell, all the Spells should be indexed here
-    TODO: move the inline definitions of Spells from within Character configs to here, and then reference this dict in said configs.
-    */
-    this.spellsDict: {
-        // from Splinter of Serpentarius
-        "debilitate": new window.Spell({ id: "debilitate", name: "Debilitate" }),
-        "pierce": new window.Spell({ id: "pierce", name: "Pierce" }),
-        "toxin": new window.Spell({ id: "toxin", name: "Toxin" }),
-        // from Splinter of Violet
-        "shadowform": new window.Spell({ id: "shadowform", name: "Shadowform" }),
-        "perfect_stillness": new window.Spell({ id: "perfect_stillness", name: "Perfect Stillness" }),
-        "savage_sympathy": new window.Spell({ id: "savage_sympathy", name: "Savage Sympathy" }),
-        // from Splinter of Snugg-lor
-        "warmest_hug": new window.Spell({ id: "warmest_hug", name: "Warmest Hug" }),
-        "woolly_shield": new window.Spell({ id: "woolly_shield", name: "Woolly Shield" }),
-        "maenad_frenzy": new window.Spell({ id: "maenad_frenzy", name: "Maenad Frenzy" }),
-    }
-
     /// end lib dicts ///
 
     
