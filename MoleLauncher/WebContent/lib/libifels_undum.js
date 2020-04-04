@@ -26,7 +26,7 @@ class MoleUndum extends Libifels{
 	    	/**
 	    	 * Not many realize that mole are venomous, because, being peaceful and lovey creatures, they so often choose not to employ it.  Most are willing even to die rather than risk killing, and thus will not use venom when fighting back against predators and similar common foebeasts.  When the sanctity of The Deepness is threatened and the ancient things from dark corners of mole memory stir, however...   
 	    	 */
-	        "mole_venom": new this.Spell({ id: "mole_venom", name: "Mole Venom" }),
+	        "mole_venom": new Spellbook.MoleVenom(),
 	        /**
 	         * It can do a body good to hug itself.  Go on, try it now.  This spell heals the mole by his 20+(1.5*pwr)
 	         */
@@ -44,7 +44,7 @@ class MoleUndum extends Libifels{
 	         */
 	        "deep_meditation": new this.Spell({ id: "deep_meditation", name: "Meditation Upon The Deepness" }),
 	        /**
-	         * Calling upon all the wisdom of his forebears, who were moles and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  This spell deals moderate fire damage based on the mole's pwr.
+	         * Calling upon all the wisdom of his forebears, who were moles of course and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  High cost spell that deals moderate fire damage based on the mole's pwr and lowers the target's res.
 	         */
 	        "shadowflare": new this.Spell({ id: "shadowflare", name: "Shadowflare" }),
 	        /**

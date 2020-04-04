@@ -147,23 +147,7 @@ class MootyWortRpgMech {
         targetChar.stats["def"] *= 2;
     }
     
-    var toxinSpell = lib.spellsDict["toxin"];
-    toxinSpell.targetType = lib.Ability.TargetTypesEnum.singleEnemy;
-    toxinSpell.cost = { "mp": 15 };
-    toxinSpell.calcDmg = function (sourceChar, targetChar) {
-        return sourceChar.stats["pwr"] - targetChar.stats["res"];
-    }
-    toxinSpell.effect = function (sourceChar, targetChar) {
-        this.dmg = this.calcDmg(sourceChar, targetChar);
-        targetChar.stats["hp"] -= this.dmg;
-        lib.addUniqueStatusEffect(targetChar, poisonStatusEffect);
-
-        // MP cost
-        this.processCost(sourceChar);
-    }
-    toxinSpell.generateFlavorText = function (sourceChar, targetChar) {
-        return "An aura of gleaming electric purple light, striated with the cheerily deadly greenish glow of radioactivity, surrounds " + sourceChar.name + " as " + sourceChar.getPronoun_gen() + " fevered will infects " + targetChar.name + ".  The insidious infection quickly overwhelms " + targetChar.name + "'s immune system totally, dealing " + this.dmg + " damage, and promising more...";
-    }
+    
 
 
     /**
