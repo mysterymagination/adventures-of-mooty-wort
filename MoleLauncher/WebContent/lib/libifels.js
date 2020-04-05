@@ -220,36 +220,7 @@ class Libifels {
         character.statusEffects.splice(effectIndex, 1);
     },
     
-    this.StatusEffect = function StatusEffect(config) {
-        if (config.hasOwnProperty('buffity')) {
-            // copy the own properties automatically, for simplicity.
-            Object.keys(config).forEach(function (propertyName) {
-                // clone() is a sugarcube built-in that returns a deep copy of the given object
-                this[propertyName] = clone(config[propertyName]);
-            }, this);
-        }// end cc
-        else {
-            this.id = config.id;
-            this.name = config.name;
-            this.duration = config.duration;
-            this.ticks = config.duration;
-            this.isBuff = true;
-            this.descriptors = [];
-        }// end new instance ctor
-    }, // end StatusEffect class def
-
-    // StatusEffect class prototype def
-    this.StatusEffect.prototype.tickDown = function() {
-        this.ticks--;
-    }
     
-    this.StatusEffect.prototype.effect: function(afflictedChar) {
-        console.log("status effect unset");
-    }
-    
-    this.StatusEffect.prototype.reverseEffect: function(afflictedChar) {
-        console.log("status effect reversal unset");
-    }
     
     
 

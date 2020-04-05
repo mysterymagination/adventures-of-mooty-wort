@@ -1,3 +1,5 @@
+import * as Alchemy from "./alchemy.js";
+
 /**
  * Class representing a capability of a character, e.g. attacking or casting a
  * spell. It takes a config object literal of the form
@@ -92,6 +94,9 @@ export class MoleVenom extends Spell {
 	effect(sourceChar, targetChar) {
         this.dmg = this.calcDmg(sourceChar, targetChar);
         targetChar.stats["hp"] -= this.dmg;
+        // mix up our poison...
+        var poisonStatusEffect = new Alchemy.Poison();
+        poisonStatusEffect.psnDmg = sourceChar.stats["pwr"] * 0.5;
         this.addUniqueStatusEffect(targetChar, poisonStatusEffect);
 
         // MP cost
