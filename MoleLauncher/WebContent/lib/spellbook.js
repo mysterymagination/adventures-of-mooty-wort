@@ -103,8 +103,61 @@ export class MoleVenom extends Spell {
         this.processCost(sourceChar);
     }
 	generateFlavorText(sourceChar, targetChar) {
-        return "Not many realize that moles are venomous, because, being peaceful and lovey creatures, they so often choose not to employ it.  Most are willing even to risk death rather than risk becoming a killer, and thus will not use venom when fighting back against predators and similar common foebeasts.  When the sanctity of The Deepness is threatened and the ancient things from dark corners of mole memory stir, however...  In a flash and with a violent violet flourish, you flick out your veneom spurs and bury them deeply in the flesh of " + targetChar.name;
+        return "Not many realize that moles are venomous, because, being peaceful and lovey creatures, they so often choose not to employ it.  Most are willing even to risk death rather than risk becoming a killer, and thus will not use venom when fighting back against predators and similar common foebeasts.  When the sanctity of The Deepness is threatened and the ancient things from dark corners of mole memory stir, however... it is a time to kill.  In a flash and with a violent violet flourish, you flick out your veneom spurs and bury them deeply in the flesh of " + targetChar.name;
     }
+}
+
+/**
+Warmest hug heals self (or self and other) with ATK; if healing a target other than self, the healing is divided by 2 amongst each party.
+*/
+export class WarmestHug extends Spell {
+	constructor() {
+		super({id: "warmest_hug", name: "Warmest Hug"});
+		WarmestHug.prototype.targetType = Ability.TargetTypesEnum.singleAlly;
+		WarmestHug.prototype.cost = { "mp": 20 };
+	}
+	calcDmg(sourceChar, targetChar) {
+	    return sourceChar.stats["atk"];
+	}
+	effect(sourceChar, targetChar) {
+	    this.dmg = this.calcDmg(sourceChar, targetChar);
+	    if(sourceChar === targetChar) {
+	    	sourceChar.stats["hp"] += this.dmg;
+	    } else {
+	    	targetChar.stats["hp"] += this.dmg * 0.5;
+	    	sourceChar.stats["hp"] += this.dmg * 0.5;
+	    }
+
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return sourceChar.name + " embraces " + sourceChar.getPronoun_gen() + " friend " + targetChar.name + " fondly, a soft golden glow surrounding them.  The glow heals " + targetChar.name + " of " + this.dmg + " damage total.";
+	}
+}
+
+/**
+Woolly Shield raises target's DEF by wielder's RES+DEF
+*/
+export class WoollyShield extends Spell {
+	constructor() {
+		super({id: "woolly_shield", name: "Woolly Shield"});
+		WoollyShield.prototype.targetType = Ability.TargetTypesEnum.singleAlly;
+		WoollyShield.prototype.cost = { "mp": 30 };
+	}
+	calcDmg(sourceChar, targetChar) {
+	    return sourceChar.stats["def"] + sourceChar.stats["res"];
+	}
+	effect(sourceChar, targetChar) {
+	    this.dmg = this.calcDmg(sourceChar, targetChar);
+	    targetChar.stats["def"] += this.dmg;
+
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return sourceChar.name + " puffs out " + sourceChar.getPronoun_gen() + " hair, approximating thick wool as best " + sourceChar.getPronoun_nom() + " can, and jumps in front of " + targetChar.name + ", intent on protecting " + targetChar.getPronoun_obj() + " with " + sourceChar.getPronoun_gen() + " woolly life!";
+	}
 }
 
     

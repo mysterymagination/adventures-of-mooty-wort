@@ -10,7 +10,7 @@ import MoleUndum from '../lib/libifels_undum.js';
  */
 
 /**
- * Class responsible for defining the RPG mechanics of the Mooty Wort adventure
+ * Class responsible for defining the RPG mechanics of the Mooty Wort adventure and running combat
  */
 class MootyWortRpgMech {
 	
@@ -24,69 +24,6 @@ class MootyWortRpgMech {
 	}
 	// establish Player party
     this.party = [this.characters["mole"]];
-	
-    /**
-    Warmest hug heals self and other with ATK
-    */
-    var warmestHugSpell = lib.spellsDict["warmest_hug"];
-    warmestHugSpell.targetType = window.Ability.TargetTypesEnum.singleAlly;
-    warmestHugSpell.cost = { "mp": 20 };
-    warmestHugSpell.calcDmg = function (sourceChar, targetChar) {
-        return sourceChar.stats["atk"];
-    }
-    warmestHugSpell.effect = function (sourceChar, targetChar) {
-        this.dmg = this.calcDmg(sourceChar, targetChar);
-        targetChar.stats["hp"] += this.dmg;
-        sourceChar.stats["hp"] += this.dmg;
-
-        // MP cost
-        this.processCost(sourceChar);
-    }
-    warmestHugSpell.generateFlavorText = function (sourceChar, targetChar) {
-        return sourceChar.name + " embraces " + sourceChar.getPronoun_gen() + " friend " + targetChar.name + " fondly, a soft golden glow surrounding them both.  The glow heals " + targetChar.name + " of " + this.dmg + " damage.";
-    }
-
-    /**
-    Woolly Shield raises target's DEF by wielder's RES+DEF
-    */
-    var woollyShieldSpell = lib.spellsDict["woolly_shield"];
-    woollyShieldSpell.targetType = window.Ability.TargetTypesEnum.singleAlly;
-    woollyShieldSpell.cost = { "mp": 30 };
-    woollyShieldSpell.calcDmg = function (sourceChar, targetChar) {
-        return sourceChar.stats["def"] + sourceChar.stats["res"];
-    }
-    woollyShieldSpell.effect = function (sourceChar, targetChar) {
-        this.dmg = this.calcDmg(sourceChar, targetChar);
-        targetChar.stats["def"] += this.dmg;
-
-        // MP cost
-        this.processCost(sourceChar);
-    }
-    woollyShieldSpell.generateFlavorText = function (sourceChar, targetChar) {
-        return sourceChar.name + " puffs out " + sourceChar.getPronoun_gen() + " hair, approximating thick wool as best " + sourceChar.getPronoun_nom() + " can, and jumps in front of " + targetChar.name + ", intent on protecting " + targetChar.getPronoun_obj() + " with " + sourceChar.getPronoun_gen() + " woolly life!";
-    }
-
-    /**
-    Maenad Frenzy deals ATK+CHA to self and (ATK+CHA)*2 to target
-    */
-    var maenadFrenzySpell = lib.spellsDict["maenad_frenzy"];
-    maenadFrenzySpell.targetType = lib.Ability.TargetTypesEnum.singleEnemy;
-    maenadFrenzySpell.cost = { "mp": 10, "hp":maenadFrenzySpell.dmg/2}; 
-    maenadFrenzySpell.calcDmg = function (sourceChar, targetChar) {
-        return 2 * (sourceChar.stats["atk"] + sourceChar.attributes["charisma"]);
-    }
-    maenadFrenzySpell.effect = function (sourceChar, targetChar) {
-        this.dmg = this.calcDmg(sourceChar, targetChar);
-        targetChar.stats["hp"] -= this.dmg;
-        sourceChar.stats["hp"] -= this.dmg / 4;
-
-        // MP cost
-        this.processCost(sourceChar);
-    }
-    maenadFrenzySpell.generateFlavorText = function (sourceChar, targetChar) {
-        return "A manic gleam shines in " + sourceChar.name + "'s eyes as they reflect the brilliant light of the lunatic moon suddenly huge in the sky above.  " + sourceChar.getPronoun_nom() + " embraces " + targetChar.name + " with a violent longing, pleasure driven through to pain before the fires of wild need.  " + targetChar.getPronoun_nom() + " wriggles and tries to escape as " + sourceChar.name + " squeezes " + targetChar.getPronoun_obj() + ", but there is no way out.  The embrace tightens and the whipcrack of snapping bone makes the night itself cower.  " + this.dmg + " damage is dealt around the world's unhappiest hug.";
-    }
-    
     
     var grueChar = this.characters["grue"];
     grueChar.gender = "male";
