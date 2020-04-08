@@ -1,5 +1,5 @@
 import * as Alchemy from "./alchemy.js";
-
+import * as Lib from "./libifels_undum.js"
 /**
  * Class representing a capability of a character, e.g. attacking or casting a
  * spell. It takes a config object literal of the form
@@ -67,7 +67,8 @@ Ability.TargetTypesEnum = Object.freeze(
 		singleEnemy: 1,
 		allEnemies: 2,
 		singleAlly: 3,
-		allAllies: 4
+		allAllies: 4,
+		personal: 5
 	}
 )
 export class Spell extends Ability {
@@ -97,7 +98,7 @@ export class MoleVenom extends Spell {
         // mix up our poison...
         var poisonStatusEffect = new Alchemy.Poison();
         poisonStatusEffect.psnDmg = sourceChar.stats["pwr"] * 0.5;
-        this.addUniqueStatusEffect(targetChar, poisonStatusEffect);
+        Lib.addUniqueStatusEffect(targetChar, poisonStatusEffect);
 
         // MP cost
         this.processCost(sourceChar);
@@ -157,6 +158,46 @@ export class WoollyShield extends Spell {
 	}
 	generateFlavorText(sourceChar, targetChar) {
 	    return sourceChar.name + " puffs out " + sourceChar.getPronoun_gen() + " hair, approximating thick wool as best " + sourceChar.getPronoun_nom() + " can, and jumps in front of " + targetChar.name + ", intent on protecting " + targetChar.getPronoun_obj() + " with " + sourceChar.getPronoun_gen() + " woolly life!";
+	}
+}
+
+/**
+ * With a fuzzily furrowed brow, the mole grants himself the Temper status
+ */
+export class BurrowFurrow extends Spell {
+	constructor() {
+		super({ id: "burrow_furrow", name: "Burrow Furrowed Brow" });
+		BurrowFurrow.prototype.targetType = Ability.TargetTypesEnum.personal;
+		BurrowFurrow.prototype.cost = { "mp": 10 };
+	}
+	effect(sourceChar) {
+		Lib.addUniqueStatusEffect(sourceChar, new Alchemy.Temper());
+
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return sourceChar.name + " furrows " + sourceChar.getPronoun_gen() + " fuzzy brow in concentration, and resolutely resolves to go all out against all " + sourceChar.getPronoun_gen() + "foebeasts!";
+	}
+}
+
+/**
+ * By considering the complexities of The Deepness, the mole is able to grant himself Third Eye status
+ */
+export class DeepMeditation extends Spell {
+	constructor() {
+		super({ id: "deep_meditation", name: "Meditation Upon The Deepness" });
+		DeepMeditation.prototype.targetType = Ability.TargetTypesEnum.personal;
+		DeepMeditation.prototype.cost = { "mp": 25 };
+	}
+	effect(sourceChar) {
+		Lib.addUniqueStatusEffect(sourceChar, new Alchemy.ThirdEye());
+
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return sourceChar.name + " takes a moment to separate " + sourceChar.getPronoun_gen() + " consciousness from the chaotic here and now, meditating upon the unknowable complexities of The Deepness. As " + sourceChar.getPronoun_nom() + " does so, the fuzzy flesh of " + sourceChar.getPronoun_gen() + " forehead tears and through a fine veil of blood there appears a mystical third eye!";
 	}
 }
 

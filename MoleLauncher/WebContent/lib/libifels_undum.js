@@ -1,4 +1,5 @@
 import Libifels from './libifels.js';
+import * as Spellbook from "./spellbook.js"
 /**
  * exported API of Libifels for Undum containing both generic IF structures and hypertext adventure framework elements specific to Undum
  */
@@ -21,7 +22,7 @@ class MoleUndum extends Libifels{
 	    this.fnUsedItemHandler = function (itemName, targetName) {
 	        system.write("<p>You can't use " + itemName + " on " + targetName + "</p>");
 	    }
-	    // todo: add actual spell definitions, ideally here
+	    // todo: add actual spell definitions
 	    this.spellsDict = {
 	    	/**
 	    	 * Not many realize that mole are venomous, because, being peaceful and lovey creatures, they so often choose not to employ it.  Most are willing even to die rather than risk killing, and thus will not use venom when fighting back against predators and similar common foebeasts.  When the sanctity of The Deepness is threatened and the ancient things from dark corners of mole memory stir, however...   
@@ -30,19 +31,19 @@ class MoleUndum extends Libifels{
 	        /**
 	         * It can do a body good to hug itself.  Go on, try it now.  This spell heals the mole by his 20+(1.5*pwr)
 	         */
-	        "warmest_hug": new this.Spell({ id: "warmest_hug", name: "Warmest Hug" }),
+	        "warmest_hug": new Spellbook.WarmestHug(),
 	        /**
 	         * By bunching up his fur and concentrating so hard on its fundamental protections that it actually become armor, the mole is able to grant himself Mage Armor
 	         */
-	        "woolly_shield": new this.Spell({ id: "woolly_shield", name: "Woolly Shield" }),
+	        "woolly_shield": new Spellbook.WoollyShield(),
 	        /**
-	         * With a fuzzy furrowed brow, the mole grants himself the Temper status
+	         * With a fuzzily furrowed brow, the mole grants himself the Temper status
 	         */
-	        "burrow_furrow": new this.Spell({ id: "burrow_furrow", name: "Burrow Furrowed Brow" }),
+	        "burrow_furrow": new Spellbook.BurrowFurrow(),
 	        /**
 	         * By considering the complexities of The Deepness, the mole is able to grant himself Third Eye status
 	         */
-	        "deep_meditation": new this.Spell({ id: "deep_meditation", name: "Meditation Upon The Deepness" }),
+	        "deep_meditation": new this.Spell(),
 	        /**
 	         * Calling upon all the wisdom of his forebears, who were moles of course and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  High cost spell that deals moderate fire damage based on the mole's pwr and lowers the target's res.
 	         */
