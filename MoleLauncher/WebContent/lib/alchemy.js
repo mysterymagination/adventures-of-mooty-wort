@@ -207,4 +207,34 @@ export class Poison extends StatusEffect {
 	    targetChar.stats["def"] = this.cachedDef;
 	}
 }
+/**
+ * Burn deals dmg each turn and drops atk to 1/4
+ */
+export class Burn extends StatusEffect {
+	constructor() {
+		super({id: "burn", name: "Burn"});
+		this.isBuff = false;
+		this.descriptors.push("debuff", "health", "elemental,fire");
+		this.cachedAtk = 0;
+		this.cachedDef = 0;
+		this.brnDmg = 0;
+	}
+	effect(targetChar) {
+		this.cachedAtk = targetChar.stats["atk"];
+	    targetChar.stats["atk"] *= 0.25;
+	}
+	reverseEffect(targetChar) {
+	    targetChar.stats["atk"] = this.cachedAtk;
+	}
+}
+/**
+ * Stun causes the afflicted to miss their next turn
+ */
+export class Stun extends StatusEffect {
+	constructor() {
+		super({id: "stun", name: "Stun"});
+		this.isBuff = false;
+		this.descriptors.push("debuff", "turns", "elemental,lightning");
+	}
+}
 // todo: init vs. ongoing effect methods?

@@ -200,5 +200,79 @@ export class DeepMeditation extends Spell {
 	    return sourceChar.name + " takes a moment to separate " + sourceChar.getPronoun_gen() + " consciousness from the chaotic here and now, meditating upon the unknowable complexities of The Deepness. As " + sourceChar.getPronoun_nom() + " does so, the fuzzy flesh of " + sourceChar.getPronoun_gen() + " forehead tears and through a fine veil of blood there appears a mystical third eye!";
 	}
 }
+// todo: mod the mole's basic attack abl to restore 10% MP
+/**
+ * Calling upon all the wisdom of his forebears, who were moles of course and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  High cost spell that deals moderate fire damage based on the mole's pwr and lowers the target's res.
+ */
+export class ShadowFlare extends Spell {
+	constructor() {
+		super({ id: "shadowflare", name: "Shadowflare" });
+		ShadowFlare.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		ShadowFlare.prototype.cost = { "mp": 50 };
+	}
+	calcDmg(sourceChar, targetChar) {
+	    return 2 * sourceChar.stats["pwr"];
+	}
+	effect(sourceChar, targetChar) {
+	    this.dmg = this.calcDmg(sourceChar, targetChar);
+	    targetChar.stats["hp"] -= this.dmg;
+	    targetChar.stats["res"] -= 10;
 
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return "Calling upon all the wisdom of his forebears, who were moles of course and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  The subtle conflagration is so overwhelming that "+targetChar.name+"'s very meta-magical field crumbles slightly, unraveling the threads of "+targetChar.getPronoun_obj()+" existance.";
+	}
+}
+/**
+ * Thrusting his mighty digging claw into the earth and calling out for aid with all his spirit, the mole summons up a wash of magma from the planet's molten core to engulf his foe.  This spell light fire damage based on mole's pwr and burns the target.
+ */
+export class MagmaBlast extends Spell {
+	constructor() {
+		super({ id: "magma_blast", name: "Magma Blast" });
+		MagmaBlast.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		MagmaBlast.prototype.cost = { "mp": 25 };
+	}
+	calcDmg(sourceChar, targetChar) {
+	    return sourceChar.stats["pwr"];
+	}
+	effect(sourceChar, targetChar) {
+	    this.dmg = this.calcDmg(sourceChar, targetChar);
+	    targetChar.stats["hp"] -= this.dmg;
+	    var burnEffect = new Alchemy.Burn();
+	    burnEffect.brnDmg = this.dmg * 0.5;
+	    Lib.addUniqueStatusEffect(targetChar, burnEffect);
+
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return "Thrusting his mighty digging claw into the earth and calling out for aid with all his spirit, the mole summons up a wash of magma from the planet's molten core to engulf his foe!";
+	}
+}
+/**
+ * Shuffling his little paws rapidly, the mole generates a bolt of static electricity; the density of his fur is quite shocking!  This deal light electric damage and also inflicts Stun.
+ */
+export class StaticBolt extends Spell {
+	constructor() {
+		super({ id: "static_bolt", name: "Static Bolt" });
+		StaticBolt.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		StaticBolt.prototype.cost = { "mp": 30 };
+	}
+	calcDmg(sourceChar, targetChar) {
+	    return sourceChar.stats["pwr"];
+	}
+	effect(sourceChar, targetChar) {
+	    this.dmg = this.calcDmg(sourceChar, targetChar);
+	    targetChar.stats["hp"] -= this.dmg;
+	    Lib.addUniqueStatusEffect(targetChar, new Alchemy.Stun());
+
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return "Shuffling his little paws rapidly, the mole generates a bolt of static electricity; the density of his fur is quite shocking!  With a righteous squeak, he hurls at "+targetChar.name+", disrupting "+targetChar.getPronoun_gen()+" systems with wild current.";
+	}
+}
     
