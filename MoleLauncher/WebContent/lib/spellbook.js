@@ -252,7 +252,7 @@ export class MagmaBlast extends Spell {
 	}
 }
 /**
- * Shuffling his little paws rapidly, the mole generates a bolt of static electricity; the density of his fur is quite shocking!  This deal light electric damage and also inflicts Stun.
+ * Shuffling his little paws rapidly, the mole generates a bolt of static electricity; the density of his fur is quite shocking!  This deals light electric damage and also inflicts Stun.
  */
 export class StaticBolt extends Spell {
 	constructor() {
@@ -275,4 +275,248 @@ export class StaticBolt extends Spell {
 	    return "Shuffling his little paws rapidly, the mole generates a bolt of static electricity; the density of his fur is quite shocking!  With a righteous squeak, he hurls at "+targetChar.name+", disrupting "+targetChar.getPronoun_gen()+" systems with wild current.";
 	}
 }
+
+/// begin Grue abilities block ///
+/**
+ * Touch of the Void deals moderate HP and MP damage if the target has any MP remaining, and the MP is absorbed by Grue. Else, it deals heavy HP damage.  Only usable once every 3-5 turns, and there's a tell in the log when it recharges.
+ */
+export class TouchVoid extends Spell {
+	constructor() {
+		super({ id: "touch_of_the_void", name: "Touch of the Void" });
+		TouchVoid.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		TouchVoid.prototype.cost = { "mp": 0, "hp": 15 };
+	}
+	/**
+	 * Calculate the damage to HP or MP to the given target character
+	 * @param sourceChar the source of the spell
+	 * @param targetChar the target of the spell
+	 * @param isMagic true if we're calculating the magical aspect of this spell's damage, false otherwise
+	 */
+	calcDmg(sourceChar, targetChar, isMagic) {
+		var aspectDamage = 0.0;
+		if(isMagic) {
+			aspectDamage = sourceChar.attributes["pwr"] - 0.5 * targetChar.stats["res"];
+		} else {
+			aspectDamage = sourceChar.stats["atk"] - 0.5 * targetChar.stats["def"];
+		}
+		return aspectDamage;
+	}
+	effect(sourceChar, targetChar) {
+	    if(targetChar.stats["mp"] > 0) {
+	    	// target has MP to steal so apply damage to HP and MP, and source's MP is healed
+	    	this.dmg = this.calcDmg(sourceChar, targetChar, true);
+	        targetChar.stats["mp"] -= this.dmg;
+	        sourceChar.stats["mp"] += this.dmg;
+	        this.dmg = this.calcDmg(sourceChar, targetChar, false);
+	        targetChar.stats["hp"] -= this.dmg;
+	    } else {
+	    	// apply double damage to target HP, no one is healed
+	    	this.dmg = this.calcDmg(sourceChar, targetChar, false);
+	        targetChar.stats["hp"] -= 2 * this.dmg;
+	    }
+
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return "Somehow the darkness near your rump becomes material and seizes you!  Cold infects your being as all the warmth and joy of life bleeds away, slaking the implacable thirst of Darkness.";
+	}
+}
+
+/**
+ * Insatiable Consumption is an instant kill if the mole is below 50% HP and otherwise drops him to 50% HP
+ */
+export class Consume extends Spell {
+	constructor() {
+		super({ id: "consume", name: "Insatiable Consumption" });
+		Consume.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		Consume.prototype.cost = { "mp": 25 };
+	}
+	effect(sourceChar, targetChar) {
+	    var currentHP = targetChar.stats["hp"];
+	    var maxHP = targetChar.stats["maxHP"]
+		if(currentHP <= 0.5 * maxHP) {
+			targetChar.stats["hp"] = 0;
+		} else {
+			targetChar.stats["hp"] = maxHP * 0.5;
+		}
+
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return "A thunderclap of malevolent intent momentarily deafens you; in the midst of that silence, when the wave of emptiness in your surroundings seems to reach its peak, a lightning flash of fangs manifests out of nothing in a rictus grin.  Jaws spreading wide, it chomps down and attempts to swallow you whole!  "+(targetChar["hp"] <= 0 ? "Your bloodsoaked fur helps ease your way on in and down, and in an instant the champion of Deepness is consumed." : "Your bulk and mighty constitution prevent you from sliding down the creature's gullet, but the fangs are still able to tear into your flesh."); 
+	}
+}
+
+/**
+ * Brass Lantern uses the target's raw magic power to deal damage to it, ignoring defense.  
+ * It then doubles target's magic power such that subsequent hits will be worse.   
+ */
+export class BrassLantern extends Spell {
+	constructor() {
+		super({ id: "brass_lantern", name: "Brass Lantern" });
+		BrassLantern.prototype.targetType = lib.Ability.TargetTypesEnum.singleEnemy;
+		BrassLantern.prototype.cost = { "mp": 10 };
+	}
+	effect(sourceChar, targetChar) {
+		
+		// deal damage equal to current mag pwr
+	    targetChar["hp"] -= targetChar["pwr"];
+	    // increase mag pwr as the mystic inferno infuses target's soul
+	    targetChar["pwr"] *= 2;
+	    	
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return "A fierce gold light burns its way out of the darkness, revealing a small brass lantern.  Inside, a flame flickers violently, tauntingly, before flaring into a raging inferno that rolls over you like a blanket of elemental destruction!  You can feel thoughts and emotions swirl in your mind as you burn, dreams flitting past your mind's eye and feeding the conflagration.  "+(targetChar["hp"] > 0 ? "As the flames roll over you, through the crippling agony you feel a resonant power welling up ever higher..." : ""); 
+	}
+}
+
+/**
+ * Chill of the Beyond deals minor cold damage and freezes the target 
+ */
+export class ChillBeyond extends Spell {
+	constructor() {
+		super({ id: "chill_beyond", name: "Chill of the Beyond" });
+		ChillBeyond.prototype.targetType = Ability.TargetTypesEnum.allEnemies;
+		ChillBeyond.prototype.cost = { "mp": 50 };
+	}
+	calcDmg(sourceChar, targetChar) {
+		return sourceChar.stats["pwr"] 
+	    	   - 0.5 * targetChar.stats["res"];
+	}
+	effect(sourceChar, targetChar) {
+		
+		// apply damage to target
+		this.dmg = this.calcDmg(sourceChar, targetChar);
+		targetChar.stats["hp"] -= this.dmg;
+	    
+		// apply Freeze status
+		Lib.addUniqueStatusEffect(targetChar, freezeStatusEffect);
+
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return "While the darkness in your beloved Deepness gets warmer as it closes in thanks to the proximity to magma, the darkness of the infinite Void beyond all worlds is a place of unfathomable cold.  With all the gentleness and decorum of a voratious graveworm, this alien darkness wriggles into the comforting blanket of blackness surrounding you.  Its inception robs your world of warmth entirely and in an instant you are frozen solid!  Refracted through the glacial translucence is a rictus grin bursting with fangs..."; 
+	}
+}
+/// end Grue abilities block ///
+
+/// begin Yawning God abilities block ///
+/**
+ * Manyfold Embrace damages the user slightly but combines their ATK and PWR to generate massive damage to the enemy
+ */
+export class ManyFoldEmbrace extends Spell {
+	constructor() {
+		super({ id: "manyfold_embrace", name: "Manyfold Embrace" });
+		ManyFoldEmbrace.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		ManyFoldEmbrace.prototype.cost = { "mp": 20 };
+		// default this instance's cost to the common element
+		this.cost = Object.assign(this.cost, ManyFoldEmbrace.prototype.cost);
+	}
+	calcDmg(sourceChar, targetChar) {
+	    // idea is the source is transforming tentacles into mighty spiked cudgels
+		// using magic and then buffeting the target with them
+		return 1.5 * (sourceChar.stats["atk"] + sourceChar.attributes["pwr"]) 
+	    	   - 0.5 * targetChar.stats["def"];
+	}
+	effect(sourceChar, targetChar) {
+	    this.dmg = this.calcDmg(sourceChar, targetChar);
+	    // now that we have calc'd damage, we can determine the rest of the cost
+	    this.cost["hp"] = this.dmg * 0.5;
+	    console.log(this.cost);
+	    targetChar.stats["hp"] -= this.dmg;
+
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return "An oily blackness like the surface of an unfathomable lake on a moonless night oozes over The God's spongy fishbelly-white flesh, and in a blinding flash of electric purple a series of serrated spikes have materialized in its wake!  With all the looming inevitability of death itself, he descends upon "+targetChar.name+" and wraps  his innumerable tentacles about "+targetChar.getPronoun_obj()+" in a crushing embrace."; 
+	}
+}
+
+/**
+ * Pestilence moderately damages all enemies and has 50% to poison each
+ */
+export class Pestilence extends Spell {
+	constructor() {
+		super({ id: "pestilence", name: "Pestilence" });
+		Pestilence.prototype.targetType = Ability.TargetTypesEnum.allEnemies;
+		Pestilence.prototype.cost = { "mp": 50 };
+	}
+	calcDmg(sourceChar, targetChar) {
+		return sourceChar.attributes["pwr"] - 0.5 * targetChar.stats["res"];
+	}
+	effect(sourceChar, targetChars) {
+	    for(let index = 0; index < targetChars.length; index++) {
+		    	// apply damage to target
+		    	this.dmg = this.calcDmg(sourceChar, targetChars[index]);
+		    	targetChars[index].stats["hp"] -= this.dmg;
+		    	// possibly apply poison
+		    	let roll = lib.rollPercentage();
+		    	if(roll >= 50) {
+		    		lib.addUniqueStatusEffect(targetChars[index], poisonStatusEffect);
+		    	}
+	    	}
+
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return "With a tortured wailing wheeze, The God draws in a mighty breath; the resulting vortex whipping the parties hair and fur and whiskers into a frazzled chaos that seems to sustain him.  When the hurricane winds calm at last, silence reigns for a moment before a deafening roar quashes the quiet out of existence: plumes of putrescent purple and bruised black smoke snake their way out of The God's maw, their very presence infecting the air with malice, and encompass everyone in choking fog!"; 
+	}
+}
+
+/**
+ * Primordial Mandate grants the Bloodlust status to the target
+ */
+export class PrimordialMandate extends Spell {
+	constructor() {
+		super({ id: "primordial_mandate", name: "Primordial Mandate" });
+		PrimordialMandate.prototype.targetType = Ability.TargetTypesEnum.singleAlly;
+		PrimordialMandate.prototype.cost = { "mp": 15 };
+	}
+	effect(sourceChar, targetChar) {
+	    // bloodlust on target
+	    lib.addUniqueStatusEffect(targetChar, bloodlustStatusEffect);
+	    	
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return "The God thrusts his tentacles into the earth and the ground begins to quake.  A deep rumble like the visceral warning growl of an intractable force of nature resonates with your spirit, awakening atavistic awe.  Auras of pulsing magma and wild verdancy course up and down The God's flesh in a violently unstoppable current, infusing every fiber of his being with all the might of this world!  The eyes of The God roll wildly, as if even the boundaries of his conception of all realities is being harshly tested by overwhelming new horizons."; 
+	}
+}
+
+/**
+ * Dark Star deals massive non-elemental damage to all enemies
+ */
+export class DarkStar extends Spell {
+	constructor() {
+		super({ id: "dark_star", name: "Dark Star" });
+		DarkStar.prototype.targetType = Ability.TargetTypesEnum.allEnemies;
+		DarkStar.prototype.cost = { "mp": 25 };
+	}
+	calcDmg(sourceChar, targetChar) {
+		return 2 * sourceChar.stats["pwr"] 
+	    	   - 0.5 * targetChar.stats["res"];
+	}
+	effect(sourceChar, targetChars) {
+		for(let index = 0; index < targetChars.length; index++) {
+	    	// apply damage to target
+	    	this.dmg = this.calcDmg(sourceChar, targetChars[index]);
+	    	targetChars[index].stats["hp"] -= this.dmg;
+	    }
+
+	    // MP cost
+	    this.processCost(sourceChar);
+	}
+	generateFlavorText(sourceChar, targetChar) {
+	    return "The burning chill of moonless midnight wrapped in Lady Winter's empty embrace casts a pall of hoarfrost over your fur as the light drains out of the world.  When all is naught but silence and dark, a muted gray pinprick of light appears before you; an offering of hope.  Unable to help yourself, you reach out to it -- the very instant you give over the focus of your mind to its power, it explodes into a blinding nova whose insatiable devouring flames crawl into and over every atom of your being!"; 
+	}
+}
+/// end yawning god abilities block ///
     
