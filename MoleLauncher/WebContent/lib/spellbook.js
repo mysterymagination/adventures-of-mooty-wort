@@ -1,5 +1,10 @@
 import * as Alchemy from "./alchemy.js";
 import * as Lib from "./libifels_undum.js"
+
+//todo: these flavor texts really need some random variations to keep things interesting
+
+//todo: define Entity here and make Entity group a set of abilities mechanically, as it does thematically, so we don't have to manually add abls one by one; we only need to say Heart of Darkness and that'll install Touch of the Void, Insatiable Consumption...
+
 /**
  * Class representing a capability of a character, e.g. attacking or casting a
  * spell. It takes a config object literal of the form
@@ -12,7 +17,7 @@ export class Ability {
 
 		// metadata about who the ability targets, namely you, all allies,
 		// one enemy, or all enemies.
-		this.targetType = window.Ability.TargetTypesEnum.singleEnemy;
+		this.targetType = Ability.TargetTypesEnum.singleEnemy;
 
 		/**
 		 * The friendly property describes whether an ability is considered
@@ -356,7 +361,7 @@ export class Consume extends Spell {
 export class BrassLantern extends Spell {
 	constructor() {
 		super({ id: "brass_lantern", name: "Brass Lantern" });
-		BrassLantern.prototype.targetType = lib.Ability.TargetTypesEnum.singleEnemy;
+		BrassLantern.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
 		BrassLantern.prototype.cost = { "mp": 10 };
 	}
 	effect(sourceChar, targetChar) {
@@ -456,9 +461,9 @@ export class Pestilence extends Spell {
 		    	this.dmg = this.calcDmg(sourceChar, targetChars[index]);
 		    	targetChars[index].stats["hp"] -= this.dmg;
 		    	// possibly apply poison
-		    	let roll = lib.rollPercentage();
+		    	let roll = Lib.rollPercentage();
 		    	if(roll >= 50) {
-		    		lib.addUniqueStatusEffect(targetChars[index], poisonStatusEffect);
+		    		Lib.addUniqueStatusEffect(targetChars[index], poisonStatusEffect);
 		    	}
 	    	}
 
@@ -481,7 +486,7 @@ export class PrimordialMandate extends Spell {
 	}
 	effect(sourceChar, targetChar) {
 	    // bloodlust on target
-	    lib.addUniqueStatusEffect(targetChar, bloodlustStatusEffect);
+	    Lib.addUniqueStatusEffect(targetChar, bloodlustStatusEffect);
 	    	
 	    // MP cost
 	    this.processCost(sourceChar);
