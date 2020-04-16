@@ -22,7 +22,6 @@ class MoleUndum extends Libifels{
 	    this.fnUsedItemHandler = function (itemName, targetName) {
 	        system.write("<p>You can't use " + itemName + " on " + targetName + "</p>");
 	    }
-	    // todo: add actual spell definitions
 	    this.spellsDict = {
 	    	/**
 	    	 * Not many realize that mole are venomous, because, being peaceful and lovey creatures, they so often choose not to employ it.  Most are willing even to die rather than risk killing, and thus will not use venom when fighting back against predators and similar common foebeasts.  When the sanctity of The Deepness is threatened and the ancient things from dark corners of mole memory stir, however...   
@@ -43,19 +42,19 @@ class MoleUndum extends Libifels{
 	        /**
 	         * By considering the complexities of The Deepness, the mole is able to grant himself Third Eye status
 	         */
-	        "deep_meditation": new this.Spell(),
+	        "deep_meditation": new Spellbook.DeepMeditation(),
 	        /**
 	         * Calling upon all the wisdom of his forebears, who were moles of course and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  High cost spell that deals moderate fire damage based on the mole's pwr and lowers the target's res.
 	         */
-	        "shadowflare": new this.Spell({ id: "shadowflare", name: "Shadowflare" }),
+	        "shadowflare": new Spellbook.Shadowflare(),
 	        /**
 	         * Thrusting his mighty digging claw into the earth and calling out for aid with all his spirit, the mole summons up a wash of magma from the planet's molten core to engulf his foe.  This spell light fire damage based on mole's pwr and burns the target.
 	         */
-	        "magma_blast": new this.Spell({ id: "magma_blast", name: "Magma Blast" }),
+	        "magma_blast": new Spellbook.MagmaBlast(),
 	        /**
 	         * Shuffling his little paws rapidly, the mole generates a bolt of static electricity; the density of his fur is quite shocking!  This deal light electric damage and also inflicts Stun.
 	         */
-	        "static_bolt": new this.Spell({ id: "static_bolt", name: "Static Bolt" }),
+	        "static_bolt": new Spellbook.StaticBolt(),
 	    }
 	}
 }
