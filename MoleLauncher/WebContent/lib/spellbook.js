@@ -3,8 +3,6 @@ import * as Lib from "./libifels_undum.js"
 
 //todo: these flavor texts really need some random variations to keep things interesting
 
-//todo: define Entity here and make Entity group a set of abilities mechanically, as it does thematically, so we don't have to manually add abls one by one; we only need to say Heart of Darkness and that'll install Touch of the Void, Insatiable Consumption...
-
 /**
  * Class representing a capability of a character, e.g. attacking or casting a
  * spell. It takes a config object literal of the form
@@ -524,4 +522,60 @@ export class DarkStar extends Spell {
 	}
 }
 /// end yawning god abilities block ///
+
+export class Entity {
+	constructor(configObj) {
+		this.id = configObj.id;
+		this.name = configObj.name;
+		Entity.prototype.spellsDict = {}
+	}
+}
+
+/**
+ * Entity associated with the stalwart tenacity of adventuresome and benevolent explorers!
+ */
+export class Burrower extends Entity {
+	constructor() {
+		super({id: "burrower", name: "Burrower"});
+		Burrower.prototype.spellsDict = {
+			"warmest_hug": new WarmestHug(),
+			"woolly_shield": new WoollyShield(),
+			"burrow_furrow": new BurrowFurrow(),
+			"deep_meditation": new DeepMeditation(),
+			"shadowflare": new Shadowflare(),
+			"magma_blast": new MagmaBlast(),
+			"static_bolt": new StaticBolt()
+		}
+	}
+}
+
+/**
+ * An Entity associated with the unfathomable alienness of that which dwells in the darkness between stars above or in the molten depths of stone below.
+ */
+export class EldritchHorror extends Entity {
+	constructor() {
+		super({id: "eldritch_horror", name: "Eldritch Horror"});
+		EldritchHorror.prototype.spellsDict = {
+				"manyfold_embrace": new ManyfoldEmbrace(),
+				"primordial_mandate": new PrimordialMandate(),
+				"pestilence": new Pestilence(),
+				"darkstar": new DarkStar()
+		}
+	}
+}
+
+/**
+ * An Entity associated with the evil things our fear insists lurk in the endless possibilities of nightscape
+ */
+export class HeartOfDarkness extends Entity {
+	constructor() {
+		super({id: "heart_of_darkness", name: "Heart of Darkness"});
+		HeartOfDarkness.prototype.spellsDict = {
+				"touch_of_the_void": new TouchVoid(),
+				"consume": new Consume(),
+				"brass_lantern": new BrassLantern(),
+				"chill_beyond": new ChillBeyond()
+		}
+	}
+}
     

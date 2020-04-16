@@ -1,4 +1,5 @@
 import * as Lib from "./libifels_undum.js"
+import * as Spells from "./spellbook.js"
 
 export class Character {
 	constructor(config) {
@@ -266,19 +267,8 @@ export class Mole extends Character {
 		this.stats["pwr"] = 5;
 		this.stats["res"] = 20; // eldritch things know better than to mess with moles
 		this.stats["spd"] = 1; // the mole is not fast
-		this.entity = new Libifels.Entity({ name: "Burrower" });
-		
-		// todo: adapt to Entity w/ abls paradigm
-		// loadout of spells and abilities
-		this.incarnations["warmest_hug"] = this.libHandle.spellsDict["warmest_hug"];
-		this.incarnations["woolly_shield"] = this.libHandle.spellsDict["woolly_shield"];
-		this.incarnations["burrow_furrow"] = this.libHandle.spellsDict["burrow_furrow"];
-		this.incarnations["deep_meditation"] = this.libHandle.spellsDict["deep_meditation"];
-		this.incarnations["shadowflare"] = this.libHandle.spellsDict["shadowflare"];
-		this.incarnations["magma_blast"] = this.libHandle.spellsDict["magma_blast"];
-		this.incarnations["static_bolt"] = this.libHandle.spellsDict["static_bolt"];
+		this.entity = new Spells.Burrower();
 	}
-	
 }
 
 export class Grue extends Character {
@@ -293,7 +283,7 @@ export class Grue extends Character {
 	    this.stats["def"] = 100;
 	    this.stats["pwr"] = 100;
 	    this.stats["res"] = 25;
-	    Grue.prototype.entity = new Lib.Entity({ name: "Heart of Darkness" });
+	    Grue.prototype.entity = new Spells.HeartOfDarkness();
 	}
 	runAI(combat, role) {
         console.log("reached grue runAI fn... have fn!");
@@ -463,7 +453,7 @@ export class YawningGod extends Lib.Character {
 		this.stats["def"] = 50;
 		this.stats["pwr"] = 100;
 		this.stats["res"] = 50;
-	    YawningGod.prototype.entity = new Lib.Entity({ name: "Eldritch Horror" });
+	    YawningGod.prototype.entity = new Spells.EldritchHorror();
 	}
 	runAI(combat, role) {
         console.log("reached The Yawning God runAI fn... have fn!");

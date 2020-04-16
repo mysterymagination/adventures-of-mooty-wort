@@ -22,40 +22,6 @@ class MoleUndum extends Libifels{
 	    this.fnUsedItemHandler = function (itemName, targetName) {
 	        system.write("<p>You can't use " + itemName + " on " + targetName + "</p>");
 	    }
-	    this.spellsDict = {
-	    	/**
-	    	 * Not many realize that mole are venomous, because, being peaceful and lovey creatures, they so often choose not to employ it.  Most are willing even to die rather than risk killing, and thus will not use venom when fighting back against predators and similar common foebeasts.  When the sanctity of The Deepness is threatened and the ancient things from dark corners of mole memory stir, however...   
-	    	 */
-	        "mole_venom": new Spellbook.MoleVenom(),
-	        /**
-	         * It can do a body good to hug itself.  Go on, try it now.  This spell heals the mole by his 20+(1.5*pwr)
-	         */
-	        "warmest_hug": new Spellbook.WarmestHug(),
-	        /**
-	         * By bunching up his fur and concentrating so hard on its fundamental protections that it actually become armor, the mole is able to grant himself Mage Armor
-	         */
-	        "woolly_shield": new Spellbook.WoollyShield(),
-	        /**
-	         * With a fuzzily furrowed brow, the mole grants himself the Temper status
-	         */
-	        "burrow_furrow": new Spellbook.BurrowFurrow(),
-	        /**
-	         * By considering the complexities of The Deepness, the mole is able to grant himself Third Eye status
-	         */
-	        "deep_meditation": new Spellbook.DeepMeditation(),
-	        /**
-	         * Calling upon all the wisdom of his forebears, who were moles of course and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  High cost spell that deals moderate fire damage based on the mole's pwr and lowers the target's res.
-	         */
-	        "shadowflare": new Spellbook.Shadowflare(),
-	        /**
-	         * Thrusting his mighty digging claw into the earth and calling out for aid with all his spirit, the mole summons up a wash of magma from the planet's molten core to engulf his foe.  This spell light fire damage based on mole's pwr and burns the target.
-	         */
-	        "magma_blast": new Spellbook.MagmaBlast(),
-	        /**
-	         * Shuffling his little paws rapidly, the mole generates a bolt of static electricity; the density of his fur is quite shocking!  This deal light electric damage and also inflicts Stun.
-	         */
-	        "static_bolt": new Spellbook.StaticBolt(),
-	    }
 	}
 }
 
