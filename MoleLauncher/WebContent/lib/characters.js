@@ -9,7 +9,7 @@ export class Character {
         this.level = 10;
 
         // simple object map of categorical descriptor arrays,
-        // e.g. descriptors.body = ["fur","curvacious"]
+        // e.g. descriptors.body = ["fur","spherical"]
         this.descriptors = {
             body: {
                 size: "average",
@@ -39,29 +39,23 @@ export class Character {
             "spd": 10
         }
 
-        // a character's spells is an object-map of 'magic' ability names to Spell objects that define their effects/cost etc. The available spells are based
-        // on inherent Entity, or that have been learned by the human
-        this.spells = {};
-
-        // a character's Entity is their inherent set of talents re: Spell.  Only the human can learn Spells from any Entity.
-        this.entity = new window.Entity({ name: "unset" });
+        // a character's Entity is their Spell load-out.  
+        this.entity = undefined;
 
         this.abilities = {
-            "attack": new window.Ability({ id: "attack", name: "Attack" }),
-            "defend": new window.Ability({ id: "defend", name: "Defend" }),
-            "run": new window.Ability({ id: "run", name: "Run" })
+            "attack": new Spells.Ability({ id: "attack", name: "Attack" }),
+            "magic": new Spells.Ability({ id: "magic", name: "Magic" }),
+            "defend": new Spells.Ability({ id: "defend", name: "Defend" }),
+            "run": new Spells.Ability({ id: "run", name: "Run" })
         }
-        this.abilities["defend"].targetType = window.Ability.TargetTypesEnum.singleAlly;
-        this.abilities["run"].targetType = window.Ability.TargetTypesEnum.allAllies;
+        // todo: move these abl defs to spellbook modules
+        // todo: add a magic command 'ability' that basically just serves to open the list of known spells, per final fantasy standards
+        this.abilities["defend"].targetType = Spells.Ability.TargetTypesEnum.personal;
+        this.abilities["run"].targetType = Spells.Ability.TargetTypesEnum.allAllies;
 
-        // todo: should boilerplate functions attached to abilities, which will have to be own properties as they are subject to change from one instance to the next, somehow be on the prototype?  Maybe something like each instance has this.abl["attack"].calcDmg = this.prototype.defaultCalcDmg?
         this.abilities["attack"].calcDmg = function (sourceCharacter, targetCharacter) {
             // favor the STR since the attacker is the leading participant
-            // todo: yeesh, balance.  I've mixed inspiration from D&D and jRPGs in the stat blocks, and it's starting to shoooow.  Well anyway, CON is a fair stand-in for a DQ style DEF stat.
-            // todo: atk is essentially useless against Puck b/c he has 500 HP and will be taking 5 damage from someone with average STR simply because his CON is average.  Recall that our STR etc. atrributes are based on D&D numbers, and D&D does NOT use same for determining base damage (only modifier).  Base damage D&D-style is a whole other thing I don't wanna get into for this demo.  For demo porpoises, I'd say fudge factors of 2 for STR and 0.25 for CON should be okay.  That way we're looking at 17-ish damage to Puck and 13-ish from him. 
-            /*
-            return sourceCharacter.attributes["strength"]*2 - targetCharacter.attributes["constitution"]/4;
-            */
+            // todo: yeesh, balance.  
             return sourceCharacter.stats["atk"] * 2 - targetCharacter.stats["def"] / 4 + Math.random() * 10;
         };
         this.abilities["attack"].effect = function (sourceCharacter, targetCharacter) {
