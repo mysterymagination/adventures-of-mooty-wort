@@ -22,11 +22,34 @@ export class StatusEffect {
 } // end StatusEffect class def
 
 /**
+Defended increases a character's defensive attributes for 1 round 
+*/
+export class Defended extends StatusEffect {
+	constructor(defIncrease, resIncrease) {
+		super({id:"defended", name: "Defended", duration: 1});
+		this.isBuff = true;
+		this.descriptors.push("buff", "defense");
+		this.defIncrease = defIncrease;
+		this.resIncrease = resIncrease;
+	}
+	effect(targetChar) {
+		this.cachedDef = targetChar.stats["def"];
+	    this.cachedRes = targetChar.stats["res"]
+	    targetChar.stats["def"] += defIncrease;
+	    targetChar.stats["res"] += resIncrease;
+	}
+	reverseEffect(targetChar) {
+	    targetChar.stats["def"] = this.cachedDef;
+	    targetChar.stats["res"] = this.cachedRes;
+	}
+}
+
+/**
 Defenseless halves a character's defensive attributes 
 */
 export class Defenseless extends StatusEffect {
 	constructor() {
-		super({id:"defenseless", name: "Defenseless"});
+		super({id:"defenseless", name: "Defenseless", duration: 3});
 		this.isBuff = false;
 		this.descriptors.push("debuff", "defense");
 	}
@@ -47,7 +70,7 @@ Temper provides a simple ATK*2 for 3 turns
 */
 export class Temper extends StatusEffect {
 	constructor() {
-		super({id:"temper", name: "Temper"});
+		super({id:"temper", name: "Temper", duration: 3});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
 		this.cachedAtk = 0;
@@ -66,7 +89,7 @@ Focus provides a simple PWR*2 for 3 turns
 */
 export class Focus extends StatusEffect {
 	constructor() {
-		super({id:"focus", name:"Focus"});
+		super({id:"focus", name:"Focus", duration: 3});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
 		this.cachedPwr = 0;
@@ -85,7 +108,7 @@ Third Eye provides a PWR*4 at cost of ATK/2 and DEF/2 for 3 turns
 */
 export class ThirdEye extends StatusEffect {
 	constructor() {
-		super({id: "third_eye", name: "Third Eye"});
+		super({id: "third_eye", name: "Third Eye", duration: 3});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
 		this.cachedPwr = 0;
@@ -112,7 +135,7 @@ Regen heals a character by their RES each turn
 */
 export class Regen extends StatusEffect {
 	constructor() {
-		super({id: "regen", name: "Regen"});
+		super({id: "regen", name: "Regen", duration: 3});
 		this.isBuff = true;
 		this.descriptors.push("buff", "health");
 	}
@@ -129,7 +152,7 @@ Bloodlust quadruples STR in exchange for halving all mental attributes
 */
 export class Bloodlust extends StatusEffect {
 	constructor() {
-		super({id: "bloodlust", name: "Bloodlust"});
+		super({id: "bloodlust", name: "Bloodlust", duration: 3});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
 		this.cachedAtk = 0;
@@ -156,7 +179,7 @@ export class Bloodlust extends StatusEffect {
  */
 export class Frozen extends StatusEffect {
 	constructor() {
-		super({id: "frozen", name: "Frozen"});
+		super({id: "frozen", name: "Frozen", duration: 3});
 		this.isBuff = false;
 		this.descriptors.push("debuff", "physical", "atk", "def");
 		this.cachedAtk = 0;
@@ -189,7 +212,7 @@ Poison deals dmg each turn and halves atk/def stats
 */
 export class Poison extends StatusEffect {
 	constructor() {
-		super({id: "poison", name: "Poison"});
+		super({id: "poison", name: "Poison", duration: 3});
 		this.isBuff = false;
 		this.descriptors.push("debuff", "health");
 		this.cachedAtk = 0;
@@ -212,7 +235,7 @@ export class Poison extends StatusEffect {
  */
 export class Burn extends StatusEffect {
 	constructor() {
-		super({id: "burn", name: "Burn"});
+		super({id: "burn", name: "Burn", duration: 3});
 		this.isBuff = false;
 		this.descriptors.push("debuff", "health", "elemental,fire");
 		this.cachedAtk = 0;
@@ -232,9 +255,9 @@ export class Burn extends StatusEffect {
  */
 export class Stun extends StatusEffect {
 	constructor() {
-		super({id: "stun", name: "Stun"});
+		super({id: "stun", name: "Stun", duration: 1});
 		this.isBuff = false;
-		this.descriptors.push("debuff", "turns", "elemental,lightning");
+		this.descriptors.push("debuff", "turns", "elemental:lightning");
 	}
 }
-// todo: init vs. ongoing effect methods?
+// todo: initial vs. ongoing effect() methods?

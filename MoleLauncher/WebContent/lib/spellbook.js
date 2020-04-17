@@ -74,6 +74,66 @@ Ability.TargetTypesEnum = Object.freeze(
 		personal: 5
 	}
 )
+
+export class Attack extends Ability {
+	constructor() {
+		super({id: "attack", name: "Attack"});
+		this.targetType = Ability.TargetTypesEnum.singleTarget;
+	}
+	calcDmg(sourceCharacter, targetCharacter) {
+        // favor the STR since the attacker is the leading participant
+        // todo: yeesh, balance.  
+        return sourceCharacter.stats["atk"] * 2 - targetCharacter.stats["def"] / 4 + Math.random() * 10;
+    };
+    effect(sourceCharacter, targetCharacter) {
+        this.dmg = this.calcDmg(sourceCharacter, targetCharacter);
+        console.log(this.dmg + " dealt by Attack to " + targetCharacter.name);
+        // todo: AC? Any other miss chance?
+        targetCharacter.stats.hp -= this.dmg;
+    }
+    generateFlavorText(sourceCharacter, targetCharacter) {
+        return sourceCharacter.name + " strikes " + targetCharacter.name + " a mighty blow, dealing " + this.dmg + " damages!";
+    };
+}
+
+export class Defend extends Ability {
+	constructor() {
+		super({id: "defend", name: "Defend"});
+		this.targetType = Ability.TargetTypesEnum.personal;
+	}
+    effect(sourceCharacter) {
+        Lib.addUniqueStatusEffect(
+        		sourceCharacter, 
+        		new Defended(sourceCharacter.stats["def"], sourceCharacter.stats["res"])
+        );
+    }
+    generateFlavorText(sourceCharacter, targetCharacter) {
+        return sourceCharacter.name + " hunkers on down to defend " + sourceCharacter.getPronoun_personal_object()+"self!";
+    };
+}
+
+export class Run extends Ability {
+	constructor() {
+		super({id: "run", name: "Run"});
+	}
+	isSuccess(playerParty) {
+		// todo: something something check party spd against enemy spd to determine if they escaped successfully?
+		return false;
+	}
+	generateFlavorText(playerParty) {
+        console.log("run::generateFlavorText -- The player party consists of " + playerParty);
+        var flavorText = "";
+        for (let i = 0; i < playerParty.length; i++) {
+            if (i < playerParty.length - 1) {
+                flavorText += playerParty[i].name + ", ";
+            } else {
+                flavorText += "and " + playerParty[i].name;
+            }
+        }
+        return flavorText + " bravely attempt to turn tail and flee, but they cannot escape!";
+    }
+}
+
 export class Spell extends Ability {
 	constructor(configObj) {
 		super(configObj);

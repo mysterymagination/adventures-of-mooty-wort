@@ -38,62 +38,20 @@ export class Character {
             "res": 10,
             "spd": 10
         }
-
-        // a character's Entity is their Spell load-out.  
+        /** 
+         * a character's Entity is their Spell load-out.
+         */
         this.entity = undefined;
-
-        this.abilities = {
-            "attack": new Spells.Ability({ id: "attack", name: "Attack" }),
-            "magic": new Spells.Ability({ id: "magic", name: "Magic" }),
-            "defend": new Spells.Ability({ id: "defend", name: "Defend" }),
-            "run": new Spells.Ability({ id: "run", name: "Run" })
-        }
-        // todo: move these abl defs to spellbook modules
-        // todo: add a magic command 'ability' that basically just serves to open the list of known spells, per final fantasy standards
-        this.abilities["defend"].targetType = Spells.Ability.TargetTypesEnum.personal;
-        this.abilities["run"].targetType = Spells.Ability.TargetTypesEnum.allAllies;
-
-        this.abilities["attack"].calcDmg = function (sourceCharacter, targetCharacter) {
-            // favor the STR since the attacker is the leading participant
-            // todo: yeesh, balance.  
-            return sourceCharacter.stats["atk"] * 2 - targetCharacter.stats["def"] / 4 + Math.random() * 10;
-        };
-        this.abilities["attack"].effect = function (sourceCharacter, targetCharacter) {
-            this.dmg = this.calcDmg(sourceCharacter, targetCharacter);
-            console.log(this.dmg + " dealt by Attack to " + targetCharacter.name);
-            // todo: AC? Any other miss chance?
-            targetCharacter.stats.hp -= this.dmg; // what's multithreading, anyway? lol
-            // possible player death processing
-            if (targetCharacter.stats.hp <= 0) {
-                console.log("Attack killed " + targetCharacter.name);
-                targetCharacter.living = false;
-            }
-        };
-        this.abilities["attack"].generateFlavorText = function (sourceCharacter, targetCharacter) {
-            // todo: clearing cached dmg after it is read to flavor text? 
-            return sourceCharacter.name + " strikes " + targetCharacter.name + " a mighty blow, dealing " + this.dmg + " damages!";
-        };
-        this.abilities["defend"].effect = function (sourceCharacter, targetCharacter) {
-            /*
-            TODO: obviously this is borken af, but since Defend is traditionally useless and this is a demo, I like the irony of making it an OP move.  A better impl would be a status buff like Defended or similar that can only be added once instead of stacking endlessly.
-            */
-            targetCharacter.stats["def"] += sourceCharacter.stats["def"];
-        };
-        this.abilities["defend"].generateFlavorText = function (sourceCharacter, targetCharacter) {
-            return sourceCharacter.name + " hops in front of " + targetCharacter.name + ", valiantly using " + sourceCharacter.getPronoun_gen() + " own flesh to protect " + targetCharacter.getPronoun_obj() + "!";
-        };
-        this.abilities["run"].generateFlavorText = function (playerParty) {
-            console.log("run::generateFlavorText -- The player party consists of " + playerParty);
-            var flavorText = "";
-            for (let i = 0; i < playerParty.length; i++) {
-                if (i < playerParty.length - 1) {
-                    flavorText += playerParty[i].name + ", ";
-                } else {
-                    flavorText += "and " + playerParty[i].name;
-                }
-            }
-            return flavorText + " bravely attempt to turn tail and flee, but they cannot escape!";
-        };
+        /**
+         * String array of command presented to the player in the combat UI
+         */
+        this.commands = [
+            "Attack",
+            "Magic",
+            "Defend",
+            "Run"
+        ]
+        
 
         // affinities will be a simple String character name key -> integer affinity value mapping
         // that reflects how a given character feels about this character.
