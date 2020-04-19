@@ -148,6 +148,27 @@
 
       <hr id="turn_separator">
     </div>
+    
+    <!-- combat UI -->
+	<div id="combatModal" class="modal">
+	  <!-- Modal content -->
+	  <div class="modal-content">
+	  	<img id="combatGraphic" alt="An atavistic force of nature, the Yawning God will not sleep again" src="">
+	    <p id="combatPrompt">Are you ready?</p>
+	    <div id= "combatCommandWindow" class="modal-content">
+	    		<ul id="combatCommandList">
+	    		<!-- todo: loop through player commands and render them 
+	          as list items with onclicks that either perform the linked
+	          ability or display a different sub-modal view (e.g. spells list)-->
+	    		</ul>
+	    		<ul id="combatSpellsList">
+	    		<!-- todo: hide this guy by default, and when shown hide the commands list. -->
+	    		<!-- todo: loop through player spells and render them as list items -->
+	    		</ul>
+	    </div>
+	  </div>
+	
+	</div>
 
     <!-- Load the libraries we depend on -->
     <script type="text/javascript" src="lib/jquery-2.1.3.min.js"></script>
