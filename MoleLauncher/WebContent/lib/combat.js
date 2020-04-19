@@ -3,7 +3,7 @@
  * @param config: an object literal with properties playerParty (array of Characters controlled by player) and enemyParty (array of Characters controlled by computer).
  */
 export class Combat {
-	constructor() {
+	constructor(config) {
 		this.playerParty = config.playerParty;
         console.log("in Combat ctor, playerParty[0].name says " + this.playerParty[0].name);
         this.enemyParty = config.enemyParty;
@@ -78,9 +78,8 @@ export class Combat {
      * Handle upkeep related to a new round beginning (i.e. top of the round to ye!)
      */
 	processRoundTop() {
-        // tick down status effects
+        // tick down and process status effects for enemy party
         for (let enemyChar of this.enemyParty) {
-            var enemyCharacter = State.variables.characters[enemyChar.id];
             for (let effect of enemyCharacter.statusEffects) {
                 if (enemyCharacter.living) {
                     // process top of stateffects with variable or triggered effects per round
@@ -96,7 +95,6 @@ export class Combat {
                     else if (effect.id === "regen") {
                         window.statusEffectsDict["regen"].effect(enemyCharacter);
                     }
-
 
                     effect.tickDown();
                     if (effect.ticks <= 0) {
@@ -119,8 +117,8 @@ export class Combat {
                 }
             }
         }
+        // tick down and process status effects for player party
         for (let playerChar of this.playerParty) {
-            var playerCharacter = State.variables.characters[playerChar.id];
             for (let effect of playerCharacter.statusEffects) {
                 if (playerCharacter.living) {
                     // process top of stateffects with variable effects per round
@@ -155,7 +153,11 @@ export class Combat {
                 }
             }
         }
+        // todo: run enemy party AI such that they have chosen their moves but NOT executed them
     }// end processRoundTop fn
+	// todo: processRoundMiddle fn where the player gets info about the enemies' stances which suggests what they will do
+	//  Once player input is received, we'll process the player moves first and then the enemy moves (checking if the enemy can still
+	//  perform the action after suffering the player's wrath of course)
 	/**
 	 * Process the end of a combat round
 	 */
@@ -163,7 +165,7 @@ export class Combat {
         var dedEnemies = 0;
         var dedPlayers = 0;
         for (let enemyChar of this.enemyParty) {
-            var enemyCharacter = State.variables.characters[enemyChar.id];
+            
             for (let effect of enemyCharacter.statusEffects) {
                 // process bottom of stateffects with variable effects per round
                 if (effect.id === "terror") {
@@ -178,8 +180,6 @@ export class Combat {
             }
         }
         for (let playerChar of this.playerParty) {
-            // extract Character object from $characters
-            var playerCharacter = State.variables.characters[playerChar.id];
             for (let effect of playerCharacter.statusEffects) {
                 // process bottom of stateffects with variable effects per round
                 if (effect.id === "terror") {

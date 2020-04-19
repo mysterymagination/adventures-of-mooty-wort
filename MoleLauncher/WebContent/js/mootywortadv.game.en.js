@@ -1,6 +1,7 @@
 // imports
-import RpgMech from 'mootywortrpgmech.js';
+import MootyWortRpgMech from 'mootywortrpgmech.js';
 import MoleUndum from '../lib/libifels_undum.js';
+import Combat from '../lib/combat.js';
 
 //-----undum config-----//
 /**
@@ -46,6 +47,7 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 //-----end undum extension-----//
 
 //-----game logic-----//
+undum.game.rpgMech = new MootyWortRpgMech();
 undum.game.situations = {
     /* hardcoded link choice -- I wanna figure out how to use Undum's awesome System.writeChoices() and System.getSituationIdChoices() to gen up these same options with literal style
     <p>What's your move?</p>\
@@ -442,7 +444,7 @@ undum.game.situations = {
         "",
         {
             enter: function (character, system, from) {
-                var stringArrayChoices = ["basement1_hub", "basement3_encounter"];
+                var stringArrayChoices = ["basement1_hub", "basement3_encounter_yawning_god"];
                 if (undum.game.situations.basement2_hub.actions.bTickled) {
                     // todo: change heading to reflect rolling rat
                     system.write(
@@ -763,11 +765,17 @@ undum.game.situations = {
             tags: ["grue_gab_crown"]
         }
     ),
-    "basement3_encounter": new undum.SimpleSituation(
+    "basement3_encounter_yawning_god": new undum.SimpleSituation(
         "",
         {
             enter: function (character, system, from) {
-                // todo: boss fight hyyyyype!  Give a combat UI within the transcript main content window; I'm thinking a relatively simple table plus some text and image output divs
+                // boss fight hyyyyype!  Give a combat UI within the transcript main content window; I'm thinking a relatively simple table plus some text and image output divs?
+            	var mech = undum.game.rpgMech;
+            	mech.combatArena = new Combat({playerParty: mech.characters["mole"], enemyParty: mech.characters["yawning_god"]});
+            	// todo: what happens when you put interactible elements in your situation HTML, like a Button tag?
+            	// todo: spawn a modal pop-over div that hosts our combat UI; disallow click-away and have the modal lifetime be tied to combat lifecycle.
+            	// todo: if the player wins against the yawning god and they aggro'ed the grue, drop the modal and give transcript text about grue coming in and then raise modal for next combat!
+            	// todo: once all fights are complete, process victory condition with transcript text appropriate to choice details
             },
             optionText: "Burrow towards the Deepest Deepness"
         }
@@ -784,6 +792,9 @@ undum.game.situations = {
         </ul>"
     )
 }
+
+// todo: combat UI; I'm thinking a Situation to handle it with a custom set of HTML widgets added into the bg of the Situation (if that's possible)
+//  (iframe?) or maybe more simply a div that we can shove into the transcript UI someplace or maybe overlay on top of it like a modal.
 
 /* The Id of the starting situation. */
 undum.game.start = "main";

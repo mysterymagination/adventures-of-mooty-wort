@@ -51,7 +51,6 @@ export class Character {
             "Defend",
             "Run"
         ]
-        
 
         // affinities will be a simple String character name key -> integer affinity value mapping
         // that reflects how a given character feels about this character.

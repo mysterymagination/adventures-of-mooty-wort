@@ -1,7 +1,7 @@
 // imports
 import MoleUndum from '../lib/libifels_undum.js';
 import * as Characters from '../lib/characters.js';
-
+import Combat from '../lib/combat.js';
 /*
  * todo: Add Lunar inspired telegraph hint (1:many, but not all) and induction (many similar:1) systems:
  * 1. (hint) "The grue sharpens its claws in a sliver of moonlight" -> he might use Quicksilver Cut, Shadow Slash, or Rake.
@@ -15,7 +15,6 @@ import * as Characters from '../lib/characters.js';
  * Class responsible for defining the RPG mechanics of the Mooty Wort adventure and running combat
  */
 class MootyWortRpgMech {
-	
 	constructor() {
 		// instantiate library
 		var lib = new MoleUndum();
@@ -26,6 +25,10 @@ class MootyWortRpgMech {
 		}
 		// establish Player party
 	    this.party = [this.characters["mole"]];
+		/**
+		 * Current combat encounter manager
+		 */
+		this.combatArena = undefined;
 	}
 	// todo: combat and other setup
 }
