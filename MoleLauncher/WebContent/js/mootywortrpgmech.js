@@ -31,5 +31,8 @@ class MootyWortRpgMech {
 		this.combatArena = undefined;
 	}
 	// todo: combat and other setup
+	enterCombat(configObj) {
+		// todo: populate the combatCommandList HTML UL with LI elements
+	}
 }
 export {MootyWortRpgMech};
