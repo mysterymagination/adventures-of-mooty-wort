@@ -45,6 +45,9 @@ class MootyWortRpgMech {
 				switch(command) {
 				case "Attack":
 					// todo: at this point we want the UI to direct the player to choose a target
+					//  That could entail making another text list to choose through, but it would be
+					//  preferable to just let them click on an enemy graphic; the gfx could have its own onclick
+					//  that informs combat a target selection has been made iff combat is in a state waiting for target selection.
 					// todo: indicate player turn complete
 					break;
 				case "Magic":
