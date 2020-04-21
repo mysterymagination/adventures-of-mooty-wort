@@ -32,7 +32,80 @@ class MootyWortRpgMech {
 	}
 	// todo: combat and other setup
 	enterCombat(configObj) {
-		// todo: populate the combatCommandList HTML UL with LI elements
+		populatePlayerCommandList();
+	}
+	/**
+	 * Populate the command list UI with player command strings
+	 */
+	populatePlayerCommandList() {
+		var combatCommandList = document.getElementById("combatCommandList");
+		for(let command in this.characters["mole"].commands) {
+			var commandListItem = document.createElement("li");
+			commandListItem.onclick = () => {
+				switch(command) {
+				case "Attack":
+					// todo: at this point we want the UI to direct the player to choose a target
+					// todo: indicate player turn complete
+					break;
+				case "Magic":
+					swapElementDisplayVisibility(combatCommandList.id, "combatSpellsList");
+					populatePlayerSpellList();
+					break;
+				case "Defend":
+					// todo: run defend effect
+					// todo: indicate player turn complete
+					break;
+				case "Run":
+					combatLogPrint("There is no escape!");
+					break;
+				}
+			}
+			var commandText = document.createTextNode(command);
+			commandListItem.appendChild(commandText);
+			combatCommandList.appendChild(commandListItem);
+		}
+	}
+	/**
+	 * Populate the spells list UI with the player's spell names
+	 */
+	populatePlayerSpellList() {
+		var combatSpellsList = document.getElementById("combatSpellsList");
+		var playerSpells = this.characters["mole"].entity.spellsDict;
+		for(const [spellId, spell] of playerSpells) {
+			var spellListItem = document.createElement("li");
+			spellListItem.onclick = () => {
+				// todo: allow player to choose target if appropriate
+				// todo: trigger spell effect with source and target as appropriate
+				//spell.effect(this.characters["mole"], targetCharacter);
+				// todo: display flavor text in combat log
+			}
+			var spellText = document.createTextNode(spell.name);
+			spellListItem.appendChild(spellText);
+			combatSpellsList.appendChild(spellListItem);
+		}
+	}
+	/**
+	 * Creates a new \<p\> tag, puts the given text in it, and appends it to the combat log
+	 * @param logString a string to append to the log
+	 */
+	combatLogPrint(logString) {
+		var combatLog = document.getElementById("combatLog");
+		var logContainer = document.createElement("p");
+		var logText = document.createTextNode(logString);
+		logContainer.appendChild(logText);
+		combatLog.appendChild(logContainer);
+	}
+	/**
+	 * Hides one element and makes another visible by setting
+	 * their style.display properties to none and block respectively.
+	 * @param hideElementId the id of the element to hide
+	 * @param showElementId the id of the element to show
+	 */
+	swapElementDisplayVisibility(hideElementId, showElementId) {
+		var hideElement = document.getElementById(hideElementId);
+		hideElement.style.display = none;
+		var showElement = document.getElementById(showElementId);
+		showElement.style.display = "block";
 	}
 }
 export {MootyWortRpgMech};

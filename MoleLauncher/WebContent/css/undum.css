@@ -374,3 +374,7 @@ img.float_left {
     text-align: center;
     border: 3px solid green;
 }
+
+.scrollable {
+	overflow: auto;
+}
