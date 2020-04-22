@@ -32,10 +32,17 @@ class MootyWortRpgMech {
 	}
 	/**
 	 * Prepares combat UI and manages Combat object
+	 * @param configObj an object literal of the form
+	 * {playerParty: [playerCharacter1, playerCharacter2...], enemyParty: [enemyCharacter1, enemyCharacter2...]}
+	 * 
 	 */
 	enterCombat(configObj) {
+		// UI setup
 		populatePlayerCommandList();
-		// todo: run Combat obj gamelogic  
+		// todo: run Combat obj gamelogic
+		// gamelogic
+		var combatDriver = new Combat(configObj.playerParty, configObj.enemyParty);
+		combatDriver.turnOwner = "mole";
 	}
 	/**
 	 * Populate the command list UI with player command strings
@@ -44,6 +51,7 @@ class MootyWortRpgMech {
 		var combatCommandList = document.getElementById("combatCommandList");
 		for(let command in this.characters["mole"].commands) {
 			var commandListItem = document.createElement("li");
+			commandListItem.className = "commandButton";
 			commandListItem.onclick = () => {
 				switch(command) {
 				case "Attack":
@@ -79,6 +87,7 @@ class MootyWortRpgMech {
 		var playerSpells = this.characters["mole"].entity.spellsDict;
 		for(const [spellId, spell] of playerSpells) {
 			var spellListItem = document.createElement("li");
+			spellListItem.className = "commandButton";
 			spellListItem.onclick = () => {
 				// todo: allow player to choose target if appropriate
 				// todo: trigger spell effect with source and target as appropriate

@@ -187,8 +187,12 @@ export class Frozen extends StatusEffect {
 		this.isBurst = false;
 	}
 	/**
-	 * Frozen's effect cuts atk and def in half for whatever duration
-	 * remains iff the afflicted chooses to burst out.
+	 * Frozen's effect divides atk and def by whatever duration
+	 * remains +1 for whatever duration remains iff the afflicted chooses to burst out.
+	 * e.g. breaking out with...
+	 * 3 turns remaining => atk and def reduced to 1/4
+	 * 2 turns remaining => ... 1/3
+	 * 1 turn remaining => ... 1/2
 	 */
 	effect(targetChar) {
 		// record that afflicted char chose to burst out

@@ -7,7 +7,7 @@ class Libifels {
      * @param array the array we're modifying
      * @param element the string (or object whose string rep) will be searched for using Array.prototype.includes()
      */
-    addUniqueStringToArray(array, element) {
+	static addUniqueStringToArray(array, element) {
         if (!array.includes(element)) {
             array.push(element);
         }
@@ -18,7 +18,7 @@ class Libifels {
      * @param element the candidate to be pushed to the array
      * @param filterFn the boolean function used by Array.prototype.some() as the criterion in determining if any current elements of the array already match the incoming element
      */
-    addUniqueToArray(array, element, filterFn) {
+    static addUniqueToArray(array, element, filterFn) {
         if (!array.some(filterFn)) {
             array.push(element);
         }
@@ -26,7 +26,7 @@ class Libifels {
     /**
     Get a random Character object from an array of Character objects that can't have the given Character ID
     */
-    randoCharacterFromArrayExceptId(characterArray, exceptCharacterId) {
+    static randoCharacterFromArrayExceptId(characterArray, exceptCharacterId) {
         var eligibleCharacters = characterArray.filter(characterUnderTest => characterUnderTest.id != exceptCharacterId);
         var unluckyIndex = Math.floor(Math.random() * eligibleCharacters.length);
         return eligibleCharacters[unluckyIndex];
@@ -37,7 +37,7 @@ class Libifels {
     @param character the recipient of the effect
     @param effect the status effect to apply
     */
-    addUniqueStatusEffect(character, effect) {
+    static addUniqueStatusEffect(character, effect) {
         var statuses = character.statusEffects;
         if (!statuses.some(effectUnderTest => effect.id === effectUnderTest.id)) {
             statuses.push(effect);
@@ -51,7 +51,7 @@ class Libifels {
     @param targetCharacter the recipient of the effect
     @param effect the status effect to apply
     */
-    addUniqueStatusEffectWithSource(sourceCharacter, targetCharacter, effect) {
+    static addUniqueStatusEffectWithSource(sourceCharacter, targetCharacter, effect) {
         var statuses = targetCharacter.statusEffects;
         if (!statuses.some(effectUnderTest => effect.id === effectUnderTest.id)) {
             statuses.push(effect);
@@ -64,7 +64,7 @@ class Libifels {
     @param effect the StatusEffect we're looking for
     @return true if the status effect is found, false otherwise
     */
-    hasStatusEffect(character, effect) {
+    static hasStatusEffect(character, effect) {
         var statuses = character.statusEffects;
         if (statuses.some(effectUnderTest => effect.id === effectUnderTest.id)) {
             return true;
@@ -78,7 +78,7 @@ class Libifels {
     @param effectId the ID of the StatusEffect we're looking for
     @return the status effect instance if found, otherwise undefined
     */
-    getStatusEffectById(character, effectId) {
+    static getStatusEffectById(character, effectId) {
         var statuses = character.statusEffects;
         return statuses.find(effectUnderTest => effectId === effectUnderTest.id);
     }
@@ -87,7 +87,7 @@ class Libifels {
      * @param characterArray an array of Character objects
      * @param characterID the string id of a searched-for Character object
      */
-    findCharacterIndex(characterArray, characterID) {
+    static findCharacterIndex(characterArray, characterID) {
         return characterArray.findIndex(character => {
             return character.id === characterID;
         });
@@ -96,7 +96,7 @@ class Libifels {
     Adds this character to the $party iff they are not already a member
     @param character Character object to be added
     */
-    addUniqueCharacterToParty(character) {
+    static addUniqueCharacterToParty(character) {
         var party = State.variables.party;
         if (!party.some(characterUnderTest => character.id === characterUnderTest.id)) {
             party.push(character);
@@ -105,13 +105,13 @@ class Libifels {
     /**
     Returns a Character object from the array whose id matches the given id
     */
-    findCharacterInArrayById(characterId, array) {
+    static findCharacterInArrayById(characterId, array) {
         return array.find(characterUnderTest => characterId === characterUnderTest.id);
     }
     /**
     Returns true if any Character object from the array has an id that matches the given id
     */
-    isCharacterWithIdInArray(characterId, array) {
+    static isCharacterWithIdInArray(characterId, array) {
         return array.some(characterUnderTest => characterId === characterUnderTest.id);
     }
     /**
@@ -119,7 +119,7 @@ class Libifels {
     @param character the Character to be removed from the array
     @param characterArray the array of Characters
     */
-    removeCharacterFromArray(character, characterArray) {
+    static removeCharacterFromArray(character, characterArray) {
         // find the index of the target character in the array
         var index = this.findCharacterIndex(characterArray, character.id);
         // splice the character out of the array; this modified the given array
@@ -129,7 +129,7 @@ class Libifels {
      * Finds the last living character in the given array (first living character starting from back of the array)
      * @param characterArray array of Character objects
      */
-    findLastLivingCharacter(characterArray) {
+    static findLastLivingCharacter(characterArray) {
         for (let index = characterArray.length - 1; index >= 0; index--) {
         	let currentCharacter = characterArray[index];
             console.log("findLastLivingCharacter; character with id " + currentCharacter.id + " is " + (currentCharacter.living ? "living" : "dead"));
@@ -142,7 +142,7 @@ class Libifels {
      * Finds the first living character in the given array (first living character starting from front of the array)
      * @param characterArray array of Character objects
      */
-    findFirstLivingCharacter(characterArray) {
+    static findFirstLivingCharacter(characterArray) {
         for (let index = 0; index < characterArray.length; index++) {
             let currentCharacter = characterArray[index];
             console.log("findFirstLivingCharacter; character with id " + currentCharacter.id + " is " + (currentCharacter.living ? "living" : "dead"));
@@ -157,7 +157,7 @@ class Libifels {
      * @param characterArray array of Character objects
      * @param startingIndex the index after which we will look for a living character
      */
-    findFirstLivingCharacter(characterArray, startingIndex) {
+    static findFirstLivingCharacter(characterArray, startingIndex) {
         for (let index = startingIndex; index < characterArray.length; index++) {
             let currentCharacter = characterArray[index];
             console.log("findFirstLivingCharacter; character with id " + currentCharacter.id + " is " + (currentCharacter.living ? "living" : "dead"));
@@ -169,20 +169,20 @@ class Libifels {
     /**
      * simulate a d20 roll
      */ 
-    rollD20() {
+    static rollD20() {
         return Math.floor(Math.random() * 20) + 1;
     }
     /** 
      * simulate a dN roll, where N is given by sides param
      * @param sides an integer number of dice sides e.g. 20 for a d20
      */
-    rollDie(sides) {
+    static rollDie(sides) {
         return Math.floor(Math.random() * sides) + 1;
     }
     /** 
      * simulate a d% roll
      */
-    rollPercentage() {
+    static rollPercentage() {
         return Math.floor(Math.random() * 100) + 1;
     }
     /**
@@ -190,7 +190,7 @@ class Libifels {
      * @param character a Character object from whom the given status is to be removed
      * @param effect a StatusEffect object to remove from the given character
      */
-    removeStatusEffect(character, effect) {
+    static removeStatusEffect(character, effect) {
         var effectIndex = character.statusEffects.findIndex(element => {
             return element.id === effect.id;
         });

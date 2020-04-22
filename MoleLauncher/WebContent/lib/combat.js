@@ -1,3 +1,5 @@
+import Libifels from "./libifels.js";
+
 /**
  * Combat object takes two arrays of Character objects, the player's party and the enemy's party.
  * @param config: an object literal with properties playerParty (array of Characters controlled by player) and enemyParty (array of Characters controlled by computer).
@@ -30,6 +32,14 @@ export class Combat {
 
         // the text feedback to the user re: the state of combat
         this.combatLogContent = "What will " + playerParty[this.turnOwner].name + " do?";
+	}
+	/**
+	 * Process current state and advance Combat state machine; this method will be called
+	 * multiple times by various actors, including user interaction handler functions.  As such,
+	 * its behavior is entirely dependent on the current Combat instance state.
+	 */
+	battleStateMachine() {
+		// todo: follow example of Fuzziolump PlayerCombatDisplay passage for state machine handlinmg
 	}
 	/**
 	 * Selects an ability name pseudo-randomly based on the given probability weights
@@ -82,18 +92,8 @@ export class Combat {
         for (let enemyChar of this.enemyParty) {
             for (let effect of enemyCharacter.statusEffects) {
                 if (enemyCharacter.living) {
-                    // process top of stateffects with variable or triggered effects per round
-                    if (effect.id === "terror") {
-                        // terror's effect will roll percentage, with 35% to skip this turn
-                        if (effect.effect()) {
-                            enemyCharacter.combatFlags |= window.Character.CombatFlags.FLAG_SKIP_TURN;
-                        }
-                    }
-                    else if (effect.id === "poison") {
-                        enemyCharacter.stats["hp"] -= enemyCharacter.stats["maxHP"] * 0.1;
-                    }
-                    else if (effect.id === "regen") {
-                        window.statusEffectsDict["regen"].effect(enemyCharacter);
+                    if (effect.id === "poison") {
+                        enemyCharacter.stats["hp"] -= effect.psnDmg;
                     }
 
                     effect.tickDown();
@@ -104,7 +104,7 @@ export class Combat {
                         // want to re-use this statuseffect instance
                         effect.ticks = effect.duration;
                         // remove the status effect from the character
-                        window.removeStatusEffect(enemyCharacter, effect);
+                        Libifels.removeStatusEffect(enemyCharacter, effect);
                     }
                 } else {
                     // reverse the effect now that char is dead
@@ -113,7 +113,7 @@ export class Combat {
                     // want to re-use this statuseffect instance
                     effect.ticks = effect.duration;
                     // remove the status effect from the character
-                    window.removeStatusEffect(enemyCharacter, effect);
+                    Libifels.removeStatusEffect(enemyCharacter, effect);
                 }
             }
         }
@@ -121,15 +121,9 @@ export class Combat {
         for (let playerChar of this.playerParty) {
             for (let effect of playerCharacter.statusEffects) {
                 if (playerCharacter.living) {
-                    // process top of stateffects with variable effects per round
-                    if (effect.id === "terror") {
-                        // terror's effect will roll percentage, with 35% to skip this turn
-                        if (effect.effect()) {
-                            playerCharacter.combatFlags |= window.Character.CombatFlags.FLAG_SKIP_TURN;
-                        }
-                    }
-                    else if (effect.id === "regen") {
-                        window.statusEffectsDict["regen"].effect(playerCharacter);
+                	// todo: frozen processing: player needs to choose whether to break free
+                	if (effect.id === "poison") {
+                        playerCharacter.stats["hp"] -= effect.psnDmg;
                     }
 
                     effect.tickDown();
@@ -140,7 +134,7 @@ export class Combat {
                         // want to re-use this statuseffect instance
                         effect.ticks = effect.duration;
                         // remove the status effect from the character
-                        window.removeStatusEffect(playerCharacter, effect);
+                        Libifels.removeStatusEffect(playerCharacter, effect);
                     }
                 } else {
                     // reverse the effect now that character is dead
@@ -149,7 +143,7 @@ export class Combat {
                     // want to re-use this statuseffect instance
                     effect.ticks = effect.duration;
                     // remove the status effect from the character
-                    window.removeStatusEffect(playerCharacter, effect);
+                    Libifels.removeStatusEffect(playerCharacter, effect);
                 }
             }
         }
@@ -165,15 +159,6 @@ export class Combat {
         var dedEnemies = 0;
         var dedPlayers = 0;
         for (let enemyChar of this.enemyParty) {
-            
-            for (let effect of enemyCharacter.statusEffects) {
-                // process bottom of stateffects with variable effects per round
-                if (effect.id === "terror") {
-                    // clear the FLAG_SKIP_TURN flag
-                    enemyCharacter.combatFlags &= ~window.Character.CombatFlags.FLAG_SKIP_TURN;
-                }
-            }
-
             // check for death
             if (enemyCharacter.stats.hp <= 0) {
                 dedEnemies++;
@@ -182,10 +167,7 @@ export class Combat {
         for (let playerChar of this.playerParty) {
             for (let effect of playerCharacter.statusEffects) {
                 // process bottom of stateffects with variable effects per round
-                if (effect.id === "terror") {
-                    // clear the FLAG_SKIP_TURN flag
-                    playerCharacter.combatFlags &= ~window.Character.CombatFlags.FLAG_SKIP_TURN;
-                }
+                // todo: frozen
             }
 
             // check for death
@@ -210,12 +192,17 @@ export class Combat {
 } // end Combat class
 Combat.PlayerTurnState = Object.freeze(
 	{
-	    	selectAbility: 1
+		selectTarget: 1, 
+		selectAbility: 2,
+		displayResults: 3,
+		selectEnemyTarget: 4,
+		selectAllyTarget: 5
 	}
 );
 Combat.EnemyTurnState = Object.freeze(
 	{
-    		runAI: 1
+		runAI: 1, 
+		displayResults: 2
     }
 );
 Combat.CombatResultEnum = Object.freeze(
