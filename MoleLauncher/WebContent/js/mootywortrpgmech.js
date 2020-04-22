@@ -30,9 +30,12 @@ class MootyWortRpgMech {
 		 */
 		this.combatArena = undefined;
 	}
-	// todo: combat and other setup
+	/**
+	 * Prepares combat UI and manages Combat object
+	 */
 	enterCombat(configObj) {
 		populatePlayerCommandList();
+		// todo: run Combat obj gamelogic  
 	}
 	/**
 	 * Populate the command list UI with player command strings
