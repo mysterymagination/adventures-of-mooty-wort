@@ -1,4 +1,5 @@
 import Libifels from "./libifels.js";
+import Ability from "./spellbook.js"
 
 /**
  * Combat object takes two arrays of Character objects, the player's party and the enemy's party.
@@ -15,17 +16,14 @@ export class Combat {
         this.enemyTurnState = Combat.EnemyTurnState.runAI;
         this.combatResult = Combat.CombatResultEnum.pending;
 
-        // tracks the currently selected player ability
-        this.currentSelectedAbility = undefined;
+        // tracks the currently selected player ability id
+        this.currentSelectedAbilityId = "";
 
         // tracks the turn as either player or enemy group
         this.turnGroup = "player";
 
         // tracks the actual character id whose turn it is
         this.turnOwner = "player";
-
-        // tracks the currently selected ability for the current turn owner
-        this.abilityName = "";
 
         // tracks the target of the current ability
         this.currentTargetCharacter = undefined;
@@ -39,7 +37,24 @@ export class Combat {
 	 * its behavior is entirely dependent on the current Combat instance state.
 	 */
 	battleStateMachine() {
+		// todo: since we want the combat log to show the enemy telegraphing before the player chooses their move, 
+		//  we'll need to call runAI() at the top of a combat round, I guess?
+		// todo: where should processRoundTop() and processRoundBottom() be called?
 		// todo: follow example of Fuzziolump PlayerCombatDisplay passage for state machine handlinmg
+		if(this.turnGroup === "player") {
+			if(this.playerTurnState === Combat.PlayerTurnState.selectAbility) {
+				let characterHandle = Libifels.findCharacterById(this.playerParty, this.turnOwner);
+				// in this state we should be coming here from having selected an ability,
+				//  this means that we just need to advance to state selectTarget iff the abl
+				//  is singleTarget, else go on to displayResults
+				let selectedAbility = characterHandle.entity.spellsDict[this.currentSelectedAbilityId];
+				if(selectedAbility.targetType === Ability.TargetTypesEnum.singleTarget) {
+					this.playerTurnState = Combat.PlayerTurnState.selectTarget;
+				} else {
+					this.playerTurnState = Combat.PlayerTurnState.displayResults;
+				}
+			}
+		}
 	}
 	/**
 	 * Selects an ability name pseudo-randomly based on the given probability weights
@@ -192,11 +207,9 @@ export class Combat {
 } // end Combat class
 Combat.PlayerTurnState = Object.freeze(
 	{
-		selectTarget: 1, 
-		selectAbility: 2,
-		displayResults: 3,
-		selectEnemyTarget: 4,
-		selectAllyTarget: 5
+		selectAbility: 1,
+		selectTarget: 2, 
+		displayResults: 3
 	}
 );
 Combat.EnemyTurnState = Object.freeze(

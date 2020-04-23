@@ -15,7 +15,7 @@ export class Ability {
 
 		// metadata about who the ability targets, namely you, all allies,
 		// one enemy, or all enemies.
-		this.targetType = Ability.TargetTypesEnum.singleEnemy;
+		this.targetType = Ability.TargetTypesEnum.singleTarget;
 
 		/**
 		 * The friendly property describes whether an ability is considered
@@ -67,11 +67,10 @@ export class Ability {
 }
 Ability.TargetTypesEnum = Object.freeze(
 	{
-		singleEnemy: 1,
+		singleTarget: 1,
 		allEnemies: 2,
-		singleAlly: 3,
-		allAllies: 4,
-		personal: 5
+		allAllies: 3,
+		personal: 4
 	}
 )
 
@@ -148,7 +147,7 @@ export class MoleVenom extends Spell {
 		super({id:"mole_venom", name: "Mole Venom"});
 		// these fields are meant to be identical across all instances of Mole Venom,
 		// so stick 'em on the prototype
-		MoleVenom.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		MoleVenom.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		MoleVenom.prototype.cost = { "mp": 15 };
 	}
 	// methods are placed on the object prototype and shared between all instances
@@ -177,7 +176,7 @@ Warmest hug heals self (or self and other) with ATK; if healing a target other t
 export class WarmestHug extends Spell {
 	constructor() {
 		super({id: "warmest_hug", name: "Warmest Hug"});
-		WarmestHug.prototype.targetType = Ability.TargetTypesEnum.singleAlly;
+		WarmestHug.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		WarmestHug.prototype.cost = { "mp": 20 };
 	}
 	calcDmg(sourceChar, targetChar) {
@@ -206,7 +205,7 @@ Woolly Shield raises target's DEF by wielder's RES+DEF
 export class WoollyShield extends Spell {
 	constructor() {
 		super({id: "woolly_shield", name: "Woolly Shield"});
-		WoollyShield.prototype.targetType = Ability.TargetTypesEnum.singleAlly;
+		WoollyShield.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		WoollyShield.prototype.cost = { "mp": 30 };
 	}
 	calcDmg(sourceChar, targetChar) {
@@ -270,7 +269,7 @@ export class DeepMeditation extends Spell {
 export class ShadowFlare extends Spell {
 	constructor() {
 		super({ id: "shadowflare", name: "Shadowflare" });
-		ShadowFlare.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		ShadowFlare.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		ShadowFlare.prototype.cost = { "mp": 50 };
 	}
 	calcDmg(sourceChar, targetChar) {
@@ -294,7 +293,7 @@ export class ShadowFlare extends Spell {
 export class MagmaBlast extends Spell {
 	constructor() {
 		super({ id: "magma_blast", name: "Magma Blast" });
-		MagmaBlast.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		MagmaBlast.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		MagmaBlast.prototype.cost = { "mp": 25 };
 	}
 	calcDmg(sourceChar, targetChar) {
@@ -320,7 +319,7 @@ export class MagmaBlast extends Spell {
 export class StaticBolt extends Spell {
 	constructor() {
 		super({ id: "static_bolt", name: "Static Bolt" });
-		StaticBolt.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		StaticBolt.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		StaticBolt.prototype.cost = { "mp": 30 };
 	}
 	calcDmg(sourceChar, targetChar) {
@@ -346,7 +345,7 @@ export class StaticBolt extends Spell {
 export class TouchVoid extends Spell {
 	constructor() {
 		super({ id: "touch_of_the_void", name: "Touch of the Void" });
-		TouchVoid.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		TouchVoid.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		TouchVoid.prototype.cost = { "mp": 0, "hp": 15 };
 	}
 	/**
@@ -392,7 +391,7 @@ export class TouchVoid extends Spell {
 export class Consume extends Spell {
 	constructor() {
 		super({ id: "consume", name: "Insatiable Consumption" });
-		Consume.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		Consume.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		Consume.prototype.cost = { "mp": 25 };
 	}
 	effect(sourceChar, targetChar) {
@@ -419,7 +418,7 @@ export class Consume extends Spell {
 export class BrassLantern extends Spell {
 	constructor() {
 		super({ id: "brass_lantern", name: "Brass Lantern" });
-		BrassLantern.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		BrassLantern.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		BrassLantern.prototype.cost = { "mp": 10 };
 	}
 	effect(sourceChar, targetChar) {
@@ -475,7 +474,7 @@ export class ChillBeyond extends Spell {
 export class ManyFoldEmbrace extends Spell {
 	constructor() {
 		super({ id: "manyfold_embrace", name: "Manyfold Embrace" });
-		ManyFoldEmbrace.prototype.targetType = Ability.TargetTypesEnum.singleEnemy;
+		ManyFoldEmbrace.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		ManyFoldEmbrace.prototype.cost = { "mp": 20 };
 		// default this instance's cost to the common element
 		this.cost = Object.assign(this.cost, ManyFoldEmbrace.prototype.cost);
@@ -539,7 +538,7 @@ export class Pestilence extends Spell {
 export class PrimordialMandate extends Spell {
 	constructor() {
 		super({ id: "primordial_mandate", name: "Primordial Mandate" });
-		PrimordialMandate.prototype.targetType = Ability.TargetTypesEnum.singleAlly;
+		PrimordialMandate.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		PrimordialMandate.prototype.cost = { "mp": 15 };
 	}
 	effect(sourceChar, targetChar) {

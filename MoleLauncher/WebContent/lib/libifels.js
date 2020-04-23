@@ -88,9 +88,15 @@ class Libifels {
      * @param characterID the string id of a searched-for Character object
      */
     static findCharacterIndex(characterArray, characterID) {
-        return characterArray.findIndex(character => {
-            return character.id === characterID;
-        });
+        return characterArray.findIndex(character => character.id === characterID);
+    }
+    /** 
+     * find a particular Character by id in a Character array
+     * @param characterArray an array of Character objects
+     * @param characterID the string id of a searched-for Character object
+     */
+    static findCharacterById(characterArray, characterID) {
+        return characterArray.find(character => character.id === characterID);
     }
     /**
     Adds this character to the $party iff they are not already a member
