@@ -39,7 +39,6 @@ class MootyWortRpgMech {
 	enterCombat(configObj) {
 		// UI setup
 		populatePlayerCommandList();
-		// todo: run Combat obj gamelogic
 		// gamelogic
 		var combatDriver = new Combat(configObj.playerParty, configObj.enemyParty);
 		combatDriver.turnOwner = "mole";

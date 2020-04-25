@@ -56,8 +56,29 @@ export class Combat {
 				} else {
 					this.playerTurnState = Combat.PlayerTurnState.displayResults;
 				}
+			} else if(this.playerTurnState === Combat.PlayerTurnState.selectTarget) {
+				// here we should be coming from having bopped a target image in the UI
+				//  so we ready to display results
+				this.playerTurnState = Combat.PlayerTurnState.displayResults;
+			} else if(this.playerTurnState === Combat.PlayerTurnState.displayResults) {
+				// reset player turn state
+				this.playerTurnState = Combat.PlayerTurnState.selectAbility;
+				
+				/*
+				 * since there's no interaction for the enemy AI, we can just
+				 * execute the action and update UI with the results without stepping through
+				 * any enemy turn group states.
+				 
+				// move along to enemy group, where we actually process the AI's chosen action
+				// assuming they can still perform it
+				this.turnGroup = "enemy";
+				*/
+				
+				// without needing enemy turn states, we'll just move along to processRoundBottom(),
+				// where enemy action chosen in processRoundTop() will be executed iff it is still viable.
+				this.processRoundBottom();
 			}
-		}
+		} // end turn group player 
 	}
 	/**
 	 * Selects an ability name pseudo-randomly based on the given probability weights
@@ -107,6 +128,10 @@ export class Combat {
      */
 	processRoundTop() {
         // tick down and process status effects for enemy party
+		// todo: death processing from status effects 
+		// todo: combat log report re: status effects
+		// todo: frozen status processing, specifically graying out command UI if the player is frozen
+		//  and adding a command option to break out
         for (let enemyChar of this.enemyParty) {
             for (let effect of enemyCharacter.statusEffects) {
                 if (enemyCharacter.living) {
