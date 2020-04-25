@@ -40,6 +40,9 @@ export class Combat {
 		// todo: since we want the combat log to show the enemy telegraphing before the player chooses their move, 
 		//  we'll need to call runAI() at the top of a combat round, I guess?
 		// todo: where should processRoundTop() and processRoundBottom() be called?
+		//  I guess it should be at origin and terminal nodes of combat, i.e. call
+		//  processRoundTop() when we first create combat and after calling processRoundBottom when we transition from
+		//  running Combat.EnemyTurnState.displayResults into Combat.PlayerTurnState.selectAbility?
 		// todo: follow example of Fuzziolump PlayerCombatDisplay passage for state machine handlinmg
 		if(this.turnGroup === "player") {
 			if(this.playerTurnState === Combat.PlayerTurnState.selectAbility) {
