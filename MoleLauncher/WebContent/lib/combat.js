@@ -14,7 +14,7 @@ export class Combat {
         // metadata about what state the player's turn is in.  This is necessary to help route the UI around the various actions a human player will need to input
         this.playerTurnState = Combat.PlayerTurnState.selectAbility;
         this.enemyTurnState = Combat.EnemyTurnState.runAI;
-        this.combatResult = Combat.CombatResultEnum.pending;
+        this.combatResult = undefined;
 
         // tracks the currently selected player ability id
         this.currentSelectedAbilityId = "";
@@ -190,48 +190,89 @@ export class Combat {
                 }
             }
         }
+        // check for victory/defeat condition
+        checkTerminalConditions();
+        if(this.combatResult !== undefined) {
+        	handleCombatResult();
+        } else {
+        	// todo: check for any status effects that might prevent enemy from acting
+        	for(let enemy in this.enemyParty) {
+        		let chosenAbility = enemy.runAI();
+        		// todo: write method that draws from ability id and desc to come up
+        		//  with a good pseudo-random telegraph text, which is then displayed...
+        		//  this may need to be done at the viewcontroller level or the viewcontroller
+        		//  receives a string telegraph for display.
+        		telegraphAction(chosenAbility);
+        	}
+        }
         // todo: run enemy party AI such that they have chosen their moves but NOT executed them
     }// end processRoundTop fn
-	// todo: processRoundMiddle fn where the player gets info about the enemies' stances which suggests what they will do
-	//  Once player input is received, we'll process the player moves first and then the enemy moves (checking if the enemy can still
-	//  perform the action after suffering the player's wrath of course)
 	/**
 	 * Process the end of a combat round
 	 */
 	processRoundBottom() {
-        var dedEnemies = 0;
+		checkTerminalConditions();
+        if(this.combatResult !== undefined) {
+        	handleCombatResult();
+        } else {
+        	// begin a new round
+        	processRoundTop();
+        }
+    }// end processRoundBottom()
+	handleCombatResult() {
+		if(this.combatResult !== undefined) {
+        	// combat over scenario
+			switch(this.combatResult) {
+	        case Combat.CombatResultEnum.playerVictory:
+	        	// todo: display player victory message and battle exit UI
+	        	break;
+	        case Combat.CombatResultEnum.enemyVictory:
+	        	// todo: display player defeat message and game over UI
+	        	break;
+	        case Combat.CombatResultEnum.draw:
+	        	// todo: display draw message and battle exit UI
+	        	break;
+	        }
+        } else {
+        	throw "handleCombatResult called with undefined combatResult";
+        }
+	}
+	/**
+	 * Step through player party and enemy party to look for fully dead parties
+	 */
+	checkTerminalConditions() {
+		var dedEnemies = 0;
         var dedPlayers = 0;
+        for (let playerChar of this.playerParty) {
+            // check for death
+            if (playerCharacter.stats.hp <= 0) {
+                dedPlayers++;
+            }
+        }
         for (let enemyChar of this.enemyParty) {
             // check for death
             if (enemyCharacter.stats.hp <= 0) {
                 dedEnemies++;
             }
         }
-        for (let playerChar of this.playerParty) {
-            for (let effect of playerCharacter.statusEffects) {
-                // process bottom of stateffects with variable effects per round
-                // todo: frozen
-            }
-
-            // check for death
-            if (playerCharacter.stats.hp <= 0) {
-                dedPlayers++;
-            }
-        }
-
-        // check victory conditions -- if one is met, we do not need another turn so return false.  Else, combat continues so we return true.
-        // todo: need a way to clear conditions and/or reset stats as desired at end of combat
+		// check victory conditions 
         console.log("Dead players: " + dedPlayers + ", dead enemies: " + dedEnemies);
+        var bPlayersDefeated = false;
+        var bEnemiesDefeated = false;
         if (dedEnemies >= this.enemyParty.length) {
-            this.combatResult = Combat.CombatResultEnum.playerVictory;
-            return false;
-        } else if (dedPlayers >= this.playerParty.length) {
-            this.combatResult = Combat.CombatResultEnum.enemyVictory;
-            return false;
-        } else {
-            return true;
+        	bEnemiesDefeated = true;
+        } 
+        if (dedPlayers >= this.playerParty.length) {
+        	bPlayersDefeated = true;
+        } 
+        if(bPlayersDefeated && bEnemiesDefeated) {
+        	this.combatResult = Combat.CombatResultEnum.draw;
+        } else if(bPlayersDefeated) {
+        	this.combatResult = Combat.CombatResultEnum.enemyVictory;
+        } else if(bEnemiesDefeated) {
+        	this.combatResult = Combat.CombatResultEnum.playerVictory;
         }
-    }// end processRoundBottom()
+	}
 } // end Combat class
 Combat.PlayerTurnState = Object.freeze(
 	{
@@ -248,8 +289,8 @@ Combat.EnemyTurnState = Object.freeze(
 );
 Combat.CombatResultEnum = Object.freeze(
 	{
-    		pending: 1,
-    		playerVictory: 2,
-    		enemyVictory: 3
+    		playerVictory: 1,
+    		enemyVictory: 2,
+    		draw: 3
 	}
 );

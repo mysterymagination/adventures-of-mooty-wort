@@ -30,6 +30,26 @@ class MootyWortRpgMech {
 		 */
 		this.combatArena = undefined;
 	}
+	
+	/**
+	 * Combat flow:
+	 * 1. enterCombat() sets up the Combat object
+	 * 2. processRoundTop(): 
+	 * 		1. status effects are processed and we check for victory/defeat condition
+	 * 		2. iff the enemy can act, runAI() determines the enemy's action
+	 * 		3. the enemy's telegraph is printed to combat log
+	 * 		4. the player's command UI is populated with available actions (frozen etc. status effect will gray normal ones out and add others) 
+	 * 3. player selects a command (opening sub-menu as necessary)
+	 * 4. if the selected ability is singleTarget:
+	 * 		1. the player selects a target and its image's onclick() takes us to step #5
+	 * 5. the ability's effect goes off on the appropriate target(s) and its results are printed to the combat log
+	 * 6. processRoundBottom(): 
+	 * 		1. if the enemy is still alive and able to perform its selected ability, then 
+	 * 		   the enemy's selected ability's effect goes off and its results are printed to the combat log.
+	 * 		2. check for victory/defeat condition
+	 * 7. if terminal condition is not met, loop back to step #2. Else, display victory/defeat message and put exit combat element in UI 
+	 */
+	
 	/**
 	 * Prepares combat UI and manages Combat object
 	 * @param configObj an object literal of the form
@@ -37,18 +57,21 @@ class MootyWortRpgMech {
 	 * 
 	 */
 	enterCombat(configObj) {
-		// UI setup
-		populatePlayerCommandList();
 		// gamelogic
 		var combatDriver = new Combat(configObj.playerParty, configObj.enemyParty);
 		combatDriver.turnOwner = "mole";
 		// kick off combat 
 		combatDriver.processRoundTop();
+		// UI setup
+		populatePlayerCommandList();
 	}
 	/**
 	 * Populate the command list UI with player command strings
 	 */
 	populatePlayerCommandList() {
+		// todo: check for frozen status and mod ui accordingly
+		// todo: check for poison status and log any damage taken during processRoundTop()
+		// todo: check for death (e.g. by poison) after top of the round effects are processed
 		var combatCommandList = document.getElementById("combatCommandList");
 		for(let command in this.characters["mole"].commands) {
 			var commandListItem = document.createElement("li");
