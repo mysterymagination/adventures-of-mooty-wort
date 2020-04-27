@@ -192,33 +192,72 @@ export class Combat {
         }
         // check for victory/defeat condition
         checkTerminalConditions();
+        /*
         if(this.combatResult !== undefined) {
         	handleCombatResult();
         } else {
         	// todo: check for any status effects that might prevent enemy from acting
         	for(let enemy in this.enemyParty) {
         		let chosenAbility = enemy.runAI();
-        		// todo: write method that draws from ability id and desc to come up
-        		//  with a good pseudo-random telegraph text, which is then displayed...
-        		//  this may need to be done at the viewcontroller level or the viewcontroller
-        		//  receives a string telegraph for display.
-        		telegraphAction(chosenAbility);
+        		
+        		
         	}
         }
-        // todo: run enemy party AI such that they have chosen their moves but NOT executed them
+        */
+        if(this.combatResult !== undefined) {
+			// we have a combat result, so tell the viewcontroller to process it
+        	return Combat.ControllerState.processCombatResult;
+        } else {
+        	// todo: check for any status effects that might prevent enemy from acting
+        	for(let enemy in this.enemyParty) {
+        		// todo: support for multiple enemies
+        		this.enemySelectedAbility = enemy.runAI();	
+        	}
+        	// tell viewcontroller we need to begin a new round
+        	return Combat.ControllerState.beginNewRound;
+        }
     }// end processRoundTop fn
+	/**
+	 * @return a pseudorandom string telegraphing what the AI is going to do, in the spirit of Lunar 
+	 */
+	telegraphAction(ability) {
+		/* todo: check ability id and desc for suitable telegraph message, ideally with some
+		  topical pseudo-randomness e.g. abl.id === "dark_star" with abl.desc of {fx: ["explosion", "energy", "shadow"], envrmnt: ["night", "stars"]}
+		  => <because dark_star, always something about all the lights on yawning god's body going out and a vicious rumbling shaking his form.  Because of
+		     night and stars, spin up pseudorandom template phrase about surroundings being swallowed by shadow and flaring pinpricks of omnipresent light too
+		     far away to warm but always watching>.  The idea is to generate telegraphs that are unique to each ability BUT
+		     only in their particular combination -- there shouldn't be just three different things
+		     we ever say when we see abl.id of dark_star, for instance, such that the rest doesn't matter and it's only a memory matching minigame
+		     for the player; I'm hoping for real deduction based on rando telegraph and what actuall happens!
+		*/
+		return "placeholder telegraph!";
+	}
 	/**
 	 * Process the end of a combat round
 	 */
+	/* this is probably redundant since we have to check for terminal conditions in processRoundTop after status effects are applied
 	processRoundBottom() {
 		checkTerminalConditions();
-        if(this.combatResult !== undefined) {
+        /* instead of calling these directly, this method should return information about the next step to calling viewcontroller
+		if(this.combatResult !== undefined) {
         	handleCombatResult();
         } else {
         	// begin a new round
         	processRoundTop();
         }
+        */
+		/*
+		if(this.combatResult !== undefined) {
+			// we have a combat result, so tell the viewcontroller to process it
+        	return Combat.ControllerState.processCombatResult;
+        } else {
+        	// tell viewcontroller we need to begin a new round
+        	return Combat.ControllerState.beginNewRound;
+        }
+		
     }// end processRoundBottom()
+	*/
+	/* since this is mostly UI work, it belongs in the viewcontroller
 	handleCombatResult() {
 		if(this.combatResult !== undefined) {
         	// combat over scenario
@@ -237,6 +276,7 @@ export class Combat {
         	throw "handleCombatResult called with undefined combatResult";
         }
 	}
+	*/
 	/**
 	 * Step through player party and enemy party to look for fully dead parties
 	 */
@@ -287,6 +327,13 @@ Combat.EnemyTurnState = Object.freeze(
 		displayResults: 2
     }
 );
+Combat.ControllerState = Object.freeze(
+	{
+		beginNewRound: 1,
+		processCombatResult: 2,
+		runNextActor: 3
+	}
+)
 Combat.CombatResultEnum = Object.freeze(
 	{
     		playerVictory: 1,

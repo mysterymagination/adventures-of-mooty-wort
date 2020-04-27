@@ -33,21 +33,40 @@ class MootyWortRpgMech {
 	
 	/**
 	 * Combat flow:
-	 * 1. enterCombat() sets up the Combat object
-	 * 2. processRoundTop(): 
-	 * 		1. status effects are processed and we check for victory/defeat condition
-	 * 		2. iff the enemy can act, runAI() determines the enemy's action
-	 * 		3. the enemy's telegraph is printed to combat log
-	 * 		4. the player's command UI is populated with available actions (frozen etc. status effect will gray normal ones out and add others) 
-	 * 3. player selects a command (opening sub-menu as necessary)
-	 * 4. if the selected ability is singleTarget:
-	 * 		1. the player selects a target and its image's onclick() takes us to step #5
-	 * 5. the ability's effect goes off on the appropriate target(s) and its results are printed to the combat log
-	 * 6. processRoundBottom(): 
-	 * 		1. if the enemy is still alive and able to perform its selected ability, then 
-	 * 		   the enemy's selected ability's effect goes off and its results are printed to the combat log.
-	 * 		2. check for victory/defeat condition
-	 * 7. if terminal condition is not met, loop back to step #2. Else, display victory/defeat message and put exit combat element in UI 
+	 * 1. viewcontroller.enterCombat() sets up the Combat object
+	 * 2. viewcontroller.stepCombat() in init state Combat.ControllerState.beginNewRound:
+	 * 		1. state = combat.processRoundTop(): 
+	 * 			1. status effects are processed and we check for victory/defeat condition
+	 * 			2. iff the enemy can act, runAI() determines the enemy's action
+	 * 			x3. the enemy's telegraph is printed to combat logx (update: probly don't want this here at model level, since it would require a handle to the view or viewcontroller and pollute the model's scope with view-specific ops)
+	 * 			x4. the player's command UI is populated with available actions (frozen etc. status effect will gray normal ones out and add others)x (update: see above) 
+	 * 		2. if state is not Combat.ControllerState.processCombatResult
+	 * 			1. combat.telegraphAction(enemychosenAbility) returns a telegraph string and we print to combat log
+	 * 			2. populate player's command UI with available actions (frozen etc. status effect will gray normal ones out and add others, and things the player can't afford should be grayed out as well) 
+	 * 			3. define onclick() cb functions for available command UI
+	 * 				1. commands with sub command menus should display and populate child commands
+	 * 				2. leaf node command elements should:
+	 * 					1. analyze the relevant ability:
+	 * 						1. if the selected ability is singleTarget:
+	 * 							1. the command listitem onclick() will define onclick() for possible targets that runs the ability and advances combat
+	 * 							2. the player selects a target image:
+	 * 								1. run the ability on selected target
+	 * 								2. print result
+	 * 								3. set controller state to Combat.ControllerState.runEnemy
+	 * 								4. call viewcontroller.stepCombat() 
+	 * 						2. otherwise:
+	 * 							1. run the ability on appropriate target group
+	 * 							2. print result
+	 * 							3. set controller state to Combat.ControllerState.runEnemy
+	 * 							4. call viewcontroller.stepCombat() 
+	 * 		3. if state is Combat.ControllerState.runEnemy:
+	 * 			1. if the enemy is still alive and able to perform its selected ability:
+	 * 				1. run enemy selected ability on selected target(s)
+	 * 				2. print results
+	 * 			2. otherwise: print that the enemy struggles futiley in some appropriate manner
+	 * 			3. set controller state to Combat.ControllerState.beginNewRound
+	 * 			4. call viewcontroller.stepCombat() todo: recursion?  maybe call an async fn who runs stepCombat, just so we can pop off the callstack and wait for event loop to hit us up again? 
+	 * 		4. if state is Combat.ControllerState.processCombatResult: display victory/defeat message and put exit combat element in UI 
 	 */
 	
 	/**
@@ -133,6 +152,26 @@ class MootyWortRpgMech {
 		var logText = document.createTextNode(logString);
 		logContainer.appendChild(logText);
 		combatLog.appendChild(logContainer);
+	}
+	/**
+	 * Display victory or defeat message and provide battle exit UI
+	 */
+	handleCombatResult(enumCombatResult) {
+    	// combat over scenario
+		switch(enumCombatResult) {
+        case Combat.CombatResultEnum.playerVictory:
+        	// todo: display player victory message and battle exit UI
+        	break;
+        case Combat.CombatResultEnum.enemyVictory:
+        	// todo: display player defeat message and game over UI
+        	break;
+        case Combat.CombatResultEnum.draw:
+        	// todo: display draw message and battle exit UI
+        	break;
+        default:
+        	throw "handleCombatResult called with unrecognized result enum "+enumCombatResult;
+        	break;
+        }
 	}
 	/**
 	 * Hides one element and makes another visible by setting
