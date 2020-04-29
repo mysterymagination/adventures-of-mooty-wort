@@ -37,9 +37,8 @@ class MootyWortRpgMech {
 	 * 2. viewcontroller.stepCombat() in init state Combat.ControllerState.beginNewRound:
 	 * 		1. state = combat.processRoundTop(): 
 	 * 			1. status effects are processed and we check for victory/defeat condition
-	 * 			2. iff the enemy can act, runAI() determines the enemy's action
-	 * 			x3. the enemy's telegraph is printed to combat logx (update: probly don't want this here at model level, since it would require a handle to the view or viewcontroller and pollute the model's scope with view-specific ops)
-	 * 			x4. the player's command UI is populated with available actions (frozen etc. status effect will gray normal ones out and add others)x (update: see above) 
+	 * 				1. if victory/defeat condition is detected: set state to Combat.ControllerState.processCombatResult
+	 * 				2. otherwise: runAI() determines the enemy's action
 	 * 		2. if state is not Combat.ControllerState.processCombatResult
 	 * 			1. combat.telegraphAction(enemychosenAbility) returns a telegraph string and we print to combat log
 	 * 			2. populate player's command UI with available actions (frozen etc. status effect will gray normal ones out and add others, and things the player can't afford should be grayed out as well) 
