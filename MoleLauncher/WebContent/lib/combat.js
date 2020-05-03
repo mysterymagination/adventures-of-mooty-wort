@@ -331,7 +331,8 @@ Combat.ControllerState = Object.freeze(
 	{
 		beginNewRound: 1,
 		processCombatResult: 2,
-		runNextActor: 3
+		playerInput: 3,
+		runEnemy: 4
 	}
 )
 Combat.CombatResultEnum = Object.freeze(
