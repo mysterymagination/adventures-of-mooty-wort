@@ -32,43 +32,6 @@ class MootyWortRpgMech {
 	}
 	
 	/**
-	 * Combat flow:
-	 * 1. viewcontroller.enterCombat() sets up the Combat object
-	 * 2. viewcontroller.stepCombat() in init state Combat.ControllerState.beginNewRound:
-	 * 		1. state = combat.processRoundTop(): 
-	 * 			1. status effects are processed and we check for victory/defeat condition
-	 * 				1. if victory/defeat condition is detected: set state to Combat.ControllerState.processCombatResult
-	 * 				2. otherwise: runAI() determines the enemy's action
-	 * 		2. if state is not Combat.ControllerState.processCombatResult
-	 * 			1. combat.telegraphAction(enemychosenAbility) returns a telegraph string and we print to combat log
-	 * 			2. populate player's command UI with available actions (frozen etc. status effect will gray normal ones out and add others, and things the player can't afford should be grayed out as well) 
-	 * 			3. define onclick() cb functions for available command UI
-	 * 				1. commands with sub command menus should display and populate child commands
-	 * 				2. leaf node command elements should:
-	 * 					1. analyze the relevant ability:
-	 * 						1. if the selected ability is singleTarget:
-	 * 							1. the command listitem onclick() will define onclick() for possible targets that runs the ability and advances combat
-	 * 							2. the player selects a target image:
-	 * 								1. run the ability on selected target
-	 * 								2. print result
-	 * 								3. set controller state to Combat.ControllerState.runEnemy
-	 * 								4. call viewcontroller.stepCombat() 
-	 * 						2. otherwise:
-	 * 							1. run the ability on appropriate target group
-	 * 							2. print result
-	 * 							3. set controller state to Combat.ControllerState.runEnemy
-	 * 							4. call viewcontroller.stepCombat() 
-	 * 		3. if state is Combat.ControllerState.runEnemy:
-	 * 			1. if the enemy is still alive and able to perform its selected ability:
-	 * 				1. run enemy selected ability on selected target(s)
-	 * 				2. print results
-	 * 			2. otherwise: print that the enemy struggles futiley in some appropriate manner
-	 * 			3. set controller state to Combat.ControllerState.beginNewRound
-	 * 			4. call viewcontroller.stepCombat() todo: recursion?  maybe call an async fn who runs stepCombat, just so we can pop off the callstack and wait for event loop to hit us up again? 
-	 * 		4. if state is Combat.ControllerState.processCombatResult: display victory/defeat message and put exit combat element in UI 
-	 */
-	
-	/**
 	 * Prepares combat UI and manages Combat object
 	 * @param configObj an object literal of the form
 	 * {playerParty: [playerCharacter1, playerCharacter2...], enemyParty: [enemyCharacter1, enemyCharacter2...]}
@@ -79,9 +42,23 @@ class MootyWortRpgMech {
 		var combatDriver = new Combat(configObj.playerParty, configObj.enemyParty);
 		combatDriver.turnOwner = "mole";
 		// kick off combat 
-		combatDriver.processRoundTop();
-		// UI setup
-		populatePlayerCommandList();
+		combatLoop();
+	}
+	/**
+	 * Call stepCombat() async so we can establish a loop that can loopback at any point from any place without
+	 * risking stack overflow
+	 */
+	async combatLoop() {
+		return stepCombat();
+	}
+	/**
+	 * Combat controller function that serves as the combat main() loop
+	 * @param combatModel the current Combat object
+	 * @return the current combat controller state
+	 */
+	stepCombat(combatModel) {
+		// todo: stub
+		return combatModel.controllerState;
 	}
 	/**
 	 * Populate the command list UI with player command strings

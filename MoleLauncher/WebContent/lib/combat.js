@@ -10,10 +10,7 @@ export class Combat {
 		this.playerParty = config.playerParty;
         console.log("in Combat ctor, playerParty[0].name says " + this.playerParty[0].name);
         this.enemyParty = config.enemyParty;
-        
-        // metadata about what state the player's turn is in.  This is necessary to help route the UI around the various actions a human player will need to input
-        this.playerTurnState = Combat.PlayerTurnState.selectAbility;
-        this.enemyTurnState = Combat.EnemyTurnState.runAI;
+        this.controllerState = Combat.ControllerState.beginNewRound;
         this.combatResult = undefined;
 
         // tracks the currently selected player ability id
@@ -31,55 +28,7 @@ export class Combat {
         // the text feedback to the user re: the state of combat
         this.combatLogContent = "What will " + playerParty[this.turnOwner].name + " do?";
 	}
-	/**
-	 * Process current state and advance Combat state machine; this method will be called
-	 * multiple times by various actors, including user interaction handler functions.  As such,
-	 * its behavior is entirely dependent on the current Combat instance state.
-	 */
-	battleStateMachine() {
-		// todo: since we want the combat log to show the enemy telegraphing before the player chooses their move, 
-		//  we'll need to call runAI() at the top of a combat round, I guess?
-		// todo: where should processRoundTop() and processRoundBottom() be called?
-		//  I guess it should be at origin and terminal nodes of combat, i.e. call
-		//  processRoundTop() when we first create combat and after calling processRoundBottom when we transition from
-		//  running Combat.EnemyTurnState.displayResults into Combat.PlayerTurnState.selectAbility?
-		// todo: follow example of Fuzziolump PlayerCombatDisplay passage for state machine handlinmg
-		if(this.turnGroup === "player") {
-			if(this.playerTurnState === Combat.PlayerTurnState.selectAbility) {
-				let characterHandle = Libifels.findCharacterById(this.playerParty, this.turnOwner);
-				// in this state we should be coming here from having selected an ability,
-				//  this means that we just need to advance to state selectTarget iff the abl
-				//  is singleTarget, else go on to displayResults
-				let selectedAbility = characterHandle.entity.spellsDict[this.currentSelectedAbilityId];
-				if(selectedAbility.targetType === Ability.TargetTypesEnum.singleTarget) {
-					this.playerTurnState = Combat.PlayerTurnState.selectTarget;
-				} else {
-					this.playerTurnState = Combat.PlayerTurnState.displayResults;
-				}
-			} else if(this.playerTurnState === Combat.PlayerTurnState.selectTarget) {
-				// here we should be coming from having bopped a target image in the UI
-				//  so we ready to display results
-				this.playerTurnState = Combat.PlayerTurnState.displayResults;
-			} else if(this.playerTurnState === Combat.PlayerTurnState.displayResults) {
-				// reset player turn state
-				this.playerTurnState = Combat.PlayerTurnState.selectAbility;
-				
-				/*
-				 * since there's no interaction for the enemy AI, we can just
-				 * execute the action and update UI with the results without stepping through
-				 * any enemy turn group states.
-				 
-				// move along to enemy group, where we actually process the AI's chosen action
-				// assuming they can still perform it
-				this.turnGroup = "enemy";
-				*/
-				
-				// without needing enemy turn states, we'll just move along to processRoundBottom(),
-				// where enemy action chosen in processRoundTop() will be executed iff it is still viable.
-				this.processRoundBottom();
-			}
-		} // end turn group player 
-	}
+	
 	/**
 	 * Selects an ability name pseudo-randomly based on the given probability weights
 	 * @param probConfigObj an object literal with ability name string keys paired with 
@@ -279,6 +228,7 @@ export class Combat {
 	*/
 	/**
 	 * Step through player party and enemy party to look for fully dead parties
+	 * @return true if we have a combat result, false otherwise
 	 */
 	checkTerminalConditions() {
 		var dedEnemies = 0;
@@ -312,21 +262,12 @@ export class Combat {
         } else if(bEnemiesDefeated) {
         	this.combatResult = Combat.CombatResultEnum.playerVictory;
         }
+        
+        if(this.combatResult) {
+        	return true;
+        }
 	}
 } // end Combat class
-Combat.PlayerTurnState = Object.freeze(
-	{
-		selectAbility: 1,
-		selectTarget: 2, 
-		displayResults: 3
-	}
-);
-Combat.EnemyTurnState = Object.freeze(
-	{
-		runAI: 1, 
-		displayResults: 2
-    }
-);
 Combat.ControllerState = Object.freeze(
 	{
 		beginNewRound: 1,
