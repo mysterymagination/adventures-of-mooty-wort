@@ -42,14 +42,14 @@ class MootyWortRpgMech {
 		var combatDriver = new Combat(configObj.playerParty, configObj.enemyParty);
 		combatDriver.turnOwner = "mole";
 		// kick off combat 
-		combatLoop();
+		combatLoop(combatDriver);
 	}
 	/**
 	 * Call stepCombat() async so we can establish a loop that can loopback at any point from any place without
 	 * risking stack overflow
 	 */
-	async combatLoop() {
-		return stepCombat();
+	async combatLoop(combatModel) {
+		return stepCombat(combatModel);
 	}
 	/**
 	 * Combat controller function that serves as the combat main() loop
@@ -57,7 +57,32 @@ class MootyWortRpgMech {
 	 * @return the current combat controller state
 	 */
 	stepCombat(combatModel) {
-		// todo: stub
+		var state = combatModel.controllerState;
+		if(state === Combat.ControllerState.beginNewRound) {
+			let postStatusState = processRoundTop();
+			if(postStatusState === Combat.ControllerState.processCombatResult) {
+				handleCombatResult(combatModel.combatResult);
+			} else if(postStatusState === Combat.ControllerState.playerInput) {
+				// we're done with the opening phase of combat and there's more
+				// to go, so Q up another loop
+				combatModel.controllerState = postStatusState;
+				combatLoop(combatModel);
+			} else {
+				throw "unexpected combat controller state return from processRoundTop: "+postStatusState;
+			}
+		} else if(state === Combat.ControllerState.playerInput) {
+			// Lunar-inspired hyyype!
+			displayTelegraph(
+					combatModel.telegraphAction(
+							combatModel.enemySelectedAbility
+					);
+			);
+			// todo: command selection subphase of player input phase
+		} else if(state === Combat.ControllerState.runEnemy) {
+			// todo stub
+		}
+		// print out whatever happened this step
+		combatLogPrint(combatModel.combatLogContent);
 		return combatModel.controllerState;
 	}
 	/**

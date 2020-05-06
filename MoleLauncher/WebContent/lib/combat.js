@@ -12,9 +12,10 @@ export class Combat {
         this.enemyParty = config.enemyParty;
         this.controllerState = Combat.ControllerState.beginNewRound;
         this.combatResult = undefined;
-
-        // tracks the currently selected player ability id
-        this.currentSelectedAbilityId = "";
+        
+        // tracks the currently selected player and enemy abilities
+        this.playerSelectedAbility = undefined;
+        this.enemySelectedAbility = undefined;
 
         // tracks the turn as either player or enemy group
         this.turnGroup = "player";
@@ -78,7 +79,7 @@ export class Combat {
 	processRoundTop() {
         // tick down and process status effects for enemy party
 		// todo: death processing from status effects 
-		// todo: combat log report re: status effects
+		// todo: populate combatLogContent with report re: status effects
 		// todo: frozen status processing, specifically graying out command UI if the player is frozen
 		//  and adding a command option to break out
         for (let enemyChar of this.enemyParty) {
@@ -162,8 +163,8 @@ export class Combat {
         		// todo: support for multiple enemies
         		this.enemySelectedAbility = enemy.runAI();	
         	}
-        	// tell viewcontroller we need to begin a new round
-        	return Combat.ControllerState.beginNewRound;
+        	// tell viewcontroller we're moving on to player input
+        	return Combat.ControllerState.playerInput;
         }
     }// end processRoundTop fn
 	/**
@@ -227,7 +228,8 @@ export class Combat {
 	}
 	*/
 	/**
-	 * Step through player party and enemy party to look for fully dead parties
+	 * Step through player party and enemy party to look for fully dead parties.
+	 * If a terminal condition is detected, this method sets the combatResult field accordingly.
 	 * @return true if we have a combat result, false otherwise
 	 */
 	checkTerminalConditions() {
