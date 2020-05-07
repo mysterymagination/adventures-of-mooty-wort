@@ -8,7 +8,7 @@ Combat flow:
             1. if victory/defeat condition is detected: set state to Combat.ControllerState.processCombatResult
             2. otherwise: runAI() determines the enemy's action
     2. if state is not Combat.ControllerState.processCombatResult
-        // todo: so wait, we're back at viewcontroller level?  How'd we get here?  Maybe stepCombat() fires off an async fn that calls it again, such that we've got a sort of main() with changing states, and control stays with the controller?
+        // stepCombat() fires off an async fn that calls it again, such that we've got a sort of main() with changing states, and control stays with the controller?
         1. combat.telegraphAction(enemychosenAbility) returns a telegraph string and we print to combat log
         2. populate player's command UI with available actions (frozen etc. status effect will gray normal ones out and add others, and things the player can't afford should be grayed out as well) 
         3. define onclick() cb functions for available command UI

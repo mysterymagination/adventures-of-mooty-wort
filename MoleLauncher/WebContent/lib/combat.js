@@ -20,8 +20,8 @@ export class Combat {
         // tracks the turn as either player or enemy group
         this.turnGroup = "player";
 
-        // tracks the actual character id whose turn it is
-        this.turnOwner = "player";
+        // tracks the actual character whose turn it is
+        this.turnOwner = undefined;
 
         // tracks the target of the current ability
         this.currentTargetCharacter = undefined;

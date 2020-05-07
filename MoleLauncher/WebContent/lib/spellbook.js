@@ -33,37 +33,33 @@ export class Ability {
 		 * subtracted from the corresponding stat resource pool.
 		 */
 		this.cost = { "mp": 0 };
-
-		// effect can be defined when Ability instance is defined, but usual
-		// behavior will generally be target character's HP reduced by
-		// calcDmg(). Default behavior will be to simply log a noop like the
-		// other default functions
-		this.effect = function (sourceChar, targetChar) { console.log("no effect from " + this.name) };
-		this.calcDC = function (user, modifyingAttr) {
-			return 10;
-		}// end calcDC()
-		// lambda stub - dmg formula will be defined when Ability instance
-		// is defined
-		this.calcDmg = function (sourceChar, targetChar) { console.log("no dmg from " + this.name) }
-		this.generateFlavorText = function (sourceChar, targetChar) { console.log("flavor text undefined for " + this.name) }
-		function processCost(character) {
-			for (let statCost in this.cost) {
-				character.stats[statCost] -= this.cost[statCost];
-			}
-		}
-		function printCost() {
-			var costString = "";
-			var costKeys = Object.keys(this.cost);
-			for (let index = 0; index < costKeys.length - 1; index++) {
-				// for all but the last element...
-				costString += costKeys[index] + " : " + this.cost[costKeys[index]];
-				costString += ", "
-			}
-			// final cost element, no comma needed
-			costString += costKeys[costKeys.length - 1] + " : " + this.cost[costKeys[costKeys.length - 1]];
-			return costString;
-		}
 	}// end new instance ctor
+	effect(sourceChar, targetChar) { 
+		console.log("no effect from " + this.name); 
+	}
+	calcDmg(sourceChar, targetChar) { 
+		console.log("no dmg from " + this.name); 
+	}
+	generateFlavorText(sourceChar, targetChar) { 
+		console.log("flavor text undefined for " + this.name); 
+	}
+	processCost(character) {
+		for (let statCost in this.cost) {
+			character.stats[statCost] -= this.cost[statCost];
+		}
+	}
+	printCost() {
+		var costString = "";
+		var costKeys = Object.keys(this.cost);
+		for (let index = 0; index < costKeys.length - 1; index++) {
+			// for all but the last element...
+			costString += costKeys[index] + " : " + this.cost[costKeys[index]];
+			costString += ", "
+		}
+		// final cost element, no comma needed
+		costString += costKeys[costKeys.length - 1] + " : " + this.cost[costKeys[costKeys.length - 1]];
+		return costString;
+	}
 }
 Ability.TargetTypesEnum = Object.freeze(
 	{

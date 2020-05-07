@@ -78,8 +78,38 @@ class MootyWortRpgMech {
 					);
 			);
 			// todo: command selection subphase of player input phase
+			populatePlayerCommandList(combatModel);
 		} else if(state === Combat.ControllerState.runEnemy) {
 			// todo stub
+			// todo: check enemy status effects for anything that would prevent the use of their
+			// chosen ability
+			// check if currently active enemy can still afford their chosen abl
+			if(combatModel.turnOwner.canAffordCost(combatModel.enemySelectedAbility)) {
+				// apply ability effect
+				switch(combatModel.enemySelectedAbility.targetType) {
+				case Ability.TargetTypesEnum.personal:
+					combatModel.enemySelectedAbility.effect(combatModel.turnOwner);
+					combatModel.combatLogContent = combatModel.enemySelectedAbility.generateFlavorText(combatModel.turnOwner);
+					break;
+				case Ability.TargetTypesEnum.allAllies:
+					combatModel.enemySelectedAbility.effect(combatModel.enemyParty);
+					combatModel.combatLogContent = combatModel.enemySelectedAbility.generateFlavorText(combatModel.enemyParty);
+					break;
+				case Ability.TargetTypesEnum.allEnemies:
+					combatModel.enemySelectedAbility.effect(combatModel.playerParty);
+					combatModel.combatLogContent = combatModel.enemySelectedAbility.generateFlavorText(combatModel.playerParty);
+					break;
+				case Ability.TargetTypesEnum.singleTarget:
+					combatModel.enemySelectedAbility.effect(combatModel.turnOwner, combatModel.currentTargetCharacter);
+					combatModel.combatLogContent = combatModel.enemySelectedAbility.generateFlavorText(combatModel.turnOwner, combatModel.currentTargetCharacter);
+					break;
+				}
+			} else {
+				combatModel.combatLogContent = combatModel.turnOwner.name + " feebly attempts to enact " + combatModel.enemySelectedAbility.name + " but falters in " + combatMode.currentTurnOwner.getPronoun_possessive() + " exhaustion!";
+			}
+			// todo: set state to beginNewRound iff there are no more enemies to process
+			combatModel.controllerState = Combat.ControllerState.beginNewRound;
+			combatLoop(combatModel);
 		}
 		// print out whatever happened this step
 		combatLogPrint(combatModel.combatLogContent);
@@ -87,8 +117,9 @@ class MootyWortRpgMech {
 	}
 	/**
 	 * Populate the command list UI with player command strings
+	 * @param combatModel our current Combat object
 	 */
-	populatePlayerCommandList() {
+	populatePlayerCommandList(combatModel) {
 		// todo: check for frozen status and mod ui accordingly
 		// todo: check for poison status and log any damage taken during processRoundTop()
 		// todo: check for death (e.g. by poison) after top of the round effects are processed
