@@ -16,8 +16,6 @@ import Combat from '../lib/combat.js';
  */
 class MootyWortRpgMech {
 	constructor() {
-		// instantiate library
-		var lib = new MoleUndum();
 		this.characters = {
 		        "mole": new Characters.Mole(),
 		        "yawning_god": new Characters.YawningGod(),
@@ -59,7 +57,12 @@ class MootyWortRpgMech {
 	stepCombat(combatModel) {
 		var state = combatModel.controllerState;
 		if(state === Combat.ControllerState.beginNewRound) {
-			let postStatusState = processRoundTop();
+			let postStatusState = combatModel.processRoundTop();
+			// print anything that happened during top o' the round
+			combatLogPrint(combatModel.combatLogContent);
+			combatModel.combatLogContent = "";
+			// update character portraits with status info
+			populateCharacterBattleImages(combatModel);
 			if(postStatusState === Combat.ControllerState.processCombatResult) {
 				handleCombatResult(combatModel.combatResult);
 			} else if(postStatusState === Combat.ControllerState.playerInput) {
@@ -77,43 +80,68 @@ class MootyWortRpgMech {
 							combatModel.enemySelectedAbility
 					);
 			);
-			// todo: command selection subphase of player input phase
+			// command selection subphase of player input phase
 			populatePlayerCommandList(combatModel);
 		} else if(state === Combat.ControllerState.runEnemy) {
-			// todo stub
 			// todo: check enemy status effects for anything that would prevent the use of their
 			// chosen ability
+			let selectedAbility = combatModel.enemySelectedAbility;
 			// check if currently active enemy can still afford their chosen abl
-			if(combatModel.turnOwner.canAffordCost(combatModel.enemySelectedAbility)) {
+			if(combatModel.turnOwner.canAffordCost(selectedAbility)) {
 				// apply ability effect
-				switch(combatModel.enemySelectedAbility.targetType) {
+				switch(selectedAbility.targetType) {
 				case Ability.TargetTypesEnum.personal:
-					combatModel.enemySelectedAbility.effect(combatModel.turnOwner);
-					combatModel.combatLogContent = combatModel.enemySelectedAbility.generateFlavorText(combatModel.turnOwner);
+					selectedAbility.effect(combatModel.turnOwner);
+					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.turnOwner);
 					break;
 				case Ability.TargetTypesEnum.allAllies:
-					combatModel.enemySelectedAbility.effect(combatModel.enemyParty);
-					combatModel.combatLogContent = combatModel.enemySelectedAbility.generateFlavorText(combatModel.enemyParty);
+					selectedAbility.effect(combatModel.enemyParty);
+					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.enemyParty);
 					break;
 				case Ability.TargetTypesEnum.allEnemies:
-					combatModel.enemySelectedAbility.effect(combatModel.playerParty);
-					combatModel.combatLogContent = combatModel.enemySelectedAbility.generateFlavorText(combatModel.playerParty);
+					selectedAbility.effect(combatModel.playerParty);
+					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.playerParty);
 					break;
 				case Ability.TargetTypesEnum.singleTarget:
-					combatModel.enemySelectedAbility.effect(combatModel.turnOwner, combatModel.currentTargetCharacter);
-					combatModel.combatLogContent = combatModel.enemySelectedAbility.generateFlavorText(combatModel.turnOwner, combatModel.currentTargetCharacter);
+					selectedAbility.effect(combatModel.turnOwner, combatModel.currentTargetCharacter);
+					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.turnOwner, combatModel.currentTargetCharacter);
 					break;
 				}
 			} else {
 				combatModel.combatLogContent = combatModel.turnOwner.name + " feebly attempts to enact " + combatModel.enemySelectedAbility.name + " but falters in " + combatMode.currentTurnOwner.getPronoun_possessive() + " exhaustion!";
 			}
-			// todo: set state to beginNewRound iff there are no more enemies to process
-			combatModel.controllerState = Combat.ControllerState.beginNewRound;
-			combatLoop(combatModel);
+			// complete this enemy character's turn
+			handleEnemyTurnComplete();
 		}
 		// print out whatever happened this step
 		combatLogPrint(combatModel.combatLogContent);
 		return combatModel.controllerState;
+	}
+	/**
+	 * Render the gfx for an ability 
+	 * @param ability the Ability whose associated gfx should render
+	 * @param sourceCharacter the Character who is using the given ability
+	 * @param targetCharacter the Character who is targeted by the given ability
+	 */
+	playAbilityAnimation(ability, sourceCharacter, targetCharacter) {
+		// todo: load animation/graphic/effect an ability calls for re: generation and deployment 
+		// centered on the sourceCharacter's and targetCharacter's sprites in the UI respectively
+	}
+	/**
+	 * Render the gfx for Character damage suffered
+	 * @param targetCharacter the Character who is being damaged
+	 */
+	playCharacterPainAnimation(targetCharacter) {
+		// todo: load animation indicating the targetCharacter was damaged
+		// todo: iff the targetCharacter is now dead, play death animation and then remove their sprite from UI
+	}
+	/**
+	 * Update the Character sprites based on combat data
+	 * @param combatModel current Combat object
+	 */
+	populateCharacterBattleImages(combatModel) {
+		// todo: load up player and enemy sprites appropriate for current state of combat,
+		// e.g. darkened eyes of Grue as it takes damage, don't load dead characters' art
 	}
 	/**
 	 * Populate the command list UI with player command strings
@@ -121,38 +149,87 @@ class MootyWortRpgMech {
 	 */
 	populatePlayerCommandList(combatModel) {
 		// todo: check for frozen status and mod ui accordingly
-		// todo: check for poison status and log any damage taken during processRoundTop()
-		// todo: check for death (e.g. by poison) after top of the round effects are processed
 		var combatCommandList = document.getElementById("combatCommandList");
-		for(let command in this.characters["mole"].commands) {
+		for(const [ablId, abl] of Object.entries(combatModel.currentTurnOwner.entity.spellsDict)) {
 			var commandListItem = document.createElement("li");
 			commandListItem.className = "commandButton";
 			commandListItem.onclick = () => {
-				switch(command) {
-				case "Attack":
-					// todo: at this point we want the UI to direct the player to choose a target
-					//  That could entail making another text list to choose through, but it would be
-					//  preferable to just let them click on an enemy graphic; the gfx could have its own onclick
-					//  that informs combat a target selection has been made iff combat is in a state waiting for target selection.
-					// todo: indicate player turn complete
-					break;
-				case "Magic":
-					swapElementDisplayVisibility(combatCommandList.id, "combatSpellsList");
-					populatePlayerSpellList();
-					break;
-				case "Defend":
-					// todo: run defend effect
-					// todo: indicate player turn complete
-					break;
-				case "Run":
-					combatLogPrint("There is no escape!");
-					break;
+				// todo: if abl is multi-target or personal,  run it on appropriate target(s)
+				//  print result to combat log, and set combatcontroller state to runEnemy
+				if(abl.targetType === Ability.TargetTypesEnum.singleTarget) {
+					// todo: define onclicks for all possible targets which activate the abl
+				} else {
+					let sourceCharacter = undefined;
+					let targetCharacters = undefined;
+					switch(abl.targetType) {
+					case Ability.TargetTypesEnum.personal:
+						sourceCharacter = combatModel.currentTurnOwner;
+						targetCharacters = [sourceCharacter];
+						abl.effect(sourceCharacter);
+						playAbilityAnimation(abl, sourceCharacter, targetCharacters[0]);
+						combatLogPrint(abl.generateFlavorText(sourceCharacter));
+						break;
+					case Ability.TargetTypesEnum.allEnemies:
+						sourceCharacter = combatModel.currentTurnOwner;
+						targetCharacters = combatModel.enemyParty;
+						abl.effect(sourceCharacter, targetCharacters);
+						playAbilityAnimation(abl, sourceCharacter, targetCharacters);
+						combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
+						break;
+					case Ability.TargetTypesEnum.allAllies:
+						sourceCharacter = combatModel.currentTurnOwner;
+						targetCharacters = combatModel.playerParty;
+						abl.effect(sourceCharacter, targetCharacters);
+						playAbilityAnimation(abl, sourceCharacter, targetCharacters);
+						combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
+						break;
+					}
+					handlePlayerTurnEnd(combatModel);
 				}
 			}
-			var commandText = document.createTextNode(command);
+			
+			var commandText = document.createTextNode(abl.name);
 			commandListItem.appendChild(commandText);
 			combatCommandList.appendChild(commandListItem);
 		}
+	}
+	/**
+	 * Completes an enemy AI's turn, activating next living enemy or telling controller 
+	 * we're ready for a new round if all enemies' turns are complete. 
+	 * @param combatModel current Combat object
+	 */
+	handleEnemyTurnComplete(combatModel) {
+		// set state to beginNewRound iff there are no more enemies to process
+		// otherwise, advance turn owner to next enemy
+		if(MoleUndum.findLastLivingCharacter(combatModel.enemyParty) !== combatModel.currentTurnOwner) {
+			combatModel.currentTurnOwner = 
+				MoleUndum.findFirstLivingCharacter(
+						combatModel.enemyParty, 
+						MoleUndum.findCharacterIndex(combatModel.enemyParty, combatModel.currentTurnOwner.id)
+				);
+		} else {
+			combatModel.controllerState = Combat.ControllerState.beginNewRound;
+		}
+		combatLoop(combatModel);
+	}
+	/**
+	 * Completes a player's turn, advancing control to the next living player or to enemy phase
+	 * if all players' turns are complete.
+	 * @param combatModel current Combat object
+	 */
+	handlePlayerTurnComplete(combatModel) {
+		// set state to runEnemy iff there are no more players to process
+		// otherwise, advance turn owner to next player
+		if(MoleUndum.findLastLivingCharacter(combatModel.playerParty) !== combatModel.currentTurnOwner) {
+			combatModel.currentTurnOwner = 
+				MoleUndum.findFirstLivingCharacter(
+						combatModel.playerParty, 
+						MoleUndum.findCharacterIndex(combatModel.playerParty, combatModel.currentTurnOwner.id)
+				);
+		} else {
+			combatModel.controllerState = Combat.ControllerState.runEnemy;
+		}
+		combatLoop(combatModel);
 	}
 	/**
 	 * Populate the spells list UI with the player's spell names
