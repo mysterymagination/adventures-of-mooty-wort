@@ -153,20 +153,17 @@
 	<div id="combatModal" class="modal">
 	  <!-- Modal content -->
 	  <div class="modal-content">
-	  	<img id="combatGraphic" alt="An atavistic force of nature, the Yawning God will not sleep again" src="">
-	  	<!-- todo: enemy HP gauge -->
-	  	<div id="combatLog" class=scrollable">
+	  	<div id="enemyGfx" class="scrollable">
+	  		<!-- this div will be populated with divs containing associated enemy img tag and paired progress tag from code based on actual enemy party -->
+	  	</div>
+	  	<div id="combatLog" class="scrollable">
 	    		<p>Reality rumbles and threatens to crumble...</p>
 	    </div>
 	    <div id= "combatCommandWindow" class="modal-content">
 	    		<ul id="combatCommandList">
-	    		<!-- todo: loop through player commands and render them 
+	    		<!-- content here comes from looping through player abilities and rendering them 
 	          as list items with onclicks that either perform the linked
-	          ability or display a different sub-modal view (e.g. spells list)-->
-	    		</ul>
-	    		<ul id="combatSpellsList">
-	    		<!-- todo: hide this guy by default, and when shown hide the commands list. -->
-	    		<!-- todo: loop through player spells and render them as list items -->
+	          ability or ready potential target elements' onclicks -->
 	    		</ul>
 	    </div>
 	    <!-- todo: player hp and mp gauge -->
