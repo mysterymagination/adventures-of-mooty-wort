@@ -16,7 +16,7 @@ import Combat from '../lib/combat.js';
  */
 class MootyWortRpgMech {
 	constructor() {
-		this.characters = {
+		this.charactersDict = {
 		        "mole": new Characters.Mole(),
 		        "yawning_god": new Characters.YawningGod(),
 		        "grue": new Characters.Grue()
@@ -27,6 +27,37 @@ class MootyWortRpgMech {
 		 * Current combat encounter manager
 		 */
 		this.combatArena = undefined;
+		/**
+		 * Object literal association of player Character ids to associated UI objects sack
+		 */
+		this.playerCharacterUIDict = {
+		/* e.g.
+				"mole": {
+					"characterObj": this.charactersDict["mole"],
+					"imageElement": undefined, 
+					"nameElement": undefined,
+					"hpElement": undefined,
+					"maxHPElement": undefined,
+					"hpProgressElement": undefined,
+					"mpElement": undefined,
+					"maxMPElement": undefined,
+					"mpProgressElement": undefined
+				}
+		*/
+		};
+		/**
+		 * Object literal association of enemy Character ids to associated UI objects sack
+		 */
+		this.enemyCharacterUIDict = {
+		/* e.g.
+				"yawning_god": {
+					"characterObj": this.charactersDict["yawning_god"],
+					"imageElement": undefined, 
+					"nameElement": undefined,
+					"hpProgressElement": undefined
+				}
+		*/
+		};
 	}
 	
 	/**
@@ -142,6 +173,7 @@ class MootyWortRpgMech {
 	populateCharacterBattleImages(combatModel) {
 		// todo: load up player and enemy sprites appropriate for current state of combat,
 		// e.g. darkened eyes of Grue as it takes damage, don't load dead characters' art
+		// todo: associate character object with its associated img element
 	}
 	/**
 	 * Populate the command list UI with player command strings
@@ -154,10 +186,19 @@ class MootyWortRpgMech {
 			var commandListItem = document.createElement("li");
 			commandListItem.className = "commandButton";
 			commandListItem.onclick = () => {
-				// todo: if abl is multi-target or personal,  run it on appropriate target(s)
-				//  print result to combat log, and set combatcontroller state to runEnemy
 				if(abl.targetType === Ability.TargetTypesEnum.singleTarget) {
-					// todo: define onclicks for all possible targets which activate the abl
+					for(let [targetCharacter, imgElement] of Object.entries(this.characterImageDict)) {
+						imgElement.onclick = () => {
+							let sourceCharacter = combatModel.currentTurnOwner;
+							abl.effect(sourceCharacter, targetCharacter);
+							playAbilityAnimation(abl, sourceCharacter, targetCharacter);
+							combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter));
+							handlePlayerTurnEnd(combatModel);
+							// clear onclicks now that we've used them
+							this.removeAttribute("onclick");
+							commandListItem.removeAttribute("onclick");
+						}
+					}
 				} else {
 					let sourceCharacter = undefined;
 					let targetCharacters = undefined;
@@ -185,6 +226,8 @@ class MootyWortRpgMech {
 						break;
 					}
 					handlePlayerTurnEnd(combatModel);
+					// clear onclick now that we've used it
+					this.removeAttribute("onclick");
 				}
 			}
 			
