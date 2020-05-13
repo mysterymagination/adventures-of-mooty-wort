@@ -167,13 +167,75 @@ class MootyWortRpgMech {
 		// todo: iff the targetCharacter is now dead, play death animation and then remove their sprite from UI
 	}
 	/**
+	 * Set up the battle UI 
+	 * @param combatModel the current COmbat object
+	 */
+	initBattleUi(combatModel) {
+		// todo: associate character object with its associated HTML elements
+		var playerView_Div = document.getElementById("playerView");
+		for(let playerCharacter in combatModel.playerParty) {
+			let playerCharacter_Div = document.createElement("div");
+			
+			let playerCharacterSprite_Img = document.createElement("img");
+			playerCharacterSprite_Img.src = playerCharacter.battleSprites[0];
+			playerCharacter_Div.appendChild(playerCharacterSprite_Img);
+			
+			let playerCharacterName_P = document.createElement("p");
+			playerCharacterName_Text = document.createTextNode(playerCharacter.name);
+			playerCharacterName_P.appendChild(playerCharacterName_Text);
+			playerCharacter_Div.appendChild(playerCharacterName_P);
+			
+			let playerCharacterHp_Div = document.createElement("div");
+			let playerCharacterCurrentHp_P = document.createElement("p");
+			let playerCharacterCurrentHp_Text = document.createTextNode(playerCharacter.stats["hp"]);
+			playerCharacterCurrentHp_P.appendChild(playerCharacterCurrentHp_Text);
+			playerCharacterHp_Div.appendChild(playerCurrentHp_P);
+			let playerCharacterHp_Progress = document.createElement("progress");
+			playerCharacterHp_Progress.value = playerCharacter.stats["hp"];
+			playerCharacterHp_Div.appendChild(playerCharacterHp_Progress);
+			let playerCharacterMaxHp_P = document.createElement("p");
+			let playerCharacterMaxHp_Text = document.createTextNode(playerCharacter.stats["maxHp"]);
+			playerCharacterMaxHp_P.appendChild(playerCharacterMaxHp_Text);
+			playerCharacterHp_Div.appendChild(playerCharacterMaxHp_P);
+			playerCharacter_Div.appendChild(playerCharacterHp_Div);
+			
+			let playerCharacterMp_Div = document.createElement("div");
+			let playerCharacterCurrentMp_P = document.createElement("p");
+			let playerCharacterCurrentMp_Text = document.createTextNode(playerCharacter.stats["mp"]);
+			playerCharacterCurrentMp_P.appendChild(playerCharacterCurrentMp_Text);
+			playerCharacterMp_Div.appendChild(playerCharacterCurrentMp_P);
+			let playerCharacterMp_Progress = document.createElement("progress");
+			playerCharacterMp_Progress.value = playerCharacter.stats["mp"];
+			playerCharacterMp_Div.appendChild(playerCharacterMp_Progress);
+			let playerCharacterMaxMp_P = document.createElement("p");
+			let playerCharacterMaxMp_Text = document.createTextNode(playerCharacter.stats["maxMp"]);
+			playerCharacterMaxMp_P.appendChild(playerCharacterMaxMp_Text);
+			playerCharacterMp_Div.appendChild(playerCharacterMaxMp_P);
+			playerCharacter_Div.appendChild(playerCharacterMp_Div);
+			
+			playerView_Div.appendChild(playerCharacter_Div);
+			this.playerCharacterUiDict[playerCharacter.id] = {
+					"characterObj": playerCharacter,
+					"imageElement": playerCharacterSprite_Img, 
+					"nameElement": playerCharacterName_P,
+					"hpElement": playerCharacterCurrentHp_P,
+					"maxHPElement": playerCharacterMaxHp_P,
+					"hpProgressElement": playerCharacterHp_Progress,
+					"mpElement": playerCharacterCurrentMp_P,
+					"maxMPElement": playerCharacterMaxMp_P,
+					"mpProgressElement": playerCharacterMp_Progress
+			}
+		}
+		// todo: enemy party
+	}
+	
+	/**
 	 * Update the Character sprites based on combat data
 	 * @param combatModel current Combat object
 	 */
-	populateCharacterBattleImages(combatModel) {
+	updateCharacterBattleImages(combatModel) {
 		// todo: load up player and enemy sprites appropriate for current state of combat,
-		// e.g. darkened eyes of Grue as it takes damage, don't load dead characters' art
-		// todo: associate character object with its associated img element
+		// e.g. darkened eyes of Grue as it takes damage, hide HTML elements for dead characters
 	}
 	/**
 	 * Populate the command list UI with player command strings
@@ -274,26 +336,7 @@ class MootyWortRpgMech {
 		}
 		combatLoop(combatModel);
 	}
-	/**
-	 * Populate the spells list UI with the player's spell names
-	 */
-	populatePlayerSpellList() {
-		var combatSpellsList = document.getElementById("combatSpellsList");
-		var playerSpells = this.characters["mole"].entity.spellsDict;
-		for(const [spellId, spell] of playerSpells) {
-			var spellListItem = document.createElement("li");
-			spellListItem.className = "commandButton";
-			spellListItem.onclick = () => {
-				// todo: allow player to choose target if appropriate
-				// todo: trigger spell effect with source and target as appropriate
-				//spell.effect(this.characters["mole"], targetCharacter);
-				// todo: display flavor text in combat log
-			}
-			var spellText = document.createTextNode(spell.name);
-			spellListItem.appendChild(spellText);
-			combatSpellsList.appendChild(spellListItem);
-		}
-	}
+	
 	/**
 	 * Creates a new \<p\> tag, puts the given text in it, and appends it to the combat log
 	 * @param logString a string to append to the log
