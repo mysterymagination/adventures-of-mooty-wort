@@ -69,6 +69,9 @@ class MootyWortRpgMech {
 	enterCombat(configObj) {
 		// gamelogic
 		var combatDriver = new Combat(configObj.playerParty, configObj.enemyParty);
+		// setup UI
+		initBattleUi(combatDriver);
+		// set init turn owner to player, the mole
 		combatDriver.turnOwner = "mole";
 		// kick off combat 
 		combatLoop(combatDriver);
@@ -167,11 +170,11 @@ class MootyWortRpgMech {
 		// todo: iff the targetCharacter is now dead, play death animation and then remove their sprite from UI
 	}
 	/**
-	 * Set up the battle UI 
+	 * Set up the battle UI, associating character objects with their associated HTML elements 
 	 * @param combatModel the current COmbat object
 	 */
 	initBattleUi(combatModel) {
-		// todo: associate character object with its associated HTML elements
+		// player party UI 
 		var playerView_Div = document.getElementById("playerView");
 		for(let playerCharacter in combatModel.playerParty) {
 			let playerCharacter_Div = document.createElement("div");
@@ -226,7 +229,28 @@ class MootyWortRpgMech {
 					"mpProgressElement": playerCharacterMp_Progress
 			}
 		}
-		// todo: enemy party
+		// enemy party UI from player perspective
+		let enemyView_Div = document.getElementById("enemyView");
+		for(let enemyCharacter in combatModel.enemyParty) {
+			let enemyCharacter_Div = document.createElement("div");
+			
+			let enemyCharacterSprite_Img = document.createElement("img");
+			enemyCharacterSprite_Img.src = enemyCharacter.battleSprites[0];
+			enemyCharacter_Div.appendChild(enemyCharacterSprite_Img);
+			
+			let enemyCharacterHp_Div = document.createElement("div");
+			let enemyCharacterHp_Progress = document.createElement("progress");
+			enemyCharacterHp_Progress.value = enemyCharacter.stats["hp"];
+			enemyCharacterHp_Div.appendChild(enemyCharacterHp_Progress);
+			enemyCharacter_Div.appendChild(enemyCharacterHp_Div);
+			
+			enemyView_Div.appendChild(enemyCharacter_Div);
+			this.enemyCharacterUiDict[enemyCharacter.id] = {
+					"characterObj": enemyCharacter,
+					"imageElement": enemyCharacterSprite_Img, 
+					"hpProgressElement": enemyCharacterHp_Progress
+			}
+		}
 	}
 	
 	/**
