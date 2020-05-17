@@ -178,9 +178,12 @@ export class Combat {
 		     far away to warm but always watching>.  The idea is to generate telegraphs that are unique to each ability BUT
 		     only in their particular combination -- there shouldn't be just three different things
 		     we ever say when we see abl.id of dark_star, for instance, such that the rest doesn't matter and it's only a memory matching minigame
-		     for the player; I'm hoping for real deduction based on rando telegraph and what actuall happens!
+		     for the player; I'm hoping for real player deduction based on rando telegraph and what actually happens!
 		*/
-		return "placeholder telegraph!";
+		// todo: fetch ability-specific randomized template string that will serve as a our primary telegraph string but will have placeholders throughout where envrmnt and fx from the desc can insert further random variation e.g. dark_star gives us 
+		// 1. "All the lights on the Yawning God's pulsing and quivering carapace go out as one, [fx_0].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [fx_1], begins to rumble viciously.  [fx_2] as [envrmnt_0] surrounded by [envrmnt_1]; this is no place for a little mole!"
+		// 2. 
+		return ability.desc.generateRandomDescription();
 	}
 	/**
 	 * Process the end of a combat round

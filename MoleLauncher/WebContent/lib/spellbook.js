@@ -3,6 +3,20 @@ import * as Lib from "./libifels_undum.js"
 
 //todo: these flavor texts really need some random variations to keep things interesting
 
+export class Description {
+	constructor() {
+		this.descString = "placeholder desc";
+	}
+	generateRandomDescription() {
+		var letterIndexFrom = Math.floor(Math.random() * Math.floor(this.descString.length));
+		var letterIndexTo = Math.floor(Math.random() * Math.floor(this.descString.length));
+		var charArray = this.descString.split('');
+		charArray.splice(letterIndexFrom, 1, '');
+		charArray.splice(letterIndexTo, 0, this.descString[letterIndexFrom]);
+		return charArray.join('');
+	}
+}
+
 /**
  * Class representing a capability of a character, e.g. attacking or casting a
  * spell. It takes a config object literal of the form
@@ -33,6 +47,7 @@ export class Ability {
 		 * subtracted from the corresponding stat resource pool.
 		 */
 		this.cost = { "mp": 0 };
+		this.desc = new Description();
 	}// end new instance ctor
 	effect(sourceChar, targetChar) { 
 		console.log("no effect from " + this.name); 
@@ -557,6 +572,7 @@ export class DarkStar extends Spell {
 		super({ id: "dark_star", name: "Dark Star" });
 		DarkStar.prototype.targetType = Ability.TargetTypesEnum.allEnemies;
 		DarkStar.prototype.cost = { "mp": 25 };
+		DarkStar.prototype.desc = new DarkStarDescription();
 	}
 	calcDmg(sourceChar, targetChar) {
 		return 2 * sourceChar.stats["pwr"] 
@@ -574,6 +590,27 @@ export class DarkStar extends Spell {
 	}
 	generateFlavorText(sourceChar, targetChar) {
 	    return "The burning chill of moonless midnight wrapped in Lady Winter's empty embrace casts a pall of hoarfrost over your fur as the light drains out of the world.  When all is naught but silence and dark, a muted gray pinprick of light appears before you; an offering of hope.  Unable to help yourself, you reach out to it -- the very instant you give over the focus of your mind to its power, it explodes into a blinding nova whose insatiable devouring flames crawl into and over every atom of your being!"; 
+	}
+}
+
+class DarkStarDescription extends Description {
+	constructor() {
+		this.fxTags = ["explosion", "quake", "energy", "shadow"];
+		this.envTags = ["night", "stars"];
+		this.descString = generateRandomDescription();
+	}
+	generateRandomDescription() {
+		// todo: make several base template strings and then run through parsing tags to get a complete randomized description string
+		/*
+		1. "All the lights on the Yawning God's pulsing and quivering carapace go out as one, [fx_0].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [fx_1], begins to rumble viciously.  [fx_2] as [env_0] surrounded by [env_1]; this is no place for a little mole!"
+		2.
+		*/ 
+	}
+	parseTagsFx(descStringTemplate) {
+		// todo: look for [fx_N] substrings in the given string template, where N is an array index corresponding to this.fxTags
+	}
+	parseTagsEnv(descStrinTemplate) {
+		// todo: look for [env_N] substrings in the given string template, where N is an array index corresponding to this.envTags
 	}
 }
 /// end yawning god abilities block ///
