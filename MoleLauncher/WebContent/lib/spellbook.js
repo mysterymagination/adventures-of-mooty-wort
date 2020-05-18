@@ -21,13 +21,15 @@ export class Description {
 	 * @param descStringTemplate the primary string whose gaps we're filling in with randomly selected substrings informed by tag data
 	 * @return a completed description string
 	 */
-	parseTags(tagCategory, descStringTemplate) {
-		// todo: look for [tag_N] placeholder substrings in the given string template, where tagCategory is a categorical tag string such as 'fx' or 'env' and N is an array index corresponding to an array of tags owned by this Description object such as this.fxTags; where found, replace the placeholder substring with a phrase returned by generateRandomTagString()
+	parseTags(tag, descStringTemplate) {
+		// todo: look for [tag] placeholder substrings in the given string template, where the tag string will be surrounded in brackets; where found, replace the brackets and tag with a phrase returned by generateRandomTagString(tag)
 	}
 	/**
 	 * Selects at random a prefabricated string associated with the given tag
 	 * @param tag the tag string from which we will select an appropriate description substring
 	 * @return a description substring associated with the given tag
+	 * todo: could we construct this string based on affect/intent-centric impact tags, like tag: "explosion", impact: "stunning", "fear", "overwhelm", "blind", "deafen" => something focusing on destructive aspects of an explosion, meant to startle the reader.  
+	 * todo: add support for wordcrafting meta-tags that tell use what part of a sentence we're injecting a substring into, which may need to modify articles, parts of speech etc.
 	 */
 	generateRandomTagString(tag) {
 		// todo: draw from a dictionary of prefabricated strings associated with the input tag, e.g. "explosion": ["heat washing outward in wild waves", "a blinding nova preceding molten sparks coruscating over the surface of your world", ...]
@@ -622,12 +624,13 @@ class DarkStarDescription extends Description {
 	 */
 	generateRandomDescription() {
 		// todo: make several base template strings and then run through parsing tags to get a complete randomized description string
+		// todo: should the tags in each of/some of the base strings below be randomly selected from this ability's available tags?
 		/*
-		1. "All the lights on the Yawning God's pulsing and quivering carapace go out as one, [fx_0].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [fx_1], begins to rumble viciously.  [fx_2] as [env_0] surrounded by [env_1]; this is no place for a little mole!"
-		2.
+		1. "All the lights on the Yawning God's pulsing and quivering carapace go out as one, [explosion].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [quake], begins to rumble viciously.  [energy] flares, as [night] suffused with [shadow] and beneath [stars]; this is no place for a little mole!"
+		2. "The dead eyes of the Yawning God bulge as its sprawling form convulses, [env_?] a mere backdrop for [fx_?].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake]." (here we'd be randomly selecting tags of the given categories prior to sending the base string to parseTags())
+		3. ...
 		*/ 
-		var chosenStringTemplate = this.parseTags("fx", chosenStringTemplate);
-		return this.parseTags("env", chosenStringTemplate);
+		return this.parseTags(chosenStringTemplate);
 	}
 }
 /// end yawning god abilities block ///
