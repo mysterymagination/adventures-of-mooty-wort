@@ -15,6 +15,23 @@ export class Description {
 		charArray.splice(letterIndexTo, 0, this.descString[letterIndexFrom]);
 		return charArray.join('');
 	}
+	/**
+	 * Parses out tag placeholders where we want to insert random substrings associated with the given tag
+	 * @param tagCategory a tag category string such as 'fx' indicating the array we should look into e.g. this.fxTags
+	 * @param descStringTemplate the primary string whose gaps we're filling in with randomly selected substrings informed by tag data
+	 * @return a completed description string
+	 */
+	parseTags(tagCategory, descStringTemplate) {
+		// todo: look for [tag_N] placeholder substrings in the given string template, where tagCategory is a categorical tag string such as 'fx' or 'env' and N is an array index corresponding to an array of tags owned by this Description object such as this.fxTags; where found, replace the placeholder substring with a phrase returned by generateRandomTagString()
+	}
+	/**
+	 * Selects at random a prefabricated string associated with the given tag
+	 * @param tag the tag string from which we will select an appropriate description substring
+	 * @return a description substring associated with the given tag
+	 */
+	generateRandomTagString(tag) {
+		// todo: draw from a dictionary of prefabricated strings associated with the input tag, e.g. "explosion": ["heat washing outward in wild waves", "a blinding nova preceding molten sparks coruscating over the surface of your world", ...]
+	}
 }
 
 /**
@@ -599,18 +616,18 @@ class DarkStarDescription extends Description {
 		this.envTags = ["night", "stars"];
 		this.descString = generateRandomDescription();
 	}
+	/**
+	 * Generates a random description string based on this Ability's tags and base description string(s)
+	 * @return a random Ability description string for use in telegraphs
+	 */
 	generateRandomDescription() {
 		// todo: make several base template strings and then run through parsing tags to get a complete randomized description string
 		/*
 		1. "All the lights on the Yawning God's pulsing and quivering carapace go out as one, [fx_0].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [fx_1], begins to rumble viciously.  [fx_2] as [env_0] surrounded by [env_1]; this is no place for a little mole!"
 		2.
 		*/ 
-	}
-	parseTagsFx(descStringTemplate) {
-		// todo: look for [fx_N] substrings in the given string template, where N is an array index corresponding to this.fxTags
-	}
-	parseTagsEnv(descStrinTemplate) {
-		// todo: look for [env_N] substrings in the given string template, where N is an array index corresponding to this.envTags
+		var chosenStringTemplate = this.parseTags("fx", chosenStringTemplate);
+		return this.parseTags("env", chosenStringTemplate);
 	}
 }
 /// end yawning god abilities block ///
