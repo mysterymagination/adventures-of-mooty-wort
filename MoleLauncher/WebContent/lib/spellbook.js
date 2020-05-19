@@ -16,13 +16,22 @@ export class Description {
 		return charArray.join('');
 	}
 	/**
-	 * Parses out tag placeholders where we want to insert random substrings associated with the given tag
-	 * @param tagCategory a tag category string such as 'fx' indicating the array we should look into e.g. this.fxTags
+	 * Parses out tag placeholders where we want to insert random substrings associated with the discovered/selected tag
 	 * @param descStringTemplate the primary string whose gaps we're filling in with randomly selected substrings informed by tag data
 	 * @return a completed description string
 	 */
-	parseTags(tag, descStringTemplate) {
+	parseTags(descStringTemplate) {
 		// todo: look for [tag] placeholder substrings in the given string template, where the tag string will be surrounded in brackets; where found, replace the brackets and tag with a phrase returned by generateRandomTagString(tag)
+		// todo: look for ? in tag to indicate that the remainder of the tag is actually a tag category and a random index from an array owned by the calling instance of Description with name this.cattagTags should be used as the replacement tag, which is then fed into generateRandomTagString(tag).  For example, seeing [?env] should cause parseTags to look up a random index in this.envTags and then pass the result on to generateRandomTagString instead of passing the value within the brackets directly.
+		var previousTagIndex = -1;
+		var currentTagIndex = descStringTemplate.indexOf('[');
+		var currentTagEndIndex = -1;
+		while(currentTagIndex != -1) {
+			currentTagEndIndex = descStringTemplate.indexOf(']', currentTagIndex);
+			// todo: process tag content, selecting an actual tag string if necessary, and then replacing the placeholder with appropriate generated substring.
+			currentTagIndex = descStringTemplate.indexOf('[', currentTagIndex);
+			
+		}
 	}
 	/**
 	 * Selects at random a prefabricated string associated with the given tag
@@ -616,6 +625,11 @@ class DarkStarDescription extends Description {
 	constructor() {
 		this.fxTags = ["explosion", "quake", "energy", "shadow"];
 		this.envTags = ["night", "stars"];
+		this.descTemplateStringArray = [
+			"All the lights on the Yawning God's pulsing and quivering carapace go out as one, [explosion].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [quake], begins to rumble viciously.  [energy] flares, as [night] suffused with [shadow] and beneath [stars]; this is no place for a little mole!",
+			"The dead eyes of the Yawning God bulge as its sprawling form convulses, [env_?] a mere backdrop for [fx_?].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake].",
+			"The crooked snaggle-dagger-teeth of the Yawning God are surely intimidating, but what lies beyond is far worse: [shadow] upon a hopeless landscape of [night].  As you watch, your fur bristling with apprehension, this darkness begins pulsing with promises of [explosion]."
+			];
 		this.descString = generateRandomDescription();
 	}
 	/**
@@ -624,14 +638,16 @@ class DarkStarDescription extends Description {
 	 */
 	generateRandomDescription() {
 		// todo: make several base template strings and then run through parsing tags to get a complete randomized description string
+		var randoBaseStringIndex = Math.floor(Math.random() * 3);
 		// todo: should the tags in each of/some of the base strings below be randomly selected from this ability's available tags?
 		/*
 		1. "All the lights on the Yawning God's pulsing and quivering carapace go out as one, [explosion].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [quake], begins to rumble viciously.  [energy] flares, as [night] suffused with [shadow] and beneath [stars]; this is no place for a little mole!"
-		2. "The dead eyes of the Yawning God bulge as its sprawling form convulses, [env_?] a mere backdrop for [fx_?].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake]." (here we'd be randomly selecting tags of the given categories prior to sending the base string to parseTags())
-		3. ...
+		2. "The dead eyes of the Yawning God bulge as its sprawling form convulses, [?env] a mere backdrop for [?fx].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake]." (here we'd be randomly selecting tags of the given categories prior to sending the base string to parseTags())
+		3. "The crooked snaggle-teeth of the Yawning God are surely intimidating, but what lies beyond is far worse: [shadow] upon a hopeless landscape of [night].  As you watch, your fur bristling with apprehension, this darkness begins pulsing with promises of [explosion]."
 		*/ 
-		return this.parseTags(chosenStringTemplate);
+		return this.parseTags(this.descTemplateStringArray[randoBaseStringIndex]);
 	}
+	
 }
 /// end yawning god abilities block ///
 
