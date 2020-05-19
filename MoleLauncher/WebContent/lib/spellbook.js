@@ -21,15 +21,27 @@ export class Description {
 	 * @return a completed description string
 	 */
 	parseTags(descStringTemplate) {
-		// todo: look for [tag] placeholder substrings in the given string template, where the tag string will be surrounded in brackets; where found, replace the brackets and tag with a phrase returned by generateRandomTagString(tag)
-		// todo: look for ? in tag to indicate that the remainder of the tag is actually a tag category and a random index from an array owned by the calling instance of Description with name this.cattagTags should be used as the replacement tag, which is then fed into generateRandomTagString(tag).  For example, seeing [?env] should cause parseTags to look up a random index in this.envTags and then pass the result on to generateRandomTagString instead of passing the value within the brackets directly.
-		var previousTagIndex = -1;
+		var cursorPosition = 0;
 		var currentTagIndex = descStringTemplate.indexOf('[');
 		var currentTagEndIndex = -1;
 		while(currentTagIndex != -1) {
 			currentTagEndIndex = descStringTemplate.indexOf(']', currentTagIndex);
-			// todo: process tag content, selecting an actual tag string if necessary, and then replacing the placeholder with appropriate generated substring.
+			// process tag content, selecting an actual tag string if necessary, and then replacing the placeholder with appropriate generated substring.
+			let tagString = descStringTemplate.slice(currentIndex+1, currentTagEndIndex);
+			if(tagString[0] === '?') {
+				// randomly pick a tag from the given cat
+				tagString = tagString.splice(1, currentTagEndIndex);
+				let tagArray = this[tagString + "TagArray"];
+				tagString = tagArray[Math.floor(Math.random() * tagArray.length)];
+			}
+			// generate the tag-derived substring we want to replace our placeholder with
+			let tagReplacementString = generateRandomTagString(tagString);
+			// write the replacement substring in by bolting on everything before our current tag chunk to the head of the replacement string and everything after the current tag chunk onto its tail
+			descStringTemplate = descStringTemplate.slice(cursorPosition, currentTagIndex) + tagReplacementString + descStringTemplate.slice(currentTagEndIndex+1);
+			// update tag index to next tag chunk, if any
 			currentTagIndex = descStringTemplate.indexOf('[', currentTagIndex);
+			// record our current position of interest as 1 past the last known tag chunk
+			cursorPosition = currentTagEndIndex+1;
 			
 		}
 	}
