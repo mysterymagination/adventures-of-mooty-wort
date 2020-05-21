@@ -6,6 +6,36 @@ import * as Lib from "./libifels_undum.js"
 export class Description {
 	constructor() {
 		this.descString = "placeholder desc";
+		// todo: would it be useful at all to subdivide this dict by cat?  That's mostly a usage concern, but maybe not entirely.
+		Description.prototype.telegraphTagAssocDict = {
+				"explosion": [ 
+					"in a bludgeoning tide of heat and light",
+					"heralded by fantastic technicolor pyrotechnics",
+					"preceded by a rolling rumble that rises to a roar of deafeningly dissonant chaos",
+					"heat washing outward in wild waves", 
+					"a blinding nova preceding molten sparks coruscating over the surface of your world"
+				],
+				"energy": [
+					"a torrent of coruscating charge",
+					"with a tangible pulse like the beating of a manic heart",
+					"awash in irrepressible current"
+				],
+				"shadow": [
+					"a grip of suffocating inky blackness",
+					"a rolling landscape of infinite possibility, all of it bleak",
+					"with nightmare figures suggested in the infinitely continuous facets of its smoothly jet-black surface"
+				],
+				"night": [
+					"wings of twilight goading you to rest and allow dream to take you",
+					"the deep and troubling promise of this dreamscape presenting haunting possibilities",
+					"a cold tide of loneliness born upon a sea of velvet void"
+				],
+				"stars": [
+					"winking eyes in a portrait of nothingness",
+					"an all-consuming white fire that only underscores the cold with its ambivalent distance",
+					"sparkling quintessence and the very eyes of creation -- all turned upon you and gleaming with malice"
+				]
+		}
 	}
 	generateRandomDescription() {
 		var letterIndexFrom = Math.floor(Math.random() * Math.floor(this.descString.length));
@@ -49,11 +79,14 @@ export class Description {
 	 * Selects at random a prefabricated string associated with the given tag
 	 * @param tag the tag string from which we will select an appropriate description substring
 	 * @return a description substring associated with the given tag
-	 * todo: could we construct this string based on affect/intent-centric impact tags, like tag: "explosion", impact: "stunning", "fear", "overwhelm", "blind", "deafen" => something focusing on destructive aspects of an explosion, meant to startle the reader.  
+	 * todo: could we construct this string based on affect/intent-centric impact tags, like tag: "explosion", impact: "stunning", "fear", "overwhelm", "blind", "deafen" => something focusing on destructive aspects of an explosion, meant to startle the reader.
+	 * todo: context-generative meta-tags could be useful to, like specific modifications to the desc if the boss is at critical health, poisoned, etc.  
 	 * todo: add support for wordcrafting meta-tags that tell use what part of a sentence we're injecting a substring into, which may need to modify articles, parts of speech etc.
 	 */
 	generateRandomTagString(tag) {
-		// todo: draw from a dictionary of prefabricated strings associated with the input tag, e.g. "explosion": ["heat washing outward in wild waves", "a blinding nova preceding molten sparks coruscating over the surface of your world", ...]
+		var replacementArray = this.telegraphTagsAssocDict[tag];
+		var randoIndex = Math.floor(Math.random() * replacementArray.length);
+		return replacementArray[randoIndex];
 	}
 }
 
