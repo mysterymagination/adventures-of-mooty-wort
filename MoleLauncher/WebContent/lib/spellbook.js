@@ -33,7 +33,8 @@ export class Description {
 				"stars": [
 					"winking eyes in a portrait of nothingness",
 					"an all-consuming white fire that only underscores the cold with its ambivalent distance",
-					"sparkling quintessence and the very eyes of creation -- all turned upon you and gleaming with malice"
+					"sparkling quintessence and the very eyes of creation -- all turned upon you and gleaming with malice",
+					"flaring pinpricks of omnipresent light too far away to warm but always watching"
 				]
 		}
 	}
