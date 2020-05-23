@@ -1,7 +1,7 @@
 // imports
-import MootyWortRpgMech from 'mootywortrpgmech.js';
-import MoleUndum from '../lib/libifels_undum.js';
-import Combat from '../lib/combat.js';
+import MootyWortRpgMech from "./mootywortrpgmech.js";
+import MoleUndum from "../lib/libifels_undum.js";
+import Combat from "../lib/combat.js";
 
 //-----undum config-----//
 /**
@@ -771,7 +771,7 @@ undum.game.situations = {
             enter: function (character, system, from) {
                 // boss fight hyyyyype!  Give a combat UI within the transcript main content window; I'm thinking a relatively simple table plus some text and image output divs?
             	var mech = undum.game.rpgMech;
-            	mech.combatArena = new Combat({playerParty: mech.characters["mole"], enemyParty: mech.characters["yawning_god"]});
+            	mech.enterCombat({playerParty: mech.characters["mole"], enemyParty: mech.characters["yawning_god"]});
             	// todo: what happens when you put interactible elements in your situation HTML, like a Button tag?
             	// todo: spawn a modal pop-over div that hosts our combat UI; disallow click-away and have the modal lifetime be tied to combat lifecycle.
             	// todo: if the player wins against the yawning god and they aggro'ed the grue, drop the modal and give transcript text about grue coming in and then raise modal for next combat!

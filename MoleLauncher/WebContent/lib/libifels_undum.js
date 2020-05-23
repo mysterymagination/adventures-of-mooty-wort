@@ -1,4 +1,4 @@
-import Libifels from './libifels.js';
+import Libifels from "./libifels.js";
 import * as Spellbook from "./spellbook.js"
 /**
  * exported API of Libifels for Undum containing both generic IF structures and hypertext adventure framework elements specific to Undum

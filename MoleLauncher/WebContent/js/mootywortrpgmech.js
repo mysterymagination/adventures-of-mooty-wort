@@ -1,7 +1,7 @@
 // imports
-import MoleUndum from '../lib/libifels_undum.js';
-import * as Characters from '../lib/characters.js';
-import Combat from '../lib/combat.js';
+import MoleUndum from "../lib/libifels_undum.js";
+import * as Characters from "../lib/characters.js";
+import Combat from "../lib/combat.js";
 /*
  * todo: Add Lunar inspired telegraph hint (1:many, but not all) and induction (many similar:1) systems:
  * 1. (hint) "The grue sharpens its claws in a sliver of moonlight" -> he might use Quicksilver Cut, Shadow Slash, or Rake.
