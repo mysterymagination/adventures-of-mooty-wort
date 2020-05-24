@@ -1,5 +1,5 @@
-import Libifels from "./libifels.js";
-import Ability from "./spellbook.js"
+import {Libifels} from "./libifels.js";
+import {Ability} from "./spellbook.js";
 
 /**
  * Combat object takes two arrays of Character objects, the player's party and the enemy's party.

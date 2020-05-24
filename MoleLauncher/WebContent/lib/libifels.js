@@ -1,7 +1,7 @@
 /**
  * Libifels, as in lib Interactive Fiction Entity Logic System, provides utility functions and classes for Interactive Fiction in JS
  */
-class Libifels {
+export class Libifels {
     /**
      * Adds the given element to an array iff its string rep is not present in the array yet
      * @param array the array we're modifying
@@ -203,4 +203,3 @@ class Libifels {
         character.statusEffects.splice(effectIndex, 1);
     }
 }
-export {Libifels};

@@ -1,5 +1,5 @@
-import * as Lib from "./libifels_undum.js"
-import * as Spells from "./spellbook.js"
+import * as Lib from "./libifels_undum.js";
+import * as Spells from "./spellbook.js";
 
 export class Character {
 	constructor(config) {
@@ -331,7 +331,7 @@ export class Grue extends Character {
                     }// end The God HP > 25%
                     else {
                         // being severely injured, The God now starts to spam Dark Star if no earlier behaviors were proced and he can afford it
-                    	if(theYawningGodChar.canAffordCost(darkStarSpell)) {
+                    	if(this.canAffordCost(darkStarSpell)) {
                     		chosenAbility = this.spells["dark_star"];
                     		chosenTarget = playerParty;
                     	} else {
@@ -392,14 +392,14 @@ export class Grue extends Character {
     }//end grue AI def
 } // end Grue class def
 
-export class YawningGod extends Lib.Character {
+export class YawningGod extends Character {
 	constructor() {
 		super({ id: "yawning_god", name: "The Yawning God" });
 		this.gender = "male";
 		this.stats["maxHP"] = 500;
 		this.stats["maxMP"] = 100;
-		this.stats["hp"] = theYawningGodChar.stats["maxHP"];
-		this.stats["mp"] = theYawningGodChar.stats["maxMP"];
+		this.stats["hp"] = this.stats["maxHP"];
+		this.stats["mp"] = this.stats["maxMP"];
 		this.stats["atk"] = 100;
 		this.stats["def"] = 50;
 		this.stats["pwr"] = 100;
@@ -542,7 +542,7 @@ export class YawningGod extends Lib.Character {
                     else {
                         // being severely injured, The Yawning God now starts to spam Dark Star if no earlier behaviors were proced and he can afford it,
                     	// with a 35% chance of variance to simple attack so that the player has a little breathing room
-                    	if(theYawningGodChar.canAffordCost(darkStarSpell) &&
+                    	if(this.canAffordCost(darkStarSpell) &&
                     			lib.rollPercentage() > 35) {
                     		chosenAbility = this.spells["dark_star"];
                     		chosenTarget = playerParty;

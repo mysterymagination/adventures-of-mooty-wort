@@ -35,6 +35,11 @@ export class Description {
 					"an all-consuming white fire that only underscores the cold with its ambivalent distance",
 					"sparkling quintessence and the very eyes of creation -- all turned upon you and gleaming with malice",
 					"flaring pinpricks of omnipresent light too far away to warm but always watching"
+				],
+				"quake": [
+					"amidst a vicious rumbling of reality that promises to leave all things familiar in ruin",
+					"rocked by undulations of the earth itself, heaving in the throes of whatever madness may infect stone and soil",
+					"your paws scrabbling and your fuzzy little body tumbling about, just another spot of debris in a torrent of ruinous chaos"
 				]
 		}
 	}
@@ -58,7 +63,7 @@ export class Description {
 		while(currentTagIndex != -1) {
 			currentTagEndIndex = descStringTemplate.indexOf(']', currentTagIndex);
 			// process tag content, selecting an actual tag string if necessary, and then replacing the placeholder with appropriate generated substring.
-			let tagString = descStringTemplate.slice(currentIndex+1, currentTagEndIndex);
+			let tagString = descStringTemplate.slice(currentTagIndex + 1, currentTagEndIndex);
 			if(tagString[0] === '?') {
 				// randomly pick a tag from the given cat
 				tagString = tagString.splice(1, currentTagEndIndex);
@@ -66,7 +71,7 @@ export class Description {
 				tagString = tagArray[Math.floor(Math.random() * tagArray.length)];
 			}
 			// generate the tag-derived substring we want to replace our placeholder with
-			let tagReplacementString = generateRandomTagString(tagString);
+			let tagReplacementString = this.generateRandomTagString(tagString);
 			// write the replacement substring in by bolting on everything before our current tag chunk to the head of the replacement string and everything after the current tag chunk onto its tail
 			descStringTemplate = descStringTemplate.slice(cursorPosition, currentTagIndex) + tagReplacementString + descStringTemplate.slice(currentTagEndIndex+1);
 			// update tag index to next tag chunk, if any
@@ -85,7 +90,7 @@ export class Description {
 	 * todo: add support for wordcrafting meta-tags that tell use what part of a sentence we're injecting a substring into, which may need to modify articles, parts of speech etc.
 	 */
 	generateRandomTagString(tag) {
-		var replacementArray = this.telegraphTagsAssocDict[tag];
+		var replacementArray = this.telegraphTagAssocDict[tag];
 		var randoIndex = Math.floor(Math.random() * replacementArray.length);
 		return replacementArray[randoIndex];
 	}
@@ -180,6 +185,26 @@ export class Attack extends Ability {
     };
 }
 
+/**
+ * Special version of Attack that restores some MP for player characters
+ */
+export class HeroAttack extends Attack {
+	constructor() {
+		super();
+		// todo: should this value derive from something?
+		this.mpBonus = 10;
+		this.dmg = 1;
+	}
+	effect(sourceCharacter, targetCharacter) {
+        this.dmg = this.calcDmg(sourceCharacter, targetCharacter);
+        sourceCharacter.stats.mp += this.mpBonus;
+        console.log(this.dmg + " dealt by Attack to " + targetCharacter.name +
+        		", and the hero regains " + this.mpBonus + " MP due to heroism!");
+        // todo: AC? Any other miss chance?
+        targetCharacter.stats.hp -= this.dmg;
+    }
+}
+
 export class Defend extends Ability {
 	constructor() {
 		super({id: "defend", name: "Defend"});
@@ -187,8 +212,8 @@ export class Defend extends Ability {
 	}
     effect(sourceCharacter) {
         Lib.addUniqueStatusEffect(
-        		sourceCharacter, 
-        		new Defended(sourceCharacter.stats["def"], sourceCharacter.stats["res"])
+        	sourceCharacter, 
+        	new Defended(sourceCharacter.stats["def"], sourceCharacter.stats["res"])
         );
     }
     generateFlavorText(sourceCharacter, targetCharacter) {
@@ -353,7 +378,7 @@ export class DeepMeditation extends Spell {
  */
 export class ShadowFlare extends Spell {
 	constructor() {
-		super({ id: "shadowflare", name: "Shadowflare" });
+		super({ id: "shadowflare", name: "Shadow Flare" });
 		ShadowFlare.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		ShadowFlare.prototype.cost = { "mp": 50 };
 	}
@@ -556,13 +581,13 @@ export class ChillBeyond extends Spell {
 /**
  * Manyfold Embrace damages the user slightly but combines their ATK and PWR to generate massive damage to the enemy
  */
-export class ManyFoldEmbrace extends Spell {
+export class ManyfoldEmbrace extends Spell {
 	constructor() {
 		super({ id: "manyfold_embrace", name: "Manyfold Embrace" });
-		ManyFoldEmbrace.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
-		ManyFoldEmbrace.prototype.cost = { "mp": 20 };
+		ManyfoldEmbrace.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
+		ManyfoldEmbrace.prototype.cost = { "mp": 20 };
 		// default this instance's cost to the common element
-		this.cost = Object.assign(this.cost, ManyFoldEmbrace.prototype.cost);
+		this.cost = Object.assign(this.cost, ManyfoldEmbrace.prototype.cost);
 	}
 	calcDmg(sourceChar, targetChar) {
 	    // idea is the source is transforming tentacles into mighty spiked cudgels
@@ -669,14 +694,15 @@ export class DarkStar extends Spell {
 
 class DarkStarDescription extends Description {
 	constructor() {
+		super();
 		this.fxTags = ["explosion", "quake", "energy", "shadow"];
 		this.envTags = ["night", "stars"];
 		this.descTemplateStringArray = [
 			"All the lights on the Yawning God's pulsing and quivering carapace go out as one, [explosion].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [quake], begins to rumble viciously.  [energy] flares, as [night] suffused with [shadow] and beneath [stars]; this is no place for a little mole!",
-			"The dead eyes of the Yawning God bulge as its sprawling form convulses, [env_?] a mere backdrop for [fx_?].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake].",
+			"The dead eyes of the Yawning God bulge as its sprawling form convulses, [?env] a mere backdrop for [?fx].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake].",
 			"The crooked snaggle-dagger-teeth of the Yawning God are surely intimidating, but what lies beyond is far worse: [shadow] upon a hopeless landscape of [night].  As you watch, your fur bristling with apprehension, this darkness begins pulsing with promises of [explosion]."
 			];
-		this.descString = generateRandomDescription();
+		this.descString = this.generateRandomDescription();
 	}
 	/**
 	 * Generates a random description string based on this Ability's tags and base description string(s)
@@ -701,7 +727,10 @@ export class Entity {
 	constructor(configObj) {
 		this.id = configObj.id;
 		this.name = configObj.name;
-		Entity.prototype.spellsDict = {}
+		Entity.prototype.spellsDict = {
+			"attack": new Attack(),
+			"defend": new Defend()
+		}
 	}
 }
 
@@ -716,10 +745,13 @@ export class Burrower extends Entity {
 			"woolly_shield": new WoollyShield(),
 			"burrow_furrow": new BurrowFurrow(),
 			"deep_meditation": new DeepMeditation(),
-			"shadowflare": new Shadowflare(),
+			"shadowflare": new ShadowFlare(),
 			"magma_blast": new MagmaBlast(),
 			"static_bolt": new StaticBolt()
 		}
+		Object.assign(Burrower.prototype.spellsDict, Entity.prototype.spellsDict);
+		// redefine mole's attack to restore MP
+		Burrower.prototype.spellsDict["attack"] = new HeroAttack();
 	}
 }
 

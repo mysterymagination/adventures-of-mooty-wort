@@ -1,7 +1,7 @@
 // imports
-import MootyWortRpgMech from "./mootywortrpgmech.js";
-import MoleUndum from "../lib/libifels_undum.js";
-import Combat from "../lib/combat.js";
+import {MootyWortRpgMech} from "./mootywortrpgmech.js";
+import {MoleUndum} from "../lib/libifels_undum.js";
+import {Combat} from "../lib/combat.js";
 
 //-----undum config-----//
 /**
