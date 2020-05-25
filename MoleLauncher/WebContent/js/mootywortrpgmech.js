@@ -30,7 +30,7 @@ class MootyWortRpgMech {
 		/**
 		 * Object literal association of player Character ids to associated UI objects sack
 		 */
-		this.playerCharacterUIDict = {
+		this.playerCharacterUiDict = {
 		/* e.g.
 				"mole": {
 					"characterObj": this.charactersDict["mole"],
@@ -48,7 +48,7 @@ class MootyWortRpgMech {
 		/**
 		 * Object literal association of enemy Character ids to associated UI objects sack
 		 */
-		this.enemyCharacterUIDict = {
+		this.enemyCharacterUiDict = {
 		/* e.g.
 				"yawning_god": {
 					"characterObj": this.charactersDict["yawning_god"],
@@ -81,7 +81,7 @@ class MootyWortRpgMech {
 	 * risking stack overflow
 	 */
 	async combatLoop(combatModel) {
-		return stepCombat(combatModel);
+		return this.stepCombat(combatModel);
 	}
 	/**
 	 * Combat controller function that serves as the combat main() loop
@@ -93,29 +93,29 @@ class MootyWortRpgMech {
 		if(state === Combat.ControllerState.beginNewRound) {
 			let postStatusState = combatModel.processRoundTop();
 			// print anything that happened during top o' the round
-			combatLogPrint(combatModel.combatLogContent);
+			this.combatLogPrint(combatModel.combatLogContent);
 			combatModel.combatLogContent = "";
 			// update character portraits with status info
-			populateCharacterBattleImages(combatModel);
+			this.populateCharacterBattleImages(combatModel);
 			if(postStatusState === Combat.ControllerState.processCombatResult) {
-				handleCombatResult(combatModel.combatResult);
+				this.handleCombatResult(combatModel.combatResult);
 			} else if(postStatusState === Combat.ControllerState.playerInput) {
 				// we're done with the opening phase of combat and there's more
 				// to go, so Q up another loop
 				combatModel.controllerState = postStatusState;
-				combatLoop(combatModel);
+				this.combatLoop(combatModel);
 			} else {
 				throw "unexpected combat controller state return from processRoundTop: "+postStatusState;
 			}
 		} else if(state === Combat.ControllerState.playerInput) {
 			// Lunar-inspired hyyype!
-			displayTelegraph(
+			this.displayTelegraph(
 					combatModel.telegraphAction(
 							combatModel.enemySelectedAbility
 					)
 			);
 			// command selection subphase of player input phase
-			populatePlayerCommandList(combatModel);
+			this.populatePlayerCommandList(combatModel);
 		} else if(state === Combat.ControllerState.runEnemy) {
 			// todo: check enemy status effects for anything that would prevent the use of their
 			// chosen ability
@@ -145,10 +145,10 @@ class MootyWortRpgMech {
 				combatModel.combatLogContent = combatModel.turnOwner.name + " feebly attempts to enact " + combatModel.enemySelectedAbility.name + " but falters in " + combatMode.currentTurnOwner.getPronoun_possessive() + " exhaustion!";
 			}
 			// complete this enemy character's turn
-			handleEnemyTurnComplete();
+			this.handleEnemyTurnComplete();
 		}
 		// print out whatever happened this step
-		combatLogPrint(combatModel.combatLogContent);
+		this.combatLogPrint(combatModel.combatLogContent);
 		return combatModel.controllerState;
 	}
 	/**
@@ -176,7 +176,7 @@ class MootyWortRpgMech {
 	initBattleUi(combatModel) {
 		// player party UI 
 		var playerView_Div = document.getElementById("playerView");
-		for(let playerCharacter in combatModel.playerParty) {
+		for(let playerCharacter of combatModel.playerParty) {
 			let playerCharacter_Div = document.createElement("div");
 			
 			let playerCharacterSprite_Img = document.createElement("img");
@@ -184,7 +184,7 @@ class MootyWortRpgMech {
 			playerCharacter_Div.appendChild(playerCharacterSprite_Img);
 			
 			let playerCharacterName_P = document.createElement("p");
-			playerCharacterName_Text = document.createTextNode(playerCharacter.name);
+			let playerCharacterName_Text = document.createTextNode(playerCharacter.name);
 			playerCharacterName_P.appendChild(playerCharacterName_Text);
 			playerCharacter_Div.appendChild(playerCharacterName_P);
 			
@@ -192,7 +192,7 @@ class MootyWortRpgMech {
 			let playerCharacterCurrentHp_P = document.createElement("p");
 			let playerCharacterCurrentHp_Text = document.createTextNode(playerCharacter.stats["hp"]);
 			playerCharacterCurrentHp_P.appendChild(playerCharacterCurrentHp_Text);
-			playerCharacterHp_Div.appendChild(playerCurrentHp_P);
+			playerCharacterHp_Div.appendChild(playerCharacterCurrentHp_P);
 			let playerCharacterHp_Progress = document.createElement("progress");
 			playerCharacterHp_Progress.value = playerCharacter.stats["hp"];
 			playerCharacterHp_Div.appendChild(playerCharacterHp_Progress);
@@ -231,7 +231,7 @@ class MootyWortRpgMech {
 		}
 		// enemy party UI from player perspective
 		let enemyView_Div = document.getElementById("enemyView");
-		for(let enemyCharacter in combatModel.enemyParty) {
+		for(let enemyCharacter of combatModel.enemyParty) {
 			let enemyCharacter_Div = document.createElement("div");
 			
 			let enemyCharacterSprite_Img = document.createElement("img");
@@ -380,12 +380,15 @@ class MootyWortRpgMech {
 		switch(enumCombatResult) {
         case Combat.CombatResultEnum.playerVictory:
         	// todo: display player victory message and battle exit UI
+        	console.log("evil is vaniquished and the Deepndess saved for all time!");
         	break;
         case Combat.CombatResultEnum.enemyVictory:
         	// todo: display player defeat message and game over UI
+        	console.log("and with the mole's death, darkness swept o'er all the land...");
         	break;
         case Combat.CombatResultEnum.draw:
         	// todo: display draw message and battle exit UI
+        	console.log("it's a draw!");
         	break;
         default:
         	throw "handleCombatResult called with unrecognized result enum "+enumCombatResult;
