@@ -68,13 +68,13 @@ class MootyWortRpgMech {
 	 */
 	enterCombat(configObj) {
 		// gamelogic
-		var combatDriver = new Combat(configObj.playerParty, configObj.enemyParty);
+		var combatDriver = new Combat(configObj);
 		// setup UI
-		initBattleUi(combatDriver);
+		this.initBattleUi(combatDriver);
 		// set init turn owner to player, the mole
 		combatDriver.turnOwner = "mole";
 		// kick off combat 
-		combatLoop(combatDriver);
+		this.combatLoop(combatDriver);
 	}
 	/**
 	 * Call stepCombat() async so we can establish a loop that can loopback at any point from any place without
