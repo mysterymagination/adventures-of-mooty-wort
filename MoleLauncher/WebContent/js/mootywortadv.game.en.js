@@ -832,7 +832,7 @@ undum.game.qualityGroups = {
 undum.game.init = function (character, system) {
     // todo: how should attack and defense stats interoperate?  Obviously a straight subtraction of defense from attack stat leaves us with 0 effect for two baseline characters...
     // The FF wiki has a total damage formula of f{attack damage * rand(1,1.5) - defense} with min set to 1, so maybe lean on a slightly randomized coefficient to juice attack?
-    character.mole = new MoleUndum.MoleCharacter();
+    character.mole = undum.game.rpgMech.charactersDict["mole"];
 
     // inform UI viewmodel 
     character.qualities.health = character.mole.stats.maxHP;

@@ -228,8 +228,8 @@ export class Grue extends Character {
 		this.gender = "male";
 	    this.stats["maxHP"] = 250;
 	    this.stats["maxMP"] = 500;
-	    this.stats["hp"] = grueChar.stats["maxHP"];
-	    this.stats["mp"] = grueChar.stats["maxMP"];
+	    this.stats["hp"] = this.stats["maxHP"];
+	    this.stats["mp"] = this.stats["maxMP"];
 	    this.stats["atk"] = 75;
 	    this.stats["def"] = 100;
 	    this.stats["pwr"] = 100;

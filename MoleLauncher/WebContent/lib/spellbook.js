@@ -66,7 +66,7 @@ export class Description {
 			let tagString = descStringTemplate.slice(currentTagIndex + 1, currentTagEndIndex);
 			if(tagString[0] === '?') {
 				// randomly pick a tag from the given cat
-				tagString = tagString.splice(1, currentTagEndIndex);
+				tagString = tagString.slice(1, currentTagEndIndex);
 				let tagArray = this[tagString + "TagArray"];
 				tagString = tagArray[Math.floor(Math.random() * tagArray.length)];
 			}
@@ -695,8 +695,8 @@ export class DarkStar extends Spell {
 class DarkStarDescription extends Description {
 	constructor() {
 		super();
-		this.fxTags = ["explosion", "quake", "energy", "shadow"];
-		this.envTags = ["night", "stars"];
+		this.fxTagArray = ["explosion", "quake", "energy", "shadow"];
+		this.envTagArray = ["night", "stars"];
 		this.descTemplateStringArray = [
 			"All the lights on the Yawning God's pulsing and quivering carapace go out as one, [explosion].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [quake], begins to rumble viciously.  [energy] flares, as [night] suffused with [shadow] and beneath [stars]; this is no place for a little mole!",
 			"The dead eyes of the Yawning God bulge as its sprawling form convulses, [?env] a mere backdrop for [?fx].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake].",
@@ -710,7 +710,7 @@ class DarkStarDescription extends Description {
 	 */
 	generateRandomDescription() {
 		// todo: make several base template strings and then run through parsing tags to get a complete randomized description string
-		var randoBaseStringIndex = Math.floor(Math.random() * 3);
+		var randoBaseStringIndex = 1;///Math.floor(Math.random() * 3);
 		// todo: should the tags in each of/some of the base strings below be randomly selected from this ability's available tags?
 		/*
 		1. "All the lights on the Yawning God's pulsing and quivering carapace go out as one, [explosion].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [quake], begins to rumble viciously.  [energy] flares, as [night] suffused with [shadow] and beneath [stars]; this is no place for a little mole!"

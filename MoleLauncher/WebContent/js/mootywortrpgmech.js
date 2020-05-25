@@ -22,7 +22,7 @@ class MootyWortRpgMech {
 		        "grue": new Characters.Grue()
 		}
 		// establish Player party
-	    this.party = [this.characters["mole"]];
+	    this.party = [this.charactersDict["mole"]];
 		/**
 		 * Current combat encounter manager
 		 */
