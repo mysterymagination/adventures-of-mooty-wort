@@ -3,6 +3,7 @@ import * as Spells from "./spellbook.js";
 
 export class Character {
 	constructor(config) {
+		Character.prototype.battleSpritePath = "images/characters/battle";
 		this.id = config.id;
         this.name = config.name;
         this.gender = "";
@@ -219,6 +220,7 @@ export class Mole extends Character {
 		this.stats["res"] = 20; // eldritch things know better than to mess with moles
 		this.stats["spd"] = 1; // the mole is not fast
 		this.entity = new Spells.Burrower();
+		this.battleSprites = [this.battleSpritePath+"/mole/stoic_determination.jpg"];
 	}
 }
 
@@ -235,6 +237,15 @@ export class Grue extends Character {
 	    this.stats["pwr"] = 100;
 	    this.stats["res"] = 25;
 	    Grue.prototype.entity = new Spells.HeartOfDarkness();
+	    this.battleSprites = [
+	    	this.battleSpritePath+"/grue/grue_nightmare_0.png",
+	    	this.battleSpritePath+"/grue/grue_nightmare_1.png",
+	    	this.battleSpritePath+"/grue/grue_nightmare_2.png",
+	    	this.battleSpritePath+"/grue/grue_nightmare_3.png",
+	    	this.battleSpritePath+"/grue/grue_nightmare_4.png",
+	    	this.battleSpritePath+"/grue/grue_nightmare_5.png",
+	    	this.battleSpritePath+"/grue/grue_nightmare_6.png"
+	    	];
 	}
 	runAI(combat, role) {
         console.log("reached grue runAI fn... have fn!");
@@ -405,6 +416,9 @@ export class YawningGod extends Character {
 		this.stats["pwr"] = 100;
 		this.stats["res"] = 50;
 	    YawningGod.prototype.entity = new Spells.EldritchHorror();
+	    this.battleSprites = [
+	    	this.battleSpritePath+"/yawning_god/yawning_god_dark.png"
+	    ];
 	}
 	runAI(combat, role) {
         console.log("reached The Yawning God runAI fn... have fn!");
