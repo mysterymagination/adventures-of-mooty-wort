@@ -2,6 +2,7 @@
 import {MoleUndum} from "../lib/libifels_undum.js";
 import * as Characters from "../lib/characters.js";
 import {Combat} from "../lib/combat.js";
+import {Ability} from "../lib/spellbook.js";
 /*
  * todo: Add Lunar inspired telegraph hint (1:many, but not all) and induction (many similar:1) systems:
  * 1. (hint) "The grue sharpens its claws in a sliver of moonlight" -> he might use Quicksilver Cut, Shadow Slash, or Rake.
@@ -20,7 +21,7 @@ class MootyWortRpgMech {
 		        "mole": new Characters.Mole(),
 		        "yawning_god": new Characters.YawningGod(),
 		        "grue": new Characters.Grue()
-		}
+		};
 		// establish Player party
 	    this.party = [this.charactersDict["mole"]];
 		/**
@@ -142,7 +143,7 @@ class MootyWortRpgMech {
 					break;
 				}
 			} else {
-				combatModel.combatLogContent = combatModel.turnOwner.name + " feebly attempts to enact " + combatModel.enemySelectedAbility.name + " but falters in " + combatMode.currentTurnOwner.getPronoun_possessive() + " exhaustion!";
+				combatModel.combatLogContent = combatModel.turnOwner.name + " feebly attempts to enact " + combatModel.enemySelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!";
 			}
 			// complete this enemy character's turn
 			this.handleEnemyTurnComplete();
@@ -227,7 +228,7 @@ class MootyWortRpgMech {
 					"mpElement": playerCharacterCurrentMp_P,
 					"maxMPElement": playerCharacterMaxMp_P,
 					"mpProgressElement": playerCharacterMp_Progress
-			}
+			};
 		}
 		// enemy party UI from player perspective
 		let enemyView_Div = document.getElementById("enemyView");
@@ -249,7 +250,7 @@ class MootyWortRpgMech {
 					"characterObj": enemyCharacter,
 					"imageElement": enemyCharacterSprite_Img, 
 					"hpProgressElement": enemyCharacterHp_Progress
-			}
+			};
 		}
 	}
 	
@@ -277,13 +278,13 @@ class MootyWortRpgMech {
 						imgElement.onclick = () => {
 							let sourceCharacter = combatModel.currentTurnOwner;
 							abl.effect(sourceCharacter, targetCharacter);
-							playAbilityAnimation(abl, sourceCharacter, targetCharacter);
-							combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter));
-							handlePlayerTurnEnd(combatModel);
+							this.playAbilityAnimation(abl, sourceCharacter, targetCharacter);
+							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter));
+							this.handlePlayerTurnEnd(combatModel);
 							// clear onclicks now that we've used them
 							this.removeAttribute("onclick");
 							commandListItem.removeAttribute("onclick");
-						}
+						};
 					}
 				} else {
 					let sourceCharacter = undefined;
@@ -293,29 +294,29 @@ class MootyWortRpgMech {
 						sourceCharacter = combatModel.currentTurnOwner;
 						targetCharacters = [sourceCharacter];
 						abl.effect(sourceCharacter);
-						playAbilityAnimation(abl, sourceCharacter, targetCharacters[0]);
-						combatLogPrint(abl.generateFlavorText(sourceCharacter));
+						this.playAbilityAnimation(abl, sourceCharacter, targetCharacters[0]);
+						this.combatLogPrint(abl.generateFlavorText(sourceCharacter));
 						break;
 					case Ability.TargetTypesEnum.allEnemies:
 						sourceCharacter = combatModel.currentTurnOwner;
 						targetCharacters = combatModel.enemyParty;
 						abl.effect(sourceCharacter, targetCharacters);
-						playAbilityAnimation(abl, sourceCharacter, targetCharacters);
-						combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
+						this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
+						this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
 						break;
 					case Ability.TargetTypesEnum.allAllies:
 						sourceCharacter = combatModel.currentTurnOwner;
 						targetCharacters = combatModel.playerParty;
 						abl.effect(sourceCharacter, targetCharacters);
-						playAbilityAnimation(abl, sourceCharacter, targetCharacters);
-						combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
+						this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
+						this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
 						break;
 					}
-					handlePlayerTurnEnd(combatModel);
+					this.handlePlayerTurnEnd(combatModel);
 					// clear onclick now that we've used it
 					this.removeAttribute("onclick");
 				}
-			}
+			};
 			
 			var commandText = document.createTextNode(abl.name);
 			commandListItem.appendChild(commandText);
@@ -339,7 +340,7 @@ class MootyWortRpgMech {
 		} else {
 			combatModel.controllerState = Combat.ControllerState.beginNewRound;
 		}
-		combatLoop(combatModel);
+		this.combatLoop(combatModel);
 	}
 	/**
 	 * Completes a player's turn, advancing control to the next living player or to enemy phase
@@ -356,9 +357,9 @@ class MootyWortRpgMech {
 						MoleUndum.findCharacterIndex(combatModel.playerParty, combatModel.currentTurnOwner.id)
 				);
 		} else {
-			combatModel.controllerState = Combat.ControllerState.runEnemy;
+			this.combatModel.controllerState = Combat.ControllerState.runEnemy;
 		}
-		combatLoop(combatModel);
+		this.combatLoop(combatModel);
 	}
 	
 	/**
@@ -403,7 +404,7 @@ class MootyWortRpgMech {
 	 */
 	swapElementDisplayVisibility(hideElementId, showElementId) {
 		var hideElement = document.getElementById(hideElementId);
-		hideElement.style.display = none;
+		hideElement.style.display = "none";
 		var showElement = document.getElementById(showElementId);
 		showElement.style.display = "block";
 	}
