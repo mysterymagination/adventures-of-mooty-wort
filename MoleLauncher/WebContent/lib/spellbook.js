@@ -126,7 +126,7 @@ export class Ability {
 		 * subtracted from the corresponding stat resource pool.
 		 */
 		this.cost = { "mp": 0 };
-		this.desc = new Description();
+		this.telegraph = new Description();
 	}// end new instance ctor
 	effect(sourceChar, targetChar) { 
 		console.log("no effect from " + this.name); 
@@ -650,6 +650,7 @@ export class PrimordialMandate extends Spell {
 		super({ id: "primordial_mandate", name: "Primordial Mandate" });
 		PrimordialMandate.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		PrimordialMandate.prototype.cost = { "mp": 15 };
+		this.telegraph = new PrimordialMandateTelegraph();
 	}
 	effect(sourceChar, targetChar) {
 	    // bloodlust on target
@@ -662,6 +663,38 @@ export class PrimordialMandate extends Spell {
 	    return "The God thrusts his tentacles into the earth and the ground begins to quake.  A deep rumble like the visceral warning growl of an intractable force of nature resonates with your spirit, awakening atavistic awe.  Auras of pulsing magma and wild verdancy course up and down The God's flesh in a violently unstoppable current, infusing every fiber of his being with all the might of this world!  The eyes of The God roll wildly, as if even the boundaries of his conception of all realities is being harshly tested by overwhelming new horizons."; 
 	}
 }
+/**
+ * Telegraphs the manner in which ancient power and bloodlust of all predators through the eons floods through the caster
+ */
+class PrimordialMandateTelegraph extends Description {
+	constructor() {
+		super();
+		this.fxTagArray = ["visceral", "aura", "energy", "berserk"];
+		this.envTagArray = ["primordial", "atavistic", "cavern"];
+		this.telegraphTemplateStringArray = [
+			"",
+			"",
+			""
+			];
+		this.telegraphString = this.generateRandomTelegraph();
+	}
+	/**
+	 * Generates a random description string based on this Ability's tags and base description string(s)
+	 * @return a random Ability description string for use in telegraphs
+	 */
+	generateRandomTelegraph() {
+		// todo: make several base template strings and then run through parsing tags to get a complete randomized description string
+		var randoBaseStringIndex = Math.floor(Math.random() * 3);
+		// todo: should the tags in each of/some of the base strings below be randomly selected from this ability's available tags?
+		/*
+		1. "All the lights on the Yawning God's pulsing and quivering carapace go out as one, [explosion].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [quake], begins to rumble viciously.  [energy] flares, as [night] suffused with [shadow] and beneath [stars]; this is no place for a little mole!"
+		2. "The dead eyes of the Yawning God bulge as its sprawling form convulses, [?env] a mere backdrop for [?fx].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake]." (here we'd be randomly selecting tags of the given categories prior to sending the base string to parseTags())
+		3. "The crooked snaggle-teeth of the Yawning God are surely intimidating, but what lies beyond is far worse: [shadow] upon a hopeless landscape of [night].  As you watch, your fur bristling with apprehension, this darkness begins pulsing with promises of [explosion]."
+		*/ 
+		return this.parseTags(this.descTemplateStringArray[randoBaseStringIndex]);
+	}
+	
+}
 
 /**
  * Dark Star deals massive non-elemental damage to all enemies
@@ -671,7 +704,7 @@ export class DarkStar extends Spell {
 		super({ id: "dark_star", name: "Dark Star" });
 		DarkStar.prototype.targetType = Ability.TargetTypesEnum.allEnemies;
 		DarkStar.prototype.cost = { "mp": 25 };
-		DarkStar.prototype.desc = new DarkStarDescription();
+		DarkStar.prototype.telegraph = new DarkStarTelegraph();
 	}
 	calcDmg(sourceChar, targetChar) {
 		return 2 * sourceChar.stats["pwr"] 
@@ -692,32 +725,32 @@ export class DarkStar extends Spell {
 	}
 }
 
-class DarkStarDescription extends Description {
+class DarkStarTelegraph extends Description {
 	constructor() {
 		super();
 		this.fxTagArray = ["explosion", "quake", "energy", "shadow"];
 		this.envTagArray = ["night", "stars"];
-		this.descTemplateStringArray = [
+		this.telegraphTemplateStringArray = [
 			"All the lights on the Yawning God's pulsing and quivering carapace go out as one, [explosion].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [quake], begins to rumble viciously.  [energy] flares, as [night] suffused with [shadow] and beneath [stars]; this is no place for a little mole!",
 			"The dead eyes of the Yawning God bulge as its sprawling form convulses, [?env] a mere backdrop for [?fx].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake].",
 			"The crooked snaggle-dagger-teeth of the Yawning God are surely intimidating, but what lies beyond is far worse: [shadow] upon a hopeless landscape of [night].  As you watch, your fur bristling with apprehension, this darkness begins pulsing with promises of [explosion]."
 			];
-		this.descString = this.generateRandomDescription();
+		this.telegraphString = this.generateRandomTelegraph();
 	}
 	/**
-	 * Generates a random description string based on this Ability's tags and base description string(s)
+	 * Generates a random telegraph description string based on this Ability's tags and base description string(s)
 	 * @return a random Ability description string for use in telegraphs
 	 */
-	generateRandomDescription() {
+	generateRandomTelegraph() {
 		// todo: make several base template strings and then run through parsing tags to get a complete randomized description string
-		var randoBaseStringIndex = 1;///Math.floor(Math.random() * 3);
+		var randoBaseStringIndex = Math.floor(Math.random() * 3);
 		// todo: should the tags in each of/some of the base strings below be randomly selected from this ability's available tags?
 		/*
 		1. "All the lights on the Yawning God's pulsing and quivering carapace go out as one, [explosion].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [quake], begins to rumble viciously.  [energy] flares, as [night] suffused with [shadow] and beneath [stars]; this is no place for a little mole!"
 		2. "The dead eyes of the Yawning God bulge as its sprawling form convulses, [?env] a mere backdrop for [?fx].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake]." (here we'd be randomly selecting tags of the given categories prior to sending the base string to parseTags())
 		3. "The crooked snaggle-teeth of the Yawning God are surely intimidating, but what lies beyond is far worse: [shadow] upon a hopeless landscape of [night].  As you watch, your fur bristling with apprehension, this darkness begins pulsing with promises of [explosion]."
 		*/ 
-		return this.parseTags(this.descTemplateStringArray[randoBaseStringIndex]);
+		return this.parseTags(this.telegraphTemplateStringArray[randoBaseStringIndex]);
 	}
 	
 }
