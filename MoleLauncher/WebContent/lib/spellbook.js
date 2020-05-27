@@ -40,6 +40,26 @@ export class Description {
 					"amidst a vicious rumbling of reality that promises to leave all things familiar in ruin",
 					"rocked by undulations of the earth itself, heaving in the throes of whatever madness may infect stone and soil",
 					"your paws scrabbling and your fuzzy little body tumbling about, just another spot of debris in a torrent of ruinous chaos"
+				],
+				"visceral": [
+					"soul-deep power thrumming with irrepressible need, terrifying in its natural familiarity",
+					"insatiable instinct buried deep within the molten depths of the self",
+					"like shuddering shards of spirit, raw and radiant"
+				], 
+				"aura": [
+					
+				],  
+				"berserk": [
+					
+				],
+				"primordial": [
+					
+				], 
+				"atavistic": [
+					
+				],
+				"cavern": [
+					
 				]
 		}
 	}
