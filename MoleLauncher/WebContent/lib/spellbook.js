@@ -672,9 +672,9 @@ class PrimordialMandateTelegraph extends Description {
 		this.fxTagArray = ["visceral", "aura", "energy", "berserk"];
 		this.envTagArray = ["primordial", "atavistic", "cavern"];
 		this.telegraphTemplateStringArray = [
-			"",
-			"",
-			""
+			"With a low rumbly roar like the [berserk] fangs of a sky-rending storm clashing with the [visceral] claws of a lava-blooded quake, the Yawning God flexes its jaw.",
+			"A growl born of ancient instinct, [primordial], burbles forth and poisons the air with [berserk] madness.",
+			"Rippling muscles beneath a fluid rainbow of scales, swirling with [aura], promise incipient pain.  Beneath a pall of [atavistic] dread, you watch fangs like sabers click and clack in insatiable hunger."
 			];
 		this.telegraphString = this.generateRandomTelegraph();
 	}
