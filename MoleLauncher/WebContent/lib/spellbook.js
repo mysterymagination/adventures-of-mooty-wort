@@ -47,13 +47,17 @@ export class Description {
 					"like shuddering shards of spirit, raw and radiant"
 				], 
 				"aura": [
-					
+					"a mist swirls about the structure like an ephemeral serpent, pulsing like a heartbeat with blinding pearlescent light",
+					"fire and flickering shadow clinging to it like desperate lovers",
+					"fuzzily refracted light swirls over it, blurring and distorting its morphology, a cryptic prism of phantasmagoria"
 				],  
 				"berserk": [
-					
+					"blind rage driving destruction indescriminate",
+					"eyes flashing the furious crimson of boiling blood",
+					"tactics, rationale, and any semblance of mercy forsaken for raw power"
 				],
 				"primordial": [
-					
+					""
 				], 
 				"atavistic": [
 					
