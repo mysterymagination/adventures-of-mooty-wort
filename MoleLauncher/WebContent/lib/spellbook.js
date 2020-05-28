@@ -57,13 +57,19 @@ export class Description {
 					"tactics, rationale, and any semblance of mercy forsaken for raw power"
 				],
 				"primordial": [
-					""
+					"unformed potential, vibrating with the violence required to inflict itself upon reality",
+					"quaking like the molten core of the world",
+					"born forth in cataclysmic cold from a time before anything perverted the emptiness of the void"
 				], 
 				"atavistic": [
-					
+					"primal, raw, and unrelenting",
+					"like claws of ancient stone upthrust through an untold infinity of the forgotten and into your reality",
+					"bearing the undeniable gravity of fundamental need at the center of all being"
 				],
 				"cavern": [
-					
+					"echoing endlessly down to the core of everything",
+					"slow, steady, horrible, and unstoppable -- like the growth of a stalactite aligned to impale the very eye of the world",
+					"a deafening shriek of winds rushing all 'round, their howling highlighting the abounding emptiness suffocating you with space"
 				]
 		}
 	}
