@@ -656,6 +656,23 @@ export class ManyfoldEmbrace extends Spell {
 }
 
 /**
+ * Telegraphs the manner in which the wielder's many, many appendages are about to inflict affection upon a target
+ */
+class ManyfoldEmbraceTelegraph extends Telegraph {
+	constructor() {
+		super();
+		ManyfoldEmbraceTelegraph.prototype.fxTagArray = [];
+		ManyfoldEmbraceTelegraph.prototype.envTagArray = [];
+	ManyfoldEmbraceTelegraph.prototype.telegraphTemplateStringArray = [
+			"",
+			"",
+			""
+			];
+		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
+	}
+}
+
+/**
  * Pestilence moderately damages all enemies and has 50% to poison each
  */
 export class Pestilence extends Spell {
@@ -688,7 +705,7 @@ export class Pestilence extends Spell {
 }
 
 /**
- * Telegraphs the manner in which the wielder's breath of disease incarnate ruins all life in the their path
+ * Telegraphs the manner in which the wielder's breath of disease incarnate will ruin all life in the their path
  */
 class PestilenceTelegraph extends Telegraph {
 	constructor() {
@@ -696,9 +713,9 @@ class PestilenceTelegraph extends Telegraph {
 		PestilenceTelegraph.prototype.fxTagArray = ["mist", "venom"];
 		PestilenceTelegraph.prototype.envTagArray = ["midden"];
 		PestilenceTelegraph.prototype.telegraphTemplateStringArray = [
-			"",
-			"",
-			""
+			"Puffs of [mist] black smoke ooze from the nostrils of the Yawning God, [venom] purple lightning crackling within...",
+			"Pouring forth a wave of rotten stench like the [midden] of a charnel house, the Yawning God's jaw parts ever so slightly.  Visible wisps of its breath roll out, [venom] [mist]",
+			"The great beast's nostrils flare and crack as a destructive [mist] issues forth, the breath of a ruinous [midden] promise."
 			];
 		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
 	}
