@@ -126,6 +126,21 @@ export class Description {
 	}
 }
 
+export class Telegraph extends Description {
+	constructor() {
+		super();
+	}
+	/**
+	 * Generates a random description string based on the given array of telegraph template strings
+	 * @param telegraphTemplateStringArray an array of telegraph template string with some static text and placeholders containing tags that are to be replaced with random string data associated with the given tag e.g. [explosion] => "an irrepressible torrent of heat and light"
+	 * @return a random Ability description string for use in telegraphs
+	 */
+	generateRandomTelegraph(telegraphTemplateStringArray) {
+		var randoBaseStringIndex = Math.floor(Math.random() * telegraphTemplateStringArray.length);
+		return this.parseTags(telegraphTemplateStringArray[randoBaseStringIndex]);
+	}
+}
+
 /**
  * Class representing a capability of a character, e.g. attacking or casting a
  * spell. It takes a config object literal of the form
@@ -222,12 +237,12 @@ export class HeroAttack extends Attack {
 	constructor() {
 		super();
 		// todo: should this value derive from something?
-		this.mpBonus = 10;
+		this.mpBonusCoefficient = 0.1;
 		this.dmg = 1;
 	}
 	effect(sourceCharacter, targetCharacter) {
         this.dmg = this.calcDmg(sourceCharacter, targetCharacter);
-        sourceCharacter.stats.mp += this.mpBonus;
+        sourceCharacter.stats.mp += this.mpBonusCoefficient * sourceCharacter.stats.maxMp;
         console.log(this.dmg + " dealt by Attack to " + targetCharacter.name +
         		", and the hero regains " + this.mpBonus + " MP due to heroism!");
         // todo: AC? Any other miss chance?
@@ -402,7 +417,7 @@ export class DeepMeditation extends Spell {
 	    return sourceChar.name + " takes a moment to separate " + sourceChar.getPronoun_gen() + " consciousness from the chaotic here and now, meditating upon the unknowable complexities of The Deepness. As " + sourceChar.getPronoun_nom() + " does so, the fuzzy flesh of " + sourceChar.getPronoun_gen() + " forehead tears and through a fine veil of blood there appears a mystical third eye!";
 	}
 }
-// todo: mod the mole's basic attack abl to restore 10% MP
+
 /**
  * Calling upon all the wisdom of his forebears, who were moles of course and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  High cost spell that deals moderate fire damage based on the mole's pwr and lowers the target's res.
  */
@@ -673,6 +688,23 @@ export class Pestilence extends Spell {
 }
 
 /**
+ * Telegraphs the manner in which the wielder's breath of disease incarnate ruins all life in the their path
+ */
+class PestilenceTelegraph extends Telegraph {
+	constructor() {
+		super();
+		PestilenceTelegraph.prototype.fxTagArray = ["mist", "venom"];
+		PestilenceTelegraph.prototype.envTagArray = ["midden"];
+		PestilenceTelegraph.prototype.telegraphTemplateStringArray = [
+			"",
+			"",
+			""
+			];
+		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
+	}
+}
+
+/**
  * Primordial Mandate grants the Bloodlust status to the target
  */
 export class PrimordialMandate extends Spell {
@@ -696,34 +728,18 @@ export class PrimordialMandate extends Spell {
 /**
  * Telegraphs the manner in which ancient power and bloodlust of all predators through the eons floods through the caster
  */
-class PrimordialMandateTelegraph extends Description {
+class PrimordialMandateTelegraph extends Telegraph {
 	constructor() {
 		super();
-		this.fxTagArray = ["visceral", "aura", "energy", "berserk"];
-		this.envTagArray = ["primordial", "atavistic", "cavern"];
-		this.telegraphTemplateStringArray = [
+		PrimordialMandateTelegraph.prototype.fxTagArray = ["visceral", "aura", "energy", "berserk"];
+		PrimordialMandateTelegraph.prototype.envTagArray = ["primordial", "atavistic", "cavern"];
+		PrimordialMandateTelegraph.prototype.telegraphTemplateStringArray = [
 			"With a low rumbly roar like the [berserk] fangs of a sky-rending storm clashing with the [visceral] claws of a lava-blooded quake, the Yawning God flexes its jaw.",
 			"A growl born of ancient instinct, [primordial], burbles forth and poisons the air with [berserk] madness.",
 			"Rippling muscles beneath a fluid rainbow of scales, swirling with [aura], promise incipient pain.  Beneath a pall of [atavistic] dread, you watch fangs like sabers click and clack in insatiable hunger."
 			];
-		this.telegraphString = this.generateRandomTelegraph();
+		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
 	}
-	/**
-	 * Generates a random description string based on this Ability's tags and base description string(s)
-	 * @return a random Ability description string for use in telegraphs
-	 */
-	generateRandomTelegraph() {
-		// todo: make several base template strings and then run through parsing tags to get a complete randomized description string
-		var randoBaseStringIndex = Math.floor(Math.random() * 3);
-		// todo: should the tags in each of/some of the base strings below be randomly selected from this ability's available tags?
-		/*
-		1. "All the lights on the Yawning God's pulsing and quivering carapace go out as one, [explosion].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [quake], begins to rumble viciously.  [energy] flares, as [night] suffused with [shadow] and beneath [stars]; this is no place for a little mole!"
-		2. "The dead eyes of the Yawning God bulge as its sprawling form convulses, [?env] a mere backdrop for [?fx].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake]." (here we'd be randomly selecting tags of the given categories prior to sending the base string to parseTags())
-		3. "The crooked snaggle-teeth of the Yawning God are surely intimidating, but what lies beyond is far worse: [shadow] upon a hopeless landscape of [night].  As you watch, your fur bristling with apprehension, this darkness begins pulsing with promises of [explosion]."
-		*/ 
-		return this.parseTags(this.descTemplateStringArray[randoBaseStringIndex]);
-	}
-	
 }
 
 /**
@@ -755,34 +771,18 @@ export class DarkStar extends Spell {
 	}
 }
 
-class DarkStarTelegraph extends Description {
+class DarkStarTelegraph extends Telegraph {
 	constructor() {
 		super();
-		this.fxTagArray = ["explosion", "quake", "energy", "shadow"];
-		this.envTagArray = ["night", "stars"];
-		this.telegraphTemplateStringArray = [
+		DarkStarTelegraph.prototype.fxTagArray = ["explosion", "quake", "energy", "shadow"];
+		DarkStarTelegraph.prototype.envTagArray = ["night", "stars"];
+		DarkStarTelegraph.prototype.telegraphTemplateStringArray = [
 			"All the lights on the Yawning God's pulsing and quivering carapace go out as one, [explosion].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [quake], begins to rumble viciously.  [energy] flares, as [night] suffused with [shadow] and beneath [stars]; this is no place for a little mole!",
 			"The dead eyes of the Yawning God bulge as its sprawling form convulses, [?env] a mere backdrop for [?fx].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake].",
 			"The crooked snaggle-dagger-teeth of the Yawning God are surely intimidating, but what lies beyond is far worse: [shadow] upon a hopeless landscape of [night].  As you watch, your fur bristling with apprehension, this darkness begins pulsing with promises of [explosion]."
 			];
-		this.telegraphString = this.generateRandomTelegraph();
+		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
 	}
-	/**
-	 * Generates a random telegraph description string based on this Ability's tags and base description string(s)
-	 * @return a random Ability description string for use in telegraphs
-	 */
-	generateRandomTelegraph() {
-		// todo: make several base template strings and then run through parsing tags to get a complete randomized description string
-		var randoBaseStringIndex = Math.floor(Math.random() * 3);
-		// todo: should the tags in each of/some of the base strings below be randomly selected from this ability's available tags?
-		/*
-		1. "All the lights on the Yawning God's pulsing and quivering carapace go out as one, [explosion].  Your claws scrabble for purchase as the strange void that is your reality at the moment, [quake], begins to rumble viciously.  [energy] flares, as [night] suffused with [shadow] and beneath [stars]; this is no place for a little mole!"
-		2. "The dead eyes of the Yawning God bulge as its sprawling form convulses, [?env] a mere backdrop for [?fx].  A deeper darkness than any you've yet known blooms from beneath its scales, and all semblance of recognizable form vanishes in rumbling [shadow] that creeps towards you like a predatory [quake]." (here we'd be randomly selecting tags of the given categories prior to sending the base string to parseTags())
-		3. "The crooked snaggle-teeth of the Yawning God are surely intimidating, but what lies beyond is far worse: [shadow] upon a hopeless landscape of [night].  As you watch, your fur bristling with apprehension, this darkness begins pulsing with promises of [explosion]."
-		*/ 
-		return this.parseTags(this.telegraphTemplateStringArray[randoBaseStringIndex]);
-	}
-	
 }
 /// end yawning god abilities block ///
 
