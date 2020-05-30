@@ -642,7 +642,23 @@ export class ChillBeyond extends Spell {
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "While the darkness in your beloved Deepness gets warmer as it closes in thanks to the proximity to magma, the darkness of the infinite Void beyond all worlds is a place of unfathomable cold.  With all the gentleness and decorum of a voratious graveworm, this alien darkness wriggles into the comforting blanket of blackness surrounding you.  Its inception robs your world of warmth entirely and in an instant you are frozen solid!  Refracted through the glacial translucence is a rictus grin bursting with fangs..."; 
+	    return "While the darkness in your beloved Deepness gets warmer as it closes in thanks to the proximity to magma, the darkness of the infinite Void beyond all worlds is a place of unfathomable cold.  With all the gentleness and decorum of a voratious graveworm, this alien darkness wriggles into the comforting blanket of blackness surrounding you.  Its inception robs your world of warmth entirely and in an instant you are frozen solid!  Refracted through the infinite facets of the glacial translucence is a rictus grin bursting with fangs..."; 
+	}
+}
+/**
+ * Telegraphs the incipient grip of the frozen insanity voidscape far far beyond the stars
+ */
+class ChillBeyondTelegraph extends Telegraph {
+	constructor() {
+		super();
+		ChillBeyondTelegraph.prototype.fxTagArray = [""];
+		ChillBeyondTelegraph.prototype.envTagArray = [];
+		ChillBeyondTelegraph.prototype.telegraphTemplateStringArray = [
+			"",
+			"",
+			""
+			];
+		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
 	}
 }
 /// end Grue abilities block ///
