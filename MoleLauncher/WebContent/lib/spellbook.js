@@ -70,6 +70,31 @@ export class Description {
 					"echoing endlessly down to the core of everything",
 					"slow, steady, horrible, and unstoppable -- like the growth of a stalactite aligned to impale the very eye of the world",
 					"a deafening shriek of winds rushing all 'round, their howling highlighting the abounding emptiness suffocating you with space"
+				],
+				"midden": [
+					"a suffocating ambience of waste and corruption",
+					"rot and ruin permeating the air",
+					"flush with the putrid heady scent of the lost and forgotten"
+				],
+				"mist": [
+					"cold fog grips at your fur, glittering gossamer wisps like desperate diamonds gasping their last",
+					"the clawing chill in the air leeching warmth from your body like a vampiric blanket... the anti-blanket!",
+					"surrounding mist rendering everything through a filter of desolate obscurity"
+				],
+				"venom": [
+					"bubbling with toxic intent",
+					"fairly boiling with anticipation at the prospect of fulfilling its promise of virulent cruelty",
+					"sneaking, searching, stabbing through everything in reach, like a curious and voracious serpent"
+				],
+				"massive": [
+					"hulking form and crushing presence",
+					"casting shadows that could eclipse the sun itself if necessary, such that drowning your hope in darkness is simple",
+					"a cyclopean monument to the primordial forces that could only squeeze themselves into the first moments of time"
+				],
+				"oily": [
+					"dripping slick with viscous filth",
+					"drenched in a thick coat of sticky poison",
+					"the smell of it being repellent enough, but the real kicker is how it's terribly... moist."
 				]
 		}
 	}
@@ -661,12 +686,11 @@ export class ManyfoldEmbrace extends Spell {
 class ManyfoldEmbraceTelegraph extends Telegraph {
 	constructor() {
 		super();
-		ManyfoldEmbraceTelegraph.prototype.fxTagArray = [];
-		ManyfoldEmbraceTelegraph.prototype.envTagArray = [];
+		ManyfoldEmbraceTelegraph.prototype.fxTagArray = ["massive", "venom", "oily"];
 	ManyfoldEmbraceTelegraph.prototype.telegraphTemplateStringArray = [
-			"",
-			"",
-			""
+			"The [oily] tendrils of the Yawning God, [massive] and innumerable, rise up ominously.",
+			"Dripping with toxins, [venom], your vision is filled with a writhing hive of [massive] serpentine columns.",
+			"A sound like reluctantly ripping roots being torn from a substrate of sucking sudden muck heralds the rising of [massive] serpent shadows from all across the hide of the Yawning God, [oily]."
 			];
 		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
 	}
