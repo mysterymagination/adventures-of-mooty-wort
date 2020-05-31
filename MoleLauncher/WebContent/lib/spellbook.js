@@ -102,10 +102,14 @@ export class Description {
 					"with bitterly chill breath that threatens to steal away your own"
 				],
 				"empty": [
-					
+					"nothingness and void",
+					"howling void, a relentless vacuum pulling the very breath from you",
+					"reducing reality to naught but insubstance drawn straight from the heart of a black hole"
 				],
 				"isolation": [
-					
+					"utterly alone in darkest darkness",
+					"the world robbed of life and warmth, of friend and foe alike, leaving only nothing",
+					"suffocating silence"
 				]
 		}
 	}
