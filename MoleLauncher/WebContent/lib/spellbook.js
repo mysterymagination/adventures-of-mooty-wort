@@ -94,7 +94,18 @@ export class Description {
 				"oily": [
 					"dripping slick with viscous filth",
 					"drenched in a thick coat of sticky poison",
-					"the smell of it being repellent enough, but the real kicker is how it's terribly... moist."
+					"the smell of it being repellent enough, but the real kicker is how it's terribly... *moist*."
+				],
+				"cold": [
+					"biting winds leeching life",
+					"frozen crystal of infinite facets, beautiful and deadly",
+					"with bitterly chill breath that threatens to steal away your own"
+				],
+				"empty": [
+					
+				],
+				"isolation": [
+					
 				]
 		}
 	}
@@ -651,12 +662,12 @@ export class ChillBeyond extends Spell {
 class ChillBeyondTelegraph extends Telegraph {
 	constructor() {
 		super();
-		ChillBeyondTelegraph.prototype.fxTagArray = [""];
-		ChillBeyondTelegraph.prototype.envTagArray = [];
+		ChillBeyondTelegraph.prototype.fxTagArray = ["shadow", "cold", "empty"];
+		ChillBeyondTelegraph.prototype.envTagArray = ["isolation"];
 		ChillBeyondTelegraph.prototype.telegraphTemplateStringArray = [
-			"",
-			"",
-			""
+			"Hateful daggers of [?fx] frost stab into your flesh from a thousand thousand angles as all [cold] closes in, gouging out vitality and leaving [isolation].",
+			"A [cold] wind whisks away all the comfort of the once-cozy darkness, leaving it [empty]; something fell approaches wreathed in [shadow].",
+			"Howling winds whistle through the caverns, underscoring your [isolation], leaving your spirit [?fx]."
 			];
 		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
 	}
