@@ -632,6 +632,23 @@ export class BrassLantern extends Spell {
 }
 
 /**
+ * Telegraphs the agonizing flare of power that will be inflicted by the Brass Lantern
+ */
+class BrassLanternTelegraph extends Telegraph {
+	constructor() {
+		super();
+		BrassLanternTelegraph.prototype.fxTagArray = ["light", "heat", "energy"];
+		BrassLanternTelegraph.prototype.envTagArray = ["mystic"];
+		BrassLanternTelegraph.prototype.telegraphTemplateStringArray = [
+			"A fierce glittering spark ignites in the void, spreading blinding [light].  Rather than illuminating, its light warps reality into [mystic] confusion.",
+			"Fire, ghostly and [mystic], springs to life through a metal grate in the distance; its [heat] and gluttonous growth put you in mind of a demon's fanged maw.",
+			"The comforting darkness is shattered as gathering [energy] and [mystic] [?fx] overwhelm your senses!"
+			];
+		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
+	}
+}
+
+/**
  * Chill of the Beyond deals minor cold damage and freezes the target 
  */
 export class ChillBeyond extends Spell {
