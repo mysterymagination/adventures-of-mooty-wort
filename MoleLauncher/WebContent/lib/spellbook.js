@@ -110,6 +110,16 @@ export class Description {
 					"utterly alone in darkest darkness",
 					"the world robbed of life and warmth, of friend and foe alike, leaving only nothing",
 					"suffocating silence"
+				],
+				"heat": [
+					"smoldering embers searing all flesh within radiant reach",
+					""
+				],
+				"mystic": [
+					
+				],
+				"light": [
+					
 				]
 		}
 	}
