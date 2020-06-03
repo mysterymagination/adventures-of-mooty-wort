@@ -114,7 +114,8 @@ export class Description {
 				"heat": [
 					"smoldering embers searing all flesh within radiant reach",
 					"roiling flares arc around and through an approaching point of strange gravity, like circling predators",
-					"pulsing with sullen light like veins of magma through blasted stone"
+					"pulsing with sullen light like veins of magma through blasted stone",
+					"combustion booms outward with a raptorial roar of rolling thunder"
 				],
 				"mystic": [
 					"obscured and mysterious, unsensed but perceived",
