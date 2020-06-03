@@ -113,13 +113,18 @@ export class Description {
 				],
 				"heat": [
 					"smoldering embers searing all flesh within radiant reach",
-					""
+					"roiling flares arc around and through an approaching point of strange gravity, like circling predators",
+					"pulsing with sullen light like veins of magma through blasted stone"
 				],
 				"mystic": [
-					
+					"obscured and mysterious, unsensed but perceived",
+					"reality twisting into convoluted chaos",
+					"steeped in neon confusion, highlighting curiosities and drowning mundane details in lambent luster"
 				],
 				"light": [
-					
+					"emitting a blinding blaze",
+					"blooms of explosive radiation, violet and violent",
+					"all cooled color swirls, a poisoned rainbow"
 				]
 		}
 	}
