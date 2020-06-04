@@ -126,6 +126,11 @@ export class Description {
 					"emitting a blinding blaze",
 					"blooms of explosive radiation, violet and violent",
 					"all cooled color swirls, a poisoned rainbow"
+				],
+				"thunder": [
+					"roaring like the sky itself has become predatory",
+					"heralded by deafening concussive booms that strangle your very heartbeat",
+					"surrounded by a cacophony of chaotic crashing sounds, like the heavens are pulling apart at the seams, lost to the madness which you struggle to endure"
 				]
 		}
 	}
