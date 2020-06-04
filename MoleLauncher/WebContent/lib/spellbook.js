@@ -621,6 +621,22 @@ export class Consume extends Spell {
 	    return "A thunderclap of malevolent intent momentarily deafens you; in the midst of that silence, when the wave of emptiness in your surroundings seems to reach its peak, a lightning flash of fangs manifests out of nothing in a rictus grin.  Jaws spreading wide, it chomps down and attempts to swallow you whole!  "+(targetChar["hp"] <= 0 ? "Your bloodsoaked fur helps ease your way on in and down, and in an instant the champion of Deepness is consumed." : "Your bulk and mighty constitution prevent you from sliding down the creature's gullet, but the fangs are still able to tear into your flesh."); 
 	}
 }
+/**
+ * Telegraphs the creaking joints of a rapidly gaping maw
+ */
+class ConsumeTelegraph extends Telegraph {
+	constructor() {
+		super();
+		ConsumeTelegraph.prototype.fxTagArray = ["visceral", "thunder"];
+		ConsumeTelegraph.prototype.envTagArray = ["isolation", "primordial"];
+		ConsumeTelegraph.prototype.telegraphTemplateStringArray = [
+			"An ominous silence stretches on for long moments of [isolation]. A [visceral] dread urgently warns you that death approaches on wings of [thunder]... the oubliette of dagger shaped silver-sheen shadows growing ever larger is also a good hint.",
+			"With a start and a squeal of pain, you note that the cavern seems to be growing new stalactites and stalagmites.  Rapidly.  A sulphurous wind, [primordial], ruffles your fur in the wake of a growl like rolling [thunder].",
+			"A distant and deep creak like [?env] [thunder] suggests that the joints of an enormous maw are being stretched beyond their limits."
+			];
+		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
+	}
+}
 
 /**
  * Brass Lantern uses the target's raw magic power to deal damage to it, ignoring defense.  
