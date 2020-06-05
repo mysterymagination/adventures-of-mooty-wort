@@ -131,6 +131,11 @@ export class Description {
 					"roaring like the sky itself has become predatory",
 					"heralded by deafening concussive booms that strangle your very heartbeat",
 					"surrounded by a cacophony of chaotic crashing sounds, like the heavens are pulling apart at the seams, lost to the madness which you struggle to endure"
+				],
+				"claustrophobic": [
+					"walls all around, crushing and suffocating",
+					"fear closes in around your heart as unyielding oubliette walls close upon everything else",
+					"as freedom of movement lessens, so too does breath quicken, pulse race, and hope erode"
 				]
 		}
 	}
@@ -622,11 +627,13 @@ export class TouchVoid extends Spell {
 class TouchVoidTelegraph extends Telegraph {
 	constructor() {
 		super();
-		TouchVoidTelegraph.prototype.fxTagArray = [];
-		TouchVoidTelegraph.prototype.envTagArray = [];
+		TouchVoidTelegraph.prototype.fxTagArray = ["cold", "shadow"];
+		TouchVoidTelegraph.prototype.envTagArray = ["night", "claustrophobic"];
 		TouchVoidTelegraph.prototype.telegraphTemplateStringArray = [
-			
-			];
+			"Walls of [night] close in all around, crushing your world into [claustrophobic].",
+			"A swirling of utmost [?fx] begins to creep over you; withing the suddenly [claustrophobic] confines, your breathing becomes labored.",
+			"With a rapidly growing sense of [claustrophobic], you warily watch as tendrils of [shadow] weave a cage of unyielding [night] around your tiny corner of the world."
+		];
 		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
 	}
 }
