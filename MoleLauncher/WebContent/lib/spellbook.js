@@ -190,6 +190,7 @@ export class Description {
 export class Telegraph extends Description {
 	constructor() {
 		super();
+		Telegraph.prototype.telegraphTemplateStringArray = [];
 	}
 	/**
 	 * Generates a random description string based on the given array of telegraph template strings
@@ -199,6 +200,14 @@ export class Telegraph extends Description {
 	generateRandomTelegraph(telegraphTemplateStringArray) {
 		var randoBaseStringIndex = Math.floor(Math.random() * telegraphTemplateStringArray.length);
 		return this.parseTags(telegraphTemplateStringArray[randoBaseStringIndex]);
+	}
+	/**
+	 * Generates a random description string based on the prototype chain tail's telegraph template strings
+	 * @return a random Ability description string for use in telegraphs
+	 */
+	generateRandomTelegraph() {
+		var randoBaseStringIndex = Math.floor(Math.random() * this.telegraphTemplateStringArray.length);
+		return this.parseTags(this.telegraphTemplateStringArray[randoBaseStringIndex]);
 	}
 }
 
@@ -598,6 +607,20 @@ export class TouchVoid extends Spell {
 	}
 	generateFlavorText(sourceChar, targetChar) {
 	    return "Somehow the darkness near your rump becomes material and seizes you!  Cold infects your being as all the warmth and joy of life bleeds away, slaking the implacable thirst of Darkness.";
+	}
+}
+/**
+ * Telegraphs the incoming and ever-bad touch of the void!
+ */
+class TouchVoidTelegraph extends Telegraph {
+	constructor() {
+		super();
+		TouchVoidTelegraph.prototype.fxTagArray = [];
+		TouchVoidTelegraph.prototype.envTagArray = [];
+		TouchVoidTelegraph.prototype.telegraphTemplateStringArray = [
+			
+			];
+		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
 	}
 }
 

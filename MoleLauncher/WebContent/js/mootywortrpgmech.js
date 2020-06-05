@@ -110,10 +110,10 @@ class MootyWortRpgMech {
 			}
 		} else if(state === Combat.ControllerState.playerInput) {
 			// Lunar-inspired hyyype!
-			this.displayTelegraph(
-					combatModel.telegraphAction(
-							combatModel.enemySelectedAbility
-					)
+			this.combatLogPrint(
+				combatModel.telegraphAction(
+					combatModel.enemySelectedAbility
+				)
 			);
 			// command selection subphase of player input phase
 			this.populatePlayerCommandList(combatModel);
