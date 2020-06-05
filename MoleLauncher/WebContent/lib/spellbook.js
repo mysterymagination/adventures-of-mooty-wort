@@ -206,8 +206,12 @@ export class Telegraph extends Description {
 	 * @return a random Ability description string for use in telegraphs
 	 */
 	generateRandomTelegraph() {
-		var randoBaseStringIndex = Math.floor(Math.random() * this.telegraphTemplateStringArray.length);
-		return this.parseTags(this.telegraphTemplateStringArray[randoBaseStringIndex]);
+		if(this.telegraphTemplateStringArray && this.telegraphTemplateStringArray.length > 0) {
+			var randoBaseStringIndex = Math.floor(Math.random() * this.telegraphTemplateStringArray.length);
+			return this.parseTags(this.telegraphTemplateStringArray[randoBaseStringIndex]);
+		} else {
+			throw "generateRandomTelegraph called on Telegraph instance with no template string array";
+		}
 	}
 }
 
@@ -241,8 +245,11 @@ export class Ability {
 		 * subtracted from the corresponding stat resource pool.
 		 */
 		this.cost = { "mp": 0 };
-		this.telegraph = new Description();
+		this.telegraph = new Telegraph();
 	}// end new instance ctor
+	generateRandomTelegraph() {
+		return this.telegraph.generateRandomTelegraph();
+	}
 	effect(sourceChar, targetChar) { 
 		console.log("no effect from " + this.name); 
 	}

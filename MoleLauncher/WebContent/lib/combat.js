@@ -171,7 +171,7 @@ export class Combat {
 	 * @return a pseudorandom string telegraphing what the AI is going to do, in the spirit of Lunar 
 	 */
 	telegraphAction(ability) {
-		return ability.telegraph.generateRandomTelegraph();
+		return ability.generateRandomTelegraph();
 	}
 	/**
 	 * Process the end of a combat round
