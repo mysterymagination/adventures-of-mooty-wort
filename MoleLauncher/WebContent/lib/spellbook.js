@@ -594,7 +594,7 @@ export class TouchVoid extends Spell {
 	calcDmg(sourceChar, targetChar, isMagic) {
 		var aspectDamage = 0.0;
 		if(isMagic) {
-			aspectDamage = sourceChar.attributes["pwr"] - 0.5 * targetChar.stats["res"];
+			aspectDamage = sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"];
 		} else {
 			aspectDamage = sourceChar.stats["atk"] - 0.5 * targetChar.stats["def"];
 		}
@@ -784,7 +784,7 @@ export class ManyfoldEmbrace extends Spell {
 	calcDmg(sourceChar, targetChar) {
 	    // idea is the source is transforming tentacles into mighty spiked cudgels
 		// using magic and then buffeting the target with them
-		return 1.5 * (sourceChar.stats["atk"] + sourceChar.attributes["pwr"]) 
+		return 1.5 * (sourceChar.stats["atk"] + sourceChar.stats["pwr"]) 
 	    	   - 0.5 * targetChar.stats["def"];
 	}
 	effect(sourceChar, targetChar) {
@@ -828,7 +828,7 @@ export class Pestilence extends Spell {
 		Pestilence.prototype.cost = { "mp": 50 };
 	}
 	calcDmg(sourceChar, targetChar) {
-		return sourceChar.attributes["pwr"] - 0.5 * targetChar.stats["res"];
+		return sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"];
 	}
 	effect(sourceChar, targetChars) {
 	    for(let index = 0; index < targetChars.length; index++) {

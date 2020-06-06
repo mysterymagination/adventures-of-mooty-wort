@@ -37,26 +37,26 @@ export class Combat {
 	 * @return the string name of the ability chosen, as specified in the input probConfigObj
 	 */
 	chooseRandomAbility(probConfigObj) {
-		  // determine ranges of a d100 roll appropriate for each ability based on weights
-		  // track where our range has raised to, starting from 0% and ending at 100%
-		  var currentFloor = 0.0;
-		  rangesObj = {};
-		  for (let probKey in probConfigObj) {
-		    // transform a probability like 0.3 into the range 0,30 
-		    rangesObj[probKey] = [currentFloor, currentFloor + probConfigObj[probKey] * 100];
-		    // raise the floor now that more range has been allocated by the amount allocated
-		    currentFloor += rangesObj[probKey][1] - rangesObj[probKey][0];
-		  }
-		  console.log(JSON.stringify(rangesObj));
-		  var roll = this.rollPercentage();
-		  // look up match
-		  for (let range in rangesObj) {
-		    if (roll >= rangesObj[range][0] && roll <= rangesObj[range][1]) {
-		      return "" + range;
-		    }
-		  }
-		  throw "chooseRandomAbility exception: range not found for roll " + roll + " in range table " + JSON.stringify(rangesObj);
+	    // determine ranges of a d100 roll appropriate for each ability based on weights
+	    // track where our range has raised to, starting from 0% and ending at 100%
+		var currentFloor = 0.0;
+		var rangesObj = {};
+		for (let probKey in probConfigObj) {
+			// transform a probability like 0.3 into the range 0,30 
+			rangesObj[probKey] = [currentFloor, currentFloor + probConfigObj[probKey] * 100];
+			// raise the floor now that more range has been allocated by the amount allocated
+			currentFloor += rangesObj[probKey][1] - rangesObj[probKey][0];
 		}
+		console.log(JSON.stringify(rangesObj));
+		var roll = Libifels.rollPercentage();
+		// look up match
+		for (let range in rangesObj) {
+			if (roll >= rangesObj[range][0] && roll <= rangesObj[range][1]) {
+				return "" + range;
+			}
+		}
+		throw "chooseRandomAbility exception: range not found for roll " + roll + " in range table " + JSON.stringify(rangesObj);
+	}
 	/**
 	 * Choose and return a character participating in this combat at random
 	 */
@@ -82,7 +82,7 @@ export class Combat {
 		// todo: populate combatLogContent with report re: status effects
 		// todo: frozen status processing, specifically graying out command UI if the player is frozen
 		//  and adding a command option to break out
-        for (let enemyChar of this.enemyParty) {
+        for (let enemyCharacter of this.enemyParty) {
             for (let effect of enemyCharacter.statusEffects) {
                 if (enemyCharacter.living) {
                     if (effect.id === "poison") {
@@ -111,7 +111,7 @@ export class Combat {
             }
         }
         // tick down and process status effects for player party
-        for (let playerChar of this.playerParty) {
+        for (let playerCharacter of this.playerParty) {
             for (let effect of playerCharacter.statusEffects) {
                 if (playerCharacter.living) {
                 	// todo: frozen processing: player needs to choose whether to break free
@@ -141,7 +141,7 @@ export class Combat {
             }
         }
         // check for victory/defeat condition
-        checkTerminalConditions();
+        this.checkTerminalConditions();
         /*
         if(this.combatResult !== undefined) {
         	handleCombatResult();
@@ -159,9 +159,9 @@ export class Combat {
         	return Combat.ControllerState.processCombatResult;
         } else {
         	// todo: check for any status effects that might prevent enemy from acting
-        	for(let enemy in this.enemyParty) {
+        	for(let enemy of this.enemyParty) {
         		// todo: support for multiple enemies
-        		this.enemySelectedAbility = enemy.runAI();	
+        		this.enemySelectedAbility = enemy.runAI(this, "enemy");	
         	}
         	// tell viewcontroller we're moving on to player input
         	return Combat.ControllerState.playerInput;
@@ -226,13 +226,13 @@ export class Combat {
 	checkTerminalConditions() {
 		var dedEnemies = 0;
         var dedPlayers = 0;
-        for (let playerChar of this.playerParty) {
+        for (let playerCharacter of this.playerParty) {
             // check for death
             if (playerCharacter.stats.hp <= 0) {
                 dedPlayers++;
             }
         }
-        for (let enemyChar of this.enemyParty) {
+        for (let enemyCharacter of this.enemyParty) {
             // check for death
             if (enemyCharacter.stats.hp <= 0) {
                 dedEnemies++;

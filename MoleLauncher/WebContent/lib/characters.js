@@ -42,7 +42,7 @@ export class Character {
         /** 
          * a character's Entity is their Spell load-out.
          */
-        this.entity = undefined;
+        Character.prototype.entity = undefined;
         /**
          * String array of command presented to the player in the combat UI
          */
@@ -251,21 +251,9 @@ export class Grue extends Character {
         console.log("reached grue runAI fn... have fn!");
         if (role) {
             if (role === "enemy") {
-                var playerParty = [];
-                for (let playerCharacter of combat.playerParty) {
-                    playerParty.push(this.characters[playerCharacter.id]);
-                    console.log("attempting to add character with id " + playerCharacter.id);
-                    console.log("added " + this.characters[playerCharacter.id].name + " to playerParty");
-                }
-            
-                var enemyParty = [];
-                for (let enemyCharacter of combat.enemyParty) {
-                    enemyParty.push(this.characters[enemyCharacter.id]);
-                }
-                
                 // defaults for action to be taken
                 var chosenAbility = undefined;
-                var chosenTarget = playerParty[0];
+                var chosenTarget = combat.playerParty[0];
 
                 // defaults for outliers and statistical points of interest
                 var playerLeastDefense = chosenTarget;
@@ -275,7 +263,7 @@ export class Grue extends Character {
                 var maxHealth = true; // assume true and let contradiction flip it
 
                 /// begin gathering data ///
-                for (let player of playerParty) {
+                for (let player of combat.playerParty) {
 
                     // overwrite player with least defense if applicable
                     if (player.stats["def"] < playerLeastDefense.stats["def"]) {
@@ -304,49 +292,49 @@ export class Grue extends Character {
                 // do one mostly at random OR spam Dark Star if his health is below 25%
                 if (chosenAbility === undefined && chosenTarget === undefined) {
                     if (this.stats.hp > this.stats.maxHP * 0.25) {
-                        var percentageRandoAbl = lib.rollPercentage();
+                        var percentageRandoAbl = Lib.rollPercentage();
                         // choose a player party index randomly and pull the poor person from it for targeting
                         var playerRandoTarget = playerParty[Math.floor(Math.random() * playerParty.length)];
                         // all The God's special abilities are pretty punishing, so make basic atk most probably
                         if (percentageRandoAbl <= 35) {
                         	// basic attack
-                            chosenAbility = this.abilities["attack"];
+                            chosenAbility = this.entity.spellsDict["attack"];
                             chosenTarget = playerLeastDefense;
                         } else if (percentageRandoAbl > 36 && percentageRandoAbl <= 60) {
                         	// hug if possible for maximum damage output
-                        	if(this.canAffordCost(this.spells["manyfold_embrace"])) {
-                        		chosenAbility = this.spells["manyfold_embrace"];
+                        	if(this.canAffordCost(this.entity.spellsDict["manyfold_embrace"])) {
+                        		chosenAbility = this.entity.spellsDict["manyfold_embrace"];
                         	} else {
-                        		chosenAbility = this.abilities["attack"];
+                        		chosenAbility = this.entity.spellsDict["attack"];
                         	}
                             chosenTarget = playerRandoTarget;
                         } else if (percentageRandoAbl > 61 && percentageRandoAbl <= 85) {
                         	// either apply bloodlust to increase attack, or attack to benefit from it
-                        	if (!lib.hasStatusEffect(this, lib.statusEffectsDict["bloodlust"])) {
-                        		chosenAbility = this.spells["primordial_mandate"];
+                        	if (!Lib.hasStatusEffect(this, Lib.statusEffectsDict["bloodlust"])) {
+                        		chosenAbility = this.entity.spellsDict["primordial_mandate"];
                                 chosenTarget = this;
                             } else {
                             	// hug if possible for maximum damage output
-                            	if(this.canAffordCost(this.spells["manyfold_embrace"])) {
-                            		chosenAbility = this.spells["manyfold_embrace"];
+                            	if(this.canAffordCost(this.entity.spellsDict["manyfold_embrace"])) {
+                            		chosenAbility = this.entity.spellsDict["manyfold_embrace"];
                             	} else {
-                            		chosenAbility = this.abilities["attack"];
+                            		chosenAbility = this.entity.spellsDict["attack"];
                             	}
                             	// regardless, hit the weakest opponent
                                 chosenTarget = playerLeastDefense;
                             }
                         } else {
-                        	chosenAbility = this.spells["putrefaction"];
-                            chosenTarget = playerParty;
+                        	chosenAbility = this.entity.spellsDict["putrefaction"];
+                            chosenTarget = combat.playerParty;
                         }// end rando block
                     }// end The God HP > 25%
                     else {
                         // being severely injured, The God now starts to spam Dark Star if no earlier behaviors were proced and he can afford it
                     	if(this.canAffordCost(darkStarSpell)) {
-                    		chosenAbility = this.spells["dark_star"];
+                    		chosenAbility = this.entity.spellsDict["dark_star"];
                     		chosenTarget = playerParty;
                     	} else {
-                    		chosenAbility = this.abilities["attack"];
+                    		chosenAbility = this.entity.spellsDict["attack"];
                     		chosenTarget = playerLeastDefense;
                     	}
                     }
@@ -355,7 +343,7 @@ export class Grue extends Character {
 
                 // normalize input chosen targets to array form
                 var targets = undefined;
-                if (chosenAbility.targetType === lib.Ability.TargetTypesEnum.allEnemies) {
+                if (chosenAbility.targetType === Spells.Ability.TargetTypesEnum.allEnemies) {
                     console.log("setting AI targets to array " + chosenTarget + " which starts with " + chosenTarget[0].name);
                     targets = chosenTarget;
                 } else {
@@ -367,7 +355,7 @@ export class Grue extends Character {
                 console.log("AI chose the ability " + chosenAbility.name);
                 if (targets.length > 0) {
                     // there are still targets, so go forward with them as per usual
-                    if (chosenAbility.targetType === lib.Ability.TargetTypesEnum.allEnemies) {
+                    if (chosenAbility.targetType === Spells.Ability.TargetTypesEnum.allEnemies) {
 
                         // multi-target attack, expects an array of chars as target	
                         chosenAbility.effect(this, targets);
@@ -512,44 +500,46 @@ export class YawningGod extends Character {
                 // todo: particular mole attributes or status effects we wanna sniff for?
                 // only actually the one player in this case
                 chosenTarget = combat.playerParty[0];
-                chosenAbility = lib.chooseRandomAbility(ablProbsConfig)
+                chosenAbility = this.entity.spellsDict[
+                	combat.chooseRandomAbility(ablProbsConfig)
+                ];
                 
                 /// defaults block ///
                 if (chosenAbility === undefined && chosenTarget === undefined) {
                     if (this.stats.hp > this.stats.maxHP * 0.25) {
-                        var percentageRandoAbl = lib.rollPercentage();
+                        var percentageRandoAbl = Lib.rollPercentage();
                         // choose a player party index randomly and pull the poor person from it for targeting
                         var playerRandoTarget = playerParty[Math.floor(Math.random() * playerParty.length)];
                         // all The God's special abilities are pretty punishing, so make basic atk most probably
                         if (percentageRandoAbl <= 35) {
                         	// basic attack
-                            chosenAbility = this.abilities["attack"];
+                            chosenAbility = this.entity.spellsDict["attack"];
                             chosenTarget = playerLeastDefense;
                         } else if (percentageRandoAbl > 36 && percentageRandoAbl <= 60) {
                         	// hug if possible for maximum damage output
-                        	if(this.canAffordCost(this.spells["manyfold_embrace"])) {
-                        		chosenAbility = this.spells["manyfold_embrace"];
+                        	if(this.canAffordCost(this.entity.spellsDict["manyfold_embrace"])) {
+                        		chosenAbility = this.entity.spellsDict["manyfold_embrace"];
                         	} else {
-                        		chosenAbility = this.abilities["attack"];
+                        		chosenAbility = this.entity.spellsDict["attack"];
                         	}
                             chosenTarget = playerRandoTarget;
                         } else if (percentageRandoAbl > 61 && percentageRandoAbl <= 85) {
                         	// either apply bloodlust to increase attack, or attack to benefit from it
-                        	if (!lib.hasStatusEffect(this, lib.statusEffectsDict["bloodlust"])) {
-                        		chosenAbility = this.spells["primordial_mandate"];
+                        	if (!Lib.hasStatusEffect(this, Lib.statusEffectsDict["bloodlust"])) {
+                        		chosenAbility = this.entity.spellsDict["primordial_mandate"];
                                 chosenTarget = this;
                             } else {
                             	// hug if possible for maximum damage output
-                            	if(this.canAffordCost(this.spells["manyfold_embrace"])) {
-                            		chosenAbility = this.spells["manyfold_embrace"];
+                            	if(this.canAffordCost(this.entity.spellsDict["manyfold_embrace"])) {
+                            		chosenAbility = this.entity.spellsDict["manyfold_embrace"];
                             	} else {
-                            		chosenAbility = this.abilities["attack"];
+                            		chosenAbility = this.entity.spellsDict["attack"];
                             	}
                             	// regardless, hit the weakest opponent
                                 chosenTarget = playerLeastDefense;
                             }
                         } else {
-                        	chosenAbility = this.spells["putrefaction"];
+                        	chosenAbility = this.entity.spellsDict["putrefaction"];
                             chosenTarget = playerParty;
                         }// end rando block
                     }// end The God HP > 25%
@@ -557,11 +547,11 @@ export class YawningGod extends Character {
                         // being severely injured, The Yawning God now starts to spam Dark Star if no earlier behaviors were proced and he can afford it,
                     	// with a 35% chance of variance to simple attack so that the player has a little breathing room
                     	if(this.canAffordCost(darkStarSpell) &&
-                    			lib.rollPercentage() > 35) {
-                    		chosenAbility = this.spells["dark_star"];
+                    			Lib.rollPercentage() > 35) {
+                    		chosenAbility = this.entity.spellsDict["dark_star"];
                     		chosenTarget = playerParty;
                     	} else {
-                    		chosenAbility = this.abilities["attack"];
+                    		chosenAbility = this.entity.spellsDict["attack"];
                     		chosenTarget = playerLeastDefense;
                     	}
                     }
@@ -575,7 +565,7 @@ export class YawningGod extends Character {
 
                 // normalize input chosen targets to array form
                 var targets = undefined;
-                if (chosenAbility.targetType === lib.Ability.TargetTypesEnum.allEnemies) {
+                if (chosenAbility.targetType === Spells.Ability.TargetTypesEnum.allEnemies) {
                     console.log("setting AI targets to array " + chosenTarget + " which starts with " + chosenTarget[0].name);
                     targets = chosenTarget;
                 } else {
@@ -587,7 +577,7 @@ export class YawningGod extends Character {
                 console.log("AI chose the ability " + chosenAbility.name);
                 if (targets.length > 0) {
                     // there are still targets, so go forward with them as per usual
-                    if (chosenAbility.targetType === lib.Ability.TargetTypesEnum.allEnemies) {
+                    if (chosenAbility.targetType === Spells.Ability.TargetTypesEnum.allEnemies) {
 
                         // multi-target attack, expects an array of chars as target	
                         chosenAbility.effect(this, targets);
@@ -597,7 +587,7 @@ export class YawningGod extends Character {
                             console.log("target " + targets[0] + " with name " + targets[0].name + " has prop: " + targetKey);
                         }
 
-                        console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp + " and specifically the human's HP is " + this.characters["mole"].stats.hp);
+                        console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp);
 
                     } else {
                         // single target attack, expects only single character as target
@@ -608,7 +598,7 @@ export class YawningGod extends Character {
                             console.log("target " + targets[0] + " with name " + targets[0].name + " has prop: " + targetKey);
                         }
 
-                        console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp + " and specifically the human's HP is " + this.characters["mole"].stats.hp);
+                        console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp);
                     }
                 } else {
                     // abl cost is an object map with keys that match the mutable resource stats... completely on purpose and by design, that was.
