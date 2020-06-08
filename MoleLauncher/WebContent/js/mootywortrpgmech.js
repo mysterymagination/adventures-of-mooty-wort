@@ -97,7 +97,7 @@ class MootyWortRpgMech {
 			this.combatLogPrint(combatModel.combatLogContent);
 			combatModel.combatLogContent = "";
 			// update character portraits with status info
-			this.populateCharacterBattleImages(combatModel);
+			this.updateCharacterBattleImages(combatModel);
 			if(postStatusState === Combat.ControllerState.processCombatResult) {
 				this.handleCombatResult(combatModel.combatResult);
 			} else if(postStatusState === Combat.ControllerState.playerInput) {

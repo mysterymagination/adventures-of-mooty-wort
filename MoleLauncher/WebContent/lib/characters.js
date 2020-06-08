@@ -379,13 +379,16 @@ export class Grue extends Character {
                         console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp + " and specifically the human's HP is " + this.characters["mole"].stats.hp);
                     }
                 } else {
+                	// todo: why are we manually processing abl cost?  Isn't that normally a function of abl.effect()?
+                   
                     // abl cost is an object map with keys that match the mutable resource stats... completely on purpose and by design, that was.
                     for (costElement in chosenAbility.cost) {
                         this.stats[costElement] -= chosenAbility.cost[costElement];
                     }
                 }// end if no targets left after flag processing, so only abl cost is applied
 
-                console.log("The God's chosen abl is " + chosenAbility.name + " with first target named " + targets[0].name);
+                console.log("The Grue's chosen abl is " + chosenAbility.name + " with first target named " + targets[0].name);
+                combat.enemySelectedAbility = chosenAbility;
             }// if role is enemy
         }// if role is defined
     }//end grue AI def
@@ -601,13 +604,15 @@ export class YawningGod extends Character {
                         console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp);
                     }
                 } else {
+                	// todo: why are we manually processing abl cost?  Isn't that normally a function of abl.effect()?
                     // abl cost is an object map with keys that match the mutable resource stats... completely on purpose and by design, that was.
                     for (costElement in chosenAbility.cost) {
                         this.stats[costElement] -= chosenAbility.cost[costElement];
                     }
                 }// end if no targets left after flag processing, so only abl cost is applied
 
-                console.log("The God's chosen abl is " + chosenAbility.name + " with first target named " + targets[0].name);
+                console.log("The Yawning God's chosen abl is " + chosenAbility.name + " with first target named " + targets[0].name);
+                combat.enemySelectedAbility = chosenAbility;
             }// if role is enemy
         }// if role is defined
     }//end The Yawning God AI def
