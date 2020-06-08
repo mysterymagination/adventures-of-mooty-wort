@@ -156,13 +156,22 @@ export class Character {
 	    return true;
 	}
 
+	/**
+	 * Runs NPC combat AI to determine what it should do based on current combat variable
+	 * @param combat current Combat model
+	 * @param role string value representing the role the NPC is playing wrt the player e.g. "enemy" or "ally"
+	 * @return an Ability object representing the action the NPC has chosen to take 
+	 */
     /**
      * Makes the character act autonomously according to its role
-     * @param combat: the current combat context
-     * @param role: could be as simple as player or enemy, but could be configurable to something like player:assist if a guided auto-battle system gets implemented someday
+     * @param combat: the current combat context via Combat model object
+     * @param role: could be as simple as ally or enemy wrt the player, but 
+     *        could be configurable to something like player:assist if a 
+     *        guided auto-battle system gets implemented someday
+     * @return an Ability object representing the action the automated Character has chosen to take 
      */
 	runAI(combat, role) {
-		console.log("AI behavior unset");
+		throw "runAI; AI behavior unset -- Character subclasses should override this method";
 	}
 } // end Character class def
 
@@ -388,7 +397,7 @@ export class Grue extends Character {
                 }// end if no targets left after flag processing, so only abl cost is applied
 
                 console.log("The Grue's chosen abl is " + chosenAbility.name + " with first target named " + targets[0].name);
-                combat.enemySelectedAbility = chosenAbility;
+                return chosenAbility;
             }// if role is enemy
         }// if role is defined
     }//end grue AI def
@@ -612,7 +621,7 @@ export class YawningGod extends Character {
                 }// end if no targets left after flag processing, so only abl cost is applied
 
                 console.log("The Yawning God's chosen abl is " + chosenAbility.name + " with first target named " + targets[0].name);
-                combat.enemySelectedAbility = chosenAbility;
+                return chosenAbility;
             }// if role is enemy
         }// if role is defined
     }//end The Yawning God AI def

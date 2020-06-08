@@ -584,6 +584,7 @@ export class TouchVoid extends Spell {
 		super({ id: "touch_of_the_void", name: "Touch of the Void" });
 		TouchVoid.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		TouchVoid.prototype.cost = { "mp": 0, "hp": 15 };
+		TouchVoid.prototype.telegraph = new TouchVoidTelegraph();
 	}
 	/**
 	 * Calculate the damage to HP or MP to the given target character
@@ -646,6 +647,7 @@ export class Consume extends Spell {
 		super({ id: "consume", name: "Insatiable Consumption" });
 		Consume.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		Consume.prototype.cost = { "mp": 25 };
+		Consume.prototype.telegraph = new ConsumeTelegraph();
 	}
 	effect(sourceChar, targetChar) {
 	    var currentHP = targetChar.stats["hp"];
@@ -689,6 +691,7 @@ export class BrassLantern extends Spell {
 		super({ id: "brass_lantern", name: "Brass Lantern" });
 		BrassLantern.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		BrassLantern.prototype.cost = { "mp": 10 };
+		BrassLantern.prototype.telegraph = new BrassLanternTelegraph();
 	}
 	effect(sourceChar, targetChar) {
 		
@@ -730,6 +733,7 @@ export class ChillBeyond extends Spell {
 		super({ id: "chill_beyond", name: "Chill of the Beyond" });
 		ChillBeyond.prototype.targetType = Ability.TargetTypesEnum.allEnemies;
 		ChillBeyond.prototype.cost = { "mp": 50 };
+		ChillBeyond.prototype.telegraph = new ChillBeyondTelegraph();
 	}
 	calcDmg(sourceChar, targetChar) {
 		return sourceChar.stats["pwr"] 
@@ -780,6 +784,7 @@ export class ManyfoldEmbrace extends Spell {
 		ManyfoldEmbrace.prototype.cost = { "mp": 20 };
 		// default this instance's cost to the common element
 		this.cost = Object.assign(this.cost, ManyfoldEmbrace.prototype.cost);
+		ManyfoldEmbrace.prototype.telegraph = new ManyfoldEmbraceTelegraph();
 	}
 	calcDmg(sourceChar, targetChar) {
 	    // idea is the source is transforming tentacles into mighty spiked cudgels
@@ -826,6 +831,7 @@ export class Pestilence extends Spell {
 		super({ id: "pestilence", name: "Pestilence" });
 		Pestilence.prototype.targetType = Ability.TargetTypesEnum.allEnemies;
 		Pestilence.prototype.cost = { "mp": 50 };
+		Pestilence.prototype.telegraph = new PestilenceTelegraph();
 	}
 	calcDmg(sourceChar, targetChar) {
 		return sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"];
@@ -875,7 +881,7 @@ export class PrimordialMandate extends Spell {
 		super({ id: "primordial_mandate", name: "Primordial Mandate" });
 		PrimordialMandate.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		PrimordialMandate.prototype.cost = { "mp": 15 };
-		this.telegraph = new PrimordialMandateTelegraph();
+		PrimordialMandate.prototype.telegraph = new PrimordialMandateTelegraph();
 	}
 	effect(sourceChar, targetChar) {
 	    // bloodlust on target
