@@ -884,7 +884,7 @@ export class PrimordialMandate extends Spell {
 	}
 	effect(sourceChar, targetChar) {
 	    // bloodlust on target
-	    Lib.addUniqueStatusEffect(targetChar, bloodlustStatusEffect);
+	    Lib.addUniqueStatusEffect(targetChar, new Bloodlust());
 	    	
 	    // MP cost
 	    this.processCost(sourceChar);

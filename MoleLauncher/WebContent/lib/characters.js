@@ -470,7 +470,7 @@ export class YawningGod extends Character {
                 // todo: make this general by adding ability descriptor tags
                 //  such as "status_effect_add:<id of status effect we add>"
                 if(chosenAbility.id === "primordial_mandate") {
-                	if (Lib.hasStatusEffect(this, Lib.statusEffectsDict["bloodlust"])) {
+                	if (Lib.hasStatusEffect(this, "bloodlust")) {
                 		// todo: logic for reselection?
                 		chosenAbility = this.entity.spellsDict["attack"];
                     }

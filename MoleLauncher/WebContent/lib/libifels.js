@@ -59,18 +59,13 @@ export class Libifels {
         }
     }
     /**
-    Checks a given character for a given statyus effect
+    Checks a given character for a given status effect
     @param character the Character under test
-    @param effect the StatusEffect we're looking for
+    @param effectId the string id of the StatusEffect we're looking for
     @return true if the status effect is found, false otherwise
     */
-    static hasStatusEffect(character, effect) {
-        var statuses = character.statusEffects;
-        if (statuses.some(effectUnderTest => effect.id === effectUnderTest.id)) {
-            return true;
-        } else {
-            return false;
-        }
+    static hasStatusEffect(character, effectId) {
+        return character.statusEffects.includes(effectId);
     }
     /**
     Checks a given character for a given status effect and returns the discovered status effect instance
