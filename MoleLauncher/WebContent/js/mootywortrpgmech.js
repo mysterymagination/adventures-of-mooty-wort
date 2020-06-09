@@ -73,7 +73,7 @@ class MootyWortRpgMech {
 		// setup UI
 		this.initBattleUi(combatDriver);
 		// set init turn owner to player, the mole
-		combatDriver.turnOwner = "mole";
+		combatDriver.currentTurnOwner = "mole";
 		// kick off combat 
 		this.combatLoop(combatDriver);
 	}
@@ -122,12 +122,12 @@ class MootyWortRpgMech {
 			// chosen ability
 			let selectedAbility = combatModel.currentSelectedAbility;
 			// check if currently active enemy can still afford their chosen abl
-			if(combatModel.turnOwner.canAffordCost(selectedAbility)) {
+			if(combatModel.currentTurnOwner.canAffordCost(selectedAbility)) {
 				// apply ability effect
 				switch(selectedAbility.targetType) {
 				case Ability.TargetTypesEnum.personal:
-					selectedAbility.effect(combatModel.turnOwner);
-					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.turnOwner);
+					selectedAbility.effect(combatModel.currentTurnOwner);
+					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.currentTurnOwner);
 					break;
 				case Ability.TargetTypesEnum.allAllies:
 					selectedAbility.effect(combatModel.enemyParty);
@@ -138,12 +138,12 @@ class MootyWortRpgMech {
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.playerParty);
 					break;
 				case Ability.TargetTypesEnum.singleTarget:
-					selectedAbility.effect(combatModel.turnOwner, combatModel.currentTargetCharacter);
-					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.turnOwner, combatModel.currentTargetCharacter);
+					selectedAbility.effect(combatModel.currentTurnOwner, combatModel.currentTargetCharacter);
+					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.currentTurnOwner, combatModel.currentTargetCharacter);
 					break;
 				}
 			} else {
-				combatModel.combatLogContent = combatModel.turnOwner.name + " feebly attempts to enact " + combatModel.currentSelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!";
+				combatModel.combatLogContent = combatModel.currentTurnOwner.name + " feebly attempts to enact " + combatModel.currentSelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!";
 			}
 			// complete this enemy character's turn
 			this.handleEnemyTurnComplete();

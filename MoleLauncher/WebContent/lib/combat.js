@@ -21,13 +21,13 @@ export class Combat {
         this.turnGroup = "player";
 
         // tracks the actual character whose turn it is
-        this.turnOwner = this.playerParty[0]; // todo: support for speed based and other turn orders 
+        this.currentTurnOwner = this.playerParty[0]; // todo: support for speed based and other turn orders 
 
         // tracks the target of the current ability
         this.currentTargetCharacter = undefined;
 
         // the text feedback to the user re: the state of combat
-        this.combatLogContent = "What will " + this.turnOwner.name + " do?";
+        this.combatLogContent = "What will " + this.currentTurnOwner.name + " do?";
 	}
 	
 	/**

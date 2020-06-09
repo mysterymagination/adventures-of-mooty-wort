@@ -250,7 +250,7 @@ export class Ability {
 		 * subtracted from the corresponding stat resource pool.
 		 */
 		this.cost = { "mp": 0 };
-		this.telegraph = new Telegraph();
+		Ability.prototype.telegraph = new Telegraph();
 	}// end new instance ctor
 	generateRandomTelegraph() {
 		return this.telegraph.generateRandomTelegraph();

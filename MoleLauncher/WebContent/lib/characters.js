@@ -319,7 +319,7 @@ export class Grue extends Character {
                 	ablProbsConfig["chill_beyond"] = 0.2;
                 	ablProbsConfig["consume"] = 0.2;
                 } else if (this.stats.hp <= this.stats.maxHP * 0.25) {
-                	// FEAST
+                	// F E A S T
                 	ablProbsConfig["touch_of_the_void"] = 0.0;
                 	ablProbsConfig["brass_lantern"] = 0.4;
                 	ablProbsConfig["chill_beyond"] = 0.0;
@@ -333,7 +333,7 @@ export class Grue extends Character {
                 ];
                 
                 /// install target if necessary ///
-                if(chosenAbility.targetType === Ability.TargetTypesEnum.singleTarget) {   
+                if(chosenAbility.targetType === Spells.Ability.TargetTypesEnum.singleTarget) {   
                     // todo: add more intelligent targeting via abl descriptor tag that indicates what sort of defense
                     //  the ability targets e.g. "hits_res" or "hits_def"
                 	// the Grue targets whoever's worst off because he's a butt
@@ -374,7 +374,7 @@ export class YawningGod extends Character {
         console.log("reached The Yawning God runAI fn... have fn!");
         if (role) {
             if (role === "enemy") {
-                // defaults for targeting and ability
+            	// defaults for targeting and ability
             	var moleHandle = undefined;
                 var chosenAbility = undefined;
                 var chosenTarget = undefined;
@@ -477,7 +477,7 @@ export class YawningGod extends Character {
                 }
                 
                 /// install target if necessary ///
-                if(chosenAbility.targetType === Ability.TargetTypesEnum.singleTarget) {   
+                if(chosenAbility.targetType === Spells.Ability.TargetTypesEnum.singleTarget) {   
                     // all The God's special abilities are pretty punishing, so make basic atk most probable
                     // todo: add more intelligent targeting via abl descriptor tag that indicates what sort of defense
                     //  the ability targets e.g. "hits_res" or "hits_def"
