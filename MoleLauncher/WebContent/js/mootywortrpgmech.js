@@ -112,7 +112,7 @@ class MootyWortRpgMech {
 			// Lunar-inspired hyyype!
 			this.combatLogPrint(
 				combatModel.telegraphAction(
-					combatModel.enemySelectedAbility
+					combatModel.currentSelectedAbility
 				)
 			);
 			// command selection subphase of player input phase
@@ -120,7 +120,7 @@ class MootyWortRpgMech {
 		} else if(state === Combat.ControllerState.runEnemy) {
 			// todo: check enemy status effects for anything that would prevent the use of their
 			// chosen ability
-			let selectedAbility = combatModel.enemySelectedAbility;
+			let selectedAbility = combatModel.currentSelectedAbility;
 			// check if currently active enemy can still afford their chosen abl
 			if(combatModel.turnOwner.canAffordCost(selectedAbility)) {
 				// apply ability effect
@@ -143,7 +143,7 @@ class MootyWortRpgMech {
 					break;
 				}
 			} else {
-				combatModel.combatLogContent = combatModel.turnOwner.name + " feebly attempts to enact " + combatModel.enemySelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!";
+				combatModel.combatLogContent = combatModel.turnOwner.name + " feebly attempts to enact " + combatModel.currentSelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!";
 			}
 			// complete this enemy character's turn
 			this.handleEnemyTurnComplete();

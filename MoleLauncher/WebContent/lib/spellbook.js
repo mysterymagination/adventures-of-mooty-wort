@@ -694,8 +694,7 @@ export class BrassLantern extends Spell {
 		BrassLantern.prototype.telegraph = new BrassLanternTelegraph();
 	}
 	effect(sourceChar, targetChar) {
-		
-		// deal damage equal to current mag pwr
+		// deal damage equal to target's current mag pwr
 	    targetChar["hp"] -= targetChar["pwr"];
 	    // increase mag pwr as the mystic inferno infuses target's soul
 	    targetChar["pwr"] *= 2;

@@ -15,7 +15,7 @@ export class Combat {
         
         // tracks the currently selected player and enemy abilities
         this.playerSelectedAbility = undefined;
-        this.enemySelectedAbility = undefined;
+        this.currentSelectedAbility = undefined;
 
         // tracks the turn as either player or enemy group
         this.turnGroup = "player";
@@ -161,7 +161,7 @@ export class Combat {
         	// todo: check for any status effects that might prevent enemy from acting
         	for(let enemy of this.enemyParty) {
         		// todo: support for multiple enemies
-        		this.enemySelectedAbility = enemy.runAI(this, "enemy");	
+        		this.currentSelectedAbility = enemy.runAI(this, "enemy");	
         	}
         	// tell viewcontroller we're moving on to player input
         	return Combat.ControllerState.playerInput;

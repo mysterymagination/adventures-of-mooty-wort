@@ -262,7 +262,7 @@ export class Grue extends Character {
             if (role === "enemy") {
                 // defaults for action to be taken
                 var chosenAbility = undefined;
-                var chosenTarget = combat.playerParty[0];
+                var chosenTarget = undefined;
 
                 // defaults for outliers and statistical points of interest
                 var playerLeastDefense = chosenTarget;
@@ -296,107 +296,57 @@ export class Grue extends Character {
                 // todo: check mole type and maybe modify attack choice accordingly
                 /// end story scenario mod proc ///
 
-                // begin defaults block -- at this point in the script, 
-                // if The God has not already picked an abl he will either 
-                // do one mostly at random OR spam Dark Star if his health is below 25%
-                if (chosenAbility === undefined && chosenTarget === undefined) {
-                    if (this.stats.hp > this.stats.maxHP * 0.25) {
-                        var percentageRandoAbl = Lib.rollPercentage();
-                        // choose a player party index randomly and pull the poor person from it for targeting
-                        var playerRandoTarget = playerParty[Math.floor(Math.random() * playerParty.length)];
-                        // all The God's special abilities are pretty punishing, so make basic atk most probably
-                        if (percentageRandoAbl <= 35) {
-                        	// basic attack
-                            chosenAbility = this.entity.spellsDict["attack"];
-                            chosenTarget = playerLeastDefense;
-                        } else if (percentageRandoAbl > 36 && percentageRandoAbl <= 60) {
-                        	// hug if possible for maximum damage output
-                        	if(this.canAffordCost(this.entity.spellsDict["manyfold_embrace"])) {
-                        		chosenAbility = this.entity.spellsDict["manyfold_embrace"];
-                        	} else {
-                        		chosenAbility = this.entity.spellsDict["attack"];
-                        	}
-                            chosenTarget = playerRandoTarget;
-                        } else if (percentageRandoAbl > 61 && percentageRandoAbl <= 85) {
-                        	// either apply bloodlust to increase attack, or attack to benefit from it
-                        	if (!Lib.hasStatusEffect(this, Lib.statusEffectsDict["bloodlust"])) {
-                        		chosenAbility = this.entity.spellsDict["primordial_mandate"];
-                                chosenTarget = this;
-                            } else {
-                            	// hug if possible for maximum damage output
-                            	if(this.canAffordCost(this.entity.spellsDict["manyfold_embrace"])) {
-                            		chosenAbility = this.entity.spellsDict["manyfold_embrace"];
-                            	} else {
-                            		chosenAbility = this.entity.spellsDict["attack"];
-                            	}
-                            	// regardless, hit the weakest opponent
-                                chosenTarget = playerLeastDefense;
-                            }
-                        } else {
-                        	chosenAbility = this.entity.spellsDict["putrefaction"];
-                            chosenTarget = combat.playerParty;
-                        }// end rando block
-                    }// end The God HP > 25%
-                    else {
-                        // being severely injured, The God now starts to spam Dark Star if no earlier behaviors were proced and he can afford it
-                    	if(this.canAffordCost(darkStarSpell)) {
-                    		chosenAbility = this.entity.spellsDict["dark_star"];
-                    		chosenTarget = playerParty;
-                    	} else {
-                    		chosenAbility = this.entity.spellsDict["attack"];
-                    		chosenTarget = playerLeastDefense;
-                    	}
-                    }
-                } // end if abl and target are not yet chosen, landing us in defaults
-                /// end defaults block ///
-
-                // normalize input chosen targets to array form
-                var targets = undefined;
-                if (chosenAbility.targetType === Spells.Ability.TargetTypesEnum.allEnemies) {
-                    console.log("setting AI targets to array " + chosenTarget + " which starts with " + chosenTarget[0].name);
-                    targets = chosenTarget;
-                } else {
-                    // in this case there is only one target, but by wrapping it in an array we can proceed with equivalent loop code used for multi-target scenario
-                    console.log("setting AI target to array wrapping the single target " + chosenTarget + " with name " + chosenTarget.name);
-                    targets = [chosenTarget];
+                
+                // set abl probabilities as floating point percentages; default to mostly buffing and hugging to death
+                var ablProbsConfig = {
+                	"touch_of_the_void": 0.5,
+                	"brass_lantern": 0.3,
+                	"chill_beyond": 0.15,
+                	"consume": 0.05
                 }
+                if(this.stats.hp <= this.stats.maxHP * 0.75 && 
+                		this.stats.hp > this.stats.maxHP * 0.5) {
+                	// now we wanna increase chances of freezing player
+                	ablProbsConfig["touch_of_the_void"] = 0.2;
+                	ablProbsConfig["brass_lantern"] = 0.35;
+                	ablProbsConfig["chill_beyond"] = 0.4;
+                	ablProbsConfig["consume"] = 0.05;
+                } else if (this.stats.hp <= this.stats.maxHP * 0.5 &&
+                		this.stats.hp > this.stats.maxHP * 0.25) {
+                	// never mind the fondling and maybe freezing further, just burn!
+                	ablProbsConfig["touch_of_the_void"] = 0.0;
+                	ablProbsConfig["brass_lantern"] = 0.6;
+                	ablProbsConfig["chill_beyond"] = 0.2;
+                	ablProbsConfig["consume"] = 0.2;
+                } else if (this.stats.hp <= this.stats.maxHP * 0.25) {
+                	// FEAST
+                	ablProbsConfig["touch_of_the_void"] = 0.0;
+                	ablProbsConfig["brass_lantern"] = 0.4;
+                	ablProbsConfig["chill_beyond"] = 0.0;
+                	ablProbsConfig["consume"] = 0.6;
+                }
+                
+                // todo: particular mole attributes or status effects we wanna sniff for?
+                // only actually the one player in this case
+                chosenAbility = this.entity.spellsDict[
+                	combat.chooseRandomAbility(ablProbsConfig)
+                ];
+                
+                /// install target if necessary ///
+                if(chosenAbility.targetType === Ability.TargetTypesEnum.singleTarget) {   
+                    // todo: add more intelligent targeting via abl descriptor tag that indicates what sort of defense
+                    //  the ability targets e.g. "hits_res" or "hits_def"
+                	// the Grue targets whoever's worst off because he's a butt
+                    chosenTarget = playerLeastHP;
+                    // todo: support for small chance of random target selection instead so that player with
+                    //  least def isn't pummeled too much and the player can't kite the AI as easily 
+                } // end if abl needs a target
+                /// end target installation block ///
 
-                console.log("AI chose the ability " + chosenAbility.name);
-                if (targets.length > 0) {
-                    // there are still targets, so go forward with them as per usual
-                    if (chosenAbility.targetType === Spells.Ability.TargetTypesEnum.allEnemies) {
-
-                        // multi-target attack, expects an array of chars as target	
-                        chosenAbility.effect(this, targets);
-                        combat.combatLogContent = chosenAbility.generateFlavorText(this, targets);
-
-                        for (let targetKey in targets[0]) {
-                            console.log("target " + targets[0] + " with name " + targets[0].name + " has prop: " + targetKey);
-                        }
-
-                        console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp + " and specifically the human's HP is " + this.characters["mole"].stats.hp);
-
-                    } else {
-                        // single target attack, expects only single character as target
-                        chosenAbility.effect(this, targets[0]);
-                        combat.combatLogContent = chosenAbility.generateFlavorText(this, targets[0]);
-
-                        for (let targetKey in targets[0]) {
-                            console.log("target " + targets[0] + " with name " + targets[0].name + " has prop: " + targetKey);
-                        }
-
-                        console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp + " and specifically the human's HP is " + this.characters["mole"].stats.hp);
-                    }
-                } else {
-                	// todo: why are we manually processing abl cost?  Isn't that normally a function of abl.effect()?
-                   
-                    // abl cost is an object map with keys that match the mutable resource stats... completely on purpose and by design, that was.
-                    for (costElement in chosenAbility.cost) {
-                        this.stats[costElement] -= chosenAbility.cost[costElement];
-                    }
-                }// end if no targets left after flag processing, so only abl cost is applied
-
-                console.log("The Grue's chosen abl is " + chosenAbility.name + " with first target named " + targets[0].name);
+                combat.currentSelectedAbility = chosenAbility;
+                combatModel.currentTargetCharacter = chosenTarget
+                console.log("The Grue's chosen abl is " + chosenAbility.name
+                		+ (chosenTarget ? ", targetting "+chosenTarget.name : ""));
                 return chosenAbility;
             }// if role is enemy
         }// if role is defined
@@ -516,111 +466,31 @@ export class YawningGod extends Character {
                 	combat.chooseRandomAbility(ablProbsConfig)
                 ];
                 
-                /// defaults block ///
-                if (chosenAbility === undefined && chosenTarget === undefined) {
-                    if (this.stats.hp > this.stats.maxHP * 0.25) {
-                        var percentageRandoAbl = Lib.rollPercentage();
-                        // choose a player party index randomly and pull the poor person from it for targeting
-                        var playerRandoTarget = playerParty[Math.floor(Math.random() * playerParty.length)];
-                        // all The God's special abilities are pretty punishing, so make basic atk most probably
-                        if (percentageRandoAbl <= 35) {
-                        	// basic attack
-                            chosenAbility = this.entity.spellsDict["attack"];
-                            chosenTarget = playerLeastDefense;
-                        } else if (percentageRandoAbl > 36 && percentageRandoAbl <= 60) {
-                        	// hug if possible for maximum damage output
-                        	if(this.canAffordCost(this.entity.spellsDict["manyfold_embrace"])) {
-                        		chosenAbility = this.entity.spellsDict["manyfold_embrace"];
-                        	} else {
-                        		chosenAbility = this.entity.spellsDict["attack"];
-                        	}
-                            chosenTarget = playerRandoTarget;
-                        } else if (percentageRandoAbl > 61 && percentageRandoAbl <= 85) {
-                        	// either apply bloodlust to increase attack, or attack to benefit from it
-                        	if (!Lib.hasStatusEffect(this, Lib.statusEffectsDict["bloodlust"])) {
-                        		chosenAbility = this.entity.spellsDict["primordial_mandate"];
-                                chosenTarget = this;
-                            } else {
-                            	// hug if possible for maximum damage output
-                            	if(this.canAffordCost(this.entity.spellsDict["manyfold_embrace"])) {
-                            		chosenAbility = this.entity.spellsDict["manyfold_embrace"];
-                            	} else {
-                            		chosenAbility = this.entity.spellsDict["attack"];
-                            	}
-                            	// regardless, hit the weakest opponent
-                                chosenTarget = playerLeastDefense;
-                            }
-                        } else {
-                        	chosenAbility = this.entity.spellsDict["putrefaction"];
-                            chosenTarget = playerParty;
-                        }// end rando block
-                    }// end The God HP > 25%
-                    else {
-                        // being severely injured, The Yawning God now starts to spam Dark Star if no earlier behaviors were proced and he can afford it,
-                    	// with a 35% chance of variance to simple attack so that the player has a little breathing room
-                    	if(this.canAffordCost(darkStarSpell) &&
-                    			Lib.rollPercentage() > 35) {
-                    		chosenAbility = this.entity.spellsDict["dark_star"];
-                    		chosenTarget = playerParty;
-                    	} else {
-                    		chosenAbility = this.entity.spellsDict["attack"];
-                    		chosenTarget = playerLeastDefense;
-                    	}
+                // check for redundant status mod application and modify chosen abl accordingly
+                // todo: make this general by adding ability descriptor tags
+                //  such as "status_effect_add:<id of status effect we add>"
+                if(chosenAbility.id === "primordial_mandate") {
+                	if (Lib.hasStatusEffect(this, Lib.statusEffectsDict["bloodlust"])) {
+                		// todo: logic for reselection?
+                		chosenAbility = this.entity.spellsDict["attack"];
                     }
-                } // end if abl and target are not yet chosen, landing us in defaults
-                /// end defaults block ///
-                
-                // todo: refactor to have this fn return a chosen move and target for the enemy
-                // which will be performed at a later stage -- I want the combat manager to
-                // generate a prompt for the user suggesting what the enemy plans to do and then
-                // once player has chosen their action spd stat will determine what happens when.
-
-                // normalize input chosen targets to array form
-                var targets = undefined;
-                if (chosenAbility.targetType === Spells.Ability.TargetTypesEnum.allEnemies) {
-                    console.log("setting AI targets to array " + chosenTarget + " which starts with " + chosenTarget[0].name);
-                    targets = chosenTarget;
-                } else {
-                    // in this case there is only one target, but by wrapping it in an array we can proceed with equivalent loop code used for multi-target scenario
-                    console.log("setting AI target to array wrapping the single target " + chosenTarget + " with name " + chosenTarget.name);
-                    targets = [chosenTarget];
                 }
-
-                console.log("AI chose the ability " + chosenAbility.name);
-                if (targets.length > 0) {
-                    // there are still targets, so go forward with them as per usual
-                    if (chosenAbility.targetType === Spells.Ability.TargetTypesEnum.allEnemies) {
-
-                        // multi-target attack, expects an array of chars as target	
-                        chosenAbility.effect(this, targets);
-                        combat.combatLogContent = chosenAbility.generateFlavorText(this, targets);
-
-                        for (let targetKey in targets[0]) {
-                            console.log("target " + targets[0] + " with name " + targets[0].name + " has prop: " + targetKey);
-                        }
-
-                        console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp);
-
-                    } else {
-                        // single target attack, expects only single character as target
-                        chosenAbility.effect(this, targets[0]);
-                        combat.combatLogContent = chosenAbility.generateFlavorText(this, targets[0]);
-
-                        for (let targetKey in targets[0]) {
-                            console.log("target " + targets[0] + " with name " + targets[0].name + " has prop: " + targetKey);
-                        }
-
-                        console.log(targets[0].name + "'s hp is now " + targets[0].stats.hp);
-                    }
-                } else {
-                	// todo: why are we manually processing abl cost?  Isn't that normally a function of abl.effect()?
-                    // abl cost is an object map with keys that match the mutable resource stats... completely on purpose and by design, that was.
-                    for (costElement in chosenAbility.cost) {
-                        this.stats[costElement] -= chosenAbility.cost[costElement];
-                    }
-                }// end if no targets left after flag processing, so only abl cost is applied
-
-                console.log("The Yawning God's chosen abl is " + chosenAbility.name + " with first target named " + targets[0].name);
+                
+                /// install target if necessary ///
+                if(chosenAbility.targetType === Ability.TargetTypesEnum.singleTarget) {   
+                    // all The God's special abilities are pretty punishing, so make basic atk most probable
+                    // todo: add more intelligent targeting via abl descriptor tag that indicates what sort of defense
+                    //  the ability targets e.g. "hits_res" or "hits_def"
+                    chosenTarget = playerLeastDefense;
+                    // todo: support for small chance of random target selection instead so that player with
+                    //  least def isn't pummeled too much and the player can't kite the AI as easily 
+                } // end if abl needs a target
+                /// end target installation block ///
+                
+                console.log("The Yawning God's chosen abl is " + chosenAbility.name
+                		+ (chosenTarget ? ", targetting "+chosenTarget.name : ""));
+                combat.currentSelectedAbility = chosenAbility;
+                combat.currentTargetCharacter = chosenTarget;
                 return chosenAbility;
             }// if role is enemy
         }// if role is defined
