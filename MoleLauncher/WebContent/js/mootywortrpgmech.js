@@ -72,8 +72,6 @@ class MootyWortRpgMech {
 		var combatDriver = new Combat(configObj);
 		// setup UI
 		this.initBattleUi(combatDriver);
-		// set init turn owner to player, the mole
-		combatDriver.currentTurnOwner = "mole";
 		// kick off combat 
 		this.combatLoop(combatDriver);
 	}
@@ -175,6 +173,9 @@ class MootyWortRpgMech {
 	 * @param combatModel the current COmbat object
 	 */
 	initBattleUi(combatModel) {
+		// show the combat mode modal
+		var combatUI = document.getElementById("combatModal");
+		combatUI.style.display = "block";
 		// player party UI 
 		var playerView_Div = document.getElementById("playerView");
 		for(let playerCharacter of combatModel.playerParty) {

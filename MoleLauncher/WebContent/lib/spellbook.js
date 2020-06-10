@@ -340,7 +340,7 @@ export class Defend extends Ability {
     effect(sourceCharacter) {
         Lib.addUniqueStatusEffect(
         	sourceCharacter, 
-        	new Defended(sourceCharacter.stats["def"], sourceCharacter.stats["res"])
+        	new Alchemy.Defended(sourceCharacter.stats["def"], sourceCharacter.stats["res"])
         );
     }
     generateFlavorText(sourceCharacter, targetCharacter) {
@@ -884,7 +884,7 @@ export class PrimordialMandate extends Spell {
 	}
 	effect(sourceChar, targetChar) {
 	    // bloodlust on target
-	    Lib.addUniqueStatusEffect(targetChar, new Bloodlust());
+	    Lib.addUniqueStatusEffect(targetChar, new Alchemy.Bloodlust());
 	    	
 	    // MP cost
 	    this.processCost(sourceChar);
