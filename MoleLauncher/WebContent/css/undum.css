@@ -379,9 +379,93 @@ img.float_left {
 	overflow: auto;
 }
 
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: relative; 
+  z-index: 1; /* Sit on top */
+  width: 75%; /* take up majority width but show page beneath at the sides */
+  margin-left: auto; /* auto for margin left and right is effective center-align (?) */
+  margin-right: auto;
+  overflow: auto; /* Enable scroll if needed */
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  display: inline-block;
+  position: relative;
+  background-color: #fefefe;
+  width: 100%; /* Could be more or less, depending on screen size */
+  height: 100%;
+}
+
+#effectsOverlayCanvas {
+  position: absolute;
+  opacity: 0.50;
+  z-index: 2;
+}
+
+.character-image {
+  display: inline-block;
+}
+
+.character-image:active {
+  animation: shake 0.5s;
+  animation-iteration-count: 1;
+}
+
+.character-image-hurting {
+  display: inline-block;
+  animation: shake 0.5s;
+  animation-iteration-count: infinite;
+}
+
+.character-hud {
+  width: 100%;
+}
+
+.character-data {
+  display: block;
+  margin: auto; /* horizontally centered */
+}
+
+.enemy-name {
+  font-family: 'Metal Mania', cursive;
+  font-weight: bold;
+}
+
+.player-name {
+  font-family: 'Kaushan Script', cursive;
+  font-weight: bold;
+}
+
+.character-image-container {
+  text-align: center;
+}
+
+.combat-log {
+  background-color: #fe0e0f;
+  margin: auto; /* horizontally centered */
+  border: 5px solid #555;
+  overflow: scroll;
+}
+
+.ability-button-container {
+  margin: auto; /* horizontally centered */
+  margin-top: 5%;
+  border: 1px solid #888;
+  overflow: scroll;
+  max-height: 25vh;
+}
+
 .commandButton {
-  padding: 15px 25px;
-  font-size: 24px;
+  padding: 5px 5px;
+  font-size: 12px;
   text-align: center;
   cursor: pointer;
   outline: none;
@@ -389,37 +473,31 @@ img.float_left {
   background-color: #4CAF50;
   border: none;
   border-radius: 15px;
-  box-shadow: 0 9px #999;
+  box-shadow: 0 1px #999;
+  margin-top: 5px;
 }
 
-.commandButton:hover {background-color: #3e8e41}
+.commandButton:hover {
+  background-color: #3e8e41;
+}
 
 .commandButton:active {
   background-color: #3e8e41;
-  box-shadow: 0 5px #666;
-  transform: translateY(4px);
+  box-shadow: 0 3px #666;
+  transform: translateY(1px);
 }
 
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  vertical-align: middle; /* align center of modal vertically with center of screen */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+@keyframes shake {
+  0% { transform: translate(5px, 2px) rotate(0deg); }
+  10% { transform: translate(-6px, -4px) rotate(-2deg); }
+  20% { transform: translate(-3px, 0px) rotate(2deg); }
+  30% { transform: translate(3px, 4px) rotate(0deg); }
+  40% { transform: translate(6px, -2px) rotate(2deg); }
+  50% { transform: translate(-6px, 4px) rotate(-2deg); }
+  60% { transform: translate(-3px, 2px) rotate(0deg); }
+  70% { transform: translate(3px, 2px) rotate(-2deg); }
+  80% { transform: translate(-6px, -2px) rotate(2deg); }
+  90% { transform: translate(6px, 4px) rotate(0deg); }
+  100% { transform: translate(11px, -4px) rotate(-6deg); }
 }
 
-/* Modal Content/Box */
-.modal-content {
-  background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
-}

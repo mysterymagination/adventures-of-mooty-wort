@@ -169,18 +169,69 @@ class MootyWortRpgMech {
 		// todo: iff the targetCharacter is now dead, play death animation and then remove their sprite from UI
 	}
 	/**
+	   * Draws a single frame from the given sprite sheet over the entire canvas, scaling automatically
+	   * @param spriteSheetId the id of an object literal containing an Image object whose src property should be a loaded sprite sheet as well as related metadata
+	   * @param frameIdx the 0-based index of the frame we want to extract from the spritesheet
+	   * @param canvas the Canvas we want to draw on
+	   */
+	  drawFrame(spriteSheetId, frameIdx, canvas) {
+	    var spriteSheetData = this.spellFXDict[spriteSheetId];
+	    console.log("drawFrame; looked up " + spriteSheetData.columns + "x" + spriteSheetData.rows + " sprite sheet");
+	    var context2d = canvas.getContext('2d');
+	    // clear frame
+	    context2d.clearRect(0, 0, canvas.width, canvas.height);
+	    // determine image frame dimens
+	    var srcX = frameIdx % spriteSheetData.columns * spriteSheetData.frameWidthPx;
+	    var srcY = Math.floor(frameIdx / spriteSheetData.columns) * spriteSheetData.frameHeightPx;
+	    var srcWidth = spriteSheetData.frameWidthPx;
+	    var srcHeight = spriteSheetData.frameHeightPx;
+	    var dstWidth = canvas.offsetWidth;
+	    var dstHeight = canvas.offsetHeight;
+	    // draw the image frame
+	    context2d.drawImage(
+	      spriteSheetData.image,
+	      srcX,
+	      srcY,
+	      srcWidth,
+	      srcHeight,
+	      0,
+	      0,
+	      dstWidth,
+	      dstHeight
+	    );
+	    console.log("sourcing from " + srcX + "x" + srcY + " out to " + (srcX + srcWidth) + "x" + (srcY + srcHeight) + ".  Destination is 0x0 out to " + dstWidth + "x" + dstHeight);
+	  }
+	/**
 	 * Set up the battle UI, associating character objects with their associated HTML elements 
 	 * @param combatModel the current COmbat object
 	 */
 	initBattleUi(combatModel) {
 		// show the combat mode modal
 		var combatUI = document.getElementById("combatModal");
-		combatUI.style.display = "block";
+		combatUI.style.display = "flex";
+		
+		// resource loading
+		// load up spell effect spritesheets
+	    var testSheet = new Image();
+	    testSheet.src = 'https://opengameart.org/sites/default/files/Green-Cap-Character-16x18.png';
+	    var rpgMechHandle = this;
+	    testSheet.addEventListener('load', function() {
+	        rpgMechHandle.spellFXDict.test = {
+	          "image": this,
+	          "columns": 3,
+	          "rows": 4,
+	          "frameWidthPx": 16,
+	          "frameHeightPx": 18,
+	          "frameCount": 12
+	        }
+	        console.log("test spritesheet is loaded");
+	      }, false);
+	    
 		// player party UI 
 		var playerView_Div = document.getElementById("playerView");
 		for(let playerCharacter of combatModel.playerParty) {
 			let playerCharacter_Div = document.createElement("div");
-			
+			// todo: convert to Canvas elements so we can draw on em
 			let playerCharacterSprite_Img = document.createElement("img");
 			playerCharacterSprite_Img.src = playerCharacter.battleSprites[0];
 			playerCharacter_Div.appendChild(playerCharacterSprite_Img);
