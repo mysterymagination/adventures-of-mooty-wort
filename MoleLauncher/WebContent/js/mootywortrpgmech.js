@@ -231,7 +231,7 @@ class MootyWortRpgMech {
 		var playerView_Div = document.getElementById("playerView");
 		for(let playerCharacter of combatModel.playerParty) {
 			let playerCharacter_Div = document.createElement("div");
-			// todo: convert to Canvas elements so we can draw on em
+			// todo: convert player view stuff to Canvas elements etc. so we can draw on em
 			let playerCharacterSprite_Img = document.createElement("img");
 			playerCharacterSprite_Img.src = playerCharacter.battleSprites[0];
 			playerCharacter_Div.appendChild(playerCharacterSprite_Img);
@@ -272,7 +272,7 @@ class MootyWortRpgMech {
 			playerView_Div.appendChild(playerCharacter_Div);
 			this.playerCharacterUiDict[playerCharacter.id] = {
 					"characterObj": playerCharacter,
-					"imageElement": playerCharacterSprite_Img, 
+					"canvasElement": playerCharacterSprite_Canvas, 
 					"nameElement": playerCharacterName_P,
 					"hpElement": playerCharacterCurrentHp_P,
 					"maxHPElement": playerCharacterMaxHp_P,
@@ -285,22 +285,33 @@ class MootyWortRpgMech {
 		// enemy party UI from player perspective
 		let enemyView_Div = document.getElementById("enemyView");
 		for(let enemyCharacter of combatModel.enemyParty) {
-			let enemyCharacter_Div = document.createElement("div");
+			let enemyCharacterImageContainer_Div = document.createElement("div");
+			enemyCharacterImageContainer_Div.className = "character-image-container"; 
+			enemyView_Div.appendChild(enemyCharacterImageContainer_Div);
 			
-			let enemyCharacterSprite_Img = document.createElement("img");
-			enemyCharacterSprite_Img.src = enemyCharacter.battleSprites[0];
-			enemyCharacter_Div.appendChild(enemyCharacterSprite_Img);
+			let enemyCharacterSprite_Span = document.createElement("span");
+			enemyCharacterImageContainer_Div.appendChild(enemyCharacterSprite_Span);
+			let enemyCharacterSprite_Canvas = document.createElement("canvas");
+			enemyCharacterSprite_Canvas.id = enemyCharacter.id;
+			enemyCharacterSprite_Canvas.className = "character-image";
+			enemyCharacterSprite_Canvas.src = enemyCharacter.battleSprites[0];
+			enemyCharacterSprite_Span.appendChild(enemyCharacterSprite_Canvas);
 			
-			let enemyCharacterHp_Div = document.createElement("div");
+			let enemyCharacterData_Div = document.createElement("div");
+			enemyCharacterData_Div.className = "character-data";
+			let enemyCharacterName_Span = document.createElement("span");
+			enemyCharacterName_Span.innerHTML = enemyCharacter.name;
+			enemyCharacterData_Div.appendChild(enemyCharacterName_Span);
 			let enemyCharacterHp_Progress = document.createElement("progress");
-			enemyCharacterHp_Progress.value = enemyCharacter.stats["hp"];
-			enemyCharacterHp_Div.appendChild(enemyCharacterHp_Progress);
-			enemyCharacter_Div.appendChild(enemyCharacterHp_Div);
+			// progress element value expects a percentage, so calculate our stat ratio
+			// and then use that as a scaling factor to the max percentage 100
+			enemyCharacterHp_Progress.value = 
+				enemyCharacter.stats["hp"]/enemyCharacter.stats["maxHP"]*100;
+			enemyCharacterData_Div.appendChild(enemyCharacterHp_Progress);
 			
-			enemyView_Div.appendChild(enemyCharacter_Div);
 			this.enemyCharacterUiDict[enemyCharacter.id] = {
 					"characterObj": enemyCharacter,
-					"imageElement": enemyCharacterSprite_Img, 
+					"canvasElement": enemyCharacterSprite_Canvas, 
 					"hpProgressElement": enemyCharacterHp_Progress
 			};
 		}

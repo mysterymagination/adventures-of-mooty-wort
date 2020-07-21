@@ -148,20 +148,10 @@
 
       <hr id="turn_separator">
     </div>
-    <!-- todo: the modal needs to be dimen limited to something
-    	 like 75% screen dimens, and pinned at the center of the 
-    	 screen -->
-    <!-- todo: the images etc. inside the modal should scale down based
-         on the bounds of modal given above (should happen automatically
-         as long as we don't allow scrolling directly in the modal itself)
-         and the player vs. enemy side should match regardless of source
-         image size by having the element dimens tied to some % of the modal's dimens -->
-    <!-- todo: the ability list should either be a 3x3 (easier, less generally useful)
-    	 or more special abls like actual spells should be in a separate sub-menu DIV  
-    	 which can be scrollable but its dimens should match those of the basic 
-    	 atk, def, spl menu such that the UX doesn't wildly resize -->
     <!-- combat UI -->
 	<div id="combatModal" class="modal">
+	  <!-- spell effect overlay -->
+	  <canvas id="effectsOverlayCanvas"></canvas>
 	  <!-- Modal content -->
 	  <div class="modal-content">
 	  	<div id="enemyView" class="scrollable">
