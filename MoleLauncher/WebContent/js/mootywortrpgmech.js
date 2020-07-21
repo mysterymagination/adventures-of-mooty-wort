@@ -303,10 +303,10 @@ class MootyWortRpgMech {
 			enemyCharacterName_Span.innerHTML = enemyCharacter.name;
 			enemyCharacterData_Div.appendChild(enemyCharacterName_Span);
 			let enemyCharacterHp_Progress = document.createElement("progress");
-			// progress element value expects a percentage, so calculate our stat ratio
-			// and then use that as a scaling factor to the max percentage 100
+			// progress element value expects a ration expressed as value between 0 and 1, 
+			// so set it to our stat ratio directly
 			enemyCharacterHp_Progress.value = 
-				enemyCharacter.stats["hp"]/enemyCharacter.stats["maxHP"]*100;
+				enemyCharacter.stats["hp"]/enemyCharacter.stats["maxHP"];
 			enemyCharacterData_Div.appendChild(enemyCharacterHp_Progress);
 			
 			this.enemyCharacterUiDict[enemyCharacter.id] = {
