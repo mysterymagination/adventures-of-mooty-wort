@@ -230,12 +230,17 @@ class MootyWortRpgMech {
 		// player party UI 
 		var playerView_Div = document.getElementById("playerView");
 		for(let playerCharacter of combatModel.playerParty) {
-			let playerCharacter_Div = document.createElement("div");
-			// todo: convert player view stuff to Canvas elements etc. so we can draw on em
-			let playerCharacterSprite_Img = document.createElement("img");
-			playerCharacterSprite_Img.src = playerCharacter.battleSprites[0];
-			playerCharacter_Div.appendChild(playerCharacterSprite_Img);
+			let playerCharacterImageContainer_Div = document.createElement("div");
+			playerCharacterImageContainer_Div.className = "character-image-container";
 			
+			let playerCharacterSprite_Span = document.createElement("span");
+			let playerCharacterSprite_Canvas = document.createElement("canvas");
+			playerCharacterSprite_Canvas.className = "character-image";
+			playerCharacterSprite_Canvas.src = playerCharacter.battleSprites[0];
+			playerCharacterSprite_Span.appendChild(playerCharacterSprite_Canvas);
+			playerCharacterImageContainer_Div.appendChild(playerCharacterSprite_Span);
+			
+			// todo: player data container
 			let playerCharacterName_P = document.createElement("p");
 			let playerCharacterName_Text = document.createTextNode(playerCharacter.name);
 			playerCharacterName_P.appendChild(playerCharacterName_Text);
@@ -284,6 +289,10 @@ class MootyWortRpgMech {
 		}
 		// enemy party UI from player perspective
 		let enemyView_Div = document.getElementById("enemyView");
+		// todo: the top level character-image-container
+		//  and character-data divs are supposed to one per 
+		//  character side (enemy and player) not per-character instance.
+		//  Probably should be in static HTML.
 		for(let enemyCharacter of combatModel.enemyParty) {
 			let enemyCharacterImageContainer_Div = document.createElement("div");
 			enemyCharacterImageContainer_Div.className = "character-image-container"; 
