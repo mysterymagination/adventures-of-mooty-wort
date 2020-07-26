@@ -155,20 +155,28 @@
 	  <!-- Modal content -->
 	  <div class="modal-content">
 	  	<div id="enemyView" class="scrollable">
-	  		<!-- this div will be populated with divs containing associated enemy img tag and paired progress tag from code based on actual enemy party -->
+	  		<div id="enemySpritesContainer" class="character-image-container">
+	  		<!-- enemy character sprite canvasi will go here -->
+	  		</div>
+	  		<div id="enemyDataContainer" class="character-data">
+	  		<!-- enemy text and HP progress data will be loaded here -->
+	  		</div>
 	  	</div>
 	  	<div id="combatLog" class="scrollable">
 	    		<p>Reality rumbles and threatens to crumble...</p>
 	    </div>
 	    <div id="playerView">
 		    <div id= "combatCommandWindow" class="modal-content">
-		    		<ul id="combatCommandList">
-		    		<!-- content here comes from looping through player abilities and rendering them as list items with onclicks that either perform the linked ability or ready potential target elements' onclicks -->
-		    		</ul>
+	    		<ul id="combatCommandList">
+	    		<!-- content here comes from looping through player abilities and rendering them as list items with onclicks that either perform the linked ability or ready potential target elements' onclicks -->
+	    		</ul>
 		    </div>
-	    	<!-- this div will be populated with divs containing 
-	    	player Characters' img tag, name, HP + progress tag + maxHP, 
-	    	and MP + progress tag + maxMP -->
+	    	<div id="playerSpritesContainer" class="character-image-container">
+	    	<!-- player character sprite canvasi go here -->
+	    	</div>
+	    	<div id="playerDataContainer" class="character-data">
+	    	<!-- player character text and stat progress go here -->
+	    	</div>
 	    </div>
 	  </div>
 	</div>

@@ -229,10 +229,10 @@ class MootyWortRpgMech {
 	    
 		// player party UI 
 		var playerView_Div = document.getElementById("playerView");
+		var playerCharacterImageContainer_Div = document.getElementById("playerSpritesContainer");
+		var playerCharacterDataContainer_Div = document.getElementById("playerDataContainer");
 		for(let playerCharacter of combatModel.playerParty) {
-			let playerCharacterImageContainer_Div = document.createElement("div");
-			playerCharacterImageContainer_Div.className = "character-image-container";
-			
+			// player character sprites
 			let playerCharacterSprite_Span = document.createElement("span");
 			let playerCharacterSprite_Canvas = document.createElement("canvas");
 			playerCharacterSprite_Canvas.className = "character-image";
@@ -240,64 +240,54 @@ class MootyWortRpgMech {
 			playerCharacterSprite_Span.appendChild(playerCharacterSprite_Canvas);
 			playerCharacterImageContainer_Div.appendChild(playerCharacterSprite_Span);
 			
-			// todo: player data container
-			let playerCharacterName_P = document.createElement("p");
+			// player character data
+			let playerCharacterData_Div = document.createElement("div");
+			let playerCharacterName_Div = document.createElement("div");
+			playerCharacterName_Div.className = "player-name";
 			let playerCharacterName_Text = document.createTextNode(playerCharacter.name);
-			playerCharacterName_P.appendChild(playerCharacterName_Text);
-			playerCharacter_Div.appendChild(playerCharacterName_P);
-			
-			let playerCharacterHp_Div = document.createElement("div");
-			let playerCharacterCurrentHp_P = document.createElement("p");
+			playerCharacterName_Div.appendChild(playerCharacterName_Text);
+			playerCharacterData_Div.appendChild(playerCharacterName_Div);
+			let playerCharacterHpLabel_Span = document.createElement("span");
+			let playerCharacterHpLabel_Text = document.createTextNode("HP: ");
+			playerCharacterHpLabel_Span.appendChild(playerCharacterHpLabel_Text);
+			playerCharacterData_Div.appendChild(playerCharacterHpLabel_Span);
+			let playerCharacterCurrentHp_Span = document.createElement("span");
 			let playerCharacterCurrentHp_Text = document.createTextNode(playerCharacter.stats["hp"]);
-			playerCharacterCurrentHp_P.appendChild(playerCharacterCurrentHp_Text);
-			playerCharacterHp_Div.appendChild(playerCharacterCurrentHp_P);
+			playerCharacterCurrentHp_Span.appendChild(playerCharacterCurrentHp_Text);
+			playerCharacterData_Div.appendChild(playerCharacterCurrentHp_Span);
 			let playerCharacterHp_Progress = document.createElement("progress");
-			playerCharacterHp_Progress.value = playerCharacter.stats["hp"];
-			playerCharacterHp_Div.appendChild(playerCharacterHp_Progress);
-			let playerCharacterMaxHp_P = document.createElement("p");
-			let playerCharacterMaxHp_Text = document.createTextNode(playerCharacter.stats["maxHp"]);
-			playerCharacterMaxHp_P.appendChild(playerCharacterMaxHp_Text);
-			playerCharacterHp_Div.appendChild(playerCharacterMaxHp_P);
-			playerCharacter_Div.appendChild(playerCharacterHp_Div);
-			
-			let playerCharacterMp_Div = document.createElement("div");
-			let playerCharacterCurrentMp_P = document.createElement("p");
+			playerCharacterHp_Progress.value = playerCharacter.stats["hp"]/playerCharacter.stats["maxHP"];
+			playerCharacterData_Div.appendChild(playerCharacterHp_Progress);
+			let playerCharacterDataDivider_Div = document.createElement("div");
+			playerCharacterData_Div.appendChild(playerCharacterDataDivider_Div);
+			let playerCharacterMpLabel_Span = document.createElement("span");
+			let playerCharacterMpLabel_Text = document.createTextNode("MP: ");
+			playerCharacterMpLabel_Span.appendChild(playerCharacterMpLabel_Text);
+			playerCharacterData_Div.appendChild(playerCharacterMpLabel_Span);
+			let playerCharacterCurrentMp_Span = document.createElement("span");
 			let playerCharacterCurrentMp_Text = document.createTextNode(playerCharacter.stats["mp"]);
-			playerCharacterCurrentMp_P.appendChild(playerCharacterCurrentMp_Text);
-			playerCharacterMp_Div.appendChild(playerCharacterCurrentMp_P);
+			playerCharacterCurrentMp_Span.appendChild(playerCharacterCurrentMp_Text);
+			playerCharacterData_Div.appendChild(playerCharacterCurrentMp_Span);
 			let playerCharacterMp_Progress = document.createElement("progress");
-			playerCharacterMp_Progress.value = playerCharacter.stats["mp"];
-			playerCharacterMp_Div.appendChild(playerCharacterMp_Progress);
-			let playerCharacterMaxMp_P = document.createElement("p");
-			let playerCharacterMaxMp_Text = document.createTextNode(playerCharacter.stats["maxMp"]);
-			playerCharacterMaxMp_P.appendChild(playerCharacterMaxMp_Text);
-			playerCharacterMp_Div.appendChild(playerCharacterMaxMp_P);
-			playerCharacter_Div.appendChild(playerCharacterMp_Div);
+			playerCharacterMp_Progress.value = playerCharacter.stats["mp"]/playerCharacter.stats["maxMP"];
+			playerCharacterData_Div.appendChild(playerCharacterMp_Progress);
+			playerCharacterDataContainer_Div.appendChild(playerCharacterData_Div);
 			
-			playerView_Div.appendChild(playerCharacter_Div);
+			// associate elements with keys in UI dict
 			this.playerCharacterUiDict[playerCharacter.id] = {
 					"characterObj": playerCharacter,
 					"canvasElement": playerCharacterSprite_Canvas, 
-					"nameElement": playerCharacterName_P,
-					"hpElement": playerCharacterCurrentHp_P,
-					"maxHPElement": playerCharacterMaxHp_P,
+					"nameElement": playerCharacterName_Div,
+					"hpElement": playerCharacterCurrentHp_Span,
 					"hpProgressElement": playerCharacterHp_Progress,
-					"mpElement": playerCharacterCurrentMp_P,
-					"maxMPElement": playerCharacterMaxMp_P,
+					"mpElement": playerCharacterCurrentMp_Span,
 					"mpProgressElement": playerCharacterMp_Progress
 			};
 		}
 		// enemy party UI from player perspective
-		let enemyView_Div = document.getElementById("enemyView");
-		// todo: the top level character-image-container
-		//  and character-data divs are supposed to one per 
-		//  character side (enemy and player) not per-character instance.
-		//  Probably should be in static HTML.
+		var enemyCharacterImageContainer_Div = document.getElementById("enemySpritesContainer");
+		var enemyCharacterData_Div = document.getElementById("enemyDataContainer");
 		for(let enemyCharacter of combatModel.enemyParty) {
-			let enemyCharacterImageContainer_Div = document.createElement("div");
-			enemyCharacterImageContainer_Div.className = "character-image-container"; 
-			enemyView_Div.appendChild(enemyCharacterImageContainer_Div);
-			
 			let enemyCharacterSprite_Span = document.createElement("span");
 			enemyCharacterImageContainer_Div.appendChild(enemyCharacterSprite_Span);
 			let enemyCharacterSprite_Canvas = document.createElement("canvas");
@@ -306,8 +296,6 @@ class MootyWortRpgMech {
 			enemyCharacterSprite_Canvas.src = enemyCharacter.battleSprites[0];
 			enemyCharacterSprite_Span.appendChild(enemyCharacterSprite_Canvas);
 			
-			let enemyCharacterData_Div = document.createElement("div");
-			enemyCharacterData_Div.className = "character-data";
 			let enemyCharacterName_Span = document.createElement("span");
 			enemyCharacterName_Span.innerHTML = enemyCharacter.name;
 			enemyCharacterData_Div.appendChild(enemyCharacterName_Span);
