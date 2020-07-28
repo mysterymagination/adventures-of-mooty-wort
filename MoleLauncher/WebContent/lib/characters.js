@@ -459,11 +459,10 @@ export class YawningGod extends Character {
                 	ablProbsConfig["dark_star"] = 0.6;
                 }
                 
+                var randoAbilityId = combat.chooseRandomAbility(ablProbsConfig);
                 chosenAbility = this.entity.spellsDict[
-                	combat.chooseRandomAbility(ablProbsConfig)
+                	randoAbilityId
                 ];
-                // todo remove after debug
-                chosenAbility = this.entity.spellsDict["primordial_mandate"];
                 
                 // check for redundant status mod application and modify chosen abl accordingly
                 // todo: make this general by adding ability descriptor tags

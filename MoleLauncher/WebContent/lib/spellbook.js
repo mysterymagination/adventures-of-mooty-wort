@@ -174,8 +174,9 @@ export class Description {
 			currentTagIndex = descStringTemplate.indexOf('[', currentTagIndex);
 			// record our current position of interest as 1 past the last known tag chunk
 			cursorPosition = currentTagEndIndex+1;
-			
 		}
+		// now all the tags should be replaced with rando related phrases
+		return descStringTemplate;
 	}
 	/**
 	 * Selects at random a prefabricated string associated with the given tag
@@ -816,7 +817,7 @@ class ManyfoldEmbraceTelegraph extends Telegraph {
 	ManyfoldEmbraceTelegraph.prototype.telegraphTemplateStringArray = [
 			"The [oily] tendrils of the Yawning God, [massive] and innumerable, rise up ominously.",
 			"Dripping with toxins, [venom], your vision is filled with a writhing hive of [massive] serpentine columns.",
-			"A sound like reluctantly ripping roots being torn from a substrate of sucking sudden muck heralds the rising of [massive] serpent shadows from all across the hide of the Yawning God, [oily]."
+			"A sound like reluctantly ripping roots being torn from a substrate of sucking sudden muck heralds the rising of [massive] serpentine shadows from all across the hide of the Yawning God, [oily]."
 			];
 		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
 	}
@@ -996,7 +997,7 @@ export class EldritchHorror extends Entity {
 				"manyfold_embrace": new ManyfoldEmbrace(),
 				"primordial_mandate": new PrimordialMandate(),
 				"pestilence": new Pestilence(),
-				"darkstar": new DarkStar()
+				"dark_star": new DarkStar()
 		}
 	}
 }

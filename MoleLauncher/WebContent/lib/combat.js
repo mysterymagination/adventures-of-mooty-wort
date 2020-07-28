@@ -142,18 +142,7 @@ export class Combat {
         }
         // check for victory/defeat condition
         this.checkTerminalConditions();
-        /*
-        if(this.combatResult !== undefined) {
-        	handleCombatResult();
-        } else {
-        	// todo: check for any status effects that might prevent enemy from acting
-        	for(let enemy in this.enemyParty) {
-        		let chosenAbility = enemy.runAI();
-        		
-        		
-        	}
-        }
-        */
+        
         if(this.combatResult !== undefined) {
 			// we have a combat result, so tell the viewcontroller to process it
         	return Combat.ControllerState.processCombatResult;
@@ -173,51 +162,7 @@ export class Combat {
 	telegraphAction(ability) {
 		return ability.generateRandomTelegraph();
 	}
-	/**
-	 * Process the end of a combat round
-	 */
-	/* this is probably redundant since we have to check for terminal conditions in processRoundTop after status effects are applied
-	processRoundBottom() {
-		checkTerminalConditions();
-        /* instead of calling these directly, this method should return information about the next step to calling viewcontroller
-		if(this.combatResult !== undefined) {
-        	handleCombatResult();
-        } else {
-        	// begin a new round
-        	processRoundTop();
-        }
-        */
-		/*
-		if(this.combatResult !== undefined) {
-			// we have a combat result, so tell the viewcontroller to process it
-        	return Combat.ControllerState.processCombatResult;
-        } else {
-        	// tell viewcontroller we need to begin a new round
-        	return Combat.ControllerState.beginNewRound;
-        }
-		
-    }// end processRoundBottom()
-	*/
-	/* since this is mostly UI work, it belongs in the viewcontroller
-	handleCombatResult() {
-		if(this.combatResult !== undefined) {
-        	// combat over scenario
-			switch(this.combatResult) {
-	        case Combat.CombatResultEnum.playerVictory:
-	        	// todo: display player victory message and battle exit UI
-	        	break;
-	        case Combat.CombatResultEnum.enemyVictory:
-	        	// todo: display player defeat message and game over UI
-	        	break;
-	        case Combat.CombatResultEnum.draw:
-	        	// todo: display draw message and battle exit UI
-	        	break;
-	        }
-        } else {
-        	throw "handleCombatResult called with undefined combatResult";
-        }
-	}
-	*/
+	
 	/**
 	 * Step through player party and enemy party to look for fully dead parties.
 	 * If a terminal condition is detected, this method sets the combatResult field accordingly.
