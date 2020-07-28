@@ -232,7 +232,7 @@ export class Ability {
 
 		// metadata about who the ability targets, namely you, all allies,
 		// one enemy, or all enemies.
-		this.targetType = Ability.TargetTypesEnum.singleTarget;
+		Ability.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 
 		/**
 		 * The friendly property describes whether an ability is considered
@@ -878,13 +878,13 @@ class PestilenceTelegraph extends Telegraph {
 export class PrimordialMandate extends Spell {
 	constructor() {
 		super({ id: "primordial_mandate", name: "Primordial Mandate" });
-		PrimordialMandate.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
+		PrimordialMandate.prototype.targetType = Ability.TargetTypesEnum.personal;
 		PrimordialMandate.prototype.cost = { "mp": 15 };
 		PrimordialMandate.prototype.telegraph = new PrimordialMandateTelegraph();
 	}
-	effect(sourceChar, targetChar) {
-	    // bloodlust on target
-	    Lib.addUniqueStatusEffect(targetChar, new Alchemy.Bloodlust());
+	effect(sourceChar) {
+	    // bloodlust on self
+	    Lib.addUniqueStatusEffect(sourceChar, new Alchemy.Bloodlust());
 	    	
 	    // MP cost
 	    this.processCost(sourceChar);

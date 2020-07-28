@@ -768,11 +768,24 @@ undum.game.situations = {
     "basement3_encounter_yawning_god": new undum.SimpleSituation(
         "",
         {
+        	// todo: may have a problem here re: loading a saved game that was in combat;
+        	//  the Undum save/load mech tries to repeat all choices made like a Doom demo archive
+        	//  (although it isn't clear how/if any random events within the Situations are 
+        	//  replicated -- random effects on stats or determination of Situation routing could
+        	//  be handled by traversing a record of the Situation routing that happened and restoring
+        	//  character etc. state BUT the load system seems to be running the Situation callbacks afresh
+        	//  and those can contain arbitrary code.  What if I had a Situation::enter() that called
+        	//  system.doLink(randoString(situationIdStringArray))?  You'd have a wacky transcript at least,
+        	//  and perhaps also mucked up state)
+        	//  and when it hits this one I just get the modal on top of the title screen rather than
+        	//  the expected modal over transcript up to that point.  Also, there seems to potentially be
+        	//  auto saving/loading since I definitely hit this without even being able to hit load.
             enter: function (character, system, from) {
                 // boss fight hyyyyype!  Give a combat UI within the transcript main content window; I'm thinking a relatively simple table plus some text and image output divs?
             	var mech = undum.game.rpgMech;
             	mech.enterCombat({playerParty: [mech.charactersDict["mole"]], enemyParty: [mech.charactersDict["yawning_god"]]});
-            	// todo: what happens when you put interactible elements in your situation HTML, like a Button tag?
+            	// todox: what happens when you put interactible elements in your situation HTML, like a Button tag?
+            	//  update: whatever should normally happen; see death case below
             	// todo: spawn a modal pop-over div that hosts our combat UI; disallow click-away and have the modal lifetime be tied to combat lifecycle.
             	// todo: if the player wins against the yawning god and they aggro'ed the grue, drop the modal and give transcript text about grue coming in and then raise modal for next combat!
             	// todo: once all fights are complete, process victory condition with transcript text appropriate to choice details

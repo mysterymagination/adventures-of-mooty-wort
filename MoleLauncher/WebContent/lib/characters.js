@@ -459,12 +459,11 @@ export class YawningGod extends Character {
                 	ablProbsConfig["dark_star"] = 0.6;
                 }
                 
-                // todo: particular mole attributes or status effects we wanna sniff for?
-                // only actually the one player in this case
-                chosenTarget = combat.playerParty[0];
                 chosenAbility = this.entity.spellsDict[
                 	combat.chooseRandomAbility(ablProbsConfig)
                 ];
+                // todo remove after debug
+                chosenAbility = this.entity.spellsDict["primordial_mandate"];
                 
                 // check for redundant status mod application and modify chosen abl accordingly
                 // todo: make this general by adding ability descriptor tags
@@ -477,6 +476,7 @@ export class YawningGod extends Character {
                 }
                 
                 /// install target if necessary ///
+                // todo: particular mole attributes or status effects we wanna sniff for?
                 if(chosenAbility.targetType === Spells.Ability.TargetTypesEnum.singleTarget) {   
                     // all The God's special abilities are pretty punishing, so make basic atk most probable
                     // todo: add more intelligent targeting via abl descriptor tag that indicates what sort of defense
@@ -488,7 +488,7 @@ export class YawningGod extends Character {
                 /// end target installation block ///
                 
                 console.log("The Yawning God's chosen abl is " + chosenAbility.name
-                		+ (chosenTarget ? ", targetting "+chosenTarget.name : ""));
+                		+ (chosenTarget ? ", targeting "+chosenTarget.name : ""));
                 combat.currentSelectedAbility = chosenAbility;
                 combat.currentTargetCharacter = chosenTarget;
                 return chosenAbility;

@@ -134,6 +134,7 @@ class MootyWortRpgMech {
 		} else if(state === Combat.ControllerState.runEnemy) {
 			// todo: check enemy status effects for anything that would prevent the use of their
 			// chosen ability
+			// todo: probably at least some of this should be moved to Combat model class
 			let selectedAbility = combatModel.currentSelectedAbility;
 			// check if currently active enemy can still afford their chosen abl
 			if(combatModel.currentTurnOwner.canAffordCost(selectedAbility)) {
