@@ -59,6 +59,22 @@ class MootyWortRpgMech {
 				}
 		*/
 		};
+		/**
+		 * Object literal pairing a spell FX spritesheet id (same as associated ability id)
+		 * with spritesheet properties necessary for parsing
+		 */
+		this.spellFXDict = {
+			/*
+			 e.g. "test_spritesheet": {
+			    "image": this,
+	            "columns": 3,
+	            "rows": 4,
+	            "frameWidthPx": 16,
+	            "frameHeightPx": 18,
+	            "frameCount": 12
+			  }
+			 */	
+		};
 	}
 	
 	/**
