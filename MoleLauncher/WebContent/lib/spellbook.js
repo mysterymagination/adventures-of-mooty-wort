@@ -8,6 +8,9 @@ export class Description {
 		this.descString = "placeholder desc";
 		// todo: would it be useful at all to subdivide this dict by cat?  That's mostly a usage concern, but maybe not entirely.
 		Description.prototype.telegraphTagAssocDict = {
+				"test": [
+					"it is a placeholder test telegraph tag replacement string"
+				],
 				"explosion": [ 
 					"in a bludgeoning tide of heat and light",
 					"heralded by fantastic technicolor pyrotechnics",
