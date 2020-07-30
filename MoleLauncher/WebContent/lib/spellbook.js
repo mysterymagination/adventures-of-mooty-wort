@@ -8,8 +8,17 @@ export class Description {
 		this.descString = "placeholder desc";
 		// todo: would it be useful at all to subdivide this dict by cat?  That's mostly a usage concern, but maybe not entirely.
 		Description.prototype.telegraphTagAssocDict = {
-				"test": [
+				"test_phrase": [
 					"it is a placeholder test telegraph tag replacement string"
+				],
+				"test_one": [
+					"1"
+				],
+				"test_two": [
+					"2"
+				],
+				"test_three": [
+					"3"
 				],
 				"explosion": [ 
 					"in a bludgeoning tide of heat and light",
@@ -156,7 +165,6 @@ export class Description {
 	 * @return a completed description string
 	 */
 	parseTags(descStringTemplate) {
-		var cursorPosition = 0;
 		var currentTagIndex = descStringTemplate.indexOf('[');
 		var currentTagEndIndex = -1;
 		while(currentTagIndex != -1) {
@@ -172,11 +180,9 @@ export class Description {
 			// generate the tag-derived substring we want to replace our placeholder with
 			let tagReplacementString = this.generateRandomTagString(tagString);
 			// write the replacement substring in by bolting on everything before our current tag chunk to the head of the replacement string and everything after the current tag chunk onto its tail
-			descStringTemplate = descStringTemplate.slice(cursorPosition, currentTagIndex) + tagReplacementString + descStringTemplate.slice(currentTagEndIndex+1);
+			descStringTemplate = descStringTemplate.slice(0, currentTagIndex) + tagReplacementString + descStringTemplate.slice(currentTagEndIndex+1);
 			// update tag index to next tag chunk, if any
 			currentTagIndex = descStringTemplate.indexOf('[', currentTagIndex);
-			// record our current position of interest as 1 past the last known tag chunk
-			cursorPosition = currentTagEndIndex+1;
 		}
 		// now all the tags should be replaced with rando related phrases
 		return descStringTemplate;

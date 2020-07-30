@@ -7,8 +7,5 @@
   },
   "scripts": {
     "test": "jest"
-  },
-  "dependencies": {
-    "mocha": "^8.0.1"
   }
 }

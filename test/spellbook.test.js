@@ -15,7 +15,7 @@ test('Description.parseTags() Simple Single Tag Test ', () => {
 	//  tag replaced by a known single possibility replacement string.
 	var testDesc = new spellbook.Description();
 	var expectedResult = "this desc is weird because it is a placeholder test telegraph tag replacement string";
-	var testStringTemplate = "this desc is weird because [test]";	
+	var testStringTemplate = "this desc is weird because [test_phrase]";	
 	var actualResult = testDesc.parseTags(testStringTemplate);
 	console.log("Description.parseTags() test; actual result is {"+actualResult+"}");
 	expect(actualResult).toBe(expectedResult);
@@ -25,8 +25,8 @@ test('Description.parseTags() Triple Tag Test ', () => {
 	// check that a simple string template gets its three 
 	//  tags replaced by a known single possibility replacement string.
 	var testDesc = new spellbook.Description();
-	var expectedResult = "this it is a placeholder test telegraph tag replacement string desc it is a placeholder test telegraph tag replacement string is weird because it is a placeholder test telegraph tag replacement string";
-	var testStringTemplate = "this [test] desc [test] is weird because [test]";	
+	var expectedResult = "this 1 desc is 2 weird because it is a placeholder test telegraph tag replacement string";
+	var testStringTemplate = "this [test_one] desc is [test_two] weird because [test_phrase]";	
 	var actualResult = testDesc.parseTags(testStringTemplate);
 	console.log("Description.parseTags() triple tag test; actual result is {"+actualResult+"}");
 	expect(actualResult).toBe(expectedResult);
