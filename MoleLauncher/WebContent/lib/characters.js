@@ -367,7 +367,7 @@ export class YawningGod extends Character {
 		this.stats["res"] = 50;
 	    YawningGod.prototype.entity = new Spells.EldritchHorror();
 	    this.battleSprites = [
-	    	this.battleSpritePath+"/yawning_god/yawning_god_dark.png"
+	    	this.battleSpritePath+"/yawning_god/yawning_god_mk4.jpg"
 	    ];
 	}
 	runAI(combat, role) {

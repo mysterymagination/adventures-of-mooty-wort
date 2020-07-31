@@ -31,3 +31,14 @@ test('Description.parseTags() Triple Tag Test ', () => {
 	console.log("Description.parseTags() triple tag test; actual result is {"+actualResult+"}");
 	expect(actualResult).toBe(expectedResult);
 });
+
+test('Description.parseTags() Triple Phrase Tag Test ', () => {
+	// check that a string template gets its three 
+	//  phrase tags replaced by a known single possibility replacement string.
+	var testDesc = new spellbook.Description();
+	var expectedResult = "this it is a placeholder test telegraph tag replacement string desc is it is a placeholder test telegraph tag replacement string weird because it is a placeholder test telegraph tag replacement string";
+	var testStringTemplate = "this [test_phrase] desc is [test_phrase] weird because [test_phrase]";	
+	var actualResult = testDesc.parseTags(testStringTemplate);
+	console.log("Description.parseTags() triple phrase tag test; actual result is {"+actualResult+"}");
+	expect(actualResult).toBe(expectedResult);
+});

@@ -810,7 +810,7 @@ undum.game.situations = {
 //  (iframe?) or maybe more simply a div that we can shove into the transcript UI someplace or maybe overlay on top of it like a modal.
 
 /* The Id of the starting situation. */
-undum.game.start = "main";
+undum.game.start = "basement3_encounter_yawning_god";//"main";
 
 /* Here we define all the qualities that our characters could
  * possess. We don't have to be exhaustive, but if we miss one out then
