@@ -463,6 +463,7 @@ img.float_left {
   border: 5px solid #555;
   overflow: scroll;
   color: #fefefeff;
+  max-height: 20vh;
 }
 
 .ability-button-container {
@@ -470,7 +471,7 @@ img.float_left {
   margin-top: 5%;
   border: 1px solid #888;
   overflow: scroll;
-  max-height: 25vh;
+  max-height: 20vh;
 }
 
 .commandButton {

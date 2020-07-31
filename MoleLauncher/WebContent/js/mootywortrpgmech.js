@@ -269,7 +269,7 @@ class MootyWortRpgMech {
 			playerCharacterHpLabel_Span.appendChild(playerCharacterHpLabel_Text);
 			playerCharacterData_Div.appendChild(playerCharacterHpLabel_Span);
 			let playerCharacterCurrentHp_Span = document.createElement("span");
-			let playerCharacterCurrentHp_Text = document.createTextNode(playerCharacter.stats["hp"]);
+			let playerCharacterCurrentHp_Text = document.createTextNode(playerCharacter.stats["hp"]+" ");
 			playerCharacterCurrentHp_Span.appendChild(playerCharacterCurrentHp_Text);
 			playerCharacterData_Div.appendChild(playerCharacterCurrentHp_Span);
 			let playerCharacterHp_Progress = document.createElement("progress");
@@ -282,7 +282,8 @@ class MootyWortRpgMech {
 			playerCharacterMpLabel_Span.appendChild(playerCharacterMpLabel_Text);
 			playerCharacterData_Div.appendChild(playerCharacterMpLabel_Span);
 			let playerCharacterCurrentMp_Span = document.createElement("span");
-			let playerCharacterCurrentMp_Text = document.createTextNode(playerCharacter.stats["mp"]);
+			playerCharacterCurrentMp_Span.className = "player-stat-value";
+			let playerCharacterCurrentMp_Text = document.createTextNode(playerCharacter.stats["mp"]+" ");
 			playerCharacterCurrentMp_Span.appendChild(playerCharacterCurrentMp_Text);
 			playerCharacterData_Div.appendChild(playerCharacterCurrentMp_Span);
 			let playerCharacterMp_Progress = document.createElement("progress");
