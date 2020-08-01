@@ -220,7 +220,7 @@ class MootyWortRpgMech {
 	  }
 	/**
 	 * Set up the battle UI, associating character objects with their associated HTML elements 
-	 * @param combatModel the current COmbat object
+	 * @param combatModel the current Combat object
 	 */
 	initBattleUi(combatModel) {
 		// show the combat mode modal
@@ -333,7 +333,8 @@ class MootyWortRpgMech {
 			enemyCharacterSprite_Span.appendChild(enemyCharacterSprite_Canvas);
 			
 			let enemyCharacterName_Span = document.createElement("span");
-			enemyCharacterName_Span.innerHTML = enemyCharacter.name;
+			enemyCharacterName_Span.className = "enemy-name";
+			enemyCharacterName_Span.innerHTML = enemyCharacter.name + " ";
 			enemyCharacterData_Div.appendChild(enemyCharacterName_Span);
 			let enemyCharacterHp_Progress = document.createElement("progress");
 			// progress element value expects a ration expressed as value between 0 and 1, 
@@ -348,7 +349,33 @@ class MootyWortRpgMech {
 					"hpProgressElement": enemyCharacterHp_Progress
 			};
 		}
+		
+		// now that modal content is loaded, do centering calc
+		// todo: find a better way to call this after loading of content is fully complete
+		window.setTimeout(() => {this.centerElement(combatUI)}, 3000);
 	}
+	
+	/**
+	 * Centers the element
+	 * @param element the DOM element to be centered
+	 */
+	centerElement(element) {
+        var elementWidth = element.offsetWidth;
+        // todo: why is offsetHeight not accounting for the height 75% constraint?
+        var elementHeight = element.offsetHeight;
+        var windowWidth = window.innerWidth;
+        var windowHeight = window.innerHeight;
+        element.style.top = ((windowHeight - elementHeight) / 2 + window.pageYOffset) + "px";
+        if(parseInt(element.style.top, 10) < 0) {
+        	element.style.top = "0px";
+        }
+        element.style.left = ((windowWidth - elementWidth) / 2 + window.pageXOffset) + "px";
+        if(parseInt(element.style.left, 10) < 0) {
+        	element.style.left = "0px";
+        }
+        console.log("centerElement; window height is "+windowHeight+" and elem height is "+elementHeight+", and pageYOffset is "+window.pageYOffset+
+        		", so we're going to set top to "+element.style.top);
+    }
 	
 	/**
 	 * Update the Character sprites based on combat data

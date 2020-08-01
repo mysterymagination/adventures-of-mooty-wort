@@ -114,7 +114,7 @@ span.drop + p {
 p {
     margin: 0;
     -webkit-transition: text-indent 0.25s ease;
-            transition: text-indent 0.25s ease;
+    transition: text-indent 0.25s ease;
 }
 hr {
     border: none;
@@ -382,9 +382,10 @@ img.float_left {
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */
-  position: relative; /*constrained by parent*/
+  position: absolute; /*constrained by parent*/
   z-index: 1; /* Sit on top */
   width: 75%; /* take up majority width but show page beneath at the sides */
+  height: 75%;
   margin-left: auto; /* auto for margin left and right is effective center-align (?) */
   margin-right: auto;/* auto for margin left and right is effective center-align (?) */
   overflow: auto; /* Enable scroll if needed */
@@ -397,6 +398,14 @@ img.float_left {
   /*todo: what's a reasonable way to keep the modal centered within the currently visible area 
      i.e. keep it centered as the underlying content is scrolled?  The below messes up image-container
      height constraint for some reason.*/
+  /* idfk, just use JS
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 75%;
+  height: 75%;
+  transform: translate(50%, 50%);
+  */
   /*
   top: 50%;
   left: 50%;
@@ -411,7 +420,9 @@ img.float_left {
 .modal-content {
   display: inline-block;
   position: relative;
-  background-color: #fefefeff;
+  /*background-color: #aeaeae2a;*/
+  background: url("../images/lava_flow.jpg");
+  background-size: cover;
   width: 100%; /* Could be more or less, depending on screen size */
   height: 100%;
   overflow: auto; /* Enable scroll if needed */
@@ -450,16 +461,19 @@ img.float_left {
 .character-data {
   display: block;
   margin: auto; /* horizontally centered */
+  color: #fefefe;
 }
 
 .enemy-name {
   font-family: 'Metal Mania', cursive;
   font-weight: bold;
+  color: #ff0e0e;
 }
 
 .player-name {
   font-family: 'Kaushan Script', cursive;
   font-weight: bold;
+  color: #fefefe;
 }
 
 .combat-log {
@@ -477,6 +491,11 @@ img.float_left {
   border: 1px solid #888;
   overflow: scroll;
   max-height: 20vh;
+}
+
+.command-button-list {
+  list-style: none; /*no bullets*/
+  padding: 0;
 }
 
 .commandButton {
