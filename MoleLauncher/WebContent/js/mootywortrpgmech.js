@@ -257,8 +257,8 @@ class MootyWortRpgMech {
 			var playerCharacterSprite_Image = new Image(); // Create new Image element
 			playerCharacterSprite_Image.addEventListener('load', function() {
 				// execute drawImage statements now that image has loaded
-				//playerCharacterSprite_Canvas.width = 256;//this.width;
-				//playerCharacterSprite_Canvas.height = 256;//this.height;
+				playerCharacterSprite_Canvas.width = this.width;
+				playerCharacterSprite_Canvas.height = this.height;
 				playerCharacterSprite_Canvas.getContext('2d').drawImage(this, 0, 0, playerCharacterSprite_Canvas.width, playerCharacterSprite_Canvas.height);
 		        console.log("player "+playerCharacter.name+"'s canvas dimens are "+playerCharacterSprite_Canvas.width+"x"+playerCharacterSprite_Canvas.height);
 		    }, false);
@@ -324,8 +324,8 @@ class MootyWortRpgMech {
 			var enemyCharacterSprite_Image = new Image(); // Create new Image element
 			enemyCharacterSprite_Image.addEventListener('load', function() {
 				// execute drawImage statements now that image has loaded
-				//enemyCharacterSprite_Canvas.width = 256;//this.width;
-				//enemyCharacterSprite_Canvas.height = 256;//this.height;
+				enemyCharacterSprite_Canvas.width = this.width;
+				enemyCharacterSprite_Canvas.height = this.height;
 				enemyCharacterSprite_Canvas.getContext('2d').drawImage(this, 0, 0, enemyCharacterSprite_Canvas.width, enemyCharacterSprite_Canvas.height);
 		        console.log("enemy "+enemyCharacter.name+"'s canvas dimens are "+enemyCharacterSprite_Canvas.width+"x"+enemyCharacterSprite_Canvas.height);
 		    }, false);

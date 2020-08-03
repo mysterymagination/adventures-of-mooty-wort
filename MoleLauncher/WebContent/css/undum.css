@@ -391,7 +391,7 @@ img.float_left {
   overflow: auto; /* Enable scroll if needed */
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  /*padding: 20px;*/
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
   
@@ -419,12 +419,12 @@ img.float_left {
 /* Modal Content/Box */
 .modal-content {
   display: inline-block;
-  position: relative;
+  position: absolute;
   /*background-color: #aeaeae2a;*/
   background: url("../images/lava_flow.jpg");
   background-size: cover;
-  width: 100%; /* Could be more or less, depending on screen size */
-  height: 100%;
+  width: 95%; /* Could be more or less, depending on screen size */
+  height: 95%;
   overflow: auto; /* Enable scroll if needed */
   justify-content: center;
   align-items: center;
@@ -438,19 +438,23 @@ img.float_left {
 
 .character-image-container {
   text-align: center;
-  position: relative;
+  position: absolute;
 }
 
 .character-image-enemy {
   display: inline-block;
-  width: 75%;
-  height: 75%;
+  width: 55%;
+  height: 55%;
+  max-width: 55%;
+  max-height: 55%;
 }
 
 .character-image-player {
   display: inline-block;
   width: 25%;
   height: 25%;
+  max-width: 25%;
+  max-height: 25%;
 }
 
 .character-image:active {
@@ -472,6 +476,8 @@ img.float_left {
 .character-hud-player {
 /*todo: align vertically with bottom of modal content area*/
   width: 100%;
+  height: 33%;
+  max-height: 33%;
   position: absolute;
   bottom: 0px;
 }
@@ -480,6 +486,7 @@ img.float_left {
   display: block;
   margin: auto; /* horizontally centered */
   color: #fefefe;
+  position: absolute;
 }
 
 .enemy-name {
@@ -496,14 +503,12 @@ img.float_left {
 
 .combat-log {
   background-color: #000000ff;
-  margin: auto; /* horizontally centered */
-  border: 5px solid #555;
+  /*margin: auto; /* horizontally centered */
+  /*border: 5px solid #555;*/
   overflow: scroll;
   color: #fefefeff;
   max-height: 15%;
   height: 15%;
-  /*center vertically in modal content?  I'm thinking the log can serve as a divider between the player
-  and enemy data HUDs*/
   
   top: 50%;
   position: absolute;
@@ -516,11 +521,12 @@ img.float_left {
 }
 
 .ability-button-container {
-  margin: auto; /* horizontally centered */
-  border: 1px solid #888;
+  /*margin: auto; /* horizontally centered */
+  /*border: 1px solid #888;*/
   overflow: scroll;
-  max-height: 100px;
-  
+  height: 15%;
+  max-height: 15%;
+  position: absolute;
 }
 
 .command-button-list {
