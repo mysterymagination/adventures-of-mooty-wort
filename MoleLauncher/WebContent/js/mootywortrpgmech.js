@@ -252,13 +252,13 @@ class MootyWortRpgMech {
 			// player character sprites
 			let playerCharacterSprite_Span = document.createElement("span");
 			let playerCharacterSprite_Canvas = document.createElement("canvas");
-			playerCharacterSprite_Canvas.className = "character-image";
+			playerCharacterSprite_Canvas.className = "character-image-player";
 			// need an HTML Image whose load cb will draw itself on the Canvas
 			var playerCharacterSprite_Image = new Image(); // Create new Image element
 			playerCharacterSprite_Image.addEventListener('load', function() {
 				// execute drawImage statements now that image has loaded
-				playerCharacterSprite_Canvas.width = 256;//this.width;
-				playerCharacterSprite_Canvas.height = 256;//this.height;
+				//playerCharacterSprite_Canvas.width = 256;//this.width;
+				//playerCharacterSprite_Canvas.height = 256;//this.height;
 				playerCharacterSprite_Canvas.getContext('2d').drawImage(this, 0, 0, playerCharacterSprite_Canvas.width, playerCharacterSprite_Canvas.height);
 		        console.log("player "+playerCharacter.name+"'s canvas dimens are "+playerCharacterSprite_Canvas.width+"x"+playerCharacterSprite_Canvas.height);
 		    }, false);
@@ -319,13 +319,13 @@ class MootyWortRpgMech {
 			enemyCharacterImageContainer_Div.appendChild(enemyCharacterSprite_Span);
 			let enemyCharacterSprite_Canvas = document.createElement("canvas");
 			enemyCharacterSprite_Canvas.id = enemyCharacter.id;
-			enemyCharacterSprite_Canvas.className = "character-image";
+			enemyCharacterSprite_Canvas.className = "character-image-enemy";
 			// need an HTML Image whose load cb will draw itself on the Canvas
 			var enemyCharacterSprite_Image = new Image(); // Create new Image element
 			enemyCharacterSprite_Image.addEventListener('load', function() {
 				// execute drawImage statements now that image has loaded
-				enemyCharacterSprite_Canvas.width = 256;//this.width;
-				enemyCharacterSprite_Canvas.height = 256;//this.height;
+				//enemyCharacterSprite_Canvas.width = 256;//this.width;
+				//enemyCharacterSprite_Canvas.height = 256;//this.height;
 				enemyCharacterSprite_Canvas.getContext('2d').drawImage(this, 0, 0, enemyCharacterSprite_Canvas.width, enemyCharacterSprite_Canvas.height);
 		        console.log("enemy "+enemyCharacter.name+"'s canvas dimens are "+enemyCharacterSprite_Canvas.width+"x"+enemyCharacterSprite_Canvas.height);
 		    }, false);
@@ -351,15 +351,29 @@ class MootyWortRpgMech {
 		}
 		
 		// now that modal content is loaded, do centering calc
-		// todo: find a better way to call this after loading of content is fully complete
-		window.setTimeout(() => {this.centerElement(combatUI)}, 3000);
+		// todo: call this from window resize events
+		this.centerElementInWindow(combatUI);
+		// center the center of combat log vertically
+		this.alignByElementCenterOnY(document.getElementById("combatLog"));
+	}
+	
+	/**
+	 * Translates the element on Y by -0.5*offsetHeight to account for the fact that
+	 * origin point aligns with upper left corner of the element rather than its center
+	 * and therefore top: 50% style can lead to very 'bottom-heavy' elements if the element's height
+	 * is non-trivial
+	 */
+	alignByElementCenterOnY(element) {
+		var nudgeUp = -0.5 * element.offsetHeight;
+		console.log("alignByElementCenterOnY; nudging "+element.id+" up by "+nudgeUp+" pixels");
+		element.style.transform = "translateY("+nudgeUp+"px)";
 	}
 	
 	/**
 	 * Centers the element
 	 * @param element the DOM element to be centered
 	 */
-	centerElement(element) {
+	centerElementInWindow(element) {
         var elementWidth = element.offsetWidth;
         // todo: why is offsetHeight not accounting for the height 75% constraint?
         var elementHeight = element.offsetHeight;

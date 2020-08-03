@@ -426,6 +426,8 @@ img.float_left {
   width: 100%; /* Could be more or less, depending on screen size */
   height: 100%;
   overflow: auto; /* Enable scroll if needed */
+  justify-content: center;
+  align-items: center;
 }
 
 #effectsOverlayCanvas {
@@ -439,8 +441,16 @@ img.float_left {
   position: relative;
 }
 
-.character-image {
+.character-image-enemy {
   display: inline-block;
+  width: 75%;
+  height: 75%;
+}
+
+.character-image-player {
+  display: inline-block;
+  width: 25%;
+  height: 25%;
 }
 
 .character-image:active {
@@ -454,8 +464,16 @@ img.float_left {
   animation-iteration-count: infinite;
 }
 
-.character-hud {
+.character-hud-enemy {
   width: 100%;
+  position: relative;
+}
+
+.character-hud-player {
+/*todo: align vertically with bottom of modal content area*/
+  width: 100%;
+  position: absolute;
+  bottom: 0px;
 }
 
 .character-data {
@@ -482,15 +500,27 @@ img.float_left {
   border: 5px solid #555;
   overflow: scroll;
   color: #fefefeff;
-  max-height: 20vh;
+  max-height: 15%;
+  height: 15%;
+  /*center vertically in modal content?  I'm thinking the log can serve as a divider between the player
+  and enemy data HUDs*/
+  
+  top: 50%;
+  position: absolute;
+  /*transform: translateY(-0.5*height);
+  /*
+  -ms-transform: translateY(-50%);
+  */
+  /*transform: translateY(50%);*/
+  
 }
 
 .ability-button-container {
   margin: auto; /* horizontally centered */
-  margin-top: 5%;
   border: 1px solid #888;
   overflow: scroll;
-  max-height: 20vh;
+  max-height: 100px;
+  
 }
 
 .command-button-list {
