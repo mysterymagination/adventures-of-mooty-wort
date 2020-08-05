@@ -4,12 +4,11 @@ import * as Characters from "../lib/characters.js";
 import {Combat} from "../lib/combat.js";
 import {Ability} from "../lib/spellbook.js";
 /*
- * todo: Add Lunar inspired telegraph hint (1:many, but not all) and induction (many similar:1) systems:
+ * Lunar inspired telegraph hint (1:many, but not all) and induction (many similar:1) systems:
  * 1. (hint) "The grue sharpens its claws in a sliver of moonlight" -> he might use Quicksilver Cut, Shadow Slash, or Rake.
  * 2. (induction) "Crystalline shadow swirls around the grue", "Jagged amethyst thrusts through the grue's flesh, flashing in the firelight", and "Frost and stone come together to form a complicated lattice structure around the grue, which pulses ominously" -> these all mean that he's about to use Diamond Dust.
  * 
- * I love the Lunar 1:1 situation where one animation always indicates one ability, but a little uncertainty and/or complexity could really add to it.  Probably best place to shove this system into our current combat model would be at the top of a new round, after the Ai has decided what it's doing and before we process player input such that player can see the telegraph text before choosing their action.
- * todo: might be best as far as this is concerned to just have fixed turn order of player action followed by enemy action instead of speed since we don't have any speed modding abilities and that would complicate strats related to telegraphed moves.
+ * I love the Lunar 1:1 situation where one animation always indicates one ability, but a little uncertainty and/or complexity could really add to it.  Probably best place to shove this system into our current combat model would be at the top of a new round, after the Ai has decided what it's doing and before we process player input such that player can see the telegraph text before choosing their action. 
  */
 
 /**
@@ -327,7 +326,7 @@ class MootyWortRpgMech {
 				enemyCharacterSprite_Canvas.width = this.width;
 				enemyCharacterSprite_Canvas.height = this.height;
 				enemyCharacterSprite_Canvas.getContext('2d').drawImage(this, 0, 0, enemyCharacterSprite_Canvas.width, enemyCharacterSprite_Canvas.height);
-		        console.log("enemy "+enemyCharacter.name+"'s canvas dimens are "+enemyCharacterSprite_Canvas.width+"x"+enemyCharacterSprite_Canvas.height);
+				console.log("enemy "+enemyCharacter.name+"'s canvas dimens are "+enemyCharacterSprite_Canvas.width+"x"+enemyCharacterSprite_Canvas.height);
 		    }, false);
 			enemyCharacterSprite_Image.src = enemyCharacter.battleSprites[0];
 			enemyCharacterSprite_Span.appendChild(enemyCharacterSprite_Canvas);
@@ -409,6 +408,7 @@ class MootyWortRpgMech {
 		for(const [ablId, abl] of Object.entries(combatModel.currentTurnOwner.entity.spellsDict)) {
 			var commandListItem = document.createElement("li");
 			commandListItem.className = "commandButton";
+			// todo: install a long-click listener that gives a description someplace (combat log?)
 			commandListItem.onclick = () => {
 				if(abl.targetType === Ability.TargetTypesEnum.singleTarget) {
 					for(let [targetCharacter, imgElement] of Object.entries(this.characterImageDict)) {
