@@ -385,7 +385,7 @@ img.float_left {
   position: absolute; /*constrained by parent*/
   z-index: 1; /* Sit on top */
   width: 90%; /* take up majority width but show page beneath at the sides */
-  height: 90%;
+  height: 90%; /*todo: where's the extra height coming from that necessitates vertical scroll?*/
   margin-left: auto; /* auto for margin left and right is effective center-align (?) */
   margin-right: auto;/* auto for margin left and right is effective center-align (?) */
   overflow: auto; /* Enable scroll if needed */
@@ -428,11 +428,14 @@ img.float_left {
   overflow: auto; /* Enable scroll if needed */
   justify-content: center;
   align-items: center;
+  /*max-height: 95%;/*doesn't seem to constrain the childrens' height, I guess because not all children are pos:absolute?*/
 }
 
 #effectsOverlayCanvas {
   position: absolute;
   opacity: 0.50;
+  width: 0%;
+  height: 0%;
   z-index: 2;
 }
 
