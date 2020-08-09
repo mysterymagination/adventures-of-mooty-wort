@@ -324,7 +324,7 @@ class MootyWortRpgMech {
 			enemyCharacterSprite_Image.addEventListener('load', function() {
 				// execute drawImage statements now that image has loaded
 				enemyCharacterSprite_Canvas.width = this.width;
-				enemyCharacterSprite_Canvas.height = this.height;
+				enemyCharacterSprite_Canvas.height = 5;//this.height;
 				enemyCharacterSprite_Canvas.getContext('2d').drawImage(this, 0, 0, enemyCharacterSprite_Canvas.width, enemyCharacterSprite_Canvas.height);
 				console.log("enemy "+enemyCharacter.name+"'s canvas dimens are "+enemyCharacterSprite_Canvas.width+"x"+enemyCharacterSprite_Canvas.height);
 		    }, false);

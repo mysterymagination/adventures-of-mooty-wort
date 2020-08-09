@@ -424,7 +424,7 @@ img.float_left {
   background: url("../images/lava_flow.jpg");
   background-size: cover;
   width: 95%; /* Could be more or less, depending on screen size */
-  height: 95%;
+  height: 55%;/*95%;*/
   overflow: auto; /* Enable scroll if needed */
   justify-content: center;
   align-items: center;
@@ -442,14 +442,26 @@ img.float_left {
 .character-image-container {
   text-align: center;
   position: relative;
-  height: 75%;
-  max-height: 75%;
+  /*height: 75%;/*leaving the requested height empty allows it to wrap-content*/
+  max-height: 5%;
 }
-
+/* todo: wtf? in the current config the sprite canvas sizes seem to be constrained by magic -- changing
+the desired height and parent DIV desired and height set in JS to teensy values for debug resulted
+in no change whatsoever.  Something else must be trickling down height dimens, but what?  
+   update: the actual rendered yawning god canvas is coming up ~43% of the resource dimens.
+   the mole is ~21.5% of the resource dimens. 
+   update2: walking up the whole hierarchy and debug teensying everything's height doesn't seem to mod the
+   character sprite canvas' heights; they remain the above percentages of their resource's dimens.
+   update3: I was randomly reading about inline-block display mode and happened to see that the default
+   display mode for <span> is inline WHICH IGNORES DIMEN SETTINGS!  Could well be that the little ol'
+   innocuous span I'm wrapping my sprite canvasi in simply to let them sit next to each other is actually playing
+   merry hell with the canvas sizing.  Where the actual dimens are coming from, who can say?  Only the gods
+   of madness at the depths of the pit who designed HTML/CSS.
+    */
 .character-image-enemy {
   display: inline-block;
   width: 75%;
-  height: 100%;
+  height: 5%;/*100%;*/
   max-width: 512px;
   max-height: 512px;
   opacity: 0.5;
@@ -460,8 +472,8 @@ img.float_left {
   display: inline-block;
   width: 50%;
   height: 100%;
-  max-width: 50%;
-  max-height: 100%;
+  max-width: 256px;
+  max-height: 128px;
   opacity: 0.85;
   position: relative;
 }
@@ -479,7 +491,7 @@ img.float_left {
 
 .character-hud-enemy {
   width: 100%;
-  height: 45%;
+  height: 5%;/*45%;*/
   max-height: 45%;
   position: absolute;
   top: 0px;
@@ -487,8 +499,8 @@ img.float_left {
 
 .character-hud-player {
   width: 100%;
-  height: 33%;
-  max-height: 33%;
+  height: 40%;
+  max-height: 40%;
   position: absolute;
   bottom: 0px;
 }
