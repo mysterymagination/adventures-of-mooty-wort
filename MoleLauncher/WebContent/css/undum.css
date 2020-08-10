@@ -466,6 +466,8 @@ in no change whatsoever.  Something else must be trickling down height dimens, b
    and not increasing it.  The real problem is that the page body seems to measure why taller than the allowed viewport
    height, apparently because the underlying Undum UI is adding its height to the modal's.  Easy sln there is just
    make the underlying UI (or at least any part of it with height) hidden while the modal is up.
+   update6: removing JS height set just causes our mysterious 43% thing to be applied to the default canvas height
+   of 150px.
     */
 .character-image-enemy {
   display: inline-block;
@@ -500,8 +502,8 @@ in no change whatsoever.  Something else must be trickling down height dimens, b
 
 .character-hud-enemy {
   width: 100%;
-  height: 100%;/*45%;*/
-  max-height: 100%;/*45%;*/
+  height: 45%;
+  max-height: 45%;
   position: absolute;
   top: 0px;
 }
