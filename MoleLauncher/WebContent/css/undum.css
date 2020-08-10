@@ -385,7 +385,7 @@ img.float_left {
   position: absolute; /*constrained by parent*/
   z-index: 1; /* Sit on top */
   width: 90%; /* take up majority width but show page beneath at the sides */
-  height: 90%; /*todo: where's the extra height coming from that necessitates vertical scroll?*/
+  height: 100%;/*90%; /*todo: where's the extra height coming from that necessitates vertical scroll?*/
   margin-left: auto; /* auto for margin left and right is effective center-align (?) */
   margin-right: auto;/* auto for margin left and right is effective center-align (?) */
   overflow: auto; /* Enable scroll if needed */
@@ -424,7 +424,7 @@ img.float_left {
   background: url("../images/lava_flow.jpg");
   background-size: cover;
   width: 95%; /* Could be more or less, depending on screen size */
-  height: 55%;/*95%;*/
+  height: 100%;/*95%;*/
   overflow: auto; /* Enable scroll if needed */
   justify-content: center;
   align-items: center;
@@ -442,8 +442,10 @@ img.float_left {
 .character-image-container {
   text-align: center;
   position: relative;
-  /*height: 75%;/*leaving the requested height empty allows it to wrap-content*/
-  max-height: 5%;
+  /*height: 75%;/*leaving the requested height empty allows it to wrap-content; 
+  having it unset may upset defining height of children percentage, tho.  
+  That said, height of child canvas does not currently respond even if height is defined here in parent, so...*/
+  max-height: 100%;/*75%;*/
 }
 /* todo: wtf? in the current config the sprite canvas sizes seem to be constrained by magic -- changing
 the desired height and parent DIV desired and height set in JS to teensy values for debug resulted
@@ -457,11 +459,18 @@ in no change whatsoever.  Something else must be trickling down height dimens, b
    innocuous span I'm wrapping my sprite canvasi in simply to let them sit next to each other is actually playing
    merry hell with the canvas sizing.  Where the actual dimens are coming from, who can say?  Only the gods
    of madness at the depths of the pit who designed HTML/CSS.
+   update4: setting display mode of the span (and changing the span to a div, and removing any container per canvas)
+   does not seem to have changed anything.  I am now seeing the height setting in code activate, and the actual
+   rendered height of the yawning god is ~43% of the hardcoded JS height... so 43% is coming from somewhere.
+   update5: screw it, the mod to actual image height is weird but fine enough as long as it's limiting the height
+   and not increasing it.  The real problem is that the page body seems to measure why taller than the allowed viewport
+   height, apparently because the underlying Undum UI is adding its height to the modal's.  Easy sln there is just
+   make the underlying UI (or at least any part of it with height) hidden while the modal is up.
     */
 .character-image-enemy {
   display: inline-block;
   width: 75%;
-  height: 5%;/*100%;*/
+  height: 100%;
   max-width: 512px;
   max-height: 512px;
   opacity: 0.5;
@@ -491,8 +500,8 @@ in no change whatsoever.  Something else must be trickling down height dimens, b
 
 .character-hud-enemy {
   width: 100%;
-  height: 5%;/*45%;*/
-  max-height: 45%;
+  height: 100%;/*45%;*/
+  max-height: 100%;/*45%;*/
   position: absolute;
   top: 0px;
 }
@@ -526,27 +535,16 @@ in no change whatsoever.  Something else must be trickling down height dimens, b
 
 .combat-log {
   background-color: #000000ff;
-  /*margin: auto; /* horizontally centered */
-  /*border: 5px solid #555;*/
   overflow: scroll;
   overflow-x: hidden;
   color: #fefefeff;
   max-height: 15%;
   height: 15%;
-  
   top: 50%;
   position: absolute;
-  /*transform: translateY(-0.5*height);
-  /*
-  -ms-transform: translateY(-50%);
-  */
-  /*transform: translateY(50%);*/
-  
 }
 
 .ability-button-container {
-  /*margin: auto; /* horizontally centered */
-  /*border: 1px solid #888;*/
   overflow: scroll;
   overflow-x: hidden;
   height: 30%;
