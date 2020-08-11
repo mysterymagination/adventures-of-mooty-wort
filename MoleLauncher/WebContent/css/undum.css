@@ -422,7 +422,7 @@ img.float_left {
   position: absolute;
   /*background-color: #aeaeae2a;*/
   background: url("../images/lava_flow.jpg");
-  background-size: cover;
+  background-size: 100% 100%;
   width: 95%; /* Could be more or less, depending on screen size */
   height: 100%;/*95%;*/
   overflow: auto; /* Enable scroll if needed */
@@ -447,28 +447,7 @@ img.float_left {
   That said, height of child canvas does not currently respond even if height is defined here in parent, so...*/
   max-height: 100%;/*75%;*/
 }
-/* todo: wtf? in the current config the sprite canvas sizes seem to be constrained by magic -- changing
-the desired height and parent DIV desired and height set in JS to teensy values for debug resulted
-in no change whatsoever.  Something else must be trickling down height dimens, but what?  
-   update: the actual rendered yawning god canvas is coming up ~43% of the resource dimens.
-   the mole is ~21.5% of the resource dimens. 
-   update2: walking up the whole hierarchy and debug teensying everything's height doesn't seem to mod the
-   character sprite canvas' heights; they remain the above percentages of their resource's dimens.
-   update3: I was randomly reading about inline-block display mode and happened to see that the default
-   display mode for <span> is inline WHICH IGNORES DIMEN SETTINGS!  Could well be that the little ol'
-   innocuous span I'm wrapping my sprite canvasi in simply to let them sit next to each other is actually playing
-   merry hell with the canvas sizing.  Where the actual dimens are coming from, who can say?  Only the gods
-   of madness at the depths of the pit who designed HTML/CSS.
-   update4: setting display mode of the span (and changing the span to a div, and removing any container per canvas)
-   does not seem to have changed anything.  I am now seeing the height setting in code activate, and the actual
-   rendered height of the yawning god is ~43% of the hardcoded JS height... so 43% is coming from somewhere.
-   update5: screw it, the mod to actual image height is weird but fine enough as long as it's limiting the height
-   and not increasing it.  The real problem is that the page body seems to measure why taller than the allowed viewport
-   height, apparently because the underlying Undum UI is adding its height to the modal's.  Easy sln there is just
-   make the underlying UI (or at least any part of it with height) hidden while the modal is up.
-   update6: removing JS height set just causes our mysterious 43% thing to be applied to the default canvas height
-   of 150px.
-    */
+
 .character-image-enemy {
   display: inline-block;
   width: 75%;
@@ -549,8 +528,8 @@ in no change whatsoever.  Something else must be trickling down height dimens, b
 .ability-button-container {
   overflow: scroll;
   overflow-x: hidden;
-  height: 30%;
-  max-height: 30%;
+  height: 20%;
+  max-height: 20%;
   position: relative;
 }
 

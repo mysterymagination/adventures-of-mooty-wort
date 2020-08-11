@@ -86,7 +86,7 @@ class MootyWortRpgMech {
 		// gamelogic
 		var combatDriver = new Combat(configObj);
 		// setup UI
-		this.initBattleUi(combatDriver);
+		this.openBattleUi(combatDriver);
 		// kick off combat 
 		this.combatLoop(combatDriver);
 	}
@@ -216,12 +216,28 @@ class MootyWortRpgMech {
 	      dstHeight
 	    );
 	    console.log("sourcing from " + srcX + "x" + srcY + " out to " + (srcX + srcWidth) + "x" + (srcY + srcHeight) + ".  Destination is 0x0 out to " + dstWidth + "x" + dstHeight);
-	  }
+	}
+	/**
+	 * Tear down the battle UI, bringing back Undum story page
+	 * @param combatModel the current Combat object
+	 */
+	closeCombatUi(combatModel) {
+		// hide the combat mode modal
+		var combatUI = document.getElementById("combatModal");
+		combatUI.style.display = "none";
+		// show the normal Undum UI
+		var undumPage = document.getElementById("page");
+		undumPage.style.display = "block";
+		// todo: update Undum page with/based on results
+	}
 	/**
 	 * Set up the battle UI, associating character objects with their associated HTML elements 
 	 * @param combatModel the current Combat object
 	 */
-	initBattleUi(combatModel) {
+	openBattleUi(combatModel) {
+		// hide the normal Undum UI
+		var undumPage = document.getElementById("page");
+		undumPage.style.display = "none";
 		// show the combat mode modal
 		var combatUI = document.getElementById("combatModal");
 		combatUI.style.display = "flex";
