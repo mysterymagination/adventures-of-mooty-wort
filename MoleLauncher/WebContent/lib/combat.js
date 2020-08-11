@@ -29,7 +29,14 @@ export class Combat {
         // the text feedback to the user re: the state of combat
         this.combatLogContent = "What will " + this.currentTurnOwner.name + " do?";
 	}
-	
+	/**
+	 * Searches player and enemy parties for the character given by characterId
+	 * @param characterId string id of the character we're looking for
+	 * @return the identified Character object if one could be found in this combat, else undefined
+	 */
+	findCombatant(characterId) {
+		return Libifels.findCharacterById(this.playerParty.concat(this.enemyParty), characterId);
+	}
 	/**
 	 * Selects an ability name pseudo-randomly based on the given probability weights
 	 * @param probConfigObj an object literal with ability name string keys paired with 

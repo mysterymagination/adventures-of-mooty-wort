@@ -89,6 +89,7 @@ export class Libifels {
      * find a particular Character by id in a Character array
      * @param characterArray an array of Character objects
      * @param characterID the string id of a searched-for Character object
+     * @return the first Character object whose id matched the input characterID, or undefined if none match
      */
     static findCharacterById(characterArray, characterID) {
         return characterArray.find(character => character.id === characterID);

@@ -33,15 +33,13 @@ class MootyWortRpgMech {
 		this.playerCharacterUiDict = {
 		/* e.g.
 				"mole": {
-					"characterObj": this.charactersDict["mole"],
-					"imageElement": undefined, 
-					"nameElement": undefined,
-					"hpElement": undefined,
-					"maxHPElement": undefined,
-					"hpProgressElement": undefined,
-					"mpElement": undefined,
-					"maxMPElement": undefined,
-					"mpProgressElement": undefined
+					"characterObj": playerCharacter, // would be this.charactersDict["mole"]
+					"canvasElement": playerCharacterSprite_Canvas, 
+					"nameElement": playerCharacterName_Div,
+					"hpElement": playerCharacterCurrentHp_Span,
+					"hpProgressElement": playerCharacterHp_Progress,
+					"mpElement": playerCharacterCurrentMp_Span,
+					"mpProgressElement": playerCharacterMp_Progress
 				}
 		*/
 		};
@@ -51,10 +49,9 @@ class MootyWortRpgMech {
 		this.enemyCharacterUiDict = {
 		/* e.g.
 				"yawning_god": {
-					"characterObj": this.charactersDict["yawning_god"],
-					"imageElement": undefined, 
-					"nameElement": undefined,
-					"hpProgressElement": undefined
+					"characterObj": enemyCharacter, // would be this.charactersDict["yawning_god"],
+					"canvasElement": enemyCharacterSprite_Canvas, // generated 
+					"hpProgressElement": enemyCharacterHp_Progress // generated
 				}
 		*/
 		};
@@ -428,9 +425,10 @@ class MootyWortRpgMech {
 			// todo: install a long-click listener that gives a description someplace (combat log?)
 			commandListItem.onclick = () => {
 				if(abl.targetType === Ability.TargetTypesEnum.singleTarget) {
-					for(let [targetCharacter, imgElement] of Object.entries(this.characterImageDict)) {
-						imgElement.onclick = () => {
+					for(let [targetCharacterId, uiEntry] of Object.entries(this.enemyCharacterUiDict).concat(Object.entries(this.playerCharacterUiDict))) {
+						uiEntry.canvasElement.onclick = () => {
 							let sourceCharacter = combatModel.currentTurnOwner;
+							let targetCharacter = combatModel.findCombatant(targetCharacterId);
 							abl.effect(sourceCharacter, targetCharacter);
 							this.playAbilityAnimation(abl, sourceCharacter, targetCharacter);
 							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter));
