@@ -24,10 +24,6 @@ class MootyWortRpgMech {
 		// establish Player party
 	    this.party = [this.charactersDict["mole"]];
 		/**
-		 * Current combat encounter manager
-		 */
-		this.combatArena = undefined;
-		/**
 		 * Object literal association of player Character ids to associated UI objects sack
 		 */
 		this.playerCharacterUiDict = {
@@ -157,7 +153,7 @@ class MootyWortRpgMech {
 				combatModel.combatLogContent = combatModel.currentTurnOwner.name + " feebly attempts to enact " + combatModel.currentSelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!";
 			}
 			// complete this enemy character's turn
-			this.handleEnemyTurnComplete();
+			this.handleEnemyTurnComplete(combatModel);
 		}
 		// print out whatever happened this step
 		this.combatLogPrint(combatModel.combatLogContent);
@@ -432,7 +428,7 @@ class MootyWortRpgMech {
 							abl.effect(sourceCharacter, targetCharacter);
 							this.playAbilityAnimation(abl, sourceCharacter, targetCharacter);
 							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter));
-							this.handlePlayerTurnEnd(combatModel);
+							this.handlePlayerTurnComplete(combatModel);
 							// clear onclicks now that we've used them
 							this.removeAttribute("onclick");
 							commandListItem.removeAttribute("onclick");
@@ -464,7 +460,7 @@ class MootyWortRpgMech {
 						this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
 						break;
 					}
-					this.handlePlayerTurnEnd(combatModel);
+					this.handlePlayerTurnComplete(combatModel);
 					// clear onclick now that we've used it
 					this.removeAttribute("onclick");
 				}
@@ -505,11 +501,11 @@ class MootyWortRpgMech {
 		if(MoleUndum.findLastLivingCharacter(combatModel.playerParty) !== combatModel.currentTurnOwner) {
 			combatModel.currentTurnOwner = 
 				MoleUndum.findFirstLivingCharacter(
-						combatModel.playerParty, 
-						MoleUndum.findCharacterIndex(combatModel.playerParty, combatModel.currentTurnOwner.id)
+					combatModel.playerParty, 
+					MoleUndum.findCharacterIndex(combatModel.playerParty, combatModel.currentTurnOwner.id)
 				);
 		} else {
-			this.combatModel.controllerState = Combat.ControllerState.runEnemy;
+			combatModel.controllerState = Combat.ControllerState.runEnemy;
 		}
 		this.combatLoop(combatModel);
 	}
