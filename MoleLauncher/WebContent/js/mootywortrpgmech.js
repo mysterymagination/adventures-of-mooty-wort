@@ -487,6 +487,9 @@ class MootyWortRpgMech {
 						MoleUndum.findCharacterIndex(combatModel.enemyParty, combatModel.currentTurnOwner.id)
 				);
 		} else {
+			// hand off back to first player character
+			combatModel.currentTurnOwner = combatModel.playerParty[0];
+			// indicate we're starting a new round
 			combatModel.controllerState = Combat.ControllerState.beginNewRound;
 		}
 		this.combatLoop(combatModel);
@@ -506,6 +509,9 @@ class MootyWortRpgMech {
 					MoleUndum.findCharacterIndex(combatModel.playerParty, combatModel.currentTurnOwner.id)
 				);
 		} else {
+			// hand off control to first enemy since we're doing fixed turn order
+			combatModel.currentTurnOwner = combatModel.enemyParty[0];
+			// put us in runEnemy state so the next loop will start processing AI decision
 			combatModel.controllerState = Combat.ControllerState.runEnemy;
 		}
 		this.combatLoop(combatModel);
