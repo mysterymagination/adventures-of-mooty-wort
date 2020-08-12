@@ -416,7 +416,7 @@ class MootyWortRpgMech {
 		// todo: check for frozen status and mod ui accordingly
 		var combatCommandList = document.getElementById("combatCommandList");
 		for(const [ablId, abl] of Object.entries(combatModel.currentTurnOwner.entity.spellsDict)) {
-			var commandListItem = document.createElement("li");
+			let commandListItem = document.createElement("li");
 			commandListItem.className = "commandButton";
 			// todo: install a long-click listener that gives a description someplace (combat log?)
 			commandListItem.onclick = () => {
@@ -429,8 +429,9 @@ class MootyWortRpgMech {
 							this.playAbilityAnimation(abl, sourceCharacter, targetCharacter);
 							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter));
 							this.handlePlayerTurnComplete(combatModel);
+							console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
 							// clear onclicks now that we've used them
-							this.removeAttribute("onclick");
+							uiEntry.canvasElement.removeAttribute("onclick");
 							commandListItem.removeAttribute("onclick");
 						};
 					}
