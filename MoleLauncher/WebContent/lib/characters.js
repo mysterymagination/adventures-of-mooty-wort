@@ -236,10 +236,11 @@ export class Grue extends Character {
 	    this.stats["maxMP"] = 500;
 	    this.stats["hp"] = this.stats["maxHP"];
 	    this.stats["mp"] = this.stats["maxMP"];
-	    this.stats["atk"] = 75;
-	    this.stats["def"] = 100;
-	    this.stats["pwr"] = 100;
-	    this.stats["res"] = 25;
+	    this.stats["atk"] = 8;
+	    this.stats["def"] = 10;
+	    this.stats["pwr"] = 15;
+	    this.stats["res"] = 15; 
+	    this.stats["spd"] = 0; // inevitability need not rush
 	    Grue.prototype.entity = new Spells.HeartOfDarkness();
 	    this.battleSprites = [
 	    	this.battleSpritePath+"/grue/grue_nightmare_0.png",
@@ -356,10 +357,11 @@ export class YawningGod extends Character {
 		this.stats["maxMP"] = 100;
 		this.stats["hp"] = this.stats["maxHP"];
 		this.stats["mp"] = this.stats["maxMP"];
-		this.stats["atk"] = 100;
-		this.stats["def"] = 50;
-		this.stats["pwr"] = 100;
-		this.stats["res"] = 50;
+		this.stats["atk"] = 15;
+		this.stats["def"] = 10;
+		this.stats["pwr"] = 10;
+		this.stats["res"] = 8; // as a being of madness, the Yawning God's mind is not well guarded
+		this.stats["spd"] = 5;
 	    YawningGod.prototype.entity = new Spells.EldritchHorror();
 	    this.battleSprites = [
 	    	this.battleSpritePath+"/yawning_god/yawning_god_mk4.jpg"

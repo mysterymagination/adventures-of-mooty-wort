@@ -259,7 +259,7 @@ export class Ability {
 		 * associated with integer values. The given value should be
 		 * subtracted from the corresponding stat resource pool.
 		 */
-		this.cost = { "mp": 0 };
+		Ability.prototype.cost = { "mp": 0 };
 		Ability.prototype.telegraph = new Telegraph();
 	}// end new instance ctor
 	generateRandomTelegraph() {
@@ -276,6 +276,7 @@ export class Ability {
 	}
 	processCost(character) {
 		for (let statCost in this.cost) {
+			console.log("processCost; "+character.name+"'s "+this.name+" costs "+character.getPronoun_personal_object()+" "+Object.entries(this.cost));
 			character.stats[statCost] -= this.cost[statCost];
 		}
 	}
