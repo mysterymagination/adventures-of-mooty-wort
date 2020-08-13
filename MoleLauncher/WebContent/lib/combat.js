@@ -91,7 +91,7 @@ export class Combat {
 		//  and adding a command option to break out
         for (let enemyCharacter of this.enemyParty) {
             for (let effect of enemyCharacter.statusEffects) {
-                if (enemyCharacter.living) {
+                if (enemyCharacter.stats.hp > 0) {
                     if (effect.id === "poison") {
                         enemyCharacter.stats["hp"] -= effect.psnDmg;
                     }
@@ -120,7 +120,7 @@ export class Combat {
         // tick down and process status effects for player party
         for (let playerCharacter of this.playerParty) {
             for (let effect of playerCharacter.statusEffects) {
-                if (playerCharacter.living) {
+                if (playerCharacter.stats.hp > 0) {
                 	// todo: frozen processing: player needs to choose whether to break free
                 	if (effect.id === "poison") {
                         playerCharacter.stats["hp"] -= effect.psnDmg;

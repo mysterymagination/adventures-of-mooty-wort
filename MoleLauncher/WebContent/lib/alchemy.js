@@ -2,7 +2,7 @@
  * A StatusEffect performs some behavior each round for a set duration in rounds.
  */
 export class StatusEffect {
-	constructor(configObj) {
+	constructor(config) {
         this.id = config.id;
         this.name = config.name;
         this.duration = config.duration;

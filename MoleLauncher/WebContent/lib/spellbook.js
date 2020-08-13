@@ -1,5 +1,5 @@
 import * as Alchemy from "./alchemy.js";
-import * as Lib from "./libifels_undum.js"
+import {MoleUndum} from "./libifels_undum.js"
 
 //todo: these flavor texts really need some random variations to keep things interesting
 
@@ -348,7 +348,7 @@ export class Defend extends Ability {
 		this.targetType = Ability.TargetTypesEnum.personal;
 	}
     effect(sourceCharacter) {
-        Lib.addUniqueStatusEffect(
+        MoleUndum.addUniqueStatusEffect(
         	sourceCharacter, 
         	new Alchemy.Defended(sourceCharacter.stats["def"], sourceCharacter.stats["res"])
         );
@@ -407,7 +407,7 @@ export class MoleVenom extends Spell {
         // mix up our poison...
         var poisonStatusEffect = new Alchemy.Poison();
         poisonStatusEffect.psnDmg = sourceChar.stats["pwr"] * 0.5;
-        Lib.addUniqueStatusEffect(targetChar, poisonStatusEffect);
+        MoleUndum.addUniqueStatusEffect(targetChar, poisonStatusEffect);
 
         // MP cost
         this.processCost(sourceChar);
@@ -480,7 +480,7 @@ export class BurrowFurrow extends Spell {
 		BurrowFurrow.prototype.cost = { "mp": 10 };
 	}
 	effect(sourceChar) {
-		Lib.addUniqueStatusEffect(sourceChar, new Alchemy.Temper());
+		MoleUndum.addUniqueStatusEffect(sourceChar, new Alchemy.Temper());
 
 	    // MP cost
 	    this.processCost(sourceChar);
@@ -500,7 +500,7 @@ export class DeepMeditation extends Spell {
 		DeepMeditation.prototype.cost = { "mp": 25 };
 	}
 	effect(sourceChar) {
-		Lib.addUniqueStatusEffect(sourceChar, new Alchemy.ThirdEye());
+		MoleUndum.addUniqueStatusEffect(sourceChar, new Alchemy.ThirdEye());
 
 	    // MP cost
 	    this.processCost(sourceChar);
@@ -551,7 +551,7 @@ export class MagmaBlast extends Spell {
 	    targetChar.stats["hp"] -= this.dmg;
 	    var burnEffect = new Alchemy.Burn();
 	    burnEffect.brnDmg = this.dmg * 0.5;
-	    Lib.addUniqueStatusEffect(targetChar, burnEffect);
+	    MoleUndum.addUniqueStatusEffect(targetChar, burnEffect);
 
 	    // MP cost
 	    this.processCost(sourceChar);
@@ -575,7 +575,7 @@ export class StaticBolt extends Spell {
 	effect(sourceChar, targetChar) {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
 	    targetChar.stats["hp"] -= this.dmg;
-	    Lib.addUniqueStatusEffect(targetChar, new Alchemy.Stun());
+	    MoleUndum.addUniqueStatusEffect(targetChar, new Alchemy.Stun());
 
 	    // MP cost
 	    this.processCost(sourceChar);
@@ -755,7 +755,7 @@ export class ChillBeyond extends Spell {
 		targetChar.stats["hp"] -= this.dmg;
 	    
 		// apply Freeze status
-		Lib.addUniqueStatusEffect(targetChar, freezeStatusEffect);
+		MoleUndum.addUniqueStatusEffect(targetChar, freezeStatusEffect);
 
 	    // MP cost
 	    this.processCost(sourceChar);
@@ -805,7 +805,7 @@ export class ManyfoldEmbrace extends Spell {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
 	    // now that we have calc'd damage, we can determine the rest of the cost
 	    this.cost["hp"] = this.dmg * 0.5;
-	    console.log(this.cost);
+	    console.log("manyfold embrace deals "+this.dmg+" dmg, costing "+sourceChar.name+" a whopping "+Object.entries(this.cost));
 	    targetChar.stats["hp"] -= this.dmg;
 
 	    // MP cost
@@ -846,14 +846,17 @@ export class Pestilence extends Spell {
 		return sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"];
 	}
 	effect(sourceChar, targetChars) {
+		// mix up our poison...
+        var poisonStatusEffect = new Alchemy.Poison();
+        poisonStatusEffect.psnDmg = sourceChar.stats["pwr"] * 0.5;
 	    for(let index = 0; index < targetChars.length; index++) {
 		    	// apply damage to target
 		    	this.dmg = this.calcDmg(sourceChar, targetChars[index]);
 		    	targetChars[index].stats["hp"] -= this.dmg;
 		    	// possibly apply poison
-		    	let roll = Lib.rollPercentage();
+		    	let roll = MoleUndum.rollPercentage();
 		    	if(roll >= 50) {
-		    		Lib.addUniqueStatusEffect(targetChars[index], poisonStatusEffect);
+		    		MoleUndum.addUniqueStatusEffect(targetChars[index], poisonStatusEffect);
 		    	}
 	    	}
 
@@ -894,7 +897,7 @@ export class PrimordialMandate extends Spell {
 	}
 	effect(sourceChar) {
 	    // bloodlust on self
-	    Lib.addUniqueStatusEffect(sourceChar, new Alchemy.Bloodlust());
+	    MoleUndum.addUniqueStatusEffect(sourceChar, new Alchemy.Bloodlust());
 	    	
 	    // MP cost
 	    this.processCost(sourceChar);

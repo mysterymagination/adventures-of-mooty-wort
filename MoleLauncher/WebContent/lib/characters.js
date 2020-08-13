@@ -69,11 +69,6 @@ export class Character {
         // combat status effects; these are temporary and only relevant to combat
         this.statusEffects = [];
 
-        /**
-        Boolean flag indicating whether or not the character is alive for the purposes of combat
-        */
-        this.living = true;
-
         // arbitrary PoT bitfield used to raise/lower various combat-related flags for this Character
         this.combatFlags = 0;
 

@@ -104,6 +104,8 @@ class MootyWortRpgMech {
 			combatModel.combatLogContent = "";
 			// update character portraits with status info
 			this.updateCharacterBattleImages(combatModel);
+			// sync character stat display with data model
+			this.updateCharacterData(combatModel);
 			if(postStatusState === Combat.ControllerState.processCombatResult) {
 				this.handleCombatResult(combatModel.combatResult);
 			} else if(postStatusState === Combat.ControllerState.playerInput) {
@@ -141,7 +143,7 @@ class MootyWortRpgMech {
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.enemyParty);
 					break;
 				case Ability.TargetTypesEnum.allEnemies:
-					selectedAbility.effect(combatModel.playerParty);
+					selectedAbility.effect(combatModel.currentTurnOwner, combatModel.playerParty);
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.playerParty);
 					break;
 				case Ability.TargetTypesEnum.singleTarget:
@@ -399,7 +401,23 @@ class MootyWortRpgMech {
         console.log("centerElement; window height is "+windowHeight+" and elem height is "+elementHeight+", and pageYOffset is "+window.pageYOffset+
         		", so we're going to set top to "+element.style.top);
     }
-	
+	/**
+	 * Update the Character stat display based on combat data model
+	 * @param combatModel current Combat object
+	 */
+	updateCharacterData(combatModel) {
+		for(const player of combatModel.playerParty) {
+			let uiHandle = this.playerCharacterUiDict[player.id];
+			uiHandle.hpElement.innerHTML = player.stats["hp"];
+			uiHandle.hpProgressElement.value = player.stats["hp"] / player.stats["maxHP"];
+			uiHandle.mpElement.innerHTML = player.stats["mp"];
+			uiHandle.mpProgressElement.value = player.stats["mp"] / player.stats["maxMP"]
+		}
+		for(const enemy of combatModel.enemyParty) {
+			let uiHandle = this.enemyCharacterUiDict[enemy.id];
+			uiHandle.hpProgressElement.value = enemy.stats["hp"] / enemy.stats["maxHP"];
+		}
+	}
 	/**
 	 * Update the Character sprites based on combat data
 	 * @param combatModel current Combat object
@@ -524,8 +542,11 @@ class MootyWortRpgMech {
 	combatLogPrint(logString) {
 		var combatLog = document.getElementById("combatLog");
 		var logContainer = document.createElement("p");
-		var logText = document.createTextNode(logString);
-		logContainer.appendChild(logText);
+		var timestampTextNode = document.createTextNode(new Date().toLocaleString()+":");
+		logContainer.appendChild(timestampTextNode);
+		logContainer.appendChild(document.createElement('br'));
+		var logTextNode = document.createTextNode(logString);
+		logContainer.appendChild(logTextNode);
 		combatLog.appendChild(logContainer);
 	}
 	/**
