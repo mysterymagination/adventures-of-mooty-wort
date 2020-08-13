@@ -540,14 +540,17 @@ class MootyWortRpgMech {
 	 * @param logString a string to append to the log
 	 */
 	combatLogPrint(logString) {
-		var combatLog = document.getElementById("combatLog");
-		var logContainer = document.createElement("p");
-		var timestampTextNode = document.createTextNode(new Date().toLocaleString()+":");
-		logContainer.appendChild(timestampTextNode);
-		logContainer.appendChild(document.createElement('br'));
-		var logTextNode = document.createTextNode(logString);
-		logContainer.appendChild(logTextNode);
-		combatLog.appendChild(logContainer);
+		// no need to print anything if we've received nothing
+		if(logString) {
+			var combatLog = document.getElementById("combatLog");
+			var logContainer = document.createElement("p");
+			var timestampTextNode = document.createTextNode(new Date().toLocaleString()+":");
+			logContainer.appendChild(timestampTextNode);
+			logContainer.appendChild(document.createElement('br'));
+			var logTextNode = document.createTextNode(logString);
+			logContainer.appendChild(logTextNode);
+			combatLog.appendChild(logContainer);
+		}
 	}
 	/**
 	 * Display victory or defeat message and provide battle exit UI
