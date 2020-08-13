@@ -35,8 +35,8 @@ export class Defended extends StatusEffect {
 	effect(targetChar) {
 		this.cachedDef = targetChar.stats["def"];
 	    this.cachedRes = targetChar.stats["res"]
-	    targetChar.stats["def"] += defIncrease;
-	    targetChar.stats["res"] += resIncrease;
+	    targetChar.stats["def"] += this.defIncrease;
+	    targetChar.stats["res"] += this.resIncrease;
 	}
 	reverseEffect(targetChar) {
 	    targetChar.stats["def"] = this.cachedDef;

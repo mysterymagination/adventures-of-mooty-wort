@@ -334,7 +334,7 @@ export class HeroAttack extends Attack {
 	}
 	effect(sourceCharacter, targetCharacter) {
         this.dmg = this.calcDmg(sourceCharacter, targetCharacter);
-        sourceCharacter.stats.mp += this.mpBonusCoefficient * sourceCharacter.stats.maxMp;
+        sourceCharacter.stats.mp += this.mpBonusCoefficient * sourceCharacter.stats.maxMP;
         console.log(this.dmg + " dealt by Attack to " + targetCharacter.name +
         		", and the hero regains " + this.mpBonus + " MP due to heroism!");
         // todo: AC? Any other miss chance?

@@ -481,7 +481,7 @@ class MootyWortRpgMech {
 					}
 					this.handlePlayerTurnComplete(combatModel);
 					// clear onclick now that we've used it
-					this.removeAttribute("onclick");
+					commandListItem.removeAttribute("onclick");
 				}
 			};
 			
@@ -563,7 +563,7 @@ class MootyWortRpgMech {
         	console.log("evil is vaniquished and the Deepndess saved for all time!");
         	break;
         case Combat.CombatResultEnum.enemyVictory:
-        	// todo: display player defeat message and game over UI
+        	// todo: display player defeat message and game over UI, ideally a dark soulsy 'you died'
         	console.log("and with the mole's death, darkness swept o'er all the land...");
         	break;
         case Combat.CombatResultEnum.draw:
