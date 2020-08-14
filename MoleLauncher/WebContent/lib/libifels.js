@@ -143,6 +143,7 @@ export class Libifels {
     /**
      * Finds the first living character in the given array (first living character starting from front of the array)
      * @param characterArray array of Character objects
+     * @return the first living character, or undefined if there are none
      */
     static findFirstLivingCharacter(characterArray) {
         for (let index = 0; index < characterArray.length; index++) {
@@ -152,21 +153,27 @@ export class Libifels {
                 return currentCharacter;
             }
         }
+        return undefined;
     }
 
     /**
-     * Finds the first living character in the given array after index startingIndex 
+     * Finds the first living character in the given array subsequent to index afterIndex 
      * @param characterArray array of Character objects
-     * @param startingIndex the index after which we will look for a living character
+     * @param afterIndex the index after which we will look for a living character
+     * @return the first living character subsequent to afterIndex, or undefined if there are none
      */
-    static findFirstLivingCharacter(characterArray, startingIndex) {
-        for (let index = startingIndex; index < characterArray.length; index++) {
-            let currentCharacter = characterArray[index];
-            console.log("findFirstLivingCharacter; character with id " + currentCharacter.id + " is " + (currentCharacter.stats.hp > 0 ? "living" : "dead"));
-            if (currentCharacter.stats.hp > 0) {
-                return currentCharacter;
-            }
-        }
+    static findFirstLivingCharacter(characterArray, afterIndex) {
+        // ensure there is something at the afterIndex + 1, accounting for 0-based index
+    	if(characterArray.length >= afterIndex+2) {
+	    	for (let index = startingIndex+1; index < characterArray.length; index++) {
+	            let currentCharacter = characterArray[index];
+	            console.log("findFirstLivingCharacter; character with id " + currentCharacter.id + " is " + (currentCharacter.stats.hp > 0 ? "living" : "dead"));
+	            if (currentCharacter.stats.hp > 0) {
+	                return currentCharacter;
+	            }
+	        }
+    	} 
+    	return undefined;
     }
     /**
      * simulate a d20 roll
