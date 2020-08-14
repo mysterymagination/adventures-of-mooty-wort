@@ -11,10 +11,6 @@ import {Ability} from "../lib/spellbook.js";
  * I love the Lunar 1:1 situation where one animation always indicates one ability, but a little uncertainty and/or complexity could really add to it.  Probably best place to shove this system into our current combat model would be at the top of a new round, after the Ai has decided what it's doing and before we process player input such that player can see the telegraph text before choosing their action. 
  */
 // todo: I'm seeing an odd situation where the Yawning God stops actually doing anything (no chosen abl effect call) after the mole attacks a few times?
-// todo: upon defeating the Yawning God, we wind up with an undefined currentTurnOwner trying to call canAffordCost in stepCombat;
-//  I'm guessing this is because it was the Yawning God's turn but he was dead and was removed from enemyParty/currentTurnOwner was set undefined
-//  upon his death?  Well anyway, victory condition is obviously not actually handled.  I think we exploded before the combat terminals were checked, actually,
-//  since the usual flow is top round -> player -> enemy -> bottom round with terminal check, and we exploded at the enemy turn. 
 /**
  * Class responsible for defining the RPG mechanics of the Mooty Wort adventure and running combat
  */
@@ -502,14 +498,14 @@ class MootyWortRpgMech {
 	 * @param combatModel current Combat object
 	 */
 	handleEnemyTurnComplete(combatModel) {
-		// set state to beginNewRound iff there are no more enemies to process
+		// set state to beginNewRound iff there are no more living enemies to process
 		// otherwise, advance turn owner to next enemy
-		if(MoleUndum.findLastLivingCharacter(combatModel.enemyParty) !== combatModel.currentTurnOwner) {
-			combatModel.currentTurnOwner = 
-				MoleUndum.findFirstLivingCharacter(
-						combatModel.enemyParty, 
-						MoleUndum.findCharacterIndex(combatModel.enemyParty, combatModel.currentTurnOwner.id)
-				);
+		var nextLivingEnemy = MoleUndum.findFirstLivingCharacter(
+				combatModel.enemyParty, 
+				MoleUndum.findCharacterIndex(combatModel.enemyParty, combatModel.currentTurnOwner.id)
+		);
+		if(nextLivingEnemy !== undefined) {
+			combatModel.currentTurnOwner = nextLivingEnemy;
 		} else {
 			// hand off back to first player character
 			combatModel.currentTurnOwner = combatModel.playerParty[0];
@@ -526,12 +522,13 @@ class MootyWortRpgMech {
 	handlePlayerTurnComplete(combatModel) {
 		// set state to runEnemy iff there are no more players to process
 		// otherwise, advance turn owner to next player
-		if(MoleUndum.findLastLivingCharacter(combatModel.playerParty) !== combatModel.currentTurnOwner) {
-			combatModel.currentTurnOwner = 
-				MoleUndum.findFirstLivingCharacter(
-					combatModel.playerParty, 
-					MoleUndum.findCharacterIndex(combatModel.playerParty, combatModel.currentTurnOwner.id)
-				);
+		var nextLivingPlayer = MoleUndum.findFirstLivingCharacter(
+				combatModel.playerParty, 
+				MoleUndum.findCharacterIndex(combatModel.playerParty, combatModel.currentTurnOwner.id)
+		);
+		if(nextLivingPlayer !== undefined) {
+			combatModel.currentTurnOwner = nextLivingPlayer; 
+				
 		} else {
 			// hand off control to first enemy since we're doing fixed turn order
 			combatModel.currentTurnOwner = combatModel.enemyParty[0];
