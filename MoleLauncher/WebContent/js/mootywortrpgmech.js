@@ -10,7 +10,11 @@ import {Ability} from "../lib/spellbook.js";
  * 
  * I love the Lunar 1:1 situation where one animation always indicates one ability, but a little uncertainty and/or complexity could really add to it.  Probably best place to shove this system into our current combat model would be at the top of a new round, after the Ai has decided what it's doing and before we process player input such that player can see the telegraph text before choosing their action. 
  */
-
+// todo: I'm seeing an odd situation where the Yawning God stops actually doing anything (no chosen abl effect call) after the mole attacks a few times?
+// todo: upon defeating the Yawning God, we wind up with an undefined currentTurnOwner trying to call canAffordCost in stepCombat;
+//  I'm guessing this is because it was the Yawning God's turn but he was dead and was removed from enemyParty/currentTurnOwner was set undefined
+//  upon his death?  Well anyway, victory condition is obviously not actually handled.  I think we exploded before the combat terminals were checked, actually,
+//  since the usual flow is top round -> player -> enemy -> bottom round with terminal check, and we exploded at the enemy turn. 
 /**
  * Class responsible for defining the RPG mechanics of the Mooty Wort adventure and running combat
  */
@@ -433,6 +437,8 @@ class MootyWortRpgMech {
 	populatePlayerCommandList(combatModel) {
 		// todo: check for frozen status and mod ui accordingly
 		var combatCommandList = document.getElementById("combatCommandList");
+		// clear current command list
+		combatCommandList.innerHTML = "";
 		for(const [ablId, abl] of Object.entries(combatModel.currentTurnOwner.entity.spellsDict)) {
 			let commandListItem = document.createElement("li");
 			commandListItem.className = "commandButton";
