@@ -152,7 +152,7 @@ class MootyWortRpgMech {
 					break;
 				}
 			} else {
-				combatModel.combatLogContent = combatModel.currentTurnOwner.name + " feebly attempts to enact " + combatModel.currentSelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!";
+				this.combatLogPrint(combatModel.currentTurnOwner.name + " feebly attempts to enact " + combatModel.currentSelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!");
 			}
 			// complete this enemy character's turn
 			this.handleEnemyTurnComplete(combatModel);
@@ -440,51 +440,58 @@ class MootyWortRpgMech {
 			commandListItem.className = "commandButton";
 			// todo: install a long-click listener that gives a description someplace (combat log?)
 			commandListItem.onclick = () => {
-				if(abl.targetType === Ability.TargetTypesEnum.singleTarget) {
-					for(let [targetCharacterId, uiEntry] of Object.entries(this.enemyCharacterUiDict).concat(Object.entries(this.playerCharacterUiDict))) {
-						uiEntry.canvasElement.onclick = () => {
-							let sourceCharacter = combatModel.currentTurnOwner;
-							let targetCharacter = combatModel.findCombatant(targetCharacterId);
-							abl.effect(sourceCharacter, targetCharacter);
-							this.playAbilityAnimation(abl, sourceCharacter, targetCharacter);
-							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter));
-							this.handlePlayerTurnComplete(combatModel);
-							console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
-							// clear onclicks now that we've used them
-							uiEntry.canvasElement.removeAttribute("onclick");
-							commandListItem.removeAttribute("onclick");
-						};
+				if(combatModel.currentTurnOwner.canAffordCost(abl)) {
+					// we can afford the cost of the chosen abl, so go ahead with targeting etc.
+					if(abl.targetType === Ability.TargetTypesEnum.singleTarget) {
+						for(let [targetCharacterId, uiEntry] of Object.entries(this.enemyCharacterUiDict).concat(Object.entries(this.playerCharacterUiDict))) {
+							uiEntry.canvasElement.onclick = () => {
+								let sourceCharacter = combatModel.currentTurnOwner;
+								let targetCharacter = combatModel.findCombatant(targetCharacterId);
+								abl.effect(sourceCharacter, targetCharacter);
+								this.playAbilityAnimation(abl, sourceCharacter, targetCharacter);
+								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter));
+								this.handlePlayerTurnComplete(combatModel);
+								console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
+								// clear onclicks now that we've used them
+								uiEntry.canvasElement.onclick = null;
+								commandListItem.onclick = null;
+							};
+						}
+					} else {
+						let sourceCharacter = undefined;
+						let targetCharacters = undefined;
+						switch(abl.targetType) {
+						case Ability.TargetTypesEnum.personal:
+							sourceCharacter = combatModel.currentTurnOwner;
+							targetCharacters = [sourceCharacter];
+							abl.effect(sourceCharacter);
+							this.playAbilityAnimation(abl, sourceCharacter, targetCharacters[0]);
+							this.combatLogPrint(abl.generateFlavorText(sourceCharacter));
+							break;
+						case Ability.TargetTypesEnum.allEnemies:
+							sourceCharacter = combatModel.currentTurnOwner;
+							targetCharacters = combatModel.enemyParty;
+							abl.effect(sourceCharacter, targetCharacters);
+							this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
+							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
+							break;
+						case Ability.TargetTypesEnum.allAllies:
+							sourceCharacter = combatModel.currentTurnOwner;
+							targetCharacters = combatModel.playerParty;
+							abl.effect(sourceCharacter, targetCharacters);
+							this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
+							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
+							break;
+						}
+						this.handlePlayerTurnComplete(combatModel);
+						// clear onclick now that we've used it
+						commandListItem.onclick = null;
 					}
 				} else {
-					let sourceCharacter = undefined;
-					let targetCharacters = undefined;
-					switch(abl.targetType) {
-					case Ability.TargetTypesEnum.personal:
-						sourceCharacter = combatModel.currentTurnOwner;
-						targetCharacters = [sourceCharacter];
-						abl.effect(sourceCharacter);
-						this.playAbilityAnimation(abl, sourceCharacter, targetCharacters[0]);
-						this.combatLogPrint(abl.generateFlavorText(sourceCharacter));
-						break;
-					case Ability.TargetTypesEnum.allEnemies:
-						sourceCharacter = combatModel.currentTurnOwner;
-						targetCharacters = combatModel.enemyParty;
-						abl.effect(sourceCharacter, targetCharacters);
-						this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
-						this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
-						break;
-					case Ability.TargetTypesEnum.allAllies:
-						sourceCharacter = combatModel.currentTurnOwner;
-						targetCharacters = combatModel.playerParty;
-						abl.effect(sourceCharacter, targetCharacters);
-						this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
-						this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
-						break;
-					}
-					this.handlePlayerTurnComplete(combatModel);
-					// clear onclick now that we've used it
-					commandListItem.removeAttribute("onclick");
+					// tell user to pick something else
+					this.combatLogPrint(""+combatModel.currentTurnOwner.name+" lacks the reserves to manage "+abl.name+"; try something else.  Remember that your heroic attacks can revitalize your mana!");
 				}
+				
 			};
 			
 			var commandText = document.createTextNode(abl.name);
