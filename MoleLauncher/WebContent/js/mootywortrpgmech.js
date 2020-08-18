@@ -11,6 +11,8 @@ import {Ability} from "../lib/spellbook.js";
  * I love the Lunar 1:1 situation where one animation always indicates one ability, but a little uncertainty and/or complexity could really add to it.  Probably best place to shove this system into our current combat model would be at the top of a new round, after the Ai has decided what it's doing and before we process player input such that player can see the telegraph text before choosing their action. 
  */
 // todo: I'm seeing an odd situation where the Yawning God stops actually doing anything (no chosen abl effect call) after the mole attacks a few times?
+// todo: I saw an odd situation where I was low on MP and couldn't cast Magma Blast, then went to Warmest Hug (which I might have been able to afford?), and
+//  when I clicked on mooty to heal him the magma blast effect went off (or at least the flavor text for magma blast was printed).
 /**
  * Class responsible for defining the RPG mechanics of the Mooty Wort adventure and running combat
  */
@@ -86,8 +88,16 @@ class MootyWortRpgMech {
 	/**
 	 * Call stepCombat() async so we can establish a loop that can loopback at any point from any place without
 	 * risking stack overflow
+	 * @return the next state after our eventual call to stepCombat() here
 	 */
 	async combatLoop(combatModel) {
+		// await is necessary to pop us off the call stack and get enqueued in the message Q
+		// todo: how come await stepCombat() didn't work?  
+		// todo: am I right that async (plus, I guess await) puts you in a message Q which is processed on the main
+		//  and only JS thread and therefore
+		//  the code in/after await will happen deterministically after the rest of the code in the function
+		//  that called combatLoop() has finished executing?
+		await 1;
 		return this.stepCombat(combatModel);
 	}
 	/**
@@ -98,7 +108,12 @@ class MootyWortRpgMech {
 	stepCombat(combatModel) {
 		var state = combatModel.controllerState;
 		if(state === Combat.ControllerState.beginNewRound) {
+			// close out the old round and open the new one
+			if(combatModel.roundCount > 0) {
+				this.combatRoundPrint(combatModel, false);
+			}
 			let postStatusState = combatModel.processRoundTop();
+			this.combatRoundPrint(combatModel, true);
 			// print anything that happened during top o' the round
 			this.combatLogPrint(combatModel.combatLogContent);
 			combatModel.combatLogContent = "";
@@ -154,11 +169,11 @@ class MootyWortRpgMech {
 			} else {
 				this.combatLogPrint(combatModel.currentTurnOwner.name + " feebly attempts to enact " + combatModel.currentSelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!");
 			}
-			// complete this enemy character's turn
 			this.handleEnemyTurnComplete(combatModel);
 		}
 		// print out whatever happened this step
 		this.combatLogPrint(combatModel.combatLogContent);
+		combatModel.combatLogContent = "";
 		return combatModel.controllerState;
 	}
 	/**
@@ -535,7 +550,6 @@ class MootyWortRpgMech {
 		);
 		if(nextLivingPlayer !== undefined) {
 			combatModel.currentTurnOwner = nextLivingPlayer; 
-				
 		} else {
 			// hand off control to first enemy since we're doing fixed turn order
 			combatModel.currentTurnOwner = combatModel.enemyParty[0];
@@ -544,7 +558,17 @@ class MootyWortRpgMech {
 		}
 		this.combatLoop(combatModel);
 	}
-	
+	/**
+	 * Prints the current combat round to the console
+	 * @param combatModel the current Combat object
+	 * @param openRound boolean indicating whether we're opening or closing a round
+	 */
+	combatRoundPrint(combatModel, openRound) {
+		var combatLog = document.getElementById("combatLog");
+		combatLog.appendChild(document.createElement('br'));
+		var logTextNode = document.createTextNode("<"+(openRound ? "" : "/")+"Round "+combatModel.roundCount+">");
+		combatLog.appendChild(logTextNode);
+	}
 	/**
 	 * Creates a new \<p\> tag, puts the given text in it, and appends it to the combat log
 	 * @param logString a string to append to the log
@@ -553,13 +577,11 @@ class MootyWortRpgMech {
 		// no need to print anything if we've received nothing
 		if(logString) {
 			var combatLog = document.getElementById("combatLog");
-			var logContainer = document.createElement("p");
-			var timestampTextNode = document.createTextNode(new Date().toLocaleString()+":");
-			logContainer.appendChild(timestampTextNode);
-			logContainer.appendChild(document.createElement('br'));
+			combatLog.appendChild(document.createElement('br'));
+			var arrowTextNode = document.createTextNode("----------->");
+			combatLog.appendChild(arrowTextNode);
 			var logTextNode = document.createTextNode(logString);
-			logContainer.appendChild(logTextNode);
-			combatLog.appendChild(logContainer);
+			combatLog.appendChild(logTextNode);
 		}
 	}
 	/**

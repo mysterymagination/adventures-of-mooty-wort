@@ -28,6 +28,10 @@ export class Combat {
 
         // the text feedback to the user re: the state of combat
         this.combatLogContent = "What will " + this.currentTurnOwner.name + " do?";
+        /**
+         * The integer number of rounds that have passed in this combat so far; incremented at the top of each round
+         */
+        this.roundCount = 0;
 	}
 	/**
 	 * Searches player and enemy parties for the character given by characterId
@@ -84,6 +88,7 @@ export class Combat {
      * Handle upkeep related to a new round beginning (i.e. top of the round to ye!)
      */
 	processRoundTop() {
+		this.roundCount++;
         // tick down and process status effects for enemy party
 		// todo: death processing from status effects 
 		// todo: populate combatLogContent with report re: status effects
