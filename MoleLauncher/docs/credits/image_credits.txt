@@ -26,3 +26,9 @@ https://search.creativecommons.org/photos/22c321ee-ec59-49f9-af00-5f3db64f47f6
 lava flow battle bg:
 https://search.creativecommons.org/photos/52bd0442-ce92-4226-b6cf-c564b06494ec
 "lava flow" by Euan Slorach is licensed under CC BY-NC-ND 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-nd/2.0/
+
+Apport_logo.svg:
+By Troy James Sobotka (Canonical Ltd.) - Ubuntu, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=4215961
+
+monster_icon.png:
+"Bear Monster" by TopatoCo is licensed under CC BY-NC-SA 2.0

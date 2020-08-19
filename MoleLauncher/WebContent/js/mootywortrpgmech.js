@@ -106,6 +106,11 @@ class MootyWortRpgMech {
 	 * @return the current combat controller state
 	 */
 	stepCombat(combatModel) {
+		// todo: add numeric results after effects affecting stats go off,
+		//  e.g. don't say that the enemy used dark_star but do say the mole suffered
+		//  N damage; that way it's more clear when abilities actually fire and the player
+		//  doesn't have to do their own arithmetic after the fact to figure out how effective 
+		//  something was.
 		var state = combatModel.controllerState;
 		if(state === Combat.ControllerState.beginNewRound) {
 			// close out the old round and open the new one
@@ -572,6 +577,10 @@ class MootyWortRpgMech {
 	/**
 	 * Creates a new \<p\> tag, puts the given text in it, and appends it to the combat log
 	 * @param logString a string to append to the log
+	 * todo: add a param to indicate what sort of message this is, and prepend an image icon
+	 *       to that effect to the arrow e.g. stuff about the player turn gets a mole icon,
+	 *       stuff telegraphing the enemy action gets a yellow warning sign, and enemy action gets
+	 *       a monster face
 	 */
 	combatLogPrint(logString) {
 		// no need to print anything if we've received nothing
