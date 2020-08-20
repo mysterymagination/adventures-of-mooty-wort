@@ -601,7 +601,7 @@ class MootyWortRpgMech {
 					catImg.src = "images/mole_icon.png";
 					break;
 				case MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION:
-					catImg.src = "images/monster_icon.png";
+					catImg.src = "images/skull_icon.jpg";
 					break;
 				case MootyWortRpgMech.MessageCat.CAT_ENEMY_TELEGRAPH:
 					catImg.src = "images/Apport_logo.svg";
