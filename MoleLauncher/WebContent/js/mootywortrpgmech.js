@@ -607,7 +607,7 @@ class MootyWortRpgMech {
 					catImg.src = "images/Apport_logo.svg";
 					break;
 				case MootyWortRpgMech.MessageCat.CAT_INFO:
-					catImg.src = "images/mole_icon.png";
+					catImg.src = "images/info_icon.svg";
 					break;
 			}
 			var arrowTextNode = document.createTextNode("----------->");

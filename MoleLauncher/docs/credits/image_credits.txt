@@ -32,3 +32,6 @@ By Troy James Sobotka (Canonical Ltd.) - Ubuntu, CC BY-SA 3.0, https://commons.w
 
 monster_icon.png:
 "Bear Monster" by TopatoCo is licensed under CC BY-NC-SA 2.0
+
+info_icon.svg:
+"File:Test Template Info-Icon.svg" by User Jaybear is marked with CC0 1.0
