@@ -120,7 +120,7 @@ class MootyWortRpgMech {
 			let postStatusState = combatModel.processRoundTop();
 			this.combatRoundPrint(combatModel, true);
 			// print anything that happened during top o' the round
-			this.combatLogPrint(combatModel.combatLogContent);
+			this.combatLogPrint(combatModel.combatLogContent, MootyWortRpgMech.MessageCat.CAT_INFO);
 			combatModel.combatLogContent = "";
 			// update character portraits with status info
 			this.updateCharacterBattleImages(combatModel);
@@ -141,7 +141,8 @@ class MootyWortRpgMech {
 			this.combatLogPrint(
 				combatModel.telegraphAction(
 					combatModel.currentSelectedAbility
-				)
+				),
+				MootyWortRpgMech.MessageCat.CAT_ENEMY_TELEGRAPH
 			);
 			// command selection subphase of player input phase
 			this.populatePlayerCommandList(combatModel);
@@ -171,13 +172,16 @@ class MootyWortRpgMech {
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.currentTurnOwner, combatModel.currentTargetCharacter);
 					break;
 				}
+				this.combatLogPrint(combatModel.combatLogContent, MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION);
 			} else {
-				this.combatLogPrint(combatModel.currentTurnOwner.name + " feebly attempts to enact " + combatModel.currentSelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!");
+				this.combatLogPrint(
+					combatModel.currentTurnOwner.name + " feebly attempts to enact " + combatModel.currentSelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!",
+					MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION
+				);
 			}
 			this.handleEnemyTurnComplete(combatModel);
 		}
-		// print out whatever happened this step
-		this.combatLogPrint(combatModel.combatLogContent);
+		// reset combat log content at the bottom of the step
 		combatModel.combatLogContent = "";
 		return combatModel.controllerState;
 	}
@@ -469,7 +473,7 @@ class MootyWortRpgMech {
 								let targetCharacter = combatModel.findCombatant(targetCharacterId);
 								abl.effect(sourceCharacter, targetCharacter);
 								this.playAbilityAnimation(abl, sourceCharacter, targetCharacter);
-								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter));
+								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 								this.handlePlayerTurnComplete(combatModel);
 								console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
 								// clear onclicks now that we've used them
@@ -486,21 +490,21 @@ class MootyWortRpgMech {
 							targetCharacters = [sourceCharacter];
 							abl.effect(sourceCharacter);
 							this.playAbilityAnimation(abl, sourceCharacter, targetCharacters[0]);
-							this.combatLogPrint(abl.generateFlavorText(sourceCharacter));
+							this.combatLogPrint(abl.generateFlavorText(sourceCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 							break;
 						case Ability.TargetTypesEnum.allEnemies:
 							sourceCharacter = combatModel.currentTurnOwner;
 							targetCharacters = combatModel.enemyParty;
 							abl.effect(sourceCharacter, targetCharacters);
 							this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
-							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
+							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 							break;
 						case Ability.TargetTypesEnum.allAllies:
 							sourceCharacter = combatModel.currentTurnOwner;
 							targetCharacters = combatModel.playerParty;
 							abl.effect(sourceCharacter, targetCharacters);
 							this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
-							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters));
+							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 							break;
 						}
 						this.handlePlayerTurnComplete(combatModel);
@@ -509,7 +513,10 @@ class MootyWortRpgMech {
 					}
 				} else {
 					// tell user to pick something else
-					this.combatLogPrint(""+combatModel.currentTurnOwner.name+" lacks the reserves to manage "+abl.name+"; try something else.  Remember that your heroic attacks can revitalize your mana!");
+					this.combatLogPrint(
+						""+combatModel.currentTurnOwner.name+" lacks the reserves to manage "+abl.name+"; try something else.  Remember that your heroic attacks can revitalize your mana!",
+						MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION
+					);
 				}
 				
 			};
@@ -577,17 +584,34 @@ class MootyWortRpgMech {
 	/**
 	 * Creates a new \<p\> tag, puts the given text in it, and appends it to the combat log
 	 * @param logString a string to append to the log
-	 * todo: add a param to indicate what sort of message this is, and prepend an image icon
-	 *       to that effect to the arrow e.g. stuff about the player turn gets a mole icon,
-	 *       stuff telegraphing the enemy action gets a yellow warning sign, and enemy action gets
-	 *       a monster face
+	 * @param category enum ordinal from MootyWortRpgMech.MessageCat indicating what sort of message we're printing
 	 */
-	combatLogPrint(logString) {
+	combatLogPrint(logString, category) {
 		// no need to print anything if we've received nothing
 		if(logString) {
 			var combatLog = document.getElementById("combatLog");
-			combatLog.appendChild(document.createElement('br'));
+			combatLog.appendChild(document.createElement("br"));
+			var catImg = document.createElement("img");
+			catImg.style.display = "inline";
+			catImg.style.position = "relative";
+			catImg.style.width = "32px";
+			catImg.style.height = "32px";
+			switch(category) {
+				case MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION:
+					catImg.src = "images/mole_icon.png";
+					break;
+				case MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION:
+					catImg.src = "images/monster_icon.png";
+					break;
+				case MootyWortRpgMech.MessageCat.CAT_ENEMY_TELEGRAPH:
+					catImg.src = "images/Apport_logo.svg";
+					break;
+				case MootyWortRpgMech.MessageCat.CAT_INFO:
+					catImg.src = "images/mole_icon.png";
+					break;
+			}
 			var arrowTextNode = document.createTextNode("----------->");
+			combatLog.appendChild(catImg);
 			combatLog.appendChild(arrowTextNode);
 			var logTextNode = document.createTextNode(logString);
 			combatLog.appendChild(logTextNode);
@@ -629,4 +653,28 @@ class MootyWortRpgMech {
 		showElement.style.display = "block";
 	}
 }
+
+/**
+ * Enum of combat log message categories
+ */
+MootyWortRpgMech.MessageCat = Object.freeze(
+    {
+    	/**
+    	 * A message regarding player action
+    	 */
+        CAT_PLAYER_ACTION: 1,
+        /**
+         * A message regarding enemy action
+         */
+        CAT_ENEMY_ACTION: 2,
+        /**
+         * A message regarding enemy telegraph
+         */
+        CAT_ENEMY_TELEGRAPH: 3,
+        /**
+         * A message regarding general info
+         */
+        CAT_INFO: 4
+    }
+);
 export {MootyWortRpgMech};
