@@ -456,13 +456,18 @@ class MootyWortRpgMech {
 	 */
 	populatePlayerCommandList(combatModel) {
 		// todo: check for frozen status and mod ui accordingly
-		var combatCommandList = document.getElementById("combatCommandList");
+		var combatCommandList = document.getElementById("combatCommands");
+		combatCommandList.onchange = () => console.log("abl changed to idx "+combatCommandList.selectedIndex); 
+		combatCommandList.onfocus = () => combatCommandList.selectedIndex = -1;
 		// clear current command list
 		combatCommandList.innerHTML = "";
 		for(const [ablId, abl] of Object.entries(combatModel.currentTurnOwner.entity.spellsDict)) {
-			let commandListItem = document.createElement("li");
-			commandListItem.className = "commandButton";
-			// todo: install a long-click listener that gives a description someplace (combat log?)
+			let commandListItem = document.createElement("option");
+			// todo: install a long-click (or hover?) listener that gives a description someplace (combat log?)
+			// todo: if we go dropdown, which seems wrong outside a crusty ol' form tag, then we will need to
+			//  modify our strat here -- basically the dropdown element itself would get an onchange like above,
+			//  and that would switch over the selected idx and then I guess map an idx to a known abl, implying
+			//  we'd need to sort the returned array from Object.entries() manually?  Seems janky AF
 			commandListItem.onclick = () => {
 				if(combatModel.currentTurnOwner.canAffordCost(abl)) {
 					// we can afford the cost of the chosen abl, so go ahead with targeting etc.

@@ -168,11 +168,11 @@
 	    </div>
 	    <div id="playerView" class="character-hud-player"> <!-- allowed 33% model-content height -->
 	    	<!-- todo: maybe combat command list would make more sense as a combobox dropdown?  It should
-	    	at least use some more horizontal space -->
+	    	at least use some more horizontal space, maybe as a table -->
 		    <div id= "combatCommandWindow" class="ability-button-container">
-	    		<ul id="combatCommandList" class="command-button-list">
+	    		<select id="combatCommands" class="command-dropdown">
 	    		<!-- content here comes from looping through player abilities and rendering them as list items with onclicks that either perform the linked ability or ready potential target elements' onclicks -->
-	    		</ul>
+	    		</select>
 		    </div>
 	    	<div id="playerSpritesContainer" class="character-image-container">
 	    	<!-- player character sprite canvasi go here -->

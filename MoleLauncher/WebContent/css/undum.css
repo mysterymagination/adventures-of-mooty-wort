@@ -531,6 +531,7 @@ img.float_left {
   height: 20%;
   max-height: 20%;
   position: relative;
+  text-align: center;
 }
 
 .command-button-list {
@@ -538,7 +539,19 @@ img.float_left {
   padding: 0;
 }
 
-.commandButton {
+.command-dropdown {
+	display: inline;
+	position: relative;
+}
+
+.command-label {
+  font-size: 12px;
+  text-align: center;
+  color: #fff;
+  background-color: #4CAF50;
+}
+
+.command-button {
   padding: 5px 5px;
   font-size: 12px;
   text-align: center;
@@ -552,11 +565,11 @@ img.float_left {
   margin-top: 5px;
 }
 
-.commandButton:hover {
+.command-button:hover {
   background-color: #3e8e41;
 }
 
-.commandButton:active {
+.command-button:active {
   background-color: #3e8e41;
   box-shadow: 0 3px #666;
   transform: translateY(1px);
