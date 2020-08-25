@@ -457,78 +457,85 @@ class MootyWortRpgMech {
 	populatePlayerCommandList(combatModel) {
 		// todo: check for frozen status and mod ui accordingly
 		var combatCommandList = document.getElementById("combatCommands");
-		combatCommandList.onchange = () => console.log("abl changed to idx "+combatCommandList.selectedIndex); 
-		combatCommandList.onfocus = () => combatCommandList.selectedIndex = -1;
 		// clear current command list
 		combatCommandList.innerHTML = "";
+		var colCount = 0;
 		for(const [ablId, abl] of Object.entries(combatModel.currentTurnOwner.entity.spellsDict)) {
-			let commandListItem = document.createElement("option");
-			// todo: install a long-click (or hover?) listener that gives a description someplace (combat log?)
-			// todo: if we go dropdown, which seems wrong outside a crusty ol' form tag, then we will need to
-			//  modify our strat here -- basically the dropdown element itself would get an onchange like above,
-			//  and that would switch over the selected idx and then I guess map an idx to a known abl, implying
-			//  we'd need to sort the returned array from Object.entries() manually?  Seems janky AF
-			commandListItem.onclick = () => {
-				if(combatModel.currentTurnOwner.canAffordCost(abl)) {
-					// we can afford the cost of the chosen abl, so go ahead with targeting etc.
-					if(abl.targetType === Ability.TargetTypesEnum.singleTarget) {
-						for(let [targetCharacterId, uiEntry] of Object.entries(this.enemyCharacterUiDict).concat(Object.entries(this.playerCharacterUiDict))) {
-							uiEntry.canvasElement.onclick = () => {
-								let sourceCharacter = combatModel.currentTurnOwner;
-								let targetCharacter = combatModel.findCombatant(targetCharacterId);
-								abl.effect(sourceCharacter, targetCharacter);
-								this.playAbilityAnimation(abl, sourceCharacter, targetCharacter);
-								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
-								this.handlePlayerTurnComplete(combatModel);
-								console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
-								// clear onclicks now that we've used them
-								uiEntry.canvasElement.onclick = null;
-								commandListItem.onclick = null;
-							};
+			if(colCount == 0) {
+				combatCommandList.appendChild(document.createElement("tr"));
+			}
+			if(colCount < 3) {
+				let commandListItem = document.createElement("td");
+				// todo: install a long-click (or hover?) listener that gives a description someplace (combat log?)
+				commandListItem.onclick = () => {
+					if(combatModel.currentTurnOwner.canAffordCost(abl)) {
+						// we can afford the cost of the chosen abl, so go ahead with targeting etc.
+						if(abl.targetType === Ability.TargetTypesEnum.singleTarget) {
+							for(let [targetCharacterId, uiEntry] of Object.entries(this.enemyCharacterUiDict).concat(Object.entries(this.playerCharacterUiDict))) {
+								uiEntry.canvasElement.onclick = () => {
+									let sourceCharacter = combatModel.currentTurnOwner;
+									let targetCharacter = combatModel.findCombatant(targetCharacterId);
+									abl.effect(sourceCharacter, targetCharacter);
+									this.playAbilityAnimation(abl, sourceCharacter, targetCharacter);
+									this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+									this.handlePlayerTurnComplete(combatModel);
+									console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
+									// clear onclicks now that we've used them
+									uiEntry.canvasElement.onclick = null;
+									commandListItem.onclick = null;
+								};
+							}
+						} else {
+							let sourceCharacter = undefined;
+							let targetCharacters = undefined;
+							switch(abl.targetType) {
+							case Ability.TargetTypesEnum.personal:
+								sourceCharacter = combatModel.currentTurnOwner;
+								targetCharacters = [sourceCharacter];
+								abl.effect(sourceCharacter);
+								this.playAbilityAnimation(abl, sourceCharacter, targetCharacters[0]);
+								this.combatLogPrint(abl.generateFlavorText(sourceCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+								break;
+							case Ability.TargetTypesEnum.allEnemies:
+								sourceCharacter = combatModel.currentTurnOwner;
+								targetCharacters = combatModel.enemyParty;
+								abl.effect(sourceCharacter, targetCharacters);
+								this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
+								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+								break;
+							case Ability.TargetTypesEnum.allAllies:
+								sourceCharacter = combatModel.currentTurnOwner;
+								targetCharacters = combatModel.playerParty;
+								abl.effect(sourceCharacter, targetCharacters);
+								this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
+								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+								break;
+							}
+							this.handlePlayerTurnComplete(combatModel);
+							// clear onclick now that we've used it
+							commandListItem.onclick = null;
 						}
 					} else {
-						let sourceCharacter = undefined;
-						let targetCharacters = undefined;
-						switch(abl.targetType) {
-						case Ability.TargetTypesEnum.personal:
-							sourceCharacter = combatModel.currentTurnOwner;
-							targetCharacters = [sourceCharacter];
-							abl.effect(sourceCharacter);
-							this.playAbilityAnimation(abl, sourceCharacter, targetCharacters[0]);
-							this.combatLogPrint(abl.generateFlavorText(sourceCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
-							break;
-						case Ability.TargetTypesEnum.allEnemies:
-							sourceCharacter = combatModel.currentTurnOwner;
-							targetCharacters = combatModel.enemyParty;
-							abl.effect(sourceCharacter, targetCharacters);
-							this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
-							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
-							break;
-						case Ability.TargetTypesEnum.allAllies:
-							sourceCharacter = combatModel.currentTurnOwner;
-							targetCharacters = combatModel.playerParty;
-							abl.effect(sourceCharacter, targetCharacters);
-							this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
-							this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
-							break;
-						}
-						this.handlePlayerTurnComplete(combatModel);
-						// clear onclick now that we've used it
-						commandListItem.onclick = null;
+						// tell user to pick something else
+						this.combatLogPrint(
+							""+combatModel.currentTurnOwner.name+" lacks the reserves to manage "+abl.name+"; try something else.  Remember that your heroic attacks can revitalize your mana!",
+							MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION
+						);
 					}
-				} else {
-					// tell user to pick something else
-					this.combatLogPrint(
-						""+combatModel.currentTurnOwner.name+" lacks the reserves to manage "+abl.name+"; try something else.  Remember that your heroic attacks can revitalize your mana!",
-						MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION
-					);
-				}
+					
+				};
 				
-			};
-			
-			var commandText = document.createTextNode(abl.name);
-			commandListItem.appendChild(commandText);
-			combatCommandList.appendChild(commandListItem);
+				var commandText = document.createTextNode(abl.name);
+				commandListItem.appendChild(commandText);
+				combatCommandList.appendChild(commandListItem);
+				
+				// check for col cap
+				if(colCount >= 3) {
+					colCount = 0;
+				} else {
+					colCount++;
+				}
+			}
 		}
 	}
 	/**

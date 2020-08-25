@@ -534,21 +534,9 @@ img.float_left {
   text-align: center;
 }
 
-.command-button-list {
-  list-style: none; /*no bullets*/
-  padding: 0;
-}
-
-.command-dropdown {
-	display: inline;
+.command-grid {
+	display: inline-block;
 	position: relative;
-}
-
-.command-label {
-  font-size: 12px;
-  text-align: center;
-  color: #fff;
-  background-color: #4CAF50;
 }
 
 .command-button {

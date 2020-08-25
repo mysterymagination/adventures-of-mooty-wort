@@ -714,7 +714,7 @@ export class BrassLantern extends Spell {
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "A fierce gold light burns its way out of the darkness, revealing a small brass lantern.  Inside, a flame flickers violently, tauntingly, before flaring into a raging inferno that rolls over you like a blanket of elemental destruction!  You can feel thoughts and emotions swirl in your mind as you burn, dreams flitting past your mind's eye and feeding the conflagration.  "+(targetChar["hp"] > 0 ? "As the flames roll over you, through the crippling agony you feel a resonant power welling up ever higher..." : ""); 
+	    return "A fierce gold light burns its way out of the darkness, revealing a small brass lantern.  Inside, a flame flickers violently, tauntingly, before flaring into a raging inferno that rolls over "+targetChar.name+" like a blanket of elemental destruction!  "+targetChar.name+" can feel thoughts and emotions swirl in "+targetChar.getPronoun_possessive()+" mind as "+targetChar.getPronoun_personal_subject()+" burns, dreams flitting past "+targetChar.getPronoun_possessive()+" mind's eye and feeding the conflagration.  "+(targetChar["hp"] > 0 ? "As the flames roll over "+targetChar.getPronoun_personal_object()+", through the crippling agony "+targetChar.name+" feels a resonant power welling up ever higher..." : ""); 
 	}
 }
 
@@ -992,7 +992,9 @@ export class Burrower extends Entity {
 			"deep_meditation": new DeepMeditation(),
 			"shadowflare": new ShadowFlare(),
 			"magma_blast": new MagmaBlast(),
-			"static_bolt": new StaticBolt()
+			"static_bolt": new StaticBolt(),
+			// todo: giving the mole this abl is probably a mistake
+			"brass_lantern": new BrassLantern()
 		}
 		Object.assign(Burrower.prototype.spellsDict, Entity.prototype.spellsDict);
 		// redefine mole's attack to restore MP
