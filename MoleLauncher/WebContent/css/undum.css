@@ -537,6 +537,7 @@ img.float_left {
 .command-grid {
 	display: inline-block;
 	position: relative;
+	text-align: center;
 }
 
 .command-button {

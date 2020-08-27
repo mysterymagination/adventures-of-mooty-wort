@@ -466,6 +466,7 @@ class MootyWortRpgMech {
 			}
 			if(colCount < 3) {
 				let commandListItem = document.createElement("td");
+				commandListItem.className = "command-button";
 				// todo: install a long-click (or hover?) listener that gives a description someplace (combat log?)
 				commandListItem.onclick = () => {
 					if(combatModel.currentTurnOwner.canAffordCost(abl)) {
@@ -529,12 +530,11 @@ class MootyWortRpgMech {
 				commandListItem.appendChild(commandText);
 				combatCommandList.appendChild(commandListItem);
 				
-				// check for col cap
+				// inc col count and check for col cap
+				colCount++;
 				if(colCount >= 3) {
 					colCount = 0;
-				} else {
-					colCount++;
-				}
+				} 
 			}
 		}
 	}
