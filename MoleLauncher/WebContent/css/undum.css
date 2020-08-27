@@ -530,14 +530,23 @@ img.float_left {
   overflow-x: hidden;
   height: 20%;
   max-height: 20%;
+  width: 100%;
   position: relative;
-  text-align: center;
 }
 
 .command-grid {
-	display: inline-block;
-	position: relative;
-	text-align: center;
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+.command-button-row {
+  height: 50%;
+  max-height: 50%;
+  width: 100%;
+  max-width: 100%;
+  position: absolute;
 }
 
 .command-button {
@@ -552,6 +561,9 @@ img.float_left {
   border-radius: 15px;
   box-shadow: 0 1px #999;
   margin-top: 5px;
+  width: 33%;
+  max-width: 33%;
+  position: relative;
 }
 
 .command-button:hover {

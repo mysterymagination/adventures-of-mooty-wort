@@ -462,13 +462,15 @@ class MootyWortRpgMech {
 		var colCount = 0;
 		for(const [ablId, abl] of Object.entries(combatModel.currentTurnOwner.entity.spellsDict)) {
 			if(colCount == 0) {
-				combatCommandList.appendChild(document.createElement("tr"));
+				let commandRow = document.createElement("tr");
+				commandRow.className = "command-button-row";
+				combatCommandList.appendChild(commandRow);
 			}
 			if(colCount < 3) {
-				let commandListItem = document.createElement("td");
-				commandListItem.className = "command-button";
+				let commandCell = document.createElement("td");
+				commandCell.className = "command-button";
 				// todo: install a long-click (or hover?) listener that gives a description someplace (combat log?)
-				commandListItem.onclick = () => {
+				commandCell.onclick = () => {
 					if(combatModel.currentTurnOwner.canAffordCost(abl)) {
 						// we can afford the cost of the chosen abl, so go ahead with targeting etc.
 						if(abl.targetType === Ability.TargetTypesEnum.singleTarget) {
@@ -483,7 +485,7 @@ class MootyWortRpgMech {
 									console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
 									// clear onclicks now that we've used them
 									uiEntry.canvasElement.onclick = null;
-									commandListItem.onclick = null;
+									commandCell.onclick = null;
 								};
 							}
 						} else {
@@ -514,7 +516,7 @@ class MootyWortRpgMech {
 							}
 							this.handlePlayerTurnComplete(combatModel);
 							// clear onclick now that we've used it
-							commandListItem.onclick = null;
+							commandCell.onclick = null;
 						}
 					} else {
 						// tell user to pick something else
@@ -527,8 +529,8 @@ class MootyWortRpgMech {
 				};
 				
 				var commandText = document.createTextNode(abl.name);
-				commandListItem.appendChild(commandText);
-				combatCommandList.appendChild(commandListItem);
+				commandCell.appendChild(commandText);
+				combatCommandList.appendChild(commandCell);
 				
 				// inc col count and check for col cap
 				colCount++;
