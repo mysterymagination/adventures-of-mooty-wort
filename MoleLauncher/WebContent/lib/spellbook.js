@@ -532,7 +532,7 @@ export class ShadowFlare extends Spell {
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "Calling upon all the wisdom of his forebears, who were moles of course and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  The subtle conflagration is so overwhelming that "+targetChar.name+"'s very meta-magical field crumbles slightly, unraveling the threads of "+targetChar.getPronoun_personal_object()+" existance.";
+	    return "Calling upon all the wisdom of his forebears, who were moles of course and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  The subtle conflagration is so overwhelming that "+targetChar.name+"'s very meta-magical field crumbles slightly, unraveling the threads of "+targetChar.getPronoun_possessive()+" existence.";
 	}
 }
 /**

@@ -11,8 +11,14 @@ import {Ability} from "../lib/spellbook.js";
  * I love the Lunar 1:1 situation where one animation always indicates one ability, but a little uncertainty and/or complexity could really add to it.  Probably best place to shove this system into our current combat model would be at the top of a new round, after the Ai has decided what it's doing and before we process player input such that player can see the telegraph text before choosing their action. 
  */
 // todo: I'm seeing an odd situation where the Yawning God stops actually doing anything (no chosen abl effect call) after the mole attacks a few times?
+//  update: now that the combat log is clearer, this looks like he's just running out of MP.  I kinda forgot about his resource management.
 // todo: I saw an odd situation where I was low on MP and couldn't cast Magma Blast, then went to Warmest Hug (which I might have been able to afford?), and
 //  when I clicked on mooty to heal him the magma blast effect went off (or at least the flavor text for magma blast was printed).
+//  update: oooh ok I think I get this one now -- basically whenever we choose a targeted abl, ALL possible targets get targeted behavior functions installed
+//  and when a target is click only its ONE targeted function is removed.  All other possible targets keep their targeted functions for the now
+//  historical ability until they get overwritten with a new targeted fn, which doesn't happen if we can't afford the chosen single target abl.
+//  Simplest repro flow is {click shadow flare -> click YG -> click mole -> shadow flare goes off on mole unexpectedly} 
+//  To fix this problem, we ideally would remove all targeted onclick fns from potential targets after any one has actually run their targeted code.
 /**
  * Class responsible for defining the RPG mechanics of the Mooty Wort adventure and running combat
  */
@@ -113,6 +119,8 @@ class MootyWortRpgMech {
 		//  something was.
 		var state = combatModel.controllerState;
 		if(state === Combat.ControllerState.beginNewRound) {
+			// clear out any existing targeted functions
+			this.clearTargetedHandlers();
 			// close out the old round and open the new one
 			if(combatModel.roundCount > 0) {
 				this.combatRoundPrint(combatModel, false);
@@ -184,6 +192,14 @@ class MootyWortRpgMech {
 		// reset combat log content at the bottom of the step
 		combatModel.combatLogContent = "";
 		return combatModel.controllerState;
+	}
+	/**
+	 * Sets the onclick function back to null for each character's canvas element
+	 */
+	clearTargetedHandlers() {
+		for(let [targetCharacterId, uiEntry] of Object.entries(this.enemyCharacterUiDict).concat(Object.entries(this.playerCharacterUiDict))) {
+			uiEntry.canvasElement.onclick = null;
+		}
 	}
 	/**
 	 * Render the gfx for an ability 
@@ -471,6 +487,7 @@ class MootyWortRpgMech {
 				let commandCell = document.createElement("td");
 				commandCell.className = "command-button";
 				// todo: install a long-click (or hover?) listener that gives a description someplace (combat log?)
+				// todo: check if we can afford the cost here instead of in onclick, and if not then gray-out the button and don't install onclick
 				commandCell.onclick = () => {
 					if(combatModel.currentTurnOwner.canAffordCost(abl)) {
 						// we can afford the cost of the chosen abl, so go ahead with targeting etc.
@@ -640,7 +657,7 @@ class MootyWortRpgMech {
 		switch(enumCombatResult) {
         case Combat.CombatResultEnum.playerVictory:
         	// todo: display player victory message and battle exit UI
-        	console.log("evil is vaniquished and the Deepndess saved for all time!");
+        	console.log("evil is vaniquished and the Deepness saved for all time!");
         	break;
         case Combat.CombatResultEnum.enemyVictory:
         	// todo: display player defeat message and game over UI, ideally a dark soulsy 'you died'
