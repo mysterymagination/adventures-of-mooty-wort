@@ -542,11 +542,18 @@ img.float_left {
 }
 
 .command-button-row {
+  /*
   height: 50%;
   max-height: 50%;
   width: 100%;
   max-width: 100%;
   position: absolute;
+  */
+  height: 50px;
+  max-height: 50px;
+  width: 300px;
+  max-width: 300px;
+  position: relative;
 }
 
 .command-button {
@@ -561,8 +568,15 @@ img.float_left {
   border-radius: 15px;
   box-shadow: 0 1px #999;
   margin-top: 5px;
+  /*
   width: 33%;
   max-width: 33%;
+  position: relative;
+  */
+  height: 50px;
+  max-height: 50px;
+  width: 100px;
+  max-width: 100px;
   position: relative;
 }
 
