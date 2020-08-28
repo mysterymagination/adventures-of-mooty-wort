@@ -328,12 +328,27 @@ export class Grue extends Character {
                 	combat.chooseRandomAbility(ablProbsConfig)
                 ];
                 
+                // make sure we can afford the cost, else use MP steal
+                if(!this.canAffordCost(chosenAbility)) {
+                	chosenAbility = this.entity.spellsDict["touch_of_the_void"];
+                }
+                
                 /// install target if necessary ///
-                if(chosenAbility.targetType === Spells.Ability.TargetTypesEnum.singleTarget) {   
-                    // todo: add more intelligent targeting via abl descriptor tag that indicates what sort of defense
-                    //  the ability targets e.g. "hits_res" or "hits_def"
-                	// the Grue targets whoever's worst off because he's a butt
-                    chosenTarget = playerLeastHP;
+                if(chosenAbility.targetType === Spells.Ability.TargetTypesEnum.singleTarget) {    
+                    if(chosenAbility === this.entity.spellsDict["touch_of_the_void"]) {
+                    	// this one's all about mage draining
+                    	chosenTarget = combat.playerParty[0];
+                    	for(let character of combat.playerParty) {
+                    		if(character.stats.mp > chosenTarget.stats.mp) {
+                    			chosenTarget = character;
+                    		}
+                    	}
+                    } else {
+                    	// todo: add more intelligent targeting via abl descriptor tag that indicates what sort of defense
+                        //  the ability targets e.g. "hits_res" or "hits_def"
+                    	// the Grue targets whoever's worst off because he's a butt
+                    	chosenTarget = playerLeastHP;
+                    }
                     // todo: support for small chance of random target selection instead so that player with
                     //  least def isn't pummeled too much and the player can't kite the AI as easily 
                 } // end if abl needs a target
@@ -470,6 +485,13 @@ export class YawningGod extends Character {
                 		chosenAbility = this.entity.spellsDict["attack"];
                     }
                 }
+                
+                // todo: prior to targeting, check if the YG can actually afford the abl he wants to use.
+                //  if not, make him consider a few MP restoring moves
+                if(!this.canAffordCost(chosenAbility)) {
+                	chosenAbility = this.entity.spellsDict["manyfold_embrace"];
+                }
+               
                 
                 /// install target if necessary ///
                 // todo: particular mole attributes or status effects we wanna sniff for?

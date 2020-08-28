@@ -791,7 +791,7 @@ export class ManyfoldEmbrace extends Spell {
 	constructor() {
 		super({ id: "manyfold_embrace", name: "Manyfold Embrace" });
 		ManyfoldEmbrace.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
-		ManyfoldEmbrace.prototype.cost = { "mp": 20 };
+		ManyfoldEmbrace.prototype.cost = {/*see effect()*/};
 		// default this instance's cost to the common element
 		this.cost = Object.assign(this.cost, ManyfoldEmbrace.prototype.cost);
 		ManyfoldEmbrace.prototype.telegraph = new ManyfoldEmbraceTelegraph();
@@ -805,11 +805,11 @@ export class ManyfoldEmbrace extends Spell {
 	effect(sourceChar, targetChar) {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
 	    // now that we have calc'd damage, we can determine the rest of the cost
-	    this.cost["hp"] = this.dmg * 0.5;
+	    this.cost["hp"] = this.dmg * 0.25;
 	    console.log("manyfold embrace deals "+this.dmg+" dmg, costing "+sourceChar.name+" a whopping "+Object.entries(this.cost));
 	    targetChar.stats["hp"] -= this.dmg;
-
-	    // MP cost
+	    // regain some MP from our good ol' huggle
+	    sourceChar.stats.mp += this.dmg * 0.5;
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
@@ -1011,6 +1011,7 @@ export class EldritchHorror extends Entity {
 				"primordial_mandate": new PrimordialMandate(),
 				"pestilence": new Pestilence(),
 				"dark_star": new DarkStar()
+		// todo: add some MP and/or HP healing moves
 		}
 	}
 }
@@ -1026,6 +1027,7 @@ export class HeartOfDarkness extends Entity {
 				"consume": new Consume(),
 				"brass_lantern": new BrassLantern(),
 				"chill_beyond": new ChillBeyond()
+		// todo: add some MP and/or HP healing moves
 		}
 	}
 }

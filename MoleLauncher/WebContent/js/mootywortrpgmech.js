@@ -10,8 +10,7 @@ import {Ability} from "../lib/spellbook.js";
  * 
  * I love the Lunar 1:1 situation where one animation always indicates one ability, but a little uncertainty and/or complexity could really add to it.  Probably best place to shove this system into our current combat model would be at the top of a new round, after the Ai has decided what it's doing and before we process player input such that player can see the telegraph text before choosing their action. 
  */
-// todo: I'm seeing an odd situation where the Yawning God stops actually doing anything (no chosen abl effect call) after the mole attacks a few times?
-//  update: now that the combat log is clearer, this looks like he's just running out of MP.  I kinda forgot about his resource management.
+
 /**
  * Class responsible for defining the RPG mechanics of the Mooty Wort adventure and running combat
  */
