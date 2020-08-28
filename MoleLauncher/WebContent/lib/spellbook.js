@@ -992,9 +992,7 @@ export class Burrower extends Entity {
 			"deep_meditation": new DeepMeditation(),
 			"shadowflare": new ShadowFlare(),
 			"magma_blast": new MagmaBlast(),
-			"static_bolt": new StaticBolt(),
-			// todo: giving the mole this abl is probably a mistake
-			"brass_lantern": new BrassLantern()
+			"static_bolt": new StaticBolt()
 		}
 		Object.assign(Burrower.prototype.spellsDict, Entity.prototype.spellsDict);
 		// redefine mole's attack to restore MP
