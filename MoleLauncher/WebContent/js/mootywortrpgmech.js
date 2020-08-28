@@ -12,13 +12,6 @@ import {Ability} from "../lib/spellbook.js";
  */
 // todo: I'm seeing an odd situation where the Yawning God stops actually doing anything (no chosen abl effect call) after the mole attacks a few times?
 //  update: now that the combat log is clearer, this looks like he's just running out of MP.  I kinda forgot about his resource management.
-// todo: I saw an odd situation where I was low on MP and couldn't cast Magma Blast, then went to Warmest Hug (which I might have been able to afford?), and
-//  when I clicked on mooty to heal him the magma blast effect went off (or at least the flavor text for magma blast was printed).
-//  update: oooh ok I think I get this one now -- basically whenever we choose a targeted abl, ALL possible targets get targeted behavior functions installed
-//  and when a target is click only its ONE targeted function is removed.  All other possible targets keep their targeted functions for the now
-//  historical ability until they get overwritten with a new targeted fn, which doesn't happen if we can't afford the chosen single target abl.
-//  Simplest repro flow is {click shadow flare -> click YG -> click mole -> shadow flare goes off on mole unexpectedly} 
-//  To fix this problem, we ideally would remove all targeted onclick fns from potential targets after any one has actually run their targeted code.
 /**
  * Class responsible for defining the RPG mechanics of the Mooty Wort adventure and running combat
  */
