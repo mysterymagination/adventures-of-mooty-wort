@@ -463,7 +463,7 @@ class MootyWortRpgMech {
 		for(const [ablId, abl] of Object.entries(combatModel.currentTurnOwner.entity.spellsDict)) {
 			if(colCount == 0) {
 				let commandRow = document.createElement("tr");
-				commandRow.className = "command-button-row";
+				//commandRow.className = "command-button-row";
 				combatCommandList.appendChild(commandRow);
 			}
 			if(colCount < 3) {
