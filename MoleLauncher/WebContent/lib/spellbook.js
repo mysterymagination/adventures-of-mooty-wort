@@ -957,22 +957,23 @@ export class DarkStar extends Spell {
 	}
 	calcDmg(sourceChar, targetChar) {
 		return MoleUndum.prettyDarnRound(
-					2 * sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"]
+					2 * sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"] + MoleUndum.rollD20()
 				);
 	}
 	effect(sourceChar, targetChars) {
 		for(let index = 0; index < targetChars.length; index++) {
 	    	// apply damage to target
 	    	let dmg = this.calcDmg(sourceChar, targetChars[index]);
-	    	targetChars[index].stats["hp"] -= this.dmg;
+	    	targetChars[index].stats["hp"] -= dmg;
 	    	this.characterDamageDict[targetChars[index].id] = dmg;
+	    	console.log("dark star effect; dealing "+dmg+" dmg to "+targetChars[index].name);
 	    }
 
 	    // MP cost
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "The burning chill of moonless midnight wrapped in Lady Winter's empty embrace casts a pall of hoarfrost over your fur as the light drains out of the world.  When all is naught but silence and dark, a muted gray pinprick of light appears before you; an offering of hope.  Unable to help yourself, you reach out to it -- the very instant you give over the focus of your mind to its power, it explodes into a blinding nova whose insatiable devouring flames crawl into and over every atom of your being!  Searing light tears into your party as follows: "+this.characterDamageDict; 
+	    return "The burning chill of moonless midnight wrapped in Lady Winter's empty embrace casts a pall of hoarfrost over your fur as the light drains out of the world.  When all is naught but silence and dark, a muted gray pinprick of light appears before you; an offering of hope.  Unable to help yourself, you reach out to it -- the very instant you give over the focus of your mind to its power, it explodes into a blinding nova whose insatiable devouring flames crawl into and over every atom of your being!  Searing light tears into your party as follows: "+Object.entries(this.characterDamageDict); 
 	}
 }
 

@@ -486,12 +486,11 @@ export class YawningGod extends Character {
                     }
                 }
                 
-                // todo: prior to targeting, check if the YG can actually afford the abl he wants to use.
+                // prior to targeting, check if the YG can actually afford the abl he wants to use.
                 //  if not, make him consider a few MP restoring moves
                 if(!this.canAffordCost(chosenAbility)) {
                 	chosenAbility = this.entity.spellsDict["manyfold_embrace"];
                 }
-               
                 
                 /// install target if necessary ///
                 // todo: particular mole attributes or status effects we wanna sniff for?
