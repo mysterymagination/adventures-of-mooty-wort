@@ -186,6 +186,13 @@ class MootyWortRpgMech {
 		return combatModel.controllerState;
 	}
 	/**
+	 * Scrolls the combat log div to the bottom of its current total content
+	 */
+	scrollCombatLog() {
+		var combatLog = document.getElementById("combatLog");
+		combatLog.scrollTo(0, combatLog.scrollHeight);
+	}
+	/**
 	 * Sets the onclick function back to null for each character's canvas element
 	 */
 	clearTargetedHandlers() {
@@ -620,9 +627,17 @@ class MootyWortRpgMech {
 			catImg.style.position = "relative";
 			catImg.style.width = "32px";
 			catImg.style.height = "32px";
+			var arrowTextNode = document.createTextNode("----------->");
+			combatLog.appendChild(catImg);
+			combatLog.appendChild(arrowTextNode);
+			var logTextNode = document.createTextNode(logString);
+			combatLog.appendChild(logTextNode);
 			switch(category) {
 				case MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION:
 					catImg.src = "images/mole_icon.png";
+					// scroll to current bottom of combat log so player's eye lands on the first
+					// event after they input a command, the outcome of that command
+					this.scrollCombatLog();
 					break;
 				case MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION:
 					catImg.src = "images/skull_icon.jpg";
@@ -634,11 +649,6 @@ class MootyWortRpgMech {
 					catImg.src = "images/info_icon.svg";
 					break;
 			}
-			var arrowTextNode = document.createTextNode("----------->");
-			combatLog.appendChild(catImg);
-			combatLog.appendChild(arrowTextNode);
-			var logTextNode = document.createTextNode(logString);
-			combatLog.appendChild(logTextNode);
 		}
 	}
 	/**

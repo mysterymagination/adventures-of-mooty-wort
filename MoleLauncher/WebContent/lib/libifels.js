@@ -155,7 +155,6 @@ export class Libifels {
         }
         return undefined;
     }
-
     /**
      * Finds the first living character in the given array subsequent to index afterIndex 
      * @param characterArray array of Character objects
@@ -204,5 +203,13 @@ export class Libifels {
             return element.id === effect.id;
         });
         character.statusEffects.splice(effectIndex, 1);
+    }
+    /**
+     * Approximately rounds the given floating point number to two decimal points of precision
+     * @param floatingNum the floating point number that needs to be rounded
+     * @return a floating point approximately rounded to 2 decimal places e.g. 1.34567 -> 1.35
+     */
+    static prettyDarnRound(floatingNum) {
+    	return Math.round((floatingNum + Number.EPSILON) * 100) / 100;
     }
 }
