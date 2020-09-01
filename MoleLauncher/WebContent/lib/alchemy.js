@@ -158,19 +158,23 @@ export class Bloodlust extends StatusEffect {
 		this.cachedAtk = 0;
 		this.cachedPwr = 0;
 		this.cachedRes = 0;
+		this.cachedDef = 0;
 	}
 	effect(targetChar) {
 		this.cachedAtk = targetChar.stats["atk"];
 		this.cachedPwr = targetChar.stats["pwr"];
 		this.cachedRes = targetChar.stats["res"];
+		this.cachedDef = targetChar.stats["def"];
 	    targetChar.stats["atk"] *= 4;
 	    targetChar.stats["pwr"] *= 0.5;
 	    targetChar.stats["res"] *= 0.5;
+	    targetChar.stats["def"] *= 0.5;
 	}
 	reverseEffect(targetChar) {
 	    targetChar.stats["atk"] = targetChar.stats["atk"];
 	    targetChar.stats["pwr"] = targetChar.stats["pwr"];
 	    targetChar.stats["res"] = targetChar.stats["res"];
+	    targetChar.stats["def"] = targetChar.stats["def"];
 	}
 }
 

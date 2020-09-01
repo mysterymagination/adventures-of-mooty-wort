@@ -334,10 +334,12 @@ export class HeroAttack extends Attack {
 		// todo: should this value derive from something?
 		this.mpBonusCoefficient = 0.1;
 		this.dmg = 1;
+		this.mpBonus = 0.0;
 	}
 	effect(sourceCharacter, targetCharacter) {
         this.dmg = this.calcDmg(sourceCharacter, targetCharacter);
-        sourceCharacter.stats.mp += this.mpBonusCoefficient * sourceCharacter.stats.maxMP;
+        this.mpBonus = this.mpBonusCoefficient * sourceCharacter.stats.maxMP;
+        sourceCharacter.stats.mp += this.mpBonus; 
         console.log(this.dmg + " dealt by Attack to " + targetCharacter.name +
         		", and the hero regains " + this.mpBonus + " MP due to heroism!");
         // todo: AC? Any other miss chance?
@@ -821,7 +823,7 @@ export class ManyfoldEmbrace extends Spell {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
 	    // now that we have calc'd damage, we can determine the rest of the cost
 	    this.cost["hp"] = this.dmg * 0.25;
-	    console.log("manyfold embrace deals "+this.dmg+" dmg, costing "+sourceChar.name+" a whopping "+Object.entries(this.cost));
+	    console.log("manyfold embrace deals "+this.dmg+" dmg, costing "+sourceChar.name+" a whopping "+Object.entries(this.cost)+". BTW, "+sourceChar.name+"'s atk is "+sourceChar.stats["atk"]+" and pwr is "+sourceChar.stats["pwr"]+" whereas "+targetChar.name+"'s def is merely "+targetChar.stats["def"]);
 	    targetChar.stats["hp"] -= this.dmg;
 	    // regain some MP from our good ol' huggle
 	    sourceChar.stats.mp += this.dmg * 0.5;
