@@ -418,7 +418,7 @@ export class MoleVenom extends Spell {
         this.processCost(sourceChar);
     }
 	generateFlavorText(sourceChar, targetChar) {
-        return "Not many realize that moles are venomous, because, being peaceful and lovey creatures, they so often choose not to employ it.  Most are willing even to risk death rather than risk becoming a killer, and thus will not use venom when fighting back against predators and similar common foebeasts.  When the sanctity of The Deepness is threatened and the ancient things from dark corners of mole memory stir, however... it is a time to kill.  In a flash and with a violent violet flourish, you flick out your veneom spurs and bury them deeply in the flesh of " + targetChar.name;
+        return "Not many realize that moles are venomous, because, being peaceful and lovey creatures, they so often choose not to employ it.  Most are willing even to risk death rather than risk becoming a killer, and thus will not use venom when fighting back against predators and similar common foebeasts.  When the sanctity of The Deepness is threatened and the ancient things from dark corners of mole memory stir, however... it is a time to kill.  In a flash and with a violent violet flourish, you flick out your veneom spurs and bury them deeply in the flesh of " + targetChar.name +", dealing "+this.dmg+" points of damage directly and flooding "+targetChar.getPronoun_possessive()+" veins with "+MoleUndum.getStatusEffectById("poison").psnDmg+" poison points per round!";
     }
 }
 
@@ -538,7 +538,7 @@ export class ShadowFlare extends Spell {
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "Calling upon all the wisdom of his forebears, who were moles of course and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  The subtle conflagration is so overwhelming that "+targetChar.name+"'s very meta-magical field crumbles slightly, unraveling the threads of "+targetChar.getPronoun_possessive()+" existence.";
+	    return "Calling upon all the wisdom of his forebears, who were moles of course and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  The subtle conflagration is so overwhelming that "+targetChar.name+"'s very meta-magical field crumbles slightly, unraveling the threads of "+targetChar.getPronoun_possessive()+" existence.  "+targetChar.getPronoun_personal_subject()+" appears somewhat less substantial afterwards, as if "+targetChar.getPronoun_possessive()+" form longs to be as one with the aether.  As it happens, this hurts exactly as much as "+this.dmg+" damage!";
 	}
 }
 /**
@@ -564,7 +564,7 @@ export class MagmaBlast extends Spell {
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "Thrusting his mighty digging claw into the earth and calling out for aid with all his spirit, the mole summons up a wash of magma from the planet's molten core to engulf his foe!";
+	    return "Thrusting his mighty digging claw into the earth and calling out for aid with all his spirit, the mole summons up a wash of magma from the planet's molten core to engulf his foe in "+this.dmg+" fiery damage!";
 	}
 }
 /**
@@ -588,7 +588,7 @@ export class StaticBolt extends Spell {
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "Shuffling his little paws rapidly, the mole generates a bolt of static electricity; the density of his fur is quite shocking!  With a righteous squeak, he hurls at "+targetChar.name+", disrupting "+targetChar.getPronoun_possessive()+" systems with wild current.";
+	    return "Shuffling his little paws rapidly, the mole generates a bolt of static electricity; the density of his fur is quite shocking!  With a righteous squeak, he hurls at "+targetChar.name+", disrupting "+targetChar.getPronoun_possessive()+" systems with "+this.dmg+" damage points of wild current.";
 	}
 }
 
@@ -602,6 +602,11 @@ export class TouchVoid extends Spell {
 		TouchVoid.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		TouchVoid.prototype.cost = { "mp": 0, "hp": 15 };
 		TouchVoid.prototype.telegraph = new TouchVoidTelegraph();
+		/**
+		 * Flag indicating that the target's lack of mana pool has driven The Grue into a rage,
+		 * and it inflicts all its fury upon the target's corporeal shell instead
+		 */
+		this.rendFlesh = false;
 	}
 	/**
 	 * Calculate the damage to HP or MP to the given target character
@@ -630,13 +635,14 @@ export class TouchVoid extends Spell {
 	    	// apply double damage to target HP, no one is healed
 	    	this.dmg = this.calcDmg(sourceChar, targetChar, false);
 	        targetChar.stats["hp"] -= 2 * this.dmg;
+	        this.rendFlesh = true;
 	    }
 
 	    // MP cost
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "Somehow the darkness near your rump becomes material and seizes you!  Cold infects your being as all the warmth and joy of life bleeds away, slaking the implacable thirst of Darkness.";
+	    return "Somehow the darkness near your rump becomes material and seizes you!  Cold infects your being as all the warmth and joy of life bleeds away, slaking the implacable thirst of Darkness.  "+(this.rendFlesh ? "Finding "+targetChar.name+" devoid of magical substance, "+sourceChar.name+" inflicts "+sourceChar.getPronoun_possessive()+" full rage upon "+targetChar.getPronoun_personal_object()+" corporeal shell to the tune of "+(2*this.dmg)+"!" : sourceChar.name+" sips lightly from the cup of life and spirit that is "+targetChar.name+" to "+sourceChar.getPronoun_personal_object()+", slurping down "+this.dmg+" damage points worth of blood, bone, and brains in an instant!");
 	}
 }
 /**
@@ -679,7 +685,7 @@ export class Consume extends Spell {
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "A thunderclap of malevolent intent momentarily deafens you; in the midst of that silence, when the wave of emptiness in your surroundings seems to reach its peak, a lightning flash of fangs manifests out of nothing in a rictus grin.  Jaws spreading wide, it chomps down and attempts to swallow you whole!  "+(targetChar["hp"] <= 0 ? "Your bloodsoaked fur helps ease your way on in and down, and in an instant the champion of Deepness is consumed." : "Your bulk and mighty constitution prevent you from sliding down the creature's gullet, but the fangs are still able to tear into your flesh."); 
+	    return "A thunderclap of malevolent intent momentarily deafens you; in the midst of that silence, when the wave of emptiness in your surroundings seems to reach its peak, a lightning flash of fangs manifests out of nothing in a rictus grin.  Jaws spreading wide, it chomps down and attempts to swallow you whole!  "+(targetChar["hp"] <= 0 ? "Your bloodsoaked fur helps ease your way on in and down, and in an instant the champion of Deepness is consumed." : "Your bulk and mighty constitution prevent you from sliding down the creature's gullet, but the fangs are still able to tear into "+(targetChar.stats.maxHP * 0.5)+" damages' worth of your flesh."); 
 	}
 }
 /**
@@ -712,15 +718,15 @@ export class BrassLantern extends Spell {
 	}
 	effect(sourceChar, targetChar) {
 		// deal damage equal to target's current mag pwr
-	    targetChar["hp"] -= targetChar["pwr"];
+	    targetChar.stats["hp"] -= targetChar.stats["pwr"];
 	    // increase mag pwr as the mystic inferno infuses target's soul
-	    targetChar["pwr"] *= 2;
+	    targetChar.stats["pwr"] *= 2;
 	    	
 	    // MP cost
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "A fierce gold light burns its way out of the darkness, revealing a small brass lantern.  Inside, a flame flickers violently, tauntingly, before flaring into a raging inferno that rolls over "+targetChar.name+" like a blanket of elemental destruction!  "+targetChar.name+" can feel thoughts and emotions swirl in "+targetChar.getPronoun_possessive()+" mind as "+targetChar.getPronoun_personal_subject()+" burns, dreams flitting past "+targetChar.getPronoun_possessive()+" mind's eye and feeding the conflagration.  "+(targetChar["hp"] > 0 ? "As the flames roll over "+targetChar.getPronoun_personal_object()+", through the crippling agony "+targetChar.name+" feels a resonant power welling up ever higher..." : ""); 
+	    return "A fierce gold light burns its way out of the darkness, revealing a small brass lantern.  Inside, a flame flickers violently, tauntingly, before flaring into a raging inferno that rolls over "+targetChar.name+" like a blanket of elemental destruction!  "+targetChar.name+" can feel thoughts and emotions swirl in "+targetChar.getPronoun_possessive()+" mind as "+targetChar.getPronoun_personal_subject()+" burns, dreams flitting past "+targetChar.getPronoun_possessive()+" mind's eye and feeding the conflagration.  "+(targetChar.stats["hp"] > 0 ? "As "+(targetChar.stats.pwr)+" damage of flames roll over "+targetChar.getPronoun_personal_object()+", through the crippling agony "+targetChar.name+" feels a resonant power welling up ever higher..." : ""); 
 	}
 }
 
@@ -769,7 +775,7 @@ export class ChillBeyond extends Spell {
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "While the darkness in your beloved Deepness gets warmer as it closes in thanks to the proximity to magma, the darkness of the infinite Void beyond all worlds is a place of unfathomable cold.  With all the gentleness and decorum of a voratious graveworm, this alien darkness wriggles into the comforting blanket of blackness surrounding you.  Its inception robs your world of warmth entirely and in an instant you are frozen solid!  Refracted through the infinite facets of the glacial translucence is a rictus grin bursting with fangs..."; 
+	    return "While the darkness in your beloved Deepness gets warmer as it closes in thanks to the proximity to magma, the darkness of the infinite Void beyond all worlds is a place of unfathomable cold.  With all the gentleness and decorum of a voratious graveworm, this alien darkness wriggles into the comforting blanket of blackness surrounding you.  Its inception robs your world of warmth entirely and in an instant you are frozen solid!  Refracted through the infinite facets of the glacial translucence is a rictus grin bursting with fangs... this is quite terrifying, as is the "+this.dmg+" points of damage it brings!"; 
 	}
 }
 /**
@@ -807,8 +813,8 @@ export class ManyfoldEmbrace extends Spell {
 	    // idea is the source is transforming tentacles into mighty spiked cudgels
 		// using magic and then buffeting the target with them
 		return MoleUndum.prettyDarnRound(
-					1.5 * (sourceChar.stats["atk"] + sourceChar.stats["pwr"]) 
-					- 0.5 * targetChar.stats["def"]
+					0.5*sourceChar.stats["atk"] + 0.5*sourceChar.stats["pwr"]
+					- 0.5*targetChar.stats["def"]
 				);
 	}
 	effect(sourceChar, targetChar) {
@@ -822,7 +828,7 @@ export class ManyfoldEmbrace extends Spell {
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "An oily blackness like the surface of an unfathomable lake on a moonless night oozes over The God's spongy fishbelly-white flesh, and in a blinding flash of electric purple a series of serrated spikes have materialized in its wake!  With all the looming inevitability of death itself, he descends upon "+targetChar.name+" and wraps  his innumerable tentacles about "+targetChar.getPronoun_personal_object()+" in a crushing embrace."; 
+	    return "An oily blackness like the surface of an unfathomable lake on a moonless night oozes over The God's spongy fishbelly-white flesh, and in a blinding flash of electric purple a series of serrated spikes have materialized in its wake!  With all the looming inevitability of death itself, he descends upon "+targetChar.name+" and wraps  his innumerable tentacles about "+targetChar.getPronoun_personal_object()+" in a crushing embrace.  "+this.dmg+" damage points' worth of "+targetChar.getPronoun_possessive()+" bones are crushed!"; 
 	}
 }
 
@@ -944,6 +950,10 @@ export class DarkStar extends Spell {
 		DarkStar.prototype.targetType = Ability.TargetTypesEnum.allEnemies;
 		DarkStar.prototype.cost = { "mp": 25 };
 		DarkStar.prototype.telegraph = new DarkStarTelegraph();
+		/**
+		 * Associates damage most recently dealt with the id of the character it was dealt to
+		 */
+		this.characterDamageDict = {};
 	}
 	calcDmg(sourceChar, targetChar) {
 		return MoleUndum.prettyDarnRound(
@@ -953,15 +963,16 @@ export class DarkStar extends Spell {
 	effect(sourceChar, targetChars) {
 		for(let index = 0; index < targetChars.length; index++) {
 	    	// apply damage to target
-	    	this.dmg = this.calcDmg(sourceChar, targetChars[index]);
+	    	let dmg = this.calcDmg(sourceChar, targetChars[index]);
 	    	targetChars[index].stats["hp"] -= this.dmg;
+	    	this.characterDamageDict[targetChars[index].id] = dmg;
 	    }
 
 	    // MP cost
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "The burning chill of moonless midnight wrapped in Lady Winter's empty embrace casts a pall of hoarfrost over your fur as the light drains out of the world.  When all is naught but silence and dark, a muted gray pinprick of light appears before you; an offering of hope.  Unable to help yourself, you reach out to it -- the very instant you give over the focus of your mind to its power, it explodes into a blinding nova whose insatiable devouring flames crawl into and over every atom of your being!"; 
+	    return "The burning chill of moonless midnight wrapped in Lady Winter's empty embrace casts a pall of hoarfrost over your fur as the light drains out of the world.  When all is naught but silence and dark, a muted gray pinprick of light appears before you; an offering of hope.  Unable to help yourself, you reach out to it -- the very instant you give over the focus of your mind to its power, it explodes into a blinding nova whose insatiable devouring flames crawl into and over every atom of your being!  Searing light tears into your party as follows: "+this.characterDamageDict; 
 	}
 }
 
@@ -1023,7 +1034,6 @@ export class EldritchHorror extends Entity {
 				"primordial_mandate": new PrimordialMandate(),
 				"pestilence": new Pestilence(),
 				"dark_star": new DarkStar()
-		// todo: add some MP and/or HP healing moves
 		}
 	}
 }
@@ -1039,7 +1049,6 @@ export class HeartOfDarkness extends Entity {
 				"consume": new Consume(),
 				"brass_lantern": new BrassLantern(),
 				"chill_beyond": new ChillBeyond()
-		// todo: add some MP and/or HP healing moves
 		}
 	}
 }
