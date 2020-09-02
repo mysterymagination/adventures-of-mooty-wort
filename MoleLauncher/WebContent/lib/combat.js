@@ -102,7 +102,8 @@ export class Combat {
                     }
 
                     effect.tickDown();
-                    if (effect.ticks <= 0) {
+                    // lt 0 because we don't want to count the turn in which the effect is applied
+                    if (effect.ticks < 0) {
                         // reverse the effect now that it is over
                         effect.reverseEffect(enemyCharacter);
                         // reset the ticks count to duration in case we

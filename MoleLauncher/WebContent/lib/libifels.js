@@ -65,7 +65,7 @@ export class Libifels {
     @return true if the status effect is found, false otherwise
     */
     static hasStatusEffect(character, effectId) {
-        return character.statusEffects.includes(effectId);
+        return character.statusEffects.some(effectUnderTest => effectId === effectUnderTest.id);
     }
     /**
     Checks a given character for a given status effect and returns the discovered status effect instance

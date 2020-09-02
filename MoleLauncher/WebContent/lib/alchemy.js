@@ -152,7 +152,7 @@ Bloodlust quadruples STR in exchange for halving all mental attributes
 */
 export class Bloodlust extends StatusEffect {
 	constructor() {
-		super({id: "bloodlust", name: "Bloodlust", duration: 3});
+		super({id: "bloodlust", name: "Bloodlust", duration: 2});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
 		this.cachedAtk = 0;
@@ -171,10 +171,11 @@ export class Bloodlust extends StatusEffect {
 	    targetChar.stats["def"] *= 0.5;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["atk"] = targetChar.stats["atk"];
-	    targetChar.stats["pwr"] = targetChar.stats["pwr"];
-	    targetChar.stats["res"] = targetChar.stats["res"];
-	    targetChar.stats["def"] = targetChar.stats["def"];
+		// restore stats BUT cycle 'em to keep things spiiiiiicy!
+	    targetChar.stats["atk"] = this.cachedDef;
+	    targetChar.stats["pwr"] = this.cachedAtk;
+	    targetChar.stats["res"] = this.cachedPwr;
+	    targetChar.stats["def"] = this.cachedRes;
 	}
 }
 

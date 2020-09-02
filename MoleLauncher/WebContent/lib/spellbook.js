@@ -1038,6 +1038,7 @@ export class EldritchHorror extends Entity {
 				"pestilence": new Pestilence(),
 				"dark_star": new DarkStar()
 		}
+		Object.assign(EldritchHorror.prototype.spellsDict, Entity.prototype.spellsDict);
 	}
 }
 
@@ -1053,6 +1054,7 @@ export class HeartOfDarkness extends Entity {
 				"brass_lantern": new BrassLantern(),
 				"chill_beyond": new ChillBeyond()
 		}
+		Object.assign(HeartOfDarkness.prototype.spellsDict, Entity.prototype.spellsDict);
 	}
 }
     
