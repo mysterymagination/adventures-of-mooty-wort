@@ -482,6 +482,8 @@ export class YawningGod extends Character {
                 if(chosenAbility.id === "primordial_mandate") {
                 	if (Lib.MoleUndum.hasStatusEffect(this, "bloodlust")) {
                 		// todo: logic for reselection?
+                		// todo: it turns out a bloodlusted attack from the YG is basically a one-hit kill
+                		//  to the mole... maybe just have the YG vogue on this round or something
                 		chosenAbility = this.entity.spellsDict["attack"];
                     }
                 }

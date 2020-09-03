@@ -306,6 +306,7 @@ export class Attack extends Ability {
 	constructor() {
 		super({id: "attack", name: "Attack"});
 		this.targetType = Ability.TargetTypesEnum.singleTarget;
+		Attack.prototype.telegraph = new AttackTelegraph();
 	}
 	calcDmg(sourceCharacter, targetCharacter) {
         // favor the STR since the attacker is the leading participant
@@ -323,6 +324,22 @@ export class Attack extends Ability {
     generateFlavorText(sourceCharacter, targetCharacter) {
         return sourceCharacter.name + " strikes " + targetCharacter.name + " a mighty blow, dealing " + this.dmg + " damages!";
     };
+}
+
+/**
+ * Telegraphs a basic attack
+ */
+class AttackTelegraph extends Telegraph {
+	constructor() {
+		super();
+		AttackTelegraph.prototype.fxTagArray = ["berserk", "quake", "visceral"];
+		AttackTelegraph.prototype.telegraphTemplateStringArray = [
+			"A [berserk] light gleams in your enemy's eye.",
+			"[quake] rumbles as the monstrous foes ready their weapons.",
+			"Dread simultaneously exestential and visceral floods your spirit as your enemies' weapons gleam, highlighted by the encroaching abyss, [visceral]."
+		];
+		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
+	}
 }
 
 /**
@@ -347,6 +364,9 @@ export class HeroAttack extends Attack {
     }
 }
 
+/**
+ * Ability that adds the Defended status effect, increasing def and res
+ */
 export class Defend extends Ability {
 	constructor() {
 		super({id: "defend", name: "Defend"});

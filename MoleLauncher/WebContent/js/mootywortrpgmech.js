@@ -447,9 +447,9 @@ class MootyWortRpgMech {
 	updateCharacterData(combatModel) {
 		for(const player of combatModel.playerParty) {
 			let uiHandle = this.playerCharacterUiDict[player.id];
-			uiHandle.hpElement.innerHTML = player.stats["hp"];
+			uiHandle.hpElement.innerHTML = Math.ceil(player.stats["hp"]);
 			uiHandle.hpProgressElement.value = player.stats["hp"] / player.stats["maxHP"];
-			uiHandle.mpElement.innerHTML = player.stats["mp"];
+			uiHandle.mpElement.innerHTML = Math.ceil(player.stats["mp"]);
 			uiHandle.mpProgressElement.value = player.stats["mp"] / player.stats["maxMP"]
 		}
 		for(const enemy of combatModel.enemyParty) {
