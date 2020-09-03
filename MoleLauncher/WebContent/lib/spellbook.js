@@ -306,7 +306,6 @@ export class Attack extends Ability {
 	constructor() {
 		super({id: "attack", name: "Attack"});
 		this.targetType = Ability.TargetTypesEnum.singleTarget;
-		Attack.prototype.telegraph = new AttackTelegraph();
 	}
 	calcDmg(sourceCharacter, targetCharacter) {
         // favor the STR since the attacker is the leading participant
@@ -326,14 +325,35 @@ export class Attack extends Ability {
     };
 }
 
+export class DummyAttack extends Ability {
+	constructor() {
+		super({id: "dummy_attack", name: "Attack"});
+		this.targetType = Ability.TargetTypesEnum.singleTarget;
+		DummyAttack.prototype.telegraph = new DummyAttackTelegraph();
+	}
+	calcDmg(sourceCharacter, targetCharacter) {
+        return MoleUndum.prettyDarnRound(
+        			sourceCharacter.stats["atk"] * 0.5 - targetCharacter.stats["def"] / 4 + Math.random() * 10
+        		);
+    };
+    effect(sourceCharacter, targetCharacter) {
+        this.dmg = this.calcDmg(sourceCharacter, targetCharacter);
+        console.log(this.dmg + " dealt by Attack to " + targetCharacter.name);
+        targetCharacter.stats.hp -= this.dmg;
+    }
+    generateFlavorText(sourceCharacter, targetCharacter) {
+        return sourceCharacter.name + " strikes " + targetCharacter.name + " a middlin blow, dealing " + this.dmg + " damages!";
+    };
+}
+
 /**
- * Telegraphs a basic attack
+ * Telegraphs a basic attack, purposefully weaker than player Attack abl
  */
-class AttackTelegraph extends Telegraph {
+class DummyAttackTelegraph extends Telegraph {
 	constructor() {
 		super();
-		AttackTelegraph.prototype.fxTagArray = ["berserk", "quake", "visceral"];
-		AttackTelegraph.prototype.telegraphTemplateStringArray = [
+		DummyAttackTelegraph.prototype.fxTagArray = ["berserk", "quake", "visceral"];
+		DummyAttackTelegraph.prototype.telegraphTemplateStringArray = [
 			"A [berserk] light gleams in your enemy's eye.",
 			"[quake] rumbles as the monstrous foes ready their weapons.",
 			"Dread simultaneously exestential and visceral floods your spirit as your enemies' weapons gleam, highlighted by the encroaching abyss, [visceral]."
@@ -1056,9 +1076,9 @@ export class EldritchHorror extends Entity {
 				"manyfold_embrace": new ManyfoldEmbrace(),
 				"primordial_mandate": new PrimordialMandate(),
 				"pestilence": new Pestilence(),
-				"dark_star": new DarkStar()
+				"dark_star": new DarkStar(),
+				"dummy_attack": new DummyAttack()
 		}
-		Object.assign(EldritchHorror.prototype.spellsDict, Entity.prototype.spellsDict);
 	}
 }
 
