@@ -309,9 +309,8 @@ export class Attack extends Ability {
 	}
 	calcDmg(sourceCharacter, targetCharacter) {
         // favor the STR since the attacker is the leading participant
-        // todo: yeesh, balance.  
         return MoleUndum.prettyDarnRound(
-        			sourceCharacter.stats["atk"] * 2 - targetCharacter.stats["def"] / 4 + Math.random() * 10
+        			Math.max(sourceCharacter.stats["atk"] * 2 - targetCharacter.stats["def"] / 4 + Math.random() * 10, 1)
         		);
     };
     effect(sourceCharacter, targetCharacter) {
@@ -333,7 +332,7 @@ export class DummyAttack extends Ability {
 	}
 	calcDmg(sourceCharacter, targetCharacter) {
         return MoleUndum.prettyDarnRound(
-        			sourceCharacter.stats["atk"] * 0.5 - targetCharacter.stats["def"] / 4 + Math.random() * 10
+        			Math.max(sourceCharacter.stats["atk"] * 0.5 - targetCharacter.stats["def"] / 4 + Math.random() * 10, 1)
         		);
     };
     effect(sourceCharacter, targetCharacter) {
@@ -474,7 +473,7 @@ export class WarmestHug extends Spell {
 		WarmestHug.prototype.cost = { "mp": 20 };
 	}
 	calcDmg(sourceChar, targetChar) {
-	    return MoleUndum.prettyDarnRound(sourceChar.stats["atk"]);
+	    return Math.max(MoleUndum.prettyDarnRound(sourceChar.stats["atk"], 1));
 	}
 	effect(sourceChar, targetChar) {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
@@ -504,7 +503,7 @@ export class WoollyShield extends Spell {
 	}
 	calcDmg(sourceChar, targetChar) {
 	    return MoleUndum.prettyDarnRound(
-	    			sourceChar.stats["def"] + sourceChar.stats["res"]
+	    			Math.max(sourceChar.stats["def"] + sourceChar.stats["res"], 1)
 	    		);
 	}
 	effect(sourceChar, targetChar) {
@@ -569,7 +568,7 @@ export class ShadowFlare extends Spell {
 		ShadowFlare.prototype.cost = { "mp": 50 };
 	}
 	calcDmg(sourceChar, targetChar) {
-	    return MoleUndum.prettyDarnRound(2 * sourceChar.stats["pwr"]);
+	    return Math.max(MoleUndum.prettyDarnRound(2 * sourceChar.stats["pwr"]), 1);
 	}
 	effect(sourceChar, targetChar) {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
@@ -593,7 +592,7 @@ export class MagmaBlast extends Spell {
 		MagmaBlast.prototype.cost = { "mp": 25 };
 	}
 	calcDmg(sourceChar, targetChar) {
-	    return MoleUndum.prettyDarnRound(sourceChar.stats["pwr"]);
+	    return Math.max(MoleUndum.prettyDarnRound(sourceChar.stats["pwr"] + Math.random() * 21 + 10), 1);
 	}
 	effect(sourceChar, targetChar) {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
@@ -619,7 +618,7 @@ export class StaticBolt extends Spell {
 		StaticBolt.prototype.cost = { "mp": 30 };
 	}
 	calcDmg(sourceChar, targetChar) {
-	    return MoleUndum.prettyDarnRound(sourceChar.stats["pwr"]);
+	    return Math.max(MoleUndum.prettyDarnRound(sourceChar.stats["pwr"] + MoleUndum.rollD20()), 1);
 	}
 	effect(sourceChar, targetChar) {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
@@ -663,7 +662,7 @@ export class TouchVoid extends Spell {
 		} else {
 			aspectDamage = sourceChar.stats["atk"] - 0.5 * targetChar.stats["def"];
 		}
-		return MoleUndum.prettyDarnRound(aspectDamage);
+		return Math.max(MoleUndum.prettyDarnRound(aspectDamage), 1);
 	}
 	effect(sourceChar, targetChar) {
 	    if(targetChar.stats["mp"] > 0) {
@@ -801,7 +800,7 @@ export class ChillBeyond extends Spell {
 	}
 	calcDmg(sourceChar, targetChar) {
 		return MoleUndum.prettyDarnRound(
-					sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"]
+					Math.max(sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"], 1)
 				);
 	}
 	effect(sourceChar, targetChar) {
@@ -854,9 +853,10 @@ export class ManyfoldEmbrace extends Spell {
 	calcDmg(sourceChar, targetChar) {
 	    // idea is the source is transforming tentacles into mighty spiked cudgels
 		// using magic and then buffeting the target with them
-		return MoleUndum.prettyDarnRound(
+		return Math.max(
+				MoleUndum.prettyDarnRound(
 					0.5*sourceChar.stats["atk"] + 0.5*sourceChar.stats["pwr"]
-					- 0.5*targetChar.stats["def"]
+					- 0.5*targetChar.stats["def"]), 1
 				);
 	}
 	effect(sourceChar, targetChar) {
@@ -901,8 +901,9 @@ export class Pestilence extends Spell {
 		Pestilence.prototype.telegraph = new PestilenceTelegraph();
 	}
 	calcDmg(sourceChar, targetChar) {
-		return MoleUndum.prettyDarnRound(
-					sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"]
+		return Math.max(
+				MoleUndum.prettyDarnRound(
+					sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"]), 1
 				);
 	}
 	effect(sourceChar, targetChars) {
@@ -998,8 +999,9 @@ export class DarkStar extends Spell {
 		this.characterDamageDict = {};
 	}
 	calcDmg(sourceChar, targetChar) {
-		return MoleUndum.prettyDarnRound(
-					2 * sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"] + MoleUndum.rollD20()
+		return Math.max(
+				MoleUndum.prettyDarnRound(
+					2 * sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"] + MoleUndum.rollD20()), 1
 				);
 	}
 	effect(sourceChar, targetChars) {
