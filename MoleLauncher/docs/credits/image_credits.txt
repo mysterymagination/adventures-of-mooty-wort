@@ -35,3 +35,32 @@ info_icon.svg:
 
 skull_icon.jpg:
 "Skull" by howzey is licensed under CC BY-NC-ND 2.0
+
+manyfold mebrace - octopussy3.png
+public domain by 5pr1n6
+https://opengameart.org/content/miscellaneous-octopi
+
+primordial mandate - bloodmagic.png
+public domain by Cethiel
+https://opengameart.org/content/blood-magic-effect
+
+pestilence - Effect47.png
+CC-BY 3.0 Soluna Software
+https://opengameart.org/content/explosion-effects-and-more
+
+dark star - Aura38.png
+CC-BY 3.0 Soluna Software
+https://opengameart.org/content/explosion-effects-and-more
+
+attack - Firework.png
+public domain by jellyfizh
+https://opengameart.org/content/fireworks-effect-spritesheet
+
+dummy attack - Poof.png
+public domain by jellyfizh
+https://opengameart.org/content/poof-effect-spritesheet
+
+
+
+
+
