@@ -60,7 +60,9 @@ dummy attack - Poof.png
 public domain by jellyfizh
 https://opengameart.org/content/poof-effect-spritesheet
 
-
+touch of the void - ArcaneEffect.png
+public domain by Cethiel
+https://opengameart.org/content/arcane-magic-effect
 
 
 
