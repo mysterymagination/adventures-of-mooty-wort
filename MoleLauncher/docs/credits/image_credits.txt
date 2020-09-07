@@ -60,9 +60,41 @@ dummy attack - Poof.png
 public domain by jellyfizh
 https://opengameart.org/content/poof-effect-spritesheet
 
-touch of the void - ArcaneEffect.png
+chill beyond - chillbeyond.png
+public domain by CodeManu
+https://opengameart.org/content/pixel-fx-pack
+https://codemanu.itch.io/particle-fx-designer
+
+touch of void - monster_flesh_eye_sheet.png
+public domain by Sean Noonan
+https://opengameart.org/content/top-down-tentacle-creature
+
+consume - monster_flesh_teeth_sheet.png
+public domain by Sean Noonan
+https://opengameart.org/content/top-down-tentacle-creature
+
+brass lantern - fire_trail.png
+public domain by zonked
+https://opengameart.org/content/pixel-flame-vfx
+
+static bolt - lit.png
+CC-BY-SA 4.0 by Hansjörg Malthaner
+http://opengameart.org/users/varkalandar
+
+shadow flare - ArcaneEffect.png
 public domain by Cethiel
 https://opengameart.org/content/arcane-magic-effect
 
+warmest hug - nature.png
+public domain by Cethiel
+https://opengameart.org/content/nature-magic-effect
+
+deep meditation - warp.png
+CC-BY 3.0 by Skorpio
+https://opengameart.org/content/warp-effect-2
+
+magma bolt - bolt.png
+public domain by LetargicDev
+https://opengameart.org/content/simple-spell-effect
 
 
