@@ -56,6 +56,10 @@ attack - Firework.png
 public domain by jellyfizh
 https://opengameart.org/content/fireworks-effect-spritesheet
 
+defend - defend.png
+CC-BY 3.0 by Clint Bellanger
+https://opengameart.org/content/shield-spell
+
 dummy attack - Poof.png
 public domain by jellyfizh
 https://opengameart.org/content/poof-effect-spritesheet
@@ -76,6 +80,9 @@ https://opengameart.org/content/top-down-tentacle-creature
 brass lantern - fire_trail.png
 public domain by zonked
 https://opengameart.org/content/pixel-flame-vfx
+              - boulder_creation.png
+CC-BY 3.0 by TheValar
+https://opengameart.org/content/boulder-creation-animation
 
 static bolt - lit.png
 CC-BY-SA 4.0 by Hansjörg Malthaner
@@ -97,4 +104,12 @@ magma bolt - bolt.png
 public domain by LetargicDev
 https://opengameart.org/content/simple-spell-effect
 
+wooly shield - wooly_shield.png
+(shield) public domain by LordNeo
+https://opengameart.org/content/round-shield-64x64
+(rock) CC-BY-SA 3.0 by phaelax
+https://opengameart.org/content/asteroids
 
+burrow furrow - axes.png
+public domain by AntumDeluge
+https://opengameart.org/content/cc0-axe-icons
