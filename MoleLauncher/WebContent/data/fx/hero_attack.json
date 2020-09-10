@@ -1,0 +1,9 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/Firework.png",	
+    "columns": 6,
+    "rows": 5,
+    "frameWidthPx": 256,
+    "frameHeightPx": 256,
+    "frameCount": 30	
+}

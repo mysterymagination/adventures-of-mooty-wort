@@ -201,6 +201,174 @@ class MootyWortRpgMech {
 		}
 	}
 	/**
+	   * Draws a single frame from the given sprite sheet over the entire canvas, scaling automatically
+	   * @param fxData an object with spritesheet animation FX config data, including the URL to the spritesheet image file
+	   * @param frameIdx the 0-based index of the frame we want to extract from the spritesheet
+	   * @param canvas the Canvas we want to draw on
+	   */
+	  drawFrame(fxData, frameIdx, canvas) {
+	    // todo: convert from fiddle
+		  // todo: create new Image, load its src as fxData.resName, and in the loaded cb do the actual frame extract and canvas drawing work
+	    console.log("drawFrame; looked up " + spriteSheetData.columns + "x" + spriteSheetData.rows + " sprite sheet");
+	    var context2d = canvas.getContext('2d');
+	    // clear frame
+	    context2d.clearRect(0, 0, canvas.width, canvas.height);
+	    // determine image frame dimens
+	    var srcX = frameIdx % spriteSheetData.columns * spriteSheetData.frameWidthPx;
+	    var srcY = Math.floor(frameIdx / spriteSheetData.columns) * spriteSheetData.frameHeightPx;
+	    var srcWidth = spriteSheetData.frameWidthPx;
+	    var srcHeight = spriteSheetData.frameHeightPx;
+	    /*
+	    var dstWidth = spriteSheetData.frameWidthPx;//canvas.offsetWidth;
+	    var dstHeight = spriteSheetData.frameHeightPx;//canvas.offsetHeight;
+	    */
+
+
+	    var dstWidth = canvas.offsetWidth;
+	    var dstHeight = canvas.offsetHeight;
+	    // draw the image frame
+	    context2d.drawImage(
+	      spriteSheetData.image,
+	      srcX,
+	      srcY,
+	      srcWidth,
+	      srcHeight,
+	      0,
+	      0,
+	      dstWidth,
+	      dstHeight
+	    );
+	    console.log("sourcing from " + srcX + "x" + srcY + " out to " + (srcX + srcWidth) + "x" + (srcY + srcHeight) + ".  Destination is 0x0 out to " + dstWidth + "x" + dstHeight);
+	  }
+	/**
+	 * Makes the spell FX overlay canvas visible and populates it with
+	 * the FX data associated with the given spellId available on the given character
+	 * @param sourceCharacter the Character object casting the spell, in whose Entity.spellDict 
+	 *        the spell object and its FX data can be found
+	 * @param spellId the string id of the spell whose FX should render
+	 */
+	showSpellEffectOverlay(sourceCharacter, spellId) {
+		// todo: convert from fiddle
+		console.log("showing overlay fx for spell " + spellId);
+		var overlayCanvas = document.getElementById("effectsOverlayCanvas");
+		console.log("before setting overlay canvas dimens they are " + overlayCanvas.width + "x" + overlayCanvas.height);
+		overlayCanvas.style.width = "100%";
+		overlayCanvas.style.height = "100%";
+		overlayCanvas.width = overlayCanvas.offsetWidth;
+		overlayCanvas.height = overlayCanvas.offsetHeight;
+		console.log("after setting overlay canvas dimens they are " + overlayCanvas.width + "x" + overlayCanvas.height);
+
+		// todo: XMLHTTPRequest on up our json fx data file, and put the usage of its data in a lambda
+		//  that'll get called once the file is loaded 
+		var spell = sourceCharacter.entity.spellsDict[spellId];
+		var request = new XMLHttpRequest();
+		request.open('GET', spell.fxDataFileName);
+		request.responseType = 'json';
+		request.onload = function() {
+			// since we indicated responseType json, our response should already by a JS object defining our FX data
+			var fxData = request.response;
+			// todo: use FX data object to start FX
+			// show spell anim in overlay
+			var frameSkipCount = 0;
+			var frameIdx = 0;
+			var sheetAnimFn = function(elapsedTime) {
+				if (frameSkipCount == 0) {
+					// action frame!
+					g_combatController.drawFrame(spellId, frameIdx, overlayCanvas);
+					frameIdx++;
+				}
+
+				if (frameIdx < fxData.frameCount) {
+					window.requestAnimationFrame(sheetAnimFn);
+				} else {
+					hideSpellEffectOverlay();
+					playPainAnimation(this.characterUiDict[sourceCharacter.id]);
+				}
+
+				frameSkipCount++;
+				if(frameSkipCount == 15) {
+					frameSkipCount = 0;
+				}
+			}
+			window.requestAnimationFrame(sheetAnimFn);
+		}
+		request.send();
+	}
+
+	/**
+	 * Makes the spell FX overlay canvas invisible
+	 */
+	hideSpellEffectOverlay() {
+		// todo: convert from fiddle
+		// todo: fadeout spell graphic before hiding overlay?
+		var overlayCanvas = document.getElementById("effectsOverlayCanvas");
+		overlayCanvas.style.width = "0px";
+		overlayCanvas.style.height = "0px";
+		overlayCanvas.width = overlayCanvas.offsetWidth;
+		overlayCanvas.height = overlayCanvas.offsetHeight;
+	}
+
+	/**
+	 * Plays out the pain state wiggle and flash red animation
+	 * on the given character UI data's canvas
+	 * @param the UI data object representing the views associated with
+	 *        the pained character
+	 */
+	playPainAnimation(characterUiData) {
+		// show hurt anim on target sprite
+		// todo: convert from fiddle
+		var yawningGodCanvas = document.getElementById("enemyYawningGodCanvas");
+		var context2d = yawningGodCanvas.getContext("2d");
+		var alphaPerc = 1.0;
+		var lastFrameTime = undefined;
+		var frameCount = 0;
+		var yawningGodImage = new Image(); // Create new img element
+		yawningGodImage.addEventListener('load', function() {
+			console.log("yawning god sprite loaded");
+			// ok, we've got our sprite image ref afresh
+			// start shake anim
+			yawningGodCanvas.className = "character-image-hurting";
+
+			// define animation loop
+			var animYawningGod = function(frameTimestamp) {
+				// init assign
+				if (lastFrameTime === undefined) {
+					lastFrameTime = frameTimestamp;
+				}
+				// measure time since last frame (initially 0)
+				var elapsedTimeSinceLastFrame = frameTimestamp - lastFrameTime;
+				frameCount++;
+
+				// redraw sprite 
+				context2d.drawImage(yawningGodImage, 0, 0);
+				// draw increasingly translucent red over the sprite
+				context2d.fillStyle = "rgba(255, 0, 0, " + alphaPerc + ")";
+				context2d.fillRect(0, 0, yawningGodCanvas.width, yawningGodCanvas.height);
+				if (frameCount >= 5 && alphaPerc > 0) {
+					// decrease opacity
+					alphaPerc -= elapsedTimeSinceLastFrame / 100;
+					frameCount = 0;
+				}
+				if (alphaPerc == 0) {
+					// end anim
+					yawningGodCanvas.className = "character-image";
+				} else {
+					if (alphaPerc < 0) {
+						// we underflowed; set 0 and let one more frame go by to give us the unfiltered image as the final render
+						alphaPerc = 0;
+					}
+					window.requestAnimationFrame(animYawningGod);
+				}
+				// update lastFrametime now that this frame is processed 
+				lastFrameTime = frameTimestamp;
+			}
+			// kick off animation
+			window.requestAnimationFrame(animYawningGod);
+		}, false);
+		// set image src to kick off loading
+		yawningGodImage.src = 'http://crescogames.x10hosting.com/sprite7.png';
+	}
+	/**
 	 * Render the gfx for an ability 
 	 * @param ability the Ability whose associated gfx should render
 	 * @param sourceCharacter the Character who is using the given ability

@@ -239,6 +239,10 @@ export class Ability {
 	constructor(configObj) {
 		this.id = configObj.id;
 		this.name = configObj.name;
+		/**
+		 * The string name of the FX data JSON file for this ability
+		 */
+		this.fxDataFileName = "data/fx/"+this.id;
 
 		// metadata about who the ability targets, namely you, all allies,
 		// one enemy, or all enemies.
@@ -367,6 +371,8 @@ class DummyAttackTelegraph extends Telegraph {
 export class HeroAttack extends Attack {
 	constructor() {
 		super();
+		this.id = "hero_attack";
+		this.name = "Hero Attack";
 		// todo: should this value derive from something?
 		this.mpBonusCoefficient = 0.1;
 		this.dmg = 1;
