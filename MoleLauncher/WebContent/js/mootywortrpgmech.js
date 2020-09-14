@@ -263,7 +263,7 @@ class MootyWortRpgMech {
 	 * @param canvas the Canvas we want to draw on
 	 */
 	drawSpellFxFrame(spriteSheetImage, spriteSheetData, frameIdx, canvas) {
-		console.log("drawSpellFxFrame; drawing frame index "+frameIdx+" of " + spellFxData.columns + "x" + spellFxData.rows + " sprite sheet "+spellFxData.resName);
+		console.log("drawSpellFxFrame; drawing frame index "+frameIdx+" of " + spriteSheetData.columns + "x" + spriteSheetData.rows + " sprite sheet "+spriteSheetData.resName);
 		var context2d = canvas.getContext('2d');
 		// clear frame
 		context2d.clearRect(0, 0, canvas.width, canvas.height);

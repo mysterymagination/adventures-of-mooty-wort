@@ -242,7 +242,7 @@ export class Ability {
 		/**
 		 * The string name of the FX data JSON file for this ability
 		 */
-		this.fxDataFileName = "data/fx/"+this.id;
+		this.fxDataFileName = "data/fx/"+this.id+".json";
 
 		// metadata about who the ability targets, namely you, all allies,
 		// one enemy, or all enemies.
@@ -371,8 +371,10 @@ class DummyAttackTelegraph extends Telegraph {
 export class HeroAttack extends Attack {
 	constructor() {
 		super();
+		// override id and related data
 		this.id = "hero_attack";
 		this.name = "Hero Attack";
+		this.fxDataFileName = "data/fx/"+this.id+".json";
 		// todo: should this value derive from something?
 		this.mpBonusCoefficient = 0.1;
 		this.dmg = 1;
@@ -1047,7 +1049,6 @@ export class Entity {
 		this.id = configObj.id;
 		this.name = configObj.name;
 		Entity.prototype.spellsDict = {
-			"attack": new Attack(),
 			"defend": new Defend()
 		}
 	}
@@ -1070,7 +1071,7 @@ export class Burrower extends Entity {
 		}
 		Object.assign(Burrower.prototype.spellsDict, Entity.prototype.spellsDict);
 		// redefine mole's attack to restore MP
-		Burrower.prototype.spellsDict["attack"] = new HeroAttack();
+		Burrower.prototype.spellsDict["hero_attack"] = new HeroAttack();
 	}
 }
 
