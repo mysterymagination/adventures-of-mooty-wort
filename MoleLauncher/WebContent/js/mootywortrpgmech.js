@@ -51,22 +51,6 @@ class MootyWortRpgMech {
 				}
 		*/
 		};
-		/**
-		 * Object literal pairing a spell FX spritesheet id (same as associated ability id)
-		 * with spritesheet properties necessary for parsing
-		 */
-		this.spellFXDict = {
-			/*
-			 e.g. "test_spritesheet": {
-			    "image": this,
-	            "columns": 3,
-	            "rows": 4,
-	            "frameWidthPx": 16,
-	            "frameHeightPx": 18,
-	            "frameCount": 12
-			  }
-			 */	
-		};
 	}
 	
 	/**
@@ -201,46 +185,6 @@ class MootyWortRpgMech {
 		}
 	}
 	/**
-	   * Draws a single frame from the given sprite sheet over the entire canvas, scaling automatically
-	   * @param fxData an object with spritesheet animation FX config data, including the URL to the spritesheet image file
-	   * @param frameIdx the 0-based index of the frame we want to extract from the spritesheet
-	   * @param canvas the Canvas we want to draw on
-	   */
-	  drawFrame(fxData, frameIdx, canvas) {
-	    // todo: convert from fiddle
-		  // todo: create new Image, load its src as fxData.resName, and in the loaded cb do the actual frame extract and canvas drawing work
-	    console.log("drawFrame; looked up " + spriteSheetData.columns + "x" + spriteSheetData.rows + " sprite sheet");
-	    var context2d = canvas.getContext('2d');
-	    // clear frame
-	    context2d.clearRect(0, 0, canvas.width, canvas.height);
-	    // determine image frame dimens
-	    var srcX = frameIdx % spriteSheetData.columns * spriteSheetData.frameWidthPx;
-	    var srcY = Math.floor(frameIdx / spriteSheetData.columns) * spriteSheetData.frameHeightPx;
-	    var srcWidth = spriteSheetData.frameWidthPx;
-	    var srcHeight = spriteSheetData.frameHeightPx;
-	    /*
-	    var dstWidth = spriteSheetData.frameWidthPx;//canvas.offsetWidth;
-	    var dstHeight = spriteSheetData.frameHeightPx;//canvas.offsetHeight;
-	    */
-
-
-	    var dstWidth = canvas.offsetWidth;
-	    var dstHeight = canvas.offsetHeight;
-	    // draw the image frame
-	    context2d.drawImage(
-	      spriteSheetData.image,
-	      srcX,
-	      srcY,
-	      srcWidth,
-	      srcHeight,
-	      0,
-	      0,
-	      dstWidth,
-	      dstHeight
-	    );
-	    console.log("sourcing from " + srcX + "x" + srcY + " out to " + (srcX + srcWidth) + "x" + (srcY + srcHeight) + ".  Destination is 0x0 out to " + dstWidth + "x" + dstHeight);
-	  }
-	/**
 	 * Makes the spell FX overlay canvas visible and populates it with
 	 * the FX data associated with the given spellId available on the given character
 	 * @param sourceCharacter the Character object casting the spell, in whose Entity.spellDict 
@@ -248,7 +192,7 @@ class MootyWortRpgMech {
 	 * @param spellId the string id of the spell whose FX should render
 	 */
 	showSpellEffectOverlay(sourceCharacter, spellId) {
-		// todo: convert from fiddle
+		var rpgMechHandle = this;
 		console.log("showing overlay fx for spell " + spellId);
 		var overlayCanvas = document.getElementById("effectsOverlayCanvas");
 		console.log("before setting overlay canvas dimens they are " + overlayCanvas.width + "x" + overlayCanvas.height);
@@ -258,7 +202,7 @@ class MootyWortRpgMech {
 		overlayCanvas.height = overlayCanvas.offsetHeight;
 		console.log("after setting overlay canvas dimens they are " + overlayCanvas.width + "x" + overlayCanvas.height);
 
-		// todo: XMLHTTPRequest on up our json fx data file, and put the usage of its data in a lambda
+		// XMLHTTPRequest on up our json fx data file, and put the usage of its data in a lambda
 		//  that'll get called once the file is loaded 
 		var spell = sourceCharacter.entity.spellsDict[spellId];
 		var request = new XMLHttpRequest();
@@ -267,39 +211,41 @@ class MootyWortRpgMech {
 		request.onload = function() {
 			// since we indicated responseType json, our response should already by a JS object defining our FX data
 			var fxData = request.response;
-			// todo: use FX data object to start FX
-			// show spell anim in overlay
-			var frameSkipCount = 0;
-			var frameIdx = 0;
-			var sheetAnimFn = function(elapsedTime) {
-				if (frameSkipCount == 0) {
-					// action frame!
-					g_combatController.drawFrame(spellId, frameIdx, overlayCanvas);
-					frameIdx++;
-				}
+			// load spritesheet image file
+			var fxImage = new Image();
+			fxImage.addEventListener('load', function() {
+				// show spell anim in overlay
+				var frameSkipCount = 0;
+				var frameIdx = 0;
+				var sheetAnimFn = function(elapsedTime) {
+					if (frameSkipCount == 0) {
+						// action frame!
+						rpgMechHandle.drawSpellFxFrame(this, fxData, frameIdx, overlayCanvas);
+						frameIdx++;
+					}
 
-				if (frameIdx < fxData.frameCount) {
-					window.requestAnimationFrame(sheetAnimFn);
-				} else {
-					hideSpellEffectOverlay();
-					playPainAnimation(this.characterUiDict[sourceCharacter.id]);
-				}
+					if (frameIdx < fxData.frameCount) {
+						window.requestAnimationFrame(sheetAnimFn);
+					} else {
+						hideSpellEffectOverlay();
+						playPainAnimation(this.characterUiDict[sourceCharacter.id]);
+					}
 
-				frameSkipCount++;
-				if(frameSkipCount == 15) {
-					frameSkipCount = 0;
+					frameSkipCount++;
+					if(frameSkipCount == 15) {
+						frameSkipCount = 0;
+					}
 				}
-			}
-			window.requestAnimationFrame(sheetAnimFn);
+				window.requestAnimationFrame(sheetAnimFn);
+			}, false);
+			fxImage.src = fxData.resName;
 		}
 		request.send();
 	}
-
 	/**
 	 * Makes the spell FX overlay canvas invisible
 	 */
 	hideSpellEffectOverlay() {
-		// todo: convert from fiddle
 		// todo: fadeout spell graphic before hiding overlay?
 		var overlayCanvas = document.getElementById("effectsOverlayCanvas");
 		overlayCanvas.style.width = "0px";
@@ -307,7 +253,39 @@ class MootyWortRpgMech {
 		overlayCanvas.width = overlayCanvas.offsetWidth;
 		overlayCanvas.height = overlayCanvas.offsetHeight;
 	}
-
+	/**
+	 * Draws a spell FX spritesheet animation, scaling automatically to cover the given canvas with each frame
+	 * @param spriteSheetImage Image object that already has its src loaded from the given spriteSheetData.resName
+	 * @param spriteSheetData object literal containing a spritesheet image location and data re: how to draw it
+	 * @param frameIdx integer 0-based index of the animation frame we want to draw 
+	 * @param canvas the Canvas we want to draw on
+	 */
+	drawSpellFxFrame(spriteSheetImage, spriteSheetData, frameIdx, canvas) {
+		console.log("drawSpellFxFrame; drawing frame index "+frameIdx+" of " + spellFxData.columns + "x" + spellFxData.rows + " sprite sheet "+spellFxData.resName);
+		var context2d = canvas.getContext('2d');
+		// clear frame
+		context2d.clearRect(0, 0, canvas.width, canvas.height);
+		// determine image frame dimens
+		var srcX = frameIdx % spriteSheetData.columns * spriteSheetData.frameWidthPx;
+		var srcY = Math.floor(frameIdx / spriteSheetData.columns) * spriteSheetData.frameHeightPx;
+		var srcWidth = spriteSheetData.frameWidthPx;
+		var srcHeight = spriteSheetData.frameHeightPx;
+		var dstWidth = canvas.offsetWidth;
+		var dstHeight = canvas.offsetHeight;
+		// draw the image frame
+		context2d.drawImage(
+				spriteSheetImage,
+				srcX,
+				srcY,
+				srcWidth,
+				srcHeight,
+				0,
+				0,
+				dstWidth,
+				dstHeight
+		);
+		console.log("sourcing from " + srcX + "x" + srcY + " out to " + (srcX + srcWidth) + "x" + (srcY + srcHeight) + ".  Destination is 0x0 out to " + dstWidth + "x" + dstHeight);
+	}
 	/**
 	 * Plays out the pain state wiggle and flash red animation
 	 * on the given character UI data's canvas
@@ -316,21 +294,20 @@ class MootyWortRpgMech {
 	 */
 	playPainAnimation(characterUiData) {
 		// show hurt anim on target sprite
-		// todo: convert from fiddle
-		var yawningGodCanvas = document.getElementById("enemyYawningGodCanvas");
-		var context2d = yawningGodCanvas.getContext("2d");
+		var characterCanvas = document.getElementById(characterUiData.canvasElement);
+		var context2d = characterCanvas.getContext("2d");
 		var alphaPerc = 1.0;
 		var lastFrameTime = undefined;
 		var frameCount = 0;
-		var yawningGodImage = new Image(); // Create new img element
-		yawningGodImage.addEventListener('load', function() {
-			console.log("yawning god sprite loaded");
+		var characterImage = new Image();
+		characterImage.addEventListener('load', function() {
+			console.log("character sprite loaded");
 			// ok, we've got our sprite image ref afresh
 			// start shake anim
-			yawningGodCanvas.className = "character-image-hurting";
+			characterCanvas.className = "character-image-hurting";
 
 			// define animation loop
-			var animYawningGod = function(frameTimestamp) {
+			var painAnimFn = function(frameTimestamp) {
 				// init assign
 				if (lastFrameTime === undefined) {
 					lastFrameTime = frameTimestamp;
@@ -340,10 +317,10 @@ class MootyWortRpgMech {
 				frameCount++;
 
 				// redraw sprite 
-				context2d.drawImage(yawningGodImage, 0, 0);
+				context2d.drawImage(characterImage, 0, 0);
 				// draw increasingly translucent red over the sprite
 				context2d.fillStyle = "rgba(255, 0, 0, " + alphaPerc + ")";
-				context2d.fillRect(0, 0, yawningGodCanvas.width, yawningGodCanvas.height);
+				context2d.fillRect(0, 0, characterCanvas.width, characterCanvas.height);
 				if (frameCount >= 5 && alphaPerc > 0) {
 					// decrease opacity
 					alphaPerc -= elapsedTimeSinceLastFrame / 100;
@@ -351,73 +328,23 @@ class MootyWortRpgMech {
 				}
 				if (alphaPerc == 0) {
 					// end anim
-					yawningGodCanvas.className = "character-image";
+					characterCanvas.className = "character-image";
 				} else {
 					if (alphaPerc < 0) {
 						// we underflowed; set 0 and let one more frame go by to give us the unfiltered image as the final render
 						alphaPerc = 0;
 					}
-					window.requestAnimationFrame(animYawningGod);
+					window.requestAnimationFrame(painAnimFn);
 				}
 				// update lastFrametime now that this frame is processed 
 				lastFrameTime = frameTimestamp;
 			}
 			// kick off animation
-			window.requestAnimationFrame(animYawningGod);
+			window.requestAnimationFrame(painAnimFn);
 		}, false);
 		// set image src to kick off loading
-		yawningGodImage.src = 'http://crescogames.x10hosting.com/sprite7.png';
-	}
-	/**
-	 * Render the gfx for an ability 
-	 * @param ability the Ability whose associated gfx should render
-	 * @param sourceCharacter the Character who is using the given ability
-	 * @param targetCharacter the Character who is targeted by the given ability
-	 */
-	playAbilityAnimation(ability, sourceCharacter, targetCharacter) {
-		// todo: load animation/graphic/effect an ability calls for re: generation and deployment 
-		// centered on the sourceCharacter's and targetCharacter's sprites in the UI respectively
-	}
-	/**
-	 * Render the gfx for Character damage suffered
-	 * @param targetCharacter the Character who is being damaged
-	 */
-	playCharacterPainAnimation(targetCharacter) {
-		// todo: load animation indicating the targetCharacter was damaged
-		// todo: iff the targetCharacter is now dead, play death animation and then remove their sprite from UI
-	}
-	/**
-	   * Draws a single frame from the given sprite sheet over the entire canvas, scaling automatically
-	   * @param spriteSheetId the id of an object literal containing an Image object whose src property should be a loaded sprite sheet as well as related metadata
-	   * @param frameIdx the 0-based index of the frame we want to extract from the spritesheet
-	   * @param canvas the Canvas we want to draw on
-	   */
-	  drawFrame(spriteSheetId, frameIdx, canvas) {
-	    var spriteSheetData = this.spellFXDict[spriteSheetId];
-	    console.log("drawFrame; looked up " + spriteSheetData.columns + "x" + spriteSheetData.rows + " sprite sheet");
-	    var context2d = canvas.getContext('2d');
-	    // clear frame
-	    context2d.clearRect(0, 0, canvas.width, canvas.height);
-	    // determine image frame dimens
-	    var srcX = frameIdx % spriteSheetData.columns * spriteSheetData.frameWidthPx;
-	    var srcY = Math.floor(frameIdx / spriteSheetData.columns) * spriteSheetData.frameHeightPx;
-	    var srcWidth = spriteSheetData.frameWidthPx;
-	    var srcHeight = spriteSheetData.frameHeightPx;
-	    var dstWidth = canvas.offsetWidth;
-	    var dstHeight = canvas.offsetHeight;
-	    // draw the image frame
-	    context2d.drawImage(
-	      spriteSheetData.image,
-	      srcX,
-	      srcY,
-	      srcWidth,
-	      srcHeight,
-	      0,
-	      0,
-	      dstWidth,
-	      dstHeight
-	    );
-	    console.log("sourcing from " + srcX + "x" + srcY + " out to " + (srcX + srcWidth) + "x" + (srcY + srcHeight) + ".  Destination is 0x0 out to " + dstWidth + "x" + dstHeight);
+		var character = characterUiData.characterObj;
+		characterImage.src = character.battleSprites[character.spriteIdx];
 	}
 	/**
 	 * Tear down the battle UI, bringing back Undum story page
@@ -443,23 +370,6 @@ class MootyWortRpgMech {
 		// show the combat mode modal
 		var combatUI = document.getElementById("combatModal");
 		combatUI.style.display = "flex";
-		
-		// resource loading
-		// load up spell effect spritesheets
-	    var testSheet = new Image();
-	    testSheet.src = 'https://opengameart.org/sites/default/files/Green-Cap-Character-16x18.png';
-	    var rpgMechHandle = this;
-	    testSheet.addEventListener('load', function() {
-	        rpgMechHandle.spellFXDict.test = {
-	          "image": this,
-	          "columns": 3,
-	          "rows": 4,
-	          "frameWidthPx": 16,
-	          "frameHeightPx": 18,
-	          "frameCount": 12
-	        }
-	        console.log("test spritesheet is loaded");
-	      }, false);
 	    
 		// player party UI 
 		var playerView_Div = document.getElementById("playerView");

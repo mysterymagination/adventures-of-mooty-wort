@@ -224,6 +224,7 @@ export class Mole extends Character {
 		this.stats["res"] = 20; // eldritch things know better than to mess with moles
 		this.stats["spd"] = 1; // the mole is not fast
 		this.entity = new Spells.Burrower();
+		this.spriteIdx = 0;
 		this.battleSprites = [this.battleSpritePath+"/mole/stoic_determination.jpg"];
 	}
 }
@@ -242,6 +243,7 @@ export class Grue extends Character {
 	    this.stats["res"] = 15; 
 	    this.stats["spd"] = 0; // inevitability need not rush
 	    Grue.prototype.entity = new Spells.HeartOfDarkness();
+	    this.spriteIdx = 0;
 	    this.battleSprites = [
 	    	this.battleSpritePath+"/grue/grue_nightmare_0.png",
 	    	this.battleSpritePath+"/grue/grue_nightmare_1.png",
@@ -378,6 +380,7 @@ export class YawningGod extends Character {
 		this.stats["res"] = 8; // as a being of madness, the Yawning God's mind is not well guarded
 		this.stats["spd"] = 5;
 	    YawningGod.prototype.entity = new Spells.EldritchHorror();
+	    this.spriteIdx = 0;
 	    this.battleSprites = [
 	    	this.battleSpritePath+"/yawning_god/yawning_god_mk4.jpg"
 	    ];
