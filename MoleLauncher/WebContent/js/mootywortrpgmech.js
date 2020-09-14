@@ -135,12 +135,13 @@ class MootyWortRpgMech {
 			// chosen ability
 			// todo: probably at least some of this should be moved to Combat model class
 			let selectedAbility = combatModel.currentSelectedAbility;
+			let sourceCharacter = combatModel.currentTurnOwner;
 			// check if currently active enemy can still afford their chosen abl
 			if(combatModel.currentTurnOwner.canAffordCost(selectedAbility)) {
 				// apply ability effect
 				switch(selectedAbility.targetType) {
 				case Ability.TargetTypesEnum.personal:
-					selectedAbility.effect(combatModel.currentTurnOwner);
+					selectedAbility.effect(sourceCharacter);
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.currentTurnOwner);
 					break;
 				case Ability.TargetTypesEnum.allAllies:
@@ -156,6 +157,7 @@ class MootyWortRpgMech {
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.currentTurnOwner, combatModel.currentTargetCharacter);
 					break;
 				}
+				this.showSpellEffectOverlay(sourceCharacter, selectedAbility.id);
 				this.combatLogPrint(combatModel.combatLogContent, MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION);
 			} else {
 				this.combatLogPrint(
@@ -574,7 +576,9 @@ class MootyWortRpgMech {
 									let sourceCharacter = combatModel.currentTurnOwner;
 									let targetCharacter = combatModel.findCombatant(targetCharacterId);
 									abl.effect(sourceCharacter, targetCharacter);
-									this.playAbilityAnimation(abl, sourceCharacter, targetCharacter);
+									// todo: probly gonna hafta add a cb fn param to showSpellEffectOverlay()
+									//  that will call handlePlayerTurnComplete() only after the anim is finished
+									this.showSpellEffectOverlay(sourceCharacter, abl.id);
 									this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 									this.handlePlayerTurnComplete(combatModel);
 									console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
@@ -584,31 +588,25 @@ class MootyWortRpgMech {
 								};
 							}
 						} else {
-							let sourceCharacter = undefined;
+							let sourceCharacter = combatModel.currentTurnOwner;
 							let targetCharacters = undefined;
 							switch(abl.targetType) {
 							case Ability.TargetTypesEnum.personal:
-								sourceCharacter = combatModel.currentTurnOwner;
-								targetCharacters = [sourceCharacter];
 								abl.effect(sourceCharacter);
-								this.playAbilityAnimation(abl, sourceCharacter, targetCharacters[0]);
 								this.combatLogPrint(abl.generateFlavorText(sourceCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 								break;
 							case Ability.TargetTypesEnum.allEnemies:
-								sourceCharacter = combatModel.currentTurnOwner;
 								targetCharacters = combatModel.enemyParty;
 								abl.effect(sourceCharacter, targetCharacters);
-								this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
 								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 								break;
 							case Ability.TargetTypesEnum.allAllies:
-								sourceCharacter = combatModel.currentTurnOwner;
 								targetCharacters = combatModel.playerParty;
 								abl.effect(sourceCharacter, targetCharacters);
-								this.playAbilityAnimation(abl, sourceCharacter, targetCharacters);
 								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 								break;
 							}
+							this.showSpellEffectOverlay(sourceCharacter, abl.id);
 							this.handlePlayerTurnComplete(combatModel);
 							// clear onclick now that we've used it
 							commandCell.onclick = null;
