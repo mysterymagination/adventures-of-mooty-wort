@@ -24,9 +24,9 @@ class MootyWortRpgMech {
 		// establish Player party
 	    this.party = [this.charactersDict["mole"]];
 		/**
-		 * Object literal association of player Character ids to associated UI objects sack
+		 * Object literal association of Character ids to associated UI objects sack
 		 */
-		this.playerCharacterUiDict = {
+		this.characterUiDict = {
 		/* e.g.
 				"mole": {
 					"characterObj": playerCharacter, // would be this.charactersDict["mole"]
@@ -36,18 +36,6 @@ class MootyWortRpgMech {
 					"hpProgressElement": playerCharacterHp_Progress,
 					"mpElement": playerCharacterCurrentMp_Span,
 					"mpProgressElement": playerCharacterMp_Progress
-				}
-		*/
-		};
-		/**
-		 * Object literal association of enemy Character ids to associated UI objects sack
-		 */
-		this.enemyCharacterUiDict = {
-		/* e.g.
-				"yawning_god": {
-					"characterObj": enemyCharacter, // would be this.charactersDict["yawning_god"],
-					"canvasElement": enemyCharacterSprite_Canvas, // generated 
-					"hpProgressElement": enemyCharacterHp_Progress // generated
 				}
 		*/
 		};
@@ -157,15 +145,17 @@ class MootyWortRpgMech {
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.currentTurnOwner, combatModel.currentTargetCharacter);
 					break;
 				}
-				this.showSpellEffectOverlay(sourceCharacter, selectedAbility.id);
-				this.combatLogPrint(combatModel.combatLogContent, MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION);
+				this.showSpellEffectOverlay(sourceCharacter, selectedAbility.id, () => {
+					this.combatLogPrint(combatModel.combatLogContent, MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION);
+					this.handleEnemyTurnComplete(combatModel);
+				});
 			} else {
 				this.combatLogPrint(
 					combatModel.currentTurnOwner.name + " feebly attempts to enact " + combatModel.currentSelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!",
 					MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION
 				);
+				this.handleEnemyTurnComplete(combatModel);
 			}
-			this.handleEnemyTurnComplete(combatModel);
 		}
 		// reset combat log content at the bottom of the step
 		combatModel.combatLogContent = "";
@@ -182,7 +172,7 @@ class MootyWortRpgMech {
 	 * Sets the onclick function back to null for each character's canvas element
 	 */
 	clearTargetedHandlers() {
-		for(let [targetCharacterId, uiEntry] of Object.entries(this.enemyCharacterUiDict).concat(Object.entries(this.playerCharacterUiDict))) {
+		for(let [targetCharacterId, uiEntry] of Object.entries(this.characterUiDict).concat(Object.entries(this.characterUiDict))) {
 			uiEntry.canvasElement.onclick = null;
 		}
 	}
@@ -192,8 +182,9 @@ class MootyWortRpgMech {
 	 * @param sourceCharacter the Character object casting the spell, in whose Entity.spellDict 
 	 *        the spell object and its FX data can be found
 	 * @param spellId the string id of the spell whose FX should render
+	 * @param callbackFunction no-arg function to be called when the animation is complete
 	 */
-	showSpellEffectOverlay(sourceCharacter, spellId) {
+	showSpellEffectOverlay(sourceCharacter, spellId, callbackFunction) {
 		var rpgMechHandle = this;
 		console.log("showing overlay fx for spell " + spellId);
 		var overlayCanvas = document.getElementById("effectsOverlayCanvas");
@@ -222,15 +213,16 @@ class MootyWortRpgMech {
 				var sheetAnimFn = function(elapsedTime) {
 					if (frameSkipCount == 0) {
 						// action frame!
-						rpgMechHandle.drawSpellFxFrame(this, fxData, frameIdx, overlayCanvas);
+						rpgMechHandle.drawSpellFxFrame(fxImage, fxData, frameIdx, overlayCanvas);
 						frameIdx++;
 					}
 
 					if (frameIdx < fxData.frameCount) {
 						window.requestAnimationFrame(sheetAnimFn);
 					} else {
-						hideSpellEffectOverlay();
-						playPainAnimation(this.characterUiDict[sourceCharacter.id]);
+						rpgMechHandle.hideSpellEffectOverlay();
+						// forward our cb to the next anim
+						rpgMechHandle.playPainAnimation(rpgMechHandle.characterUiDict[sourceCharacter.id], callbackFunction);
 					}
 
 					frameSkipCount++;
@@ -293,10 +285,11 @@ class MootyWortRpgMech {
 	 * on the given character UI data's canvas
 	 * @param the UI data object representing the views associated with
 	 *        the pained character
+	 * @param callbackFunction no-arg function to be called when the animation completes
 	 */
-	playPainAnimation(characterUiData) {
+	playPainAnimation(characterUiData, callbackFunction) {
 		// show hurt anim on target sprite
-		var characterCanvas = document.getElementById(characterUiData.canvasElement);
+		var characterCanvas = characterUiData.canvasElement;
 		var context2d = characterCanvas.getContext("2d");
 		var alphaPerc = 1.0;
 		var lastFrameTime = undefined;
@@ -329,8 +322,11 @@ class MootyWortRpgMech {
 					frameCount = 0;
 				}
 				if (alphaPerc == 0) {
-					// end anim
+					// end anim and call cb
 					characterCanvas.className = "character-image";
+					if(callbackFunction) {
+						callbackFunction();
+					}
 				} else {
 					if (alphaPerc < 0) {
 						// we underflowed; set 0 and let one more frame go by to give us the unfiltered image as the final render
@@ -430,7 +426,7 @@ class MootyWortRpgMech {
 			playerCharacterDataContainer_Div.appendChild(playerCharacterData_Div);
 			
 			// associate elements with keys in UI dict
-			this.playerCharacterUiDict[playerCharacter.id] = {
+			this.characterUiDict[playerCharacter.id] = {
 					"characterObj": playerCharacter,
 					"canvasElement": playerCharacterSprite_Canvas, 
 					"nameElement": playerCharacterName_Div,
@@ -473,7 +469,7 @@ class MootyWortRpgMech {
 				enemyCharacter.stats["hp"]/enemyCharacter.stats["maxHP"];
 			enemyCharacterData_Div.appendChild(enemyCharacterHp_Progress);
 			
-			this.enemyCharacterUiDict[enemyCharacter.id] = {
+			this.characterUiDict[enemyCharacter.id] = {
 					"characterObj": enemyCharacter,
 					"canvasElement": enemyCharacterSprite_Canvas, 
 					"hpProgressElement": enemyCharacterHp_Progress
@@ -526,14 +522,14 @@ class MootyWortRpgMech {
 	 */
 	updateCharacterData(combatModel) {
 		for(const player of combatModel.playerParty) {
-			let uiHandle = this.playerCharacterUiDict[player.id];
+			let uiHandle = this.characterUiDict[player.id];
 			uiHandle.hpElement.innerHTML = Math.ceil(player.stats["hp"]);
 			uiHandle.hpProgressElement.value = player.stats["hp"] / player.stats["maxHP"];
 			uiHandle.mpElement.innerHTML = Math.ceil(player.stats["mp"]);
 			uiHandle.mpProgressElement.value = player.stats["mp"] / player.stats["maxMP"]
 		}
 		for(const enemy of combatModel.enemyParty) {
-			let uiHandle = this.enemyCharacterUiDict[enemy.id];
+			let uiHandle = this.characterUiDict[enemy.id];
 			uiHandle.hpProgressElement.value = enemy.stats["hp"] / enemy.stats["maxHP"];
 		}
 	}
@@ -571,21 +567,22 @@ class MootyWortRpgMech {
 					if(combatModel.currentTurnOwner.canAffordCost(abl)) {
 						// we can afford the cost of the chosen abl, so go ahead with targeting etc.
 						if(abl.targetType === Ability.TargetTypesEnum.singleTarget) {
-							for(let [targetCharacterId, uiEntry] of Object.entries(this.enemyCharacterUiDict).concat(Object.entries(this.playerCharacterUiDict))) {
+							for(let [targetCharacterId, uiEntry] of Object.entries(this.characterUiDict).concat(Object.entries(this.characterUiDict))) {
 								uiEntry.canvasElement.onclick = () => {
 									let sourceCharacter = combatModel.currentTurnOwner;
 									let targetCharacter = combatModel.findCombatant(targetCharacterId);
 									abl.effect(sourceCharacter, targetCharacter);
 									// todo: probly gonna hafta add a cb fn param to showSpellEffectOverlay()
 									//  that will call handlePlayerTurnComplete() only after the anim is finished
-									this.showSpellEffectOverlay(sourceCharacter, abl.id);
-									this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
-									this.handlePlayerTurnComplete(combatModel);
-									console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
-									// clear onclicks now that we've used them
-									uiEntry.canvasElement.onclick = null;
-									commandCell.onclick = null;
-								};
+									this.showSpellEffectOverlay(sourceCharacter, abl.id, () => {
+										this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+										this.handlePlayerTurnComplete(combatModel);
+										console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
+										// clear onclicks now that we've used them
+										uiEntry.canvasElement.onclick = null;
+										commandCell.onclick = null;
+									});
+								}
 							}
 						} else {
 							let sourceCharacter = combatModel.currentTurnOwner;
@@ -606,10 +603,11 @@ class MootyWortRpgMech {
 								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 								break;
 							}
-							this.showSpellEffectOverlay(sourceCharacter, abl.id);
-							this.handlePlayerTurnComplete(combatModel);
-							// clear onclick now that we've used it
-							commandCell.onclick = null;
+							this.showSpellEffectOverlay(sourceCharacter, abl.id, () => {
+								this.handlePlayerTurnComplete(combatModel);
+								// clear onclick now that we've used it
+								commandCell.onclick = null;
+							});
 						}
 					} else {
 						// tell user to pick something else
