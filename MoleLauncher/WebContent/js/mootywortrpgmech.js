@@ -204,6 +204,7 @@ class MootyWortRpgMech {
 		request.onload = function() {
 			// since we indicated responseType json, our response should already by a JS object defining our FX data
 			var fxData = request.response;
+			var fps = fxData.frameRate;
 			// load spritesheet image file
 			var fxImage = new Image();
 			fxImage.addEventListener('load', function() {
@@ -226,7 +227,10 @@ class MootyWortRpgMech {
 					}
 
 					frameSkipCount++;
-					if(frameSkipCount == 15) {
+					// skip a number of frames equal to the frames/second we're likely to get from
+					// requestAnimationFrame() (60fps) minus the desired frames/second for this particular
+					// animation
+					if(frameSkipCount == 60 - fps) {
 						frameSkipCount = 0;
 					}
 				}
