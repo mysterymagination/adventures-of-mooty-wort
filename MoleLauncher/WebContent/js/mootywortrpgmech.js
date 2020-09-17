@@ -97,9 +97,6 @@ class MootyWortRpgMech {
 			// update character portraits with status info
 			this.updateCharacterBattleImages(combatModel);
 			// sync character stat display with data model
-			// todo: we should be updating the stats immediately after abilities go off as well,
-			//  else it looks weird in the UI -- like an abl had no effect because HP doesn't go down
-			//  until the end of the round.
 			this.updateCharacterData(combatModel);
 			if(postStatusState === Combat.ControllerState.processCombatResult) {
 				this.handleCombatResult(combatModel.combatResult);
@@ -155,6 +152,7 @@ class MootyWortRpgMech {
 				}
 				this.combatLogPrint(combatModel.combatLogContent, MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION);
 				this.showSpellEffectOverlay(sourceCharacter, targetCharacters, selectedAbility.id, () => {
+					this.updateCharacterData(combatModel);
 					this.handleEnemyTurnComplete(combatModel);
 				});
 			} else {
@@ -605,6 +603,7 @@ class MootyWortRpgMech {
 									//  that will call handlePlayerTurnComplete() only after the anim is finished
 									this.showSpellEffectOverlay(sourceCharacter, [targetCharacter], abl.id, () => {
 										this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+										this.updateCharacterData(combatModel);
 										this.handlePlayerTurnComplete(combatModel);
 										console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
 										// clear onclicks now that we've used them
@@ -634,6 +633,7 @@ class MootyWortRpgMech {
 								break;
 							}
 							this.showSpellEffectOverlay(sourceCharacter, targetCharacters, abl.id, () => {
+								this.updateCharacterData(combatModel);
 								this.handlePlayerTurnComplete(combatModel);
 								// clear onclick now that we've used it
 								commandCell.onclick = null;
