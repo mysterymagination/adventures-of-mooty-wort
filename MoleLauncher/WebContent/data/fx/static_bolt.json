@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/lit.png",	
+    "columns": 3,
+    "rows": 1,
+    "frameWidthPx": 2000,
+    "frameHeightPx": 2000,
+    "frameCount": 3,
+    "frameRate": 30
+}

@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/woolly_shield.png",	
+    "columns": 20,
+    "rows": 1,
+    "frameWidthPx": 320,
+    "frameHeightPx": 240,
+    "frameCount": 20,
+    "frameRate": 55
+}

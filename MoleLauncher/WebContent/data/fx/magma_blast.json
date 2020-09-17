@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/bolt.png",	
+    "columns": 7,
+    "rows": 1,
+    "frameWidthPx": 32,
+    "frameHeightPx": 32,
+    "frameCount": 7,
+    "frameRate": 50
+}

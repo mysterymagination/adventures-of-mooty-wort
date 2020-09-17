@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/defend.png",	
+    "columns": 4,
+    "rows": 1,
+    "frameWidthPx": 128,
+    "frameHeightPx": 128,
+    "frameCount": 4,
+    "frameRate": 45
+}

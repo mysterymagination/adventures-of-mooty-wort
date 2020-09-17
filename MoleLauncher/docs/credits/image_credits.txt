@@ -92,7 +92,7 @@ shadow flare - ArcaneEffect.png
 public domain by Cethiel
 https://opengameart.org/content/arcane-magic-effect
 
-warmest hug - nature.png
+warmest hug - warmest_hug.png
 public domain by Cethiel
 https://opengameart.org/content/nature-magic-effect
 
@@ -100,7 +100,7 @@ deep meditation - warp.png
 CC-BY 3.0 by Skorpio
 https://opengameart.org/content/warp-effect-2
 
-magma bolt - bolt.png
+magma blast - bolt.png
 public domain by LetargicDev
 https://opengameart.org/content/simple-spell-effect
 

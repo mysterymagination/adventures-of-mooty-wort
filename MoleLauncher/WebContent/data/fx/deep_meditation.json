@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/warp.png",	
+    "columns": 9,
+    "rows": 1,
+    "frameWidthPx": 320,
+    "frameHeightPx": 320,
+    "frameCount": 9,
+    "frameRate": 55
+}

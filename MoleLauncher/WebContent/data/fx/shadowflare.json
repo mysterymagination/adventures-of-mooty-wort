@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/ArcaneEffect.png",	
+    "columns": 42,
+    "rows": 1,
+    "frameWidthPx": 125,
+    "frameHeightPx": 108,
+    "frameCount": 42,
+    "frameRate": 55
+}

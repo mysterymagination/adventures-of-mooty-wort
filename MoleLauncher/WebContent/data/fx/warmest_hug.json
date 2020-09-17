@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/warmest_hug.png",	
+    "columns": 7,
+    "rows": 1,
+    "frameWidthPx": 218,
+    "frameHeightPx": 121,
+    "frameCount": 7,
+    "frameRate": 50
+}

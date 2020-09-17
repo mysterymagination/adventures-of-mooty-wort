@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/axes.png",	
+    "columns": 8,
+    "rows": 7,
+    "frameWidthPx": 32,
+    "frameHeightPx": 32,
+    "frameCount": 52,
+    "frameRate": 60
+}
