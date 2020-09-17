@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/Effect47.png",	
+    "columns": 4,
+    "rows": 4,
+    "frameWidthPx": 128,
+    "frameHeightPx": 128,
+    "frameCount": 16,
+    "frameRate": 55
+}

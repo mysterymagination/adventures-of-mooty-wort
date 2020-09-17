@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/Aura38.png",	
+    "columns": 8,
+    "rows": 4,
+    "frameWidthPx": 128,
+    "frameHeightPx": 128,
+    "frameCount": 32,
+    "frameRate": 55
+}

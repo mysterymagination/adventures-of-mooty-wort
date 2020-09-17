@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/octopussy3.png",	
+    "columns": 6,
+    "rows": 1,
+    "frameWidthPx": 155,
+    "frameHeightPx": 231,
+    "frameCount": 6,
+    "frameRate": 53
+}

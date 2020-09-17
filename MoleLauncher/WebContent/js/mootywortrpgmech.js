@@ -97,6 +97,9 @@ class MootyWortRpgMech {
 			// update character portraits with status info
 			this.updateCharacterBattleImages(combatModel);
 			// sync character stat display with data model
+			// todo: we should be updating the stats immediately after abilities go off as well,
+			//  else it looks weird in the UI -- like an abl had no effect because HP doesn't go down
+			//  until the end of the round.
 			this.updateCharacterData(combatModel);
 			if(postStatusState === Combat.ControllerState.processCombatResult) {
 				this.handleCombatResult(combatModel.combatResult);
@@ -150,8 +153,8 @@ class MootyWortRpgMech {
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.currentTurnOwner, combatModel.currentTargetCharacter);
 					break;
 				}
+				this.combatLogPrint(combatModel.combatLogContent, MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION);
 				this.showSpellEffectOverlay(sourceCharacter, targetCharacters, selectedAbility.id, () => {
-					this.combatLogPrint(combatModel.combatLogContent, MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION);
 					this.handleEnemyTurnComplete(combatModel);
 				});
 			} else {
@@ -240,7 +243,7 @@ class MootyWortRpgMech {
 					// skip a number of frames equal to the frames/second we're likely to get from
 					// requestAnimationFrame() (60fps) minus the desired frames/second for this particular
 					// animation
-					if(frameSkipCount == 60 - fps) {
+					if(frameSkipCount >= 60 - fps) {
 						frameSkipCount = 0;
 					}
 				}

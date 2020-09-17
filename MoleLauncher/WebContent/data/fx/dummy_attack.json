@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/Poof.png",	
+    "columns": 6,
+    "rows": 5,
+    "frameWidthPx": 256,
+    "frameHeightPx": 256,
+    "frameCount": 25,
+    "frameRate": 58
+}

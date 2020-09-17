@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/bloodmagic.png",	
+    "columns": 25,
+    "rows": 1,
+    "frameWidthPx": 150,
+    "frameHeightPx": 150,
+    "frameCount": 25,
+    "frameRate": 55
+}
