@@ -468,17 +468,6 @@ img.float_left {
   position: relative;
 }
 
-.character-image:active {
-  animation: shake 0.5s;
-  animation-iteration-count: 1;
-}
-
-.character-image-hurting {
-  display: inline-block;
-  animation: shake 0.5s;
-  animation-iteration-count: infinite;
-}
-
 .character-hud-enemy {
   width: 100%;
   height: 45%;
