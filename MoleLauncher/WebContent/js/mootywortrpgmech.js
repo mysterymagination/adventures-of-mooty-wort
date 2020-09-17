@@ -321,6 +321,7 @@ class MootyWortRpgMech {
 				console.log("character sprite loaded");
 				// ok, we've got our sprite image ref afresh
 				// start shake anim
+				var unhurtClass = characterCanvas.className;
 				characterCanvas.className = "character-image-hurting";
 	
 				// define animation loop
@@ -345,7 +346,7 @@ class MootyWortRpgMech {
 					}
 					if (alphaPerc == 0) {
 						// end anim and call cb iff all animations have completed
-						characterCanvas.className = "character-image";
+						characterCanvas.className = unhurtClass;
 						completedAnimationsCounter++;
 						if(completedAnimationsCounter == characters.length && callbackFunction) {
 							callbackFunction();
