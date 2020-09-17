@@ -124,28 +124,33 @@ class MootyWortRpgMech {
 			// todo: probably at least some of this should be moved to Combat model class
 			let selectedAbility = combatModel.currentSelectedAbility;
 			let sourceCharacter = combatModel.currentTurnOwner;
+			let targetCharacters = undefined;
 			// check if currently active enemy can still afford their chosen abl
 			if(combatModel.currentTurnOwner.canAffordCost(selectedAbility)) {
 				// apply ability effect
 				switch(selectedAbility.targetType) {
 				case Ability.TargetTypesEnum.personal:
+					targetCharacters = [sourceCharacter];
 					selectedAbility.effect(sourceCharacter);
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.currentTurnOwner);
 					break;
 				case Ability.TargetTypesEnum.allAllies:
-					selectedAbility.effect(combatModel.enemyParty);
+					targetCharacters = combatModel.enemyParty;
+					selectedAbility.effect(combatModel.currentTurnOwner, targetCharacters);
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.enemyParty);
 					break;
 				case Ability.TargetTypesEnum.allEnemies:
-					selectedAbility.effect(combatModel.currentTurnOwner, combatModel.playerParty);
+					targetCharacters = combatModel.playerParty;
+					selectedAbility.effect(combatModel.currentTurnOwner, targetCharacters);
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.playerParty);
 					break;
 				case Ability.TargetTypesEnum.singleTarget:
+					targetCharacters = [combatModel.currentTargetCharacter];
 					selectedAbility.effect(combatModel.currentTurnOwner, combatModel.currentTargetCharacter);
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.currentTurnOwner, combatModel.currentTargetCharacter);
 					break;
 				}
-				this.showSpellEffectOverlay(sourceCharacter, selectedAbility.id, () => {
+				this.showSpellEffectOverlay(sourceCharacter, targetCharacters, selectedAbility.id, () => {
 					this.combatLogPrint(combatModel.combatLogContent, MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION);
 					this.handleEnemyTurnComplete(combatModel);
 				});
@@ -181,10 +186,13 @@ class MootyWortRpgMech {
 	 * the FX data associated with the given spellId available on the given character
 	 * @param sourceCharacter the Character object casting the spell, in whose Entity.spellDict 
 	 *        the spell object and its FX data can be found
+	 * @param targetCharacters an array of one or more Character objects who are the target(s) of the spell;
+	 *        The targetCharacters are used to id the canvas that should display the pain state anim
+	 *        after the spell FX anim completes. 
 	 * @param spellId the string id of the spell whose FX should render
 	 * @param callbackFunction no-arg function to be called when the animation is complete
 	 */
-	showSpellEffectOverlay(sourceCharacter, spellId, callbackFunction) {
+	showSpellEffectOverlay(sourceCharacter, targetCharacters, spellId, callbackFunction) {
 		var rpgMechHandle = this;
 		console.log("showing overlay fx for spell " + spellId);
 		var overlayCanvas = document.getElementById("effectsOverlayCanvas");
@@ -223,7 +231,9 @@ class MootyWortRpgMech {
 					} else {
 						rpgMechHandle.hideSpellEffectOverlay();
 						// forward our cb to the next anim
-						rpgMechHandle.playPainAnimation(rpgMechHandle.characterUiDict[sourceCharacter.id], callbackFunction);
+						rpgMechHandle.playPainAnimation(
+							targetCharacters, callbackFunction
+						);
 					}
 
 					frameSkipCount++;
@@ -287,66 +297,76 @@ class MootyWortRpgMech {
 	/**
 	 * Plays out the pain state wiggle and flash red animation
 	 * on the given character UI data's canvas
-	 * @param the UI data object representing the views associated with
-	 *        the pained character
+	 * @param characters an array of Character objects whose ids can be used to lookup UI data
 	 * @param callbackFunction no-arg function to be called when the animation completes
 	 */
-	playPainAnimation(characterUiData, callbackFunction) {
-		// show hurt anim on target sprite
-		var characterCanvas = characterUiData.canvasElement;
-		var context2d = characterCanvas.getContext("2d");
-		var alphaPerc = 1.0;
-		var lastFrameTime = undefined;
-		var frameCount = 0;
-		var characterImage = new Image();
-		characterImage.addEventListener('load', function() {
-			console.log("character sprite loaded");
-			// ok, we've got our sprite image ref afresh
-			// start shake anim
-			characterCanvas.className = "character-image-hurting";
-
-			// define animation loop
-			var painAnimFn = function(frameTimestamp) {
-				// init assign
-				if (lastFrameTime === undefined) {
+	playPainAnimation(characters, callbackFunction) {
+		// todo: need to accept an array of target character objects, which we'll
+		//  unpack and anim over, and only call the cb when all have finished their
+		//  animations.  e.g. foreach targetcharacter{ uidata = rpgMechHandle.characterUiDict[targetCharacters[idx].id]...}
+		
+		// track completed animations
+		var completedAnimationsCounter = 0;
+		
+		for(character of characters) {
+			// show hurt anim on target sprite
+			var characterUiData = this.characterUiDict[character.id];
+			var characterCanvas = characterUiData.canvasElement;
+			var context2d = characterCanvas.getContext("2d");
+			var alphaPerc = 1.0;
+			var lastFrameTime = undefined;
+			var frameCount = 0;
+			var characterImage = new Image();
+			characterImage.addEventListener('load', function() {
+				console.log("character sprite loaded");
+				// ok, we've got our sprite image ref afresh
+				// start shake anim
+				characterCanvas.className = "character-image-hurting";
+	
+				// define animation loop
+				var painAnimFn = function(frameTimestamp) {
+					// init assign
+					if (lastFrameTime === undefined) {
+						lastFrameTime = frameTimestamp;
+					}
+					// measure time since last frame (initially 0)
+					var elapsedTimeSinceLastFrame = frameTimestamp - lastFrameTime;
+					frameCount++;
+	
+					// redraw sprite 
+					context2d.drawImage(characterImage, 0, 0);
+					// draw increasingly translucent red over the sprite
+					context2d.fillStyle = "rgba(255, 0, 0, " + alphaPerc + ")";
+					context2d.fillRect(0, 0, characterCanvas.width, characterCanvas.height);
+					if (frameCount >= 5 && alphaPerc > 0) {
+						// decrease opacity
+						alphaPerc -= elapsedTimeSinceLastFrame / 100;
+						frameCount = 0;
+					}
+					if (alphaPerc == 0) {
+						// end anim and call cb iff all animations have completed
+						characterCanvas.className = "character-image";
+						completedAnimationsCounter++;
+						if(completedAnimationsCounter == characters.length && callbackFunction) {
+							callbackFunction();
+						}
+					} else {
+						if (alphaPerc < 0) {
+							// we underflowed; set 0 and let one more frame go by to give us the unfiltered image as the final render
+							alphaPerc = 0;
+						}
+						window.requestAnimationFrame(painAnimFn);
+					}
+					// update lastFrametime now that this frame is processed 
 					lastFrameTime = frameTimestamp;
 				}
-				// measure time since last frame (initially 0)
-				var elapsedTimeSinceLastFrame = frameTimestamp - lastFrameTime;
-				frameCount++;
-
-				// redraw sprite 
-				context2d.drawImage(characterImage, 0, 0);
-				// draw increasingly translucent red over the sprite
-				context2d.fillStyle = "rgba(255, 0, 0, " + alphaPerc + ")";
-				context2d.fillRect(0, 0, characterCanvas.width, characterCanvas.height);
-				if (frameCount >= 5 && alphaPerc > 0) {
-					// decrease opacity
-					alphaPerc -= elapsedTimeSinceLastFrame / 100;
-					frameCount = 0;
-				}
-				if (alphaPerc == 0) {
-					// end anim and call cb
-					characterCanvas.className = "character-image";
-					if(callbackFunction) {
-						callbackFunction();
-					}
-				} else {
-					if (alphaPerc < 0) {
-						// we underflowed; set 0 and let one more frame go by to give us the unfiltered image as the final render
-						alphaPerc = 0;
-					}
-					window.requestAnimationFrame(painAnimFn);
-				}
-				// update lastFrametime now that this frame is processed 
-				lastFrameTime = frameTimestamp;
-			}
-			// kick off animation
-			window.requestAnimationFrame(painAnimFn);
-		}, false);
-		// set image src to kick off loading
-		var character = characterUiData.characterObj;
-		characterImage.src = character.battleSprites[character.spriteIdx];
+				// kick off animation
+				window.requestAnimationFrame(painAnimFn);
+			}, false);
+			// set image src to kick off loading
+			var character = characterUiData.characterObj;
+			characterImage.src = character.battleSprites[character.spriteIdx];
+		}
 	}
 	/**
 	 * Tear down the battle UI, bringing back Undum story page
@@ -578,7 +598,7 @@ class MootyWortRpgMech {
 									abl.effect(sourceCharacter, targetCharacter);
 									// todo: probly gonna hafta add a cb fn param to showSpellEffectOverlay()
 									//  that will call handlePlayerTurnComplete() only after the anim is finished
-									this.showSpellEffectOverlay(sourceCharacter, abl.id, () => {
+									this.showSpellEffectOverlay(sourceCharacter, [targetCharacter], abl.id, () => {
 										this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 										this.handlePlayerTurnComplete(combatModel);
 										console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
@@ -593,6 +613,7 @@ class MootyWortRpgMech {
 							let targetCharacters = undefined;
 							switch(abl.targetType) {
 							case Ability.TargetTypesEnum.personal:
+								targetCharacters = [sourceCharacter];
 								abl.effect(sourceCharacter);
 								this.combatLogPrint(abl.generateFlavorText(sourceCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 								break;
@@ -607,7 +628,7 @@ class MootyWortRpgMech {
 								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 								break;
 							}
-							this.showSpellEffectOverlay(sourceCharacter, abl.id, () => {
+							this.showSpellEffectOverlay(sourceCharacter, targetCharacters, abl.id, () => {
 								this.handlePlayerTurnComplete(combatModel);
 								// clear onclick now that we've used it
 								commandCell.onclick = null;
