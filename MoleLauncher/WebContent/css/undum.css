@@ -433,7 +433,7 @@ img.float_left {
 
 #effectsOverlayCanvas {
   position: absolute;
-  opacity: 0.9;
+  opacity: 0.95;
   width: 0%;
   height: 0%;
   z-index: 2;

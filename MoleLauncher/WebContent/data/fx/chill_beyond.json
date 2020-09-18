@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/chillbeyond.png",	
+    "columns": 5,
+    "rows": 8,
+    "frameWidthPx": 256,
+    "frameHeightPx": 256,
+    "frameCount": 37,
+    "frameRate": 60
+}
