@@ -1,0 +1,23 @@
+{
+	"type": "spritesheet_array",
+	"resArray": [
+		{
+			"resName": "images/fx/battle/fire_trail.png",	
+		    "columns": 6,
+		    "rows": 1,
+		    "frameWidthPx": 24,
+		    "frameHeightPx": 54,
+		    "frameCount": 6,
+		    "frameRate": 50
+    	},
+    	{
+    		"resName": "images/fx/battle/boulder_creation.png",	
+		    "columns": 7,
+		    "rows": 1,
+		    "frameWidthPx": 200,
+		    "frameHeightPx": 200,
+		    "frameCount": 7,
+		    "frameRate": 55
+    	}
+    ]
+}

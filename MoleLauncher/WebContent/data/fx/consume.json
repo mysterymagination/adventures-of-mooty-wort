@@ -1,0 +1,10 @@
+{
+	"type": "spritesheet",
+	"resName": "images/fx/battle/monster_flesh_teeth_sheet.png",	
+    "columns": 3,
+    "rows": 3,
+    "frameWidthPx": 256,
+    "frameHeightPx": 256,
+    "frameCount": 8,
+    "frameRate": 50
+}

@@ -213,41 +213,47 @@ class MootyWortRpgMech {
 		request.onload = function() {
 			// since we indicated responseType json, our response should already by a JS object defining our FX data
 			var fxData = request.response;
-			var fps = fxData.frameRate;
-			// load spritesheet image file
-			var fxImage = new Image();
-			fxImage.addEventListener('load', function() {
-				// show spell anim in overlay
-				var frameSkipCount = 0;
-				var frameIdx = 0;
-				var sheetAnimFn = function(elapsedTime) {
-					if (frameSkipCount == 0) {
-						// action frame!
-						rpgMechHandle.drawSpellFxFrame(fxImage, fxData, frameIdx, overlayCanvas);
-						frameIdx++;
+			var fxType = fxData.type;
+			if(fxType === "spritesheet") {
+				var fps = fxData.frameRate;
+				// load spritesheet image file
+				var fxImage = new Image();
+				fxImage.addEventListener('load', function() {
+					// show spell anim in overlay
+					var frameSkipCount = 0;
+					var frameIdx = 0;
+					var sheetAnimFn = function(elapsedTime) {
+						if (frameSkipCount == 0) {
+							// action frame!
+							rpgMechHandle.drawSpellFxFrame(fxImage, fxData, frameIdx, overlayCanvas);
+							frameIdx++;
+						}
+	
+						if (frameIdx < fxData.frameCount) {
+							window.requestAnimationFrame(sheetAnimFn);
+						} else {
+							rpgMechHandle.hideSpellEffectOverlay();
+							// forward our cb to the next anim
+							rpgMechHandle.playPainAnimation(
+								targetCharacters, callbackFunction
+							);
+						}
+	
+						frameSkipCount++;
+						// skip a number of frames equal to the frames/second we're likely to get from
+						// requestAnimationFrame() (60fps) minus the desired frames/second for this particular
+						// animation
+						if(frameSkipCount >= 60 - fps) {
+							frameSkipCount = 0;
+						}
 					}
-
-					if (frameIdx < fxData.frameCount) {
-						window.requestAnimationFrame(sheetAnimFn);
-					} else {
-						rpgMechHandle.hideSpellEffectOverlay();
-						// forward our cb to the next anim
-						rpgMechHandle.playPainAnimation(
-							targetCharacters, callbackFunction
-						);
-					}
-
-					frameSkipCount++;
-					// skip a number of frames equal to the frames/second we're likely to get from
-					// requestAnimationFrame() (60fps) minus the desired frames/second for this particular
-					// animation
-					if(frameSkipCount >= 60 - fps) {
-						frameSkipCount = 0;
-					}
-				}
-				window.requestAnimationFrame(sheetAnimFn);
-			}, false);
-			fxImage.src = fxData.resName;
+					window.requestAnimationFrame(sheetAnimFn);
+				}, false);
+				fxImage.src = fxData.resName;
+			} else if(fxType === "spritesheet_array") {
+				// todo: run through each anim in the array, and only have the last one
+				//  call pain state anim w/ forwarded cb
+			}
 		}
 		request.send();
 	}
