@@ -220,30 +220,35 @@ class MootyWortRpgMech {
 			} else if(fxType === "spritesheet_array") {
 				sheetDataArray = fxData.resArray;
 			}
-			
+			var sheetDataIdx = 0;
 			for(let sheetData of sheetDataArray) {
-				var fps = fxData.frameRate;
+				let fps = sheetData.frameRate;
 				// load spritesheet image file
-				var fxImage = new Image();
+				let fxImage = new Image();
 				fxImage.addEventListener('load', function() {
 					// show spell anim in overlay
-					var frameSkipCount = 0;
-					var frameIdx = 0;
-					var sheetAnimFn = function(elapsedTime) {
+					let frameSkipCount = 0;
+					let frameIdx = 0;
+					let sheetAnimFn = function(elapsedTime) {
 						if (frameSkipCount == 0) {
 							// action frame!
-							rpgMechHandle.drawSpellFxFrame(fxImage, fxData, frameIdx, overlayCanvas);
+							rpgMechHandle.drawSpellFxFrame(fxImage, sheetData, frameIdx, overlayCanvas);
 							frameIdx++;
 						}
 	
-						if (frameIdx < fxData.frameCount) {
+						if (frameIdx < sheetData.frameCount) {
 							window.requestAnimationFrame(sheetAnimFn);
 						} else {
-							rpgMechHandle.hideSpellEffectOverlay();
-							// forward our cb to the next anim
-							rpgMechHandle.playPainAnimation(
-								targetCharacters, callbackFunction
-							);
+							// inc sheet count and only hide overlay/forward cb
+							// once we're done with all spritesheets we need to anim
+							sheetDataIdx++;
+							if(sheetDataIdx === sheetDataArray.length) {
+								rpgMechHandle.hideSpellEffectOverlay();
+								// forward our cb to the next anim
+								rpgMechHandle.playPainAnimation(
+									targetCharacters, callbackFunction
+								);
+							}
 						}
 	
 						frameSkipCount++;
@@ -256,7 +261,7 @@ class MootyWortRpgMech {
 					}
 					window.requestAnimationFrame(sheetAnimFn);
 				}, false);
-				fxImage.src = fxData.resName;
+				fxImage.src = sheetData.resName;
 			}
 		}
 		request.send();
