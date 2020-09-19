@@ -214,7 +214,14 @@ class MootyWortRpgMech {
 			// since we indicated responseType json, our response should already by a JS object defining our FX data
 			var fxData = request.response;
 			var fxType = fxData.type;
+			var sheetDataArray = undefined;
 			if(fxType === "spritesheet") {
+				sheetDataArray = [fxData];
+			} else if(fxType === "spritesheet_array") {
+				sheetDataArray = fxData.resArray;
+			}
+			
+			for(let sheetData of sheetDataArray) {
 				var fps = fxData.frameRate;
 				// load spritesheet image file
 				var fxImage = new Image();
@@ -250,9 +257,6 @@ class MootyWortRpgMech {
 					window.requestAnimationFrame(sheetAnimFn);
 				}, false);
 				fxImage.src = fxData.resName;
-			} else if(fxType === "spritesheet_array") {
-				// todo: run through each anim in the array, and only have the last one
-				//  call pain state anim w/ forwarded cb
 			}
 		}
 		request.send();
@@ -308,10 +312,6 @@ class MootyWortRpgMech {
 	 * @param callbackFunction no-arg function to be called when the animation completes
 	 */
 	playPainAnimation(characters, callbackFunction) {
-		// todo: need to accept an array of target character objects, which we'll
-		//  unpack and anim over, and only call the cb when all have finished their
-		//  animations.  e.g. foreach targetcharacter{ uidata = rpgMechHandle.characterUiDict[targetCharacters[idx].id]...}
-		
 		// track completed animations
 		var completedAnimationsCounter = 0;
 		
