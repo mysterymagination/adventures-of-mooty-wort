@@ -1,3 +1,5 @@
+import {MoleUndum} from "./libifels_undum.js"
+
 /**
  * A StatusEffect performs some behavior each round for a set duration in rounds.
  */
@@ -41,6 +43,30 @@ export class Defended extends StatusEffect {
 	reverseEffect(targetChar) {
 	    targetChar.stats["def"] = this.cachedDef;
 	    targetChar.stats["res"] = this.cachedRes;
+	}
+}
+
+/**
+ * Woolily Shielded increases a character's defense massively for 3 rounds 
+ */
+export class WoolilyShielded extends StatusEffect {
+	/**
+	 * @param sourceCharacter the character whose power is making the effected character woolily shielded
+	 */
+	constructor(sourceCharacter) {
+		super({id:"woolily_shielded", name: "Woolily Shielded", duration: 3});
+		this.isBuff = true;
+		this.descriptors.push("buff", "defense");
+		this.sourceCharacter = sourceCharacter;
+	}
+	effect(targetChar) {
+		this.cachedDef = targetChar.stats["def"];
+	    targetChar.stats["def"] += MoleUndum.prettyDarnRound(
+    		Math.max(Math.max(this.sourceCharacter.stats["def"], this.sourceCharacter.stats["res"]), 1) * 2
+    	);
+	}
+	reverseEffect(targetChar) {
+	    targetChar.stats["def"] = this.cachedDef;
 	}
 }
 

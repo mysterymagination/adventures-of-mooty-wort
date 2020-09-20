@@ -501,22 +501,16 @@ export class WarmestHug extends Spell {
 }
 
 /**
-Woolly Shield raises target's DEF by wielder's RES+DEF
-*/
+ * Woolly Shield raises target's DEF by double the greater of wielder's RES or DEF (min 1)
+ */
 export class WoollyShield extends Spell {
 	constructor() {
 		super({id: "woolly_shield", name: "Woolly Shield"});
 		WoollyShield.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		WoollyShield.prototype.cost = { "mp": 30 };
 	}
-	calcDmg(sourceChar, targetChar) {
-	    return MoleUndum.prettyDarnRound(
-	    			Math.max(sourceChar.stats["def"] + sourceChar.stats["res"], 1)
-	    		);
-	}
 	effect(sourceChar, targetChar) {
-	    this.dmg = this.calcDmg(sourceChar, targetChar);
-	    targetChar.stats["def"] += this.dmg;
+		MoleUndum.addUniqueStatusEffect(targetChar, new Alchemy.WoolilyShielded(sourceChar));
 
 	    // MP cost
 	    this.processCost(sourceChar);
