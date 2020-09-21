@@ -98,7 +98,8 @@ export class Combat {
             for (let effect of enemyCharacter.statusEffects) {
                 if (enemyCharacter.stats.hp > 0) {
                     if (effect.id === "poison") {
-                        enemyCharacter.stats["hp"] -= effect.psnDmg;
+                        console.log(enemyCharacter.name+" takes "+effect.psnDmg+" damage due to poison coursing through "+enemyCharacter.getPronoun_possessive()+" poor system!");
+                    	enemyCharacter.stats["hp"] -= effect.psnDmg;
                     }
 
                     effect.tickDown();
@@ -129,7 +130,8 @@ export class Combat {
                 if (playerCharacter.stats.hp > 0) {
                 	// todo: frozen processing: player needs to choose whether to break free
                 	if (effect.id === "poison") {
-                        playerCharacter.stats["hp"] -= effect.psnDmg;
+                		console.log(playerCharacter.name+" takes "+effect.psnDmg+" damage due to poison coursing through "+playerCharacter.getPronoun_possessive()+" poor system!");
+                		playerCharacter.stats["hp"] -= effect.psnDmg;
                     }
 
                     effect.tickDown();
