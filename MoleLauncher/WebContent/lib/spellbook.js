@@ -857,7 +857,7 @@ export class ManyfoldEmbrace extends Spell {
 		// using magic and then buffeting the target with them
 		return Math.max(
 				MoleUndum.prettyDarnRound(
-					0.5*sourceChar.stats["atk"] + 0.5*sourceChar.stats["pwr"]
+					sourceChar.stats["atk"] + 0.5*sourceChar.stats["pwr"]
 					- 0.5*targetChar.stats["def"]), 1
 				);
 	}

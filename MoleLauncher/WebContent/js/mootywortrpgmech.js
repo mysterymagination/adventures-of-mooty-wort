@@ -311,6 +311,45 @@ class MootyWortRpgMech {
 		console.log("sourcing from " + srcX + "x" + srcY + " out to " + (srcX + srcWidth) + "x" + (srcY + srcHeight) + ".  Destination is 0x0 out to " + dstWidth + "x" + dstHeight);
 	}
 	/**
+	 * Draws targeting reticle over the given canvas
+	 */
+	drawTarget(canvas) {
+		var context2d = canvas.getContext('2d');
+		var reticleImage = new Image();
+		reticleImage.addEventListener('load', () => {
+			// draw the image frame
+			context2d.drawImage(
+				reticleImage,
+				0,
+				0,
+				canvas.width,
+				canvas.height
+			);
+		});
+		reticleImage.src = "images/reticle.png";
+	}
+	/**
+	 * Restores the character image as its only canvas content
+	 */
+	refreshCharacterCanvas(uiEntry) {
+		// redraw sprite 
+		var context2d = uiEntry.canvasElement.getContext('2d');
+		var characterImage = new Image();
+		characterImage.addEventListener('load', function() {
+			context2d.clearRect(0, 0, uiEntry.canvasElement.width, uiEntry.canvasElement.height);
+			context2d.drawImage(characterImage, 0, 0);
+		});
+		characterImage.src = uiEntry.characterObj.battleSprites[uiEntry.characterObj.spriteIdx];
+	}
+	/**
+	 * Restores all character images as each canvas's only content
+	 */
+	refreshCharacterCanvases() {
+		for(let [characterId, uiEntry] of Object.entries(this.characterUiDict)) {
+			this.refreshCharacterCanvas(uiEntry);
+		}
+	}
+	/**
 	 * Plays out the pain state wiggle and flash red animation
 	 * on the given character UI data's canvas
 	 * @param characters an array of Character objects whose ids can be used to lookup UI data
@@ -606,12 +645,12 @@ class MootyWortRpgMech {
 						// we can afford the cost of the chosen abl, so go ahead with targeting etc.
 						if(abl.targetType === Ability.TargetTypesEnum.singleTarget) {
 							for(let [targetCharacterId, uiEntry] of Object.entries(this.characterUiDict).concat(Object.entries(this.characterUiDict))) {
+								this.drawTarget(uiEntry.canvasElement);
 								uiEntry.canvasElement.onclick = () => {
+									this.refreshCharacterCanvases();
 									let sourceCharacter = combatModel.currentTurnOwner;
 									let targetCharacter = combatModel.findCombatant(targetCharacterId);
 									abl.effect(sourceCharacter, targetCharacter);
-									// todo: probly gonna hafta add a cb fn param to showSpellEffectOverlay()
-									//  that will call handlePlayerTurnComplete() only after the anim is finished
 									this.showSpellEffectOverlay(sourceCharacter, [targetCharacter], abl.id, () => {
 										this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 										this.updateCharacterData(combatModel);
