@@ -267,10 +267,20 @@ class MootyWortRpgMech {
 		request.send();
 	}
 	/**
+	 * Shows the spell FX overlay over the entire modal, but doesn't load and
+	 * spell FX; useful for overlaying messages over the whole combat UI
+	 */
+	showSpellEffectOverlay() {
+		var overlayCanvas = document.getElementById("effectsOverlayCanvas");
+		overlayCanvas.style.width = "100%";
+		overlayCanvas.style.height = "100%";
+		overlayCanvas.width = overlayCanvas.offsetWidth;
+		overlayCanvas.height = overlayCanvas.offsetHeight;
+	}
+	/**
 	 * Makes the spell FX overlay canvas invisible
 	 */
 	hideSpellEffectOverlay() {
-		// todo: fadeout spell graphic before hiding overlay?
 		var overlayCanvas = document.getElementById("effectsOverlayCanvas");
 		overlayCanvas.style.width = "0px";
 		overlayCanvas.style.height = "0px";
@@ -810,11 +820,19 @@ class MootyWortRpgMech {
 	 * @param resultString a string to replace the UI with
 	 */ 
 	displayResult(resultString) {
-		// todo: show the spell fx overlay
-		// todo: hide the combatModalContent div
+		this.showSpellEffectOverlay();
+		this.hideModalContent();
 		// todo: write the given result string on the canvas via ctx.fillText("Hello World", canvas.width/2, canvas.height/2);
 		// todo: draw exit door image at the bottom center of the exit message canvas
 		// todo: install onclick handler in the door image that hides div combatModal and shows div page
+	}
+	showModalContent() {
+		var modalContentDiv = document.getElementById('combatModalContent');
+		modalContentDiv.style.display = 'inline-block';
+	}
+	hideModalContent() {
+		var modalContentDiv = document.getElementById('combatModalContent');
+		modalContentDiv.style.display = 'none';
 	}
 	/**
 	 * Display victory or defeat message and provide battle exit UI 
