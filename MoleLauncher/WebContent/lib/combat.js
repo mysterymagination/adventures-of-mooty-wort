@@ -160,6 +160,8 @@ export class Combat {
         
         if(this.combatResult !== undefined) {
 			// we have a combat result, so tell the viewcontroller to process it
+        	// todo: check for serial combat gauntlet e.g. moving mole onto Grue from Yawning God if necessary
+        	//  and healing him up for the next round!
         	return Combat.ControllerState.processCombatResult;
         } else {
         	// todo: check for any status effects that might prevent enemy from acting

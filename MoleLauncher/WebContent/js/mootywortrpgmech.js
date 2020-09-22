@@ -806,22 +806,39 @@ class MootyWortRpgMech {
 		}
 	}
 	/**
-	 * Display victory or defeat message and provide battle exit UI
+	 * Hides the combat UI and draws the combat result message on the spell FX overlay canvas
+	 * @param resultString a string to replace the UI with
+	 */ 
+	displayResult(resultString) {
+		// todo: show the spell fx overlay
+		// todo: hide the combatModalContent div
+		// todo: write the given result string on the canvas via ctx.fillText("Hello World", canvas.width/2, canvas.height/2);
+		// todo: draw exit door image at the bottom center of the exit message canvas
+		// todo: install onclick handler in the door image that hides div combatModal and shows div page
+	}
+	/**
+	 * Display victory or defeat message and provide battle exit UI 
 	 */
 	handleCombatResult(enumCombatResult) {
     	// combat over scenario
 		switch(enumCombatResult) {
         case Combat.CombatResultEnum.playerVictory:
-        	// todo: display player victory message and battle exit UI
-        	console.log("evil is vaniquished and the Deepness saved for all time!");
+        	// display player victory message and battle exit UI
+        	this.displayResult("🦔 evil is vanquished and the Deepness saved for all time🦉!", MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+        	// todo: comm mole death victory to launching Situation, 
+        	//   replace its fight entry with an eerily empty message (or something hinting at Grue if it wasn't fought), 
+        	//   and put the player back in the last traversable Situation with new choices to make re: his
+        	//   apotheosis.
         	break;
         case Combat.CombatResultEnum.enemyVictory:
-        	// todo: display player defeat message and game over UI, ideally a dark soulsy 'you died'
-        	console.log("and with the mole's death, darkness swept o'er all the land...");
+        	// display player defeat message and game over UI, ideally a dark soulsy 'you died'
+        	this.displayResult("💀...and with the mole's death, darkness swept o'er all the land...💀");
+        	// todo: comm mole death back to launching Situation as the final entry in the transcript
         	break;
         case Combat.CombatResultEnum.draw:
-        	// todo: display draw message and battle exit UI
-        	console.log("it's a draw!");
+        	// display draw message and battle exit UI
+        	this.displayResult("💥the titanic clash of the mole and the mighty devil from the depths consumes them both in a conflagration quenched only by the tsunami of shed blood💥");
+        	// todo: comm mole death back to launching Situation as the final entry in the transcript
         	break;
         default:
         	throw "handleCombatResult called with unrecognized result enum "+enumCombatResult;
