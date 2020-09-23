@@ -848,21 +848,34 @@ class MootyWortRpgMech {
 			let startCharacterIndex = lineIdx*charactersPerLine;
 			// the potential end character index is the end character index derived simply from
 			// how many characters we can fit, without taking word breaks into account
-			let potentialEndCharacterIndex = startCharacterIndex + charactersPerLine;
-			let subStr = bigString.substring(startCharacterIndex, potentialEndCharacterIndex);
-			// for the actual end character index we find the last whitespace char
-			// to facilitate respecting word breaks
-			let endCharacterIndex = subStr.lastIndexOf(' ')
-			if(endCharacterIndex === -1) {
-				endCharacterIndex = potentialEndCharacterIndex;
-			}
-			// figure out how many non-whitespace characters we skipped; -1 is for the whitespace itself
-			remainderChars = potentialEndCharacterIndex - endCharacterIndex - 1;
+			let endCharacterIndex = startCharacterIndex + charactersPerLine;
+			let subStr = bigString.substring(startCharacterIndex, endCharacterIndex);
+			// redefine our substring as remainder chars from the last line break + actual next substring
+			// so we'll respect word breaks as well
 			subStr = bigString.substring(startCharacterIndex - remainderChars, startCharacterIndex) + subStr;
+			// now that we've got our final substring, we want to redefine end character index
+			// in reference to it in order to do (correct) arithmetic on it later
+			endCharacterIndex = subStr.length-1;
+			// assume we won't have any word break to worry about at all
+			let lastWhitespaceIndex = endCharacterIndex;
+			// only need to worry about word breaks if there's going to be another line break
+			if(lineIdx !== numLines - 1) {
+				// for the actual end character index we find the last whitespace char
+				// to facilitate respecting word breaks
+				lastWhitespaceIndex = subStr.lastIndexOf(' ')
+				if(lastWhitespaceIndex !== -1) {
+					// after remainder chars has been consume this iteration, figure out how many non-whitespace 
+					// characters we skipped if any; they'll be consumed by the next iteration
+					remainderChars = endCharacterIndex - lastWhitespaceIndex;
+					// -1 since we don't care to make room for the whitespace itself at the end of this line
+					endCharacterIndex = lastWhitespaceIndex - 1;
+				}
+			}
 			context2d.fillText(
-				subStr.substring(0, endCharacterIndex), 
+				subStr.substring(0, endCharacterIndex+1), 
 				canvas.width/2, canvas.height/2 + lineIdx*heightPx
 			);
+			
 		}
 	}
 	/**
