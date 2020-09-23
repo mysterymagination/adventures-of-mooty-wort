@@ -151,7 +151,7 @@ class MootyWortRpgMech {
 					break;
 				}
 				this.combatLogPrint(combatModel.combatLogContent, MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION);
-				this.showSpellEffectOverlay(sourceCharacter, targetCharacters, selectedAbility.id, () => {
+				this.showSpellEffect(sourceCharacter, targetCharacters, selectedAbility.id, () => {
 					this.updateCharacterData(combatModel);
 					this.handleEnemyTurnComplete(combatModel);
 				});
@@ -193,17 +193,10 @@ class MootyWortRpgMech {
 	 * @param spellId the string id of the spell whose FX should render
 	 * @param callbackFunction no-arg function to be called when the animation is complete
 	 */
-	showSpellEffectOverlay(sourceCharacter, targetCharacters, spellId, callbackFunction) {
+	showSpellEffect(sourceCharacter, targetCharacters, spellId, callbackFunction) {
 		var rpgMechHandle = this;
-		console.log("showing overlay fx for spell " + spellId);
-		var overlayCanvas = document.getElementById("effectsOverlayCanvas");
-		console.log("before setting overlay canvas dimens they are " + overlayCanvas.width + "x" + overlayCanvas.height);
-		overlayCanvas.style.width = "100%";
-		overlayCanvas.style.height = "100%";
-		overlayCanvas.width = overlayCanvas.offsetWidth;
-		overlayCanvas.height = overlayCanvas.offsetHeight;
-		console.log("after setting overlay canvas dimens they are " + overlayCanvas.width + "x" + overlayCanvas.height);
-
+		var overlayCanvas = this.showSpellEffectOverlay();
+		
 		// XMLHTTPRequest on up our json fx data file, and put the usage of its data in a lambda
 		//  that'll get called once the file is loaded 
 		var spell = sourceCharacter.entity.spellsDict[spellId];
@@ -269,6 +262,7 @@ class MootyWortRpgMech {
 	/**
 	 * Shows the spell FX overlay over the entire modal, but doesn't load and
 	 * spell FX; useful for overlaying messages over the whole combat UI
+	 * @return the revealed spell effect overlay canvas element
 	 */
 	showSpellEffectOverlay() {
 		var overlayCanvas = document.getElementById("effectsOverlayCanvas");
@@ -276,9 +270,11 @@ class MootyWortRpgMech {
 		overlayCanvas.style.height = "100%";
 		overlayCanvas.width = overlayCanvas.offsetWidth;
 		overlayCanvas.height = overlayCanvas.offsetHeight;
+		return overlayCanvas;
 	}
 	/**
 	 * Makes the spell FX overlay canvas invisible
+	 * @return the hidden spell effect overlay canvas element
 	 */
 	hideSpellEffectOverlay() {
 		var overlayCanvas = document.getElementById("effectsOverlayCanvas");
@@ -286,6 +282,7 @@ class MootyWortRpgMech {
 		overlayCanvas.style.height = "0px";
 		overlayCanvas.width = overlayCanvas.offsetWidth;
 		overlayCanvas.height = overlayCanvas.offsetHeight;
+		return overlayCanvas;
 	}
 	/**
 	 * Draws a spell FX spritesheet animation, scaling automatically to cover the given canvas with each frame
@@ -661,7 +658,7 @@ class MootyWortRpgMech {
 									let sourceCharacter = combatModel.currentTurnOwner;
 									let targetCharacter = combatModel.findCombatant(targetCharacterId);
 									abl.effect(sourceCharacter, targetCharacter);
-									this.showSpellEffectOverlay(sourceCharacter, [targetCharacter], abl.id, () => {
+									this.showSpellEffect(sourceCharacter, [targetCharacter], abl.id, () => {
 										this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 										this.updateCharacterData(combatModel);
 										this.handlePlayerTurnComplete(combatModel);
@@ -692,7 +689,7 @@ class MootyWortRpgMech {
 								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 								break;
 							}
-							this.showSpellEffectOverlay(sourceCharacter, targetCharacters, abl.id, () => {
+							this.showSpellEffect(sourceCharacter, targetCharacters, abl.id, () => {
 								this.updateCharacterData(combatModel);
 								this.handlePlayerTurnComplete(combatModel);
 								// clear onclick now that we've used it
@@ -822,14 +819,62 @@ class MootyWortRpgMech {
 	displayResult(resultString) {
 		this.showSpellEffectOverlay();
 		this.hideModalContent();
-		// todo: write the given result string on the canvas via ctx.fillText("Hello World", canvas.width/2, canvas.height/2);
+		var overlayCanvas = document.getElementById('effectsOverlayCanvas');
+		var context2d = overlayCanvas.getContext('2d');
+		context2d.font = "30px Arial";
+		context2d.fillStyle = "purple";
+		context2d.textAlign = "center";
+		this.multiLineFillText(overlayCanvas, 30, resultString);
 		// todo: draw exit door image at the bottom center of the exit message canvas
 		// todo: install onclick handler in the door image that hides div combatModal and shows div page
 	}
+	/**
+	 * Calls fillText() multiple times on the given canvas' context2d until the complete
+	 * string has been printed without overrunning horizontally
+	 * @param canvas the Canvas object on which we wish to render text over potentially multiple lines
+	 * @param heightPx the height of the characters in the given string
+	 * @param bigString the string that may need multiple lines to avoid running off the canvas horizontally
+	 * todo: vertical overflow support?
+	 */
+	multiLineFillText(canvas, heightPx, bigString) {
+		var context2d = canvas.getContext('2d');
+		var totalWidth = context2d.measureText(bigString).width;
+		var characterWidth = totalWidth/bigString.length;
+		var charactersPerLine = Math.floor(canvas.width/characterWidth);
+		var numLines = Math.ceil(totalWidth/canvas.width);
+		var remainderChars = 0;
+		for(let lineIdx = 0; lineIdx < numLines; lineIdx++) {
+			// offset to the character that should correspond to the current line
+			let startCharacterIndex = lineIdx*charactersPerLine;
+			// the potential end character index is the end character index derived simply from
+			// how many characters we can fit, without taking word breaks into account
+			let potentialEndCharacterIndex = startCharacterIndex + charactersPerLine;
+			let subStr = bigString.substring(startCharacterIndex, potentialEndCharacterIndex);
+			// for the actual end character index we find the last whitespace char
+			// to facilitate respecting word breaks
+			let endCharacterIndex = subStr.lastIndexOf(' ')
+			if(endCharacterIndex === -1) {
+				endCharacterIndex = potentialEndCharacterIndex;
+			}
+			// figure out how many non-whitespace characters we skipped; -1 is for the whitespace itself
+			remainderChars = potentialEndCharacterIndex - endCharacterIndex - 1;
+			subStr = bigString.substring(startCharacterIndex - remainderChars, startCharacterIndex) + subStr;
+			context2d.fillText(
+				subStr.substring(0, endCharacterIndex), 
+				canvas.width/2, canvas.height/2 + lineIdx*heightPx
+			);
+		}
+	}
+	/**
+	 * Reset the display style property of combatModalContent to inline-block
+	 */
 	showModalContent() {
 		var modalContentDiv = document.getElementById('combatModalContent');
 		modalContentDiv.style.display = 'inline-block';
 	}
+	/**
+	 * Set the display style property of combatModalContent to none
+	 */
 	hideModalContent() {
 		var modalContentDiv = document.getElementById('combatModalContent');
 		modalContentDiv.style.display = 'none';
