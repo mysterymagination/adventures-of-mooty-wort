@@ -817,16 +817,32 @@ class MootyWortRpgMech {
 	 * @param resultString a string to replace the UI with
 	 */ 
 	displayResult(resultString) {
+		// prepare overlay and hide combat UI
 		this.showSpellEffectOverlay();
 		this.hideModalContent();
 		var overlayCanvas = document.getElementById('effectsOverlayCanvas');
 		var context2d = overlayCanvas.getContext('2d');
+		// write text message in center of overlay
 		context2d.font = "30px Arial";
 		context2d.fillStyle = "purple";
 		context2d.textAlign = "center";
 		this.multiLineFillText(overlayCanvas, 30, resultString);
-		// todo: draw exit door image at the bottom center of the exit message canvas
-		// todo: install onclick handler in the door image that hides div combatModal and shows div page
+		// draw exit door image at the bottom center of the overlay canvas
+		var exitDoorImage = new Image();
+		exitDoorImage.addEventListener('load', () => {
+			context2d.drawImage(
+				exitDoorImage,
+				// we're going to scale the exit door dimens to 
+				// fractions of the overlayCanvas dimens, so just plug those
+				// in where we would otherwise have exit door width and height
+				overlayCanvas.width/2 - (overlayCanvas.width/3)/2,
+				overlayCanvas.height - overlayCanvas.height/3,
+				overlayCanvas.width/3,
+				overlayCanvas.height/3
+			);
+			// todo: install onclick handler in the door image that hides div combatModal and shows div page
+		});
+		exitDoorImage.src = 'images/cave_exit.png';
 	}
 	/**
 	 * Calls fillText() multiple times on the given canvas' context2d until the complete
@@ -875,7 +891,6 @@ class MootyWortRpgMech {
 				subStr.substring(0, endCharacterIndex+1), 
 				canvas.width/2, canvas.height/2 + lineIdx*heightPx
 			);
-			
 		}
 	}
 	/**

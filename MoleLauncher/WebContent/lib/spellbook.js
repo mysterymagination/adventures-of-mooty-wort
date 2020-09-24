@@ -1,8 +1,6 @@
 import * as Alchemy from "./alchemy.js";
 import {MoleUndum} from "./libifels_undum.js"
 
-//todo: these flavor texts really need some random variations to keep things interesting
-
 export class Description {
 	constructor() {
 		this.descString = "placeholder desc";
