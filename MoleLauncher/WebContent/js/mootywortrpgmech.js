@@ -830,17 +830,27 @@ class MootyWortRpgMech {
 		// draw exit door image at the bottom center of the overlay canvas
 		var exitDoorImage = new Image();
 		exitDoorImage.addEventListener('load', () => {
+			var doorWidth = overlayCanvas.width/3;
+			var doorHeight = overlayCanvas.height/3;
+			var doorDestX = overlayCanvas.width/2 - doorWidth/2;
+			var doorDestY = overlayCanvas.height - doorHeight;
 			context2d.drawImage(
 				exitDoorImage,
-				// we're going to scale the exit door dimens to 
-				// fractions of the overlayCanvas dimens, so just plug those
-				// in where we would otherwise have exit door width and height
-				overlayCanvas.width/2 - (overlayCanvas.width/3)/2,
-				overlayCanvas.height - overlayCanvas.height/3,
-				overlayCanvas.width/3,
-				overlayCanvas.height/3
+				doorDestX,
+				doorDestY,
+				doorWidth,
+				doorHeight
 			);
-			// todo: install onclick handler in the door image that hides div combatModal and shows div page
+			// install onclick handler in the door image that hides div combatModal and shows div page
+			overlayCanvas.onclick = (clickEvent) => {
+				if(clickEvent.clientX >= doorDestX && clickEvent.clientX <= doorDestX + doorWidth &&
+						clickEvent.clientY >= doorDestY && clickEvent.clientY <= doorDestY+doorHeight) {
+					var combatModal = document.getElementById('combatModal');
+					combatModal.style.display = 'none';
+					var undumPage = document.getElementById('page');
+					undumPage.style.display = 'block';
+				}
+			};
 		});
 		exitDoorImage.src = 'images/cave_exit.png';
 	}
