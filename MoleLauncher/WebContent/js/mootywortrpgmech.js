@@ -926,20 +926,14 @@ class MootyWortRpgMech {
         case Combat.CombatResultEnum.playerVictory:
         	// display player victory message and battle exit UI
         	this.displayResult("🦔 evil is vanquished and the Deepness saved for all time🦉!", MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
-        	// todo: comm mole death victory to launching Situation, 
-        	//   replace its fight entry with an eerily empty message (or something hinting at Grue if it wasn't fought), 
-        	//   and put the player back in the last traversable Situation with new choices to make re: his
-        	//   apotheosis.
         	break;
         case Combat.CombatResultEnum.enemyVictory:
         	// display player defeat message and game over UI, ideally a dark soulsy 'you died'
         	this.displayResult("💀...and with the mole's death, darkness swept o'er all the land...💀");
-        	// todo: comm mole death back to launching Situation as the final entry in the transcript
         	break;
         case Combat.CombatResultEnum.draw:
         	// display draw message and battle exit UI
         	this.displayResult("💥the titanic clash of the mole and the mighty devil from the depths consumes them both in a conflagration quenched only by the tsunami of shed blood💥");
-        	// todo: comm mole death back to launching Situation as the final entry in the transcript
         	break;
         default:
         	throw "handleCombatResult called with unrecognized result enum "+enumCombatResult;

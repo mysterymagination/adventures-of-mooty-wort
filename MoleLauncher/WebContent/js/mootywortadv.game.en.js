@@ -784,10 +784,23 @@ undum.game.situations = {
                 // boss fight hyyyyype!  Give a combat UI within the transcript main content window; I'm thinking a relatively simple table plus some text and image output divs?
             	var mech = undum.game.rpgMech;
             	mech.enterCombat({playerParty: [mech.charactersDict["mole"]], enemyParty: [mech.charactersDict["yawning_god"]]});
-            	// todox: what happens when you put interactible elements in your situation HTML, like a Button tag?
-            	//  update: whatever should normally happen; see death case below
-            	// todo: spawn a modal pop-over div that hosts our combat UI; disallow click-away and have the modal lifetime be tied to combat lifecycle.
             	// todo: if the player wins against the yawning god and they aggro'ed the grue, drop the modal and give transcript text about grue coming in and then raise modal for next combat!
+            	if(character.mole.stats.hp > 0) {
+            		var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
+            		var deepOneString = "Before you can fully process what has transpired, you feel a shadowy mantle slip over your shoulders, and thorned crown make its nest in bloody fur atop your noodle, clasping shut like a manacle.  A great and terrible something has come upon you, a power unwanted but irrepressible and undeniable.  Its poisonous whispers flit through your mind like tendrils of blight, corrupting your thoughts more thoroughly with each passing moment.";
+            		// todo: grue attack string if grue was aggro'ed
+            		// todo: transition to the grue fight iff grue was aggro'ed
+            		// todo: in that case, when grue is beaten proceed to dark mole epilogue below
+            		// todo: else, proceed directly to dark mole epilogue but hint that something vile remains in the Deepness, a cheschire cat grin all of teeth flashing out of the distant void for an instant. 
+            		// todo: dark mole epilogue: send player to basement2 hub and let them do as they please with new
+            		//  skull of mondain style evil actions with each character; characters should recognize him
+            		//  as the source of the rapturous rumble now, too.  Player can do with them as they see
+            		//  fit, and upon surfacing they can choose to wash off the Darkness in the sunlight
+            		//  or harness it to darken the sky and wage war upon the humans and other surfacers...
+            		system.write("<p></p>");
+            	} else {
+            		system.doLink('death');
+            	}
             	// todo: once all fights are complete, process victory condition with transcript text appropriate to choice details
             },
             optionText: "Burrow towards the Deepest Deepness"
