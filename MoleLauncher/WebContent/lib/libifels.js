@@ -188,6 +188,20 @@ export class Libifels {
         return Math.floor(Math.random() * sides) + 1;
     }
     /** 
+     * simulate a dM roll N times
+     * @param numDice the number of dM to be rolled (N)
+     * @param sides an integer number of dice sides e.g. 20 for a d20 (M)
+     * e.g. 3d6
+     * @return the aggregate total from all N dice rolls
+     */
+    static rollNDM(numDice, sides) {
+    	var total = 0;
+    	for(let i = 0; i < numDice; i++) {
+    		total += this.rollDie(sides);
+    	}
+    	return total;
+    }
+    /** 
      * simulate a d% roll
      */
     static rollPercentage() {

@@ -568,7 +568,12 @@ export class ShadowFlare extends Spell {
 		ShadowFlare.prototype.cost = { "mp": 50 };
 	}
 	calcDmg(sourceChar, targetChar) {
-	    return Math.max(MoleUndum.prettyDarnRound(2 * sourceChar.stats["pwr"]), 1);
+	    return Math.max(
+	    		MoleUndum.prettyDarnRound(
+	    				10 * sourceChar.stats["pwr"] + 
+	    				MoleUndum.rollNDM(4,10)
+	    			), 
+	    		1);
 	}
 	effect(sourceChar, targetChar) {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);

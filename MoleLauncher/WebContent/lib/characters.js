@@ -377,7 +377,7 @@ export class YawningGod extends Character {
 		this.stats["atk"] = 15;
 		this.stats["def"] = 10;
 		this.stats["pwr"] = 10;
-		this.stats["res"] = 8; // as a being of madness, the Yawning God's mind is not well guarded
+		this.stats["res"] = 1; // as a being of madness, the Yawning God's mind is not well guarded
 		this.stats["spd"] = 5;
 	    YawningGod.prototype.entity = new Spells.EldritchHorror();
 	    this.spriteIdx = 0;
