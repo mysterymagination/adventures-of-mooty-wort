@@ -292,7 +292,6 @@ class MootyWortRpgMech {
 	 * @param canvas the Canvas we want to draw on
 	 */
 	drawSpellFxFrame(spriteSheetImage, spriteSheetData, frameIdx, canvas) {
-		console.log("drawSpellFxFrame; drawing frame index "+frameIdx+" of " + spriteSheetData.columns + "x" + spriteSheetData.rows + " sprite sheet "+spriteSheetData.resName);
 		var context2d = canvas.getContext('2d');
 		// clear frame
 		context2d.clearRect(0, 0, canvas.width, canvas.height);
@@ -315,7 +314,6 @@ class MootyWortRpgMech {
 				dstWidth,
 				dstHeight
 		);
-		console.log("sourcing from " + srcX + "x" + srcY + " out to " + (srcX + srcWidth) + "x" + (srcY + srcHeight) + ".  Destination is 0x0 out to " + dstWidth + "x" + dstHeight);
 	}
 	/**
 	 * Draws targeting reticle over the given canvas

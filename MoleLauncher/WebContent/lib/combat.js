@@ -95,6 +95,7 @@ export class Combat {
 		// todo: frozen status processing, specifically graying out command UI if the player is frozen
 		//  and adding a command option to break out
         for (let enemyCharacter of this.enemyParty) {
+        	let tickedOffEffects = [];
             for (let effect of enemyCharacter.statusEffects) {
                 if (enemyCharacter.stats.hp > 0) {
                     if (effect.id === "poison") {
@@ -103,15 +104,16 @@ export class Combat {
                     }
 
                     effect.tickDown();
+                    console.log("ticking down "+enemyCharacter.name+"'s "+effect.name+" to "+effect.ticks);
                     // lt 0 because we don't want to count the turn in which the effect is applied
-                    if (effect.ticks < 0) {
+                    if (effect.ticks <= 0) {
                         // reverse the effect now that it is over
                         effect.reverseEffect(enemyCharacter);
                         // reset the ticks count to duration in case we
                         // want to re-use this statuseffect instance
                         effect.ticks = effect.duration;
-                        // remove the status effect from the character
-                        Libifels.removeStatusEffect(enemyCharacter, effect);
+                        // record that we want to remove this effect
+                        tickedOffEffects.push(effect);
                     }
                 } else {
                     // reverse the effect now that char is dead
@@ -119,13 +121,19 @@ export class Combat {
                     // reset the ticks count to duration in case we
                     // want to re-use this statuseffect instance
                     effect.ticks = effect.duration;
-                    // remove the status effect from the character
-                    Libifels.removeStatusEffect(enemyCharacter, effect);
+                    // record that we want to remove this effect
+                    tickedOffEffects.push(effect);
                 }
+            }
+            // now step over the ticked off effects array to remove 'em from the status effects array
+            for(let tickedOffEffect of tickedOffEffects) {
+            	// remove the status effect from the character
+                Libifels.removeStatusEffect(enemyCharacter, tickedOffEffect);
             }
         }
         // tick down and process status effects for player party
         for (let playerCharacter of this.playerParty) {
+        	let tickedOffEffects = [];
             for (let effect of playerCharacter.statusEffects) {
                 if (playerCharacter.stats.hp > 0) {
                 	// todo: frozen processing: player needs to choose whether to break free
@@ -135,14 +143,15 @@ export class Combat {
                     }
 
                     effect.tickDown();
+                    console.log("ticking down "+playerCharacter.name+"'s "+effect.name+" to "+effect.ticks);
                     if (effect.ticks <= 0) {
                         // reverse the effect now that it is over
                         effect.reverseEffect(playerCharacter);
                         // reset the ticks count to duration in case we
                         // want to re-use this statuseffect instance
                         effect.ticks = effect.duration;
-                        // remove the status effect from the character
-                        Libifels.removeStatusEffect(playerCharacter, effect);
+                        // record that we want to remove this effect
+                        tickedOffEffects.push(effect);
                     }
                 } else {
                     // reverse the effect now that character is dead
@@ -150,9 +159,14 @@ export class Combat {
                     // reset the ticks count to duration in case we
                     // want to re-use this statuseffect instance
                     effect.ticks = effect.duration;
-                    // remove the status effect from the character
-                    Libifels.removeStatusEffect(playerCharacter, effect);
+                    // record that we want to remove this effect
+                    tickedOffEffects.push(effect);
                 }
+            }
+            // now step over the ticked off effects array to remove 'em from the status effects array
+            for(let tickedOffEffect of tickedOffEffects) {
+            	// remove the status effect from the character
+                Libifels.removeStatusEffect(playerCharacter, tickedOffEffect);
             }
         }
         // check for victory/defeat condition

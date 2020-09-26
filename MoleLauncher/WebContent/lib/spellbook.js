@@ -400,7 +400,7 @@ export class Defend extends Ability {
     effect(sourceCharacter) {
         MoleUndum.addUniqueStatusEffect(
         	sourceCharacter, 
-        	new Alchemy.Defended(sourceCharacter.stats["def"], sourceCharacter.stats["res"])
+        	new Alchemy.Defended()
         );
     }
     generateFlavorText(sourceCharacter, targetCharacter) {

@@ -27,22 +27,23 @@ export class StatusEffect {
 Defended increases a character's defensive attributes for 1 round 
 */
 export class Defended extends StatusEffect {
-	constructor(defIncrease, resIncrease) {
+	constructor() {
 		super({id:"defended", name: "Defended", duration: 1});
 		this.isBuff = true;
 		this.descriptors.push("buff", "defense");
-		this.defIncrease = defIncrease;
-		this.resIncrease = resIncrease;
 	}
 	effect(targetChar) {
 		this.cachedDef = targetChar.stats["def"];
-	    this.cachedRes = targetChar.stats["res"]
-	    targetChar.stats["def"] += this.defIncrease;
-	    targetChar.stats["res"] += this.resIncrease;
+	    this.cachedRes = targetChar.stats["res"];
+	    console.log("defending mole's cached def is now "+this.cachedDef+" and cached res is "+this.cachedRes);
+	    targetChar.stats["def"] *= 2;
+	    targetChar.stats["res"] *= 2;
+	    console.log("defended mole's def is now "+targetChar.stats.def+" and res is "+targetChar.stats.res);
 	}
 	reverseEffect(targetChar) {
 	    targetChar.stats["def"] = this.cachedDef;
 	    targetChar.stats["res"] = this.cachedRes;
+	    console.log("defended no longer, mole's def is now "+targetChar.stats.def+" and res is "+targetChar.stats.res);
 	}
 }
 
@@ -64,9 +65,11 @@ export class WoolilyShielded extends StatusEffect {
 	    targetChar.stats["def"] += MoleUndum.prettyDarnRound(
     		Math.max(Math.max(this.sourceCharacter.stats["def"], this.sourceCharacter.stats["res"]), 1) * 2
     	);
+	    console.log("woolily shielded mole def is now "+targetChar.stats.def+"; cached def is "+this.cachedDef);
 	}
 	reverseEffect(targetChar) {
 	    targetChar.stats["def"] = this.cachedDef;
+	    console.log("woolily shielded no longer, the mole's def is now "+targetChar.stats.def);
 	}
 }
 
