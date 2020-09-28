@@ -39,6 +39,8 @@ export class Character {
             "res": 10,
             "spd": 10
         }
+        this.coreStats = {};
+        Object.assign(this.coreStats, this.stats);
         /** 
          * a character's Entity is their Spell load-out.
          */
@@ -223,6 +225,7 @@ export class Mole extends Character {
 		this.stats["pwr"] = 5;
 		this.stats["res"] = 20; // eldritch things know better than to mess with moles
 		this.stats["spd"] = 1; // the mole is not fast
+        Object.assign(this.coreStats, this.stats);
 		this.entity = new Spells.Burrower();
 		this.spriteIdx = 0;
 		this.battleSprites = [this.battleSpritePath+"/mole/stoic_determination.jpg"];
@@ -242,6 +245,7 @@ export class Grue extends Character {
 	    this.stats["pwr"] = 15;
 	    this.stats["res"] = 15; 
 	    this.stats["spd"] = 0; // inevitability need not rush
+	    Object.assign(this.coreStats, this.stats);
 	    Grue.prototype.entity = new Spells.HeartOfDarkness();
 	    this.spriteIdx = 0;
 	    this.battleSprites = [
@@ -379,6 +383,7 @@ export class YawningGod extends Character {
 		this.stats["pwr"] = 10;
 		this.stats["res"] = 1; // as a being of madness, the Yawning God's mind is not well guarded
 		this.stats["spd"] = 5;
+		Object.assign(this.coreStats, this.stats);
 	    YawningGod.prototype.entity = new Spells.EldritchHorror();
 	    this.spriteIdx = 0;
 	    this.battleSprites = [

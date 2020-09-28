@@ -33,14 +33,14 @@ export class Defended extends StatusEffect {
 		this.descriptors.push("buff", "defense");
 	}
 	effect(targetChar) {
-	    console.log("defending mole's starting def is "+targetChar.stats.def+" and starting res is "+targetChar.stats.res);
+	    console.log("defending mole's core def is "+this.coreStats.def+" and core res is "+this.coreStats.res);
 	    targetChar.stats["def"] *= 2;
 	    targetChar.stats["res"] *= 2;
 	    console.log("defended mole's def is now "+targetChar.stats.def+" and res is "+targetChar.stats.res);
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["def"] *= 0.5;
-	    targetChar.stats["res"] *= 0.5;
+	    targetChar.stats["def"] = this.coreStats.def;
+	    targetChar.stats["res"] = this.coreStats.res;
 	    console.log("defended no longer, mole's def is now "+targetChar.stats.def+" and res is "+targetChar.stats.res);
 	}
 }
@@ -57,17 +57,15 @@ export class WoolilyShielded extends StatusEffect {
 		this.isBuff = true;
 		this.descriptors.push("buff", "defense");
 		this.sourceCharacter = sourceCharacter;
-		this.defIncrease = 0;
 	}
 	effect(targetChar) {
-		this.defIncrease = MoleUndum.prettyDarnRound(
+	    targetChar.stats["def"] += MoleUndum.prettyDarnRound(
     		Math.max(Math.max(this.sourceCharacter.stats["def"], this.sourceCharacter.stats["res"]), 1) * 2
     	);
-	    targetChar.stats["def"] += this.defIncrease;
-	    console.log("woolily shielded mole def is now "+targetChar.stats.def+"; def inc is "+this.defIncrease);
+	    console.log("woolily shielded mole def is now "+targetChar.stats.def+"; core def is "+this.coreStats.def);
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["def"] -= this.defIncrease;
+	    targetChar.stats["def"] = this.coreStats.def;
 	    console.log("woolily shielded no longer, the mole's def is now "+targetChar.stats.def);
 	}
 }
@@ -86,8 +84,8 @@ export class Defenseless extends StatusEffect {
 	    targetChar.stats["res"] *= 0.5;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["def"] *= 2;
-	    targetChar.stats["res"] *= 2;
+	    targetChar.stats["def"] = this.coreStats.def;
+	    targetChar.stats["res"] = this.coreStats.res;
 	}
 }
 
@@ -104,7 +102,7 @@ export class Temper extends StatusEffect {
 	    targetChar.stats["atk"] *= 2;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["atk"] *= 0.5;
+	    targetChar.stats["atk"] = this.coreStats.atk;
 	}
 }
 
@@ -121,7 +119,7 @@ export class Focus extends StatusEffect {
 	    targetChar.stats["pwr"] *= 2;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["pwr"] *= 0.5;
+	    targetChar.stats["pwr"] = this.coreStats.pwr;
 	}
 }
 
@@ -140,9 +138,9 @@ export class ThirdEye extends StatusEffect {
 	    targetChar.stats["def"] *= 0.5;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["pwr"] *= 0.25;
-	    targetChar.stats["atk"] *= 2;
-	    targetChar.stats["def"] *= 2;
+	    targetChar.stats["pwr"] = this.coreStats.pwr;
+	    targetChar.stats["atk"] = this.coreStats.atk;
+	    targetChar.stats["def"] = this.coreStats.def;
 	}
 }
 
@@ -180,10 +178,10 @@ export class Bloodlust extends StatusEffect {
 	}
 	reverseEffect(targetChar) {
 		// restore stats BUT cycle 'em to keep things spiiiiiicy!
-	    targetChar.stats["atk"] = targetChar.stats.def * 2;
-	    targetChar.stats["pwr"] = targetChar.stats.atk * 0.25;
-	    targetChar.stats["res"] = targetChar.stats.pwr * 2;
-	    targetChar.stats["def"] = targetChar.stats.res * 2;
+	    targetChar.stats["atk"] = this.coreStats.def;
+	    targetChar.stats["pwr"] = this.coreStats.atk;
+	    targetChar.stats["res"] = this.coreStats.pwr;
+	    targetChar.stats["def"] = this.coreStats.res;
 	}
 }
 
@@ -214,8 +212,8 @@ export class Frozen extends StatusEffect {
 	reverseEffect(targetChar) {
 		// only restore stats if we modded them due to burst
 		if(this.isBurst) {
-			targetChar.stats["atk"] *= 2;
-			targetChar.stats["def"] *= 2;
+			targetChar.stats["atk"] = this.coreStats.atk;
+			targetChar.stats["def"] = this.coreStats.def;
 		}
 	}
 }
@@ -235,8 +233,8 @@ export class Poison extends StatusEffect {
 	    targetChar.stats["def"] *= 0.5;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["atk"] *= 2;
-	    targetChar.stats["def"] *= 2;
+	    targetChar.stats["atk"] = this.coreStats.atk;
+	    targetChar.stats["def"] = this.coreStats.def;
 	}
 }
 /**
@@ -253,7 +251,7 @@ export class Burn extends StatusEffect {
 	    targetChar.stats["atk"] *= 0.25;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["atk"] *= 4;
+	    targetChar.stats["atk"] = this.coreStats.atk;
 	}
 }
 /**
