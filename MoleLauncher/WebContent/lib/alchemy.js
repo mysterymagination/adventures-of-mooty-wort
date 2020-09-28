@@ -33,16 +33,14 @@ export class Defended extends StatusEffect {
 		this.descriptors.push("buff", "defense");
 	}
 	effect(targetChar) {
-		this.cachedDef = targetChar.stats["def"];
-	    this.cachedRes = targetChar.stats["res"];
-	    console.log("defending mole's cached def is now "+this.cachedDef+" and cached res is "+this.cachedRes);
+	    console.log("defending mole's core def is "+this.coreStats.def+" and core res is "+this.coreStats.res);
 	    targetChar.stats["def"] *= 2;
 	    targetChar.stats["res"] *= 2;
 	    console.log("defended mole's def is now "+targetChar.stats.def+" and res is "+targetChar.stats.res);
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["def"] = this.cachedDef;
-	    targetChar.stats["res"] = this.cachedRes;
+	    targetChar.stats["def"] = this.coreStats.def;
+	    targetChar.stats["res"] = this.coreStats.res;
 	    console.log("defended no longer, mole's def is now "+targetChar.stats.def+" and res is "+targetChar.stats.res);
 	}
 }
@@ -61,14 +59,13 @@ export class WoolilyShielded extends StatusEffect {
 		this.sourceCharacter = sourceCharacter;
 	}
 	effect(targetChar) {
-		this.cachedDef = targetChar.stats["def"];
 	    targetChar.stats["def"] += MoleUndum.prettyDarnRound(
     		Math.max(Math.max(this.sourceCharacter.stats["def"], this.sourceCharacter.stats["res"]), 1) * 2
     	);
-	    console.log("woolily shielded mole def is now "+targetChar.stats.def+"; cached def is "+this.cachedDef);
+	    console.log("woolily shielded mole def is now "+targetChar.stats.def+"; core def is "+this.coreStats.def);
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["def"] = this.cachedDef;
+	    targetChar.stats["def"] = this.coreStats.def;
 	    console.log("woolily shielded no longer, the mole's def is now "+targetChar.stats.def);
 	}
 }
@@ -83,14 +80,12 @@ export class Defenseless extends StatusEffect {
 		this.descriptors.push("debuff", "defense");
 	}
 	effect(targetChar) {
-		this.cachedDef = targetChar.stats["def"];
-	    this.cachedRes = targetChar.stats["res"]
 	    targetChar.stats["def"] *= 0.5;
 	    targetChar.stats["res"] *= 0.5;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["def"] = this.cachedDef;
-	    targetChar.stats["res"] = this.cachedRes;
+	    targetChar.stats["def"] = this.coreStats.def;
+	    targetChar.stats["res"] = this.coreStats.res;
 	}
 }
 
@@ -102,14 +97,12 @@ export class Temper extends StatusEffect {
 		super({id:"temper", name: "Temper", duration: 3});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
-		this.cachedAtk = 0;
 	}
 	effect(targetChar) {
-		this.cachedAtk = targetChar.stats["atk"];
 	    targetChar.stats["atk"] *= 2;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["atk"] = this.cachedAtk;
+	    targetChar.stats["atk"] = this.coreStats.atk;
 	}
 }
 
@@ -121,14 +114,12 @@ export class Focus extends StatusEffect {
 		super({id:"focus", name:"Focus", duration: 3});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
-		this.cachedPwr = 0;
 	}
 	effect(targetChar) {
-		this.cachedPwr = targetChar.stats["pwr"];
 	    targetChar.stats["pwr"] *= 2;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["pwr"] = this.cachedPwr;
+	    targetChar.stats["pwr"] = this.coreStats.pwr;
 	}
 }
 
@@ -140,22 +131,16 @@ export class ThirdEye extends StatusEffect {
 		super({id: "third_eye", name: "Third Eye", duration: 3});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
-		this.cachedPwr = 0;
-		this.cachedAtk = 0;
-		this.cachedDef = 0;
 	}
 	effect(targetChar) {
-		this.cachedPwr = targetChar.stats["pwr"];
-		this.cachedAtk = targetChar.stats["atk"];
-		this.cachedDef = targetChar.stats["def"];
 	    targetChar.stats["pwr"] *= 4;
 	    targetChar.stats["atk"] *= 0.5;
 	    targetChar.stats["def"] *= 0.5;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["pwr"] = this.cachedPwr;
-	    targetChar.stats["atk"] = this.cachedAtk;
-	    targetChar.stats["def"] = this.cachedDef;
+	    targetChar.stats["pwr"] = this.coreStats.pwr;
+	    targetChar.stats["atk"] = this.coreStats.atk;
+	    targetChar.stats["def"] = this.coreStats.def;
 	}
 }
 
@@ -184,16 +169,8 @@ export class Bloodlust extends StatusEffect {
 		super({id: "bloodlust", name: "Bloodlust", duration: 2});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
-		this.cachedAtk = 0;
-		this.cachedPwr = 0;
-		this.cachedRes = 0;
-		this.cachedDef = 0;
 	}
 	effect(targetChar) {
-		this.cachedAtk = targetChar.stats["atk"];
-		this.cachedPwr = targetChar.stats["pwr"];
-		this.cachedRes = targetChar.stats["res"];
-		this.cachedDef = targetChar.stats["def"];
 	    targetChar.stats["atk"] *= 4;
 	    targetChar.stats["pwr"] *= 0.5;
 	    targetChar.stats["res"] *= 0.5;
@@ -201,10 +178,10 @@ export class Bloodlust extends StatusEffect {
 	}
 	reverseEffect(targetChar) {
 		// restore stats BUT cycle 'em to keep things spiiiiiicy!
-	    targetChar.stats["atk"] = this.cachedDef;
-	    targetChar.stats["pwr"] = this.cachedAtk;
-	    targetChar.stats["res"] = this.cachedPwr;
-	    targetChar.stats["def"] = this.cachedRes;
+	    targetChar.stats["atk"] = this.coreStats.def;
+	    targetChar.stats["pwr"] = this.coreStats.atk;
+	    targetChar.stats["res"] = this.coreStats.pwr;
+	    targetChar.stats["def"] = this.coreStats.res;
 	}
 }
 
@@ -216,8 +193,6 @@ export class Frozen extends StatusEffect {
 		super({id: "frozen", name: "Frozen", duration: 3});
 		this.isBuff = false;
 		this.descriptors.push("debuff", "physical", "atk", "def");
-		this.cachedAtk = 0;
-		this.cachedDef = 0;
 		this.isBurst = false;
 	}
 	/**
@@ -231,16 +206,14 @@ export class Frozen extends StatusEffect {
 	effect(targetChar) {
 		// record that afflicted char chose to burst out
 		this.isBurst = true;
-		this.cachedAtk = targetChar.stats["atk"];
-		this.cachedDef = targetChar.stats["def"];
 	    targetChar.stats["atk"] *= 0.5;
 	    targetChar.stats["def"] *= 0.5;
 	}
 	reverseEffect(targetChar) {
 		// only restore stats if we modded them due to burst
 		if(this.isBurst) {
-			targetChar.stats["atk"] = this.cachedAtk;
-			targetChar.stats["def"] = this.cachedDef;
+			targetChar.stats["atk"] = this.coreStats.atk;
+			targetChar.stats["def"] = this.coreStats.def;
 		}
 	}
 }
@@ -253,19 +226,15 @@ export class Poison extends StatusEffect {
 		super({id: "poison", name: "Poison", duration: 3});
 		this.isBuff = false;
 		this.descriptors.push("debuff", "health");
-		this.cachedAtk = 0;
-		this.cachedDef = 0;
 		this.psnDmg = 0;
 	}
 	effect(targetChar) {
-		this.cachedAtk = targetChar.stats["atk"];
-		this.cachedDef = targetChar.stats["def"];
 	    targetChar.stats["atk"] *= 0.5;
 	    targetChar.stats["def"] *= 0.5;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["atk"] = this.cachedAtk;
-	    targetChar.stats["def"] = this.cachedDef;
+	    targetChar.stats["atk"] = this.coreStats.atk;
+	    targetChar.stats["def"] = this.coreStats.def;
 	}
 }
 /**
@@ -276,16 +245,13 @@ export class Burn extends StatusEffect {
 		super({id: "burn", name: "Burn", duration: 3});
 		this.isBuff = false;
 		this.descriptors.push("debuff", "health", "elemental,fire");
-		this.cachedAtk = 0;
-		this.cachedDef = 0;
 		this.brnDmg = 0;
 	}
 	effect(targetChar) {
-		this.cachedAtk = targetChar.stats["atk"];
 	    targetChar.stats["atk"] *= 0.25;
 	}
 	reverseEffect(targetChar) {
-	    targetChar.stats["atk"] = this.cachedAtk;
+	    targetChar.stats["atk"] = this.coreStats.atk;
 	}
 }
 /**

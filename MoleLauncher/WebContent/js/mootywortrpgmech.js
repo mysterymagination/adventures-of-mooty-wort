@@ -668,6 +668,9 @@ class MootyWortRpgMech {
 								}
 							}
 						} else {
+							// gotta refresh portraits in case we started 
+							// targeting someone and then changed to a diff abl
+							this.refreshCharacterCanvases();
 							let sourceCharacter = combatModel.currentTurnOwner;
 							let targetCharacters = undefined;
 							switch(abl.targetType) {
