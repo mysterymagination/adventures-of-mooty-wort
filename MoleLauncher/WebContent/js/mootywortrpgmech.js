@@ -637,7 +637,6 @@ class MootyWortRpgMech {
 				.sort((a, b) => a[1].name.localeCompare(b[1].name))) {
 			if(colCount == 0) {
 				let commandRow = document.createElement("tr");
-				//commandRow.className = "command-button-row";
 				combatCommandList.appendChild(commandRow);
 			}
 			if(colCount < 3) {
@@ -645,7 +644,25 @@ class MootyWortRpgMech {
 				commandCell.className = "command-button";
 				// todo: install a long-click (or hover?) listener that gives a description someplace (combat log?)
 				// todo: check if we can afford the cost here instead of in onclick, and if not then gray-out the button and don't install onclick
-				commandCell.onclick = () => {
+				let longClickTimerFn;
+				let longClicked = false;
+				commandCell.addEventListener('mousedown', e => { 
+					longClickTimerFn = window.setTimeout(() => {
+						this.combatLogPrint(abl.getHint(), MootyWortRpgMech.MessageCat.CAT_ABILITY_HINT);
+						longClicked = true;
+					}, 1000);
+				});
+				commandCell.addEventListener('mouseup', e => {
+					window.clearTimeout(longClickTimerFn);
+					// don't want to block the onclick handler if we didn't wait 
+					// requisite time for longpress
+					if(longClicked) {
+						longClicked = false;
+					} else {
+						commandCell.customClickHandler();
+					}
+				});
+				commandCell.customClickHandler = () => {
 					if(combatModel.currentTurnOwner.canAffordCost(abl)) {
 						// we can afford the cost of the chosen abl, so go ahead with targeting etc.
 						if(abl.targetType === Ability.TargetTypesEnum.singleTarget) {
@@ -799,6 +816,12 @@ class MootyWortRpgMech {
 					catImg.src = "images/mole_icon.png";
 					// scroll to current bottom of combat log so player's eye lands on the first
 					// event after they input a command, the outcome of that command
+					this.scrollCombatLog();
+					break;
+				case MootyWortRpgMech.MessageCat.CAT_ABILITY_HINT:
+					catImg.src = "images/info_icon.svg";
+					// scroll to current bottom of combat log so player's eye lands on the 
+					// ability hint text
 					this.scrollCombatLog();
 					break;
 				case MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION:

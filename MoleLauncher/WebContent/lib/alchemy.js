@@ -259,7 +259,7 @@ export class Burn extends StatusEffect {
  */
 export class Stun extends StatusEffect {
 	constructor() {
-		super({id: "stun", name: "Stun", duration: 1});
+		super({id: "stun", name: "Stun", duration: 2});
 		this.isBuff = false;
 		this.descriptors.push("debuff", "turns", "elemental:lightning");
 	}

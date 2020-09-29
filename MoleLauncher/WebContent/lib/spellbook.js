@@ -294,6 +294,9 @@ export class Ability {
 		costString += costKeys[costKeys.length - 1] + " : " + this.cost[costKeys[costKeys.length - 1]];
 		return costString;
 	}
+	getHint() {
+		return "default ability hint";
+	}
 }
 Ability.TargetTypesEnum = Object.freeze(
 	{
@@ -324,6 +327,9 @@ export class Attack extends Ability {
     generateFlavorText(sourceCharacter, targetCharacter) {
         return sourceCharacter.name + " strikes " + targetCharacter.name + " a mighty blow, dealing " + this.dmg + " damages!";
     };
+    getHint() {
+		return "Performs a basic physical attack against a single target";
+	}
 }
 
 export class DummyAttack extends Ability {
@@ -345,6 +351,9 @@ export class DummyAttack extends Ability {
     generateFlavorText(sourceCharacter, targetCharacter) {
         return sourceCharacter.name + " strikes " + targetCharacter.name + " a middlin blow, dealing " + this.dmg + " damages!";
     };
+    getHint() {
+		return "Performs a weak physical attack against a single target";
+	}
 }
 
 /**
@@ -387,6 +396,9 @@ export class HeroAttack extends Attack {
         // todo: AC? Any other miss chance?
         targetCharacter.stats.hp -= this.dmg;
     }
+	getHint() {
+		return "Performs a basic physical attack against a single target, and restores some of the hero's MP";
+	}
 }
 
 /**
@@ -405,7 +417,10 @@ export class Defend extends Ability {
     }
     generateFlavorText(sourceCharacter, targetCharacter) {
         return sourceCharacter.name + " hunkers on down to defend " + sourceCharacter.getPronoun_personal_object()+"self!";
-    };
+    }
+    getHint() {
+		return "Doubles physical defense and magical resistance for one round";
+	}
 }
 
 export class Run extends Ability {
@@ -428,6 +443,9 @@ export class Run extends Ability {
         }
         return flavorText + " bravely attempt to turn tail and flee, but they cannot escape!";
     }
+	getHint() {
+		return "There is no escape!";
+	}
 }
 
 export class Spell extends Ability {
@@ -467,6 +485,9 @@ export class MoleVenom extends Spell {
 	generateFlavorText(sourceChar, targetChar) {
         return "Not many realize that moles are venomous, because, being peaceful and lovey creatures, they so often choose not to employ it.  Most are willing even to risk death rather than risk becoming a killer, and thus will not use venom when fighting back against predators and similar common foebeasts.  When the sanctity of The Deepness is threatened and the ancient things from dark corners of mole memory stir, however... it is a time to kill.  In a flash and with a violent violet flourish, you flick out your veneom spurs and bury them deeply in the flesh of " + targetChar.name +", dealing "+this.dmg+" points of damage directly and flooding "+targetChar.getPronoun_possessive()+" veins with "+MoleUndum.getStatusEffectById("poison").psnDmg+" poison points per round!";
     }
+	getHint() {
+		return "Deals magical acid damage to a single target and leaves a corrosive poison that festers in their bloodstream for 3 rounds";
+	}
 }
 
 /**
@@ -476,10 +497,10 @@ export class WarmestHug extends Spell {
 	constructor() {
 		super({id: "warmest_hug", name: "Warmest Hug"});
 		WarmestHug.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
-		WarmestHug.prototype.cost = { "mp": 20 };
+		WarmestHug.prototype.cost = { "mp": 15 };
 	}
 	calcDmg(sourceChar, targetChar) {
-	    return Math.max(MoleUndum.prettyDarnRound(sourceChar.stats["atk"], 1));
+	    return Math.max(MoleUndum.prettyDarnRound(sourceChar.stats["atk"] * 2, 1));
 	}
 	effect(sourceChar, targetChar) {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
@@ -495,6 +516,9 @@ export class WarmestHug extends Spell {
 	}
 	generateFlavorText(sourceChar, targetChar) {
 	    return sourceChar.name + " embraces " + sourceChar.getPronoun_possessive() + " friend " + targetChar.name + " fondly, a soft golden glow surrounding them.  The glow heals " + targetChar.name + " of " + this.dmg + " damage total.";
+	}
+	getHint() {
+		return "Heals a single target and the user for an amount of health based on the user's attack stat; if the user targets themselves, they receive double healing!";
 	}
 }
 
@@ -516,6 +540,9 @@ export class WoollyShield extends Spell {
 	generateFlavorText(sourceChar, targetChar) {
 	    return sourceChar.name + " puffs out " + sourceChar.getPronoun_possessive() + " hair, approximating thick wool as best " + sourceChar.getPronoun_personal_subject() + " can, and jumps in front of " + targetChar.name + ", intent on protecting " + targetChar.getPronoun_personal_object() + " with " + sourceChar.getPronoun_possessive() + " woolly life!";
 	}
+	getHint() {
+		return "Shields a single target for 3 rounds, raising their defense by an amount derived from the user's highest defensive stat";
+	}
 }
 
 /**
@@ -536,6 +563,9 @@ export class BurrowFurrow extends Spell {
 	generateFlavorText(sourceChar, targetChar) {
 	    return sourceChar.name + " furrows " + sourceChar.getPronoun_possessive() + " fuzzy brow in concentration, and resolutely resolves to go all out against all " + sourceChar.getPronoun_possessive() + "foebeasts!";
 	}
+	getHint() {
+		return "Raises the user's physical strength for 3 rounds";
+	}
 }
 
 /**
@@ -555,6 +585,12 @@ export class DeepMeditation extends Spell {
 	}
 	generateFlavorText(sourceChar, targetChar) {
 	    return sourceChar.name + " takes a moment to separate " + sourceChar.getPronoun_possessive() + " consciousness from the chaotic here and now, meditating upon the unknowable complexities of The Deepness. As " + sourceChar.getPronoun_personal_subject() + " does so, the fuzzy flesh of " + sourceChar.getPronoun_possessive() + " forehead tears and through a fine veil of blood there appears a mystical third eye!";
+	}
+	getHint() {
+		return "Raises the user's attack stat for 3 rounds";
+	}
+	getHint() {
+		return "Raises the user's magical strength for 3 rounds";
 	}
 }
 
@@ -586,6 +622,9 @@ export class ShadowFlare extends Spell {
 	generateFlavorText(sourceChar, targetChar) {
 	    return "Calling upon all the wisdom of his forebears, who were moles of course and not bears, the mole lashes out with an evocation of fiery darkness from The Pit's shapely bottom!  The subtle conflagration is so overwhelming that "+targetChar.name+"'s very meta-magical field crumbles slightly, unraveling the threads of "+targetChar.getPronoun_possessive()+" existence.  "+targetChar.getPronoun_personal_subject()+" appears somewhat less substantial afterwards, as if "+targetChar.getPronoun_possessive()+" form longs to be as one with the aether.  As it happens, this hurts exactly as much as "+this.dmg+" damage!";
 	}
+	getHint() {
+		return "Deals heavy magical damage to a single target, and permanently lowers its magical resistance";
+	}
 }
 /**
  * Thrusting his mighty digging claw into the earth and calling out for aid with all his spirit, the mole summons up a wash of magma from the planet's molten core to engulf his foe.  This spell light fire damage based on mole's pwr and burns the target.
@@ -612,6 +651,9 @@ export class MagmaBlast extends Spell {
 	generateFlavorText(sourceChar, targetChar) {
 	    return "Thrusting his mighty digging claw into the earth and calling out for aid with all his spirit, the mole summons up a wash of magma from the planet's molten core to engulf his foe in "+this.dmg+" fiery damage!";
 	}
+	getHint() {
+		return "Deals magical fire damage to a single target and inflicts a debilitating burn that lingers for 3 rounds";
+	}
 }
 /**
  * Shuffling his little paws rapidly, the mole generates a bolt of static electricity; the density of his fur is quite shocking!  This deals light electric damage and also inflicts Stun.
@@ -635,6 +677,9 @@ export class StaticBolt extends Spell {
 	}
 	generateFlavorText(sourceChar, targetChar) {
 	    return "Shuffling his little paws rapidly, the mole generates a bolt of static electricity; the density of his fur is quite shocking!  With a righteous squeak, he hurls at "+targetChar.name+", disrupting "+targetChar.getPronoun_possessive()+" systems with "+this.dmg+" damage points of wild current.";
+	}
+	getHint() {
+		return "Shocks a single target with magical lightning, stunning them into inaction for 1 round";
 	}
 }
 
