@@ -650,7 +650,7 @@ class MootyWortRpgMech {
 					longClickTimerFn = window.setTimeout(() => {
 						this.combatLogPrint(abl.getHint(), MootyWortRpgMech.MessageCat.CAT_ABILITY_HINT);
 						longClicked = true;
-					}, 1000);
+					}, 500);
 				});
 				commandCell.addEventListener('mouseup', e => {
 					window.clearTimeout(longClickTimerFn);
