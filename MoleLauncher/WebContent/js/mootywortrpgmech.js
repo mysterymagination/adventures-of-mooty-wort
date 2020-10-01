@@ -642,17 +642,16 @@ class MootyWortRpgMech {
 			if(colCount < 3) {
 				let commandCell = document.createElement("td");
 				commandCell.className = "command-button";
-				// todo: install a long-click (or hover?) listener that gives a description someplace (combat log?)
 				// todo: check if we can afford the cost here instead of in onclick, and if not then gray-out the button and don't install onclick
 				let longClickTimerFn;
 				let longClicked = false;
-				commandCell.addEventListener('mousedown', e => { 
+				let touchDown = e => { 
 					longClickTimerFn = window.setTimeout(() => {
 						this.combatLogPrint(abl.getHint(), MootyWortRpgMech.MessageCat.CAT_ABILITY_HINT);
 						longClicked = true;
-					}, 1000);
-				});
-				commandCell.addEventListener('mouseup', e => {
+					}, 500);
+				};
+				let touchUp = e => {
 					window.clearTimeout(longClickTimerFn);
 					// don't want to block the onclick handler if we didn't wait 
 					// requisite time for longpress
@@ -661,7 +660,11 @@ class MootyWortRpgMech {
 					} else {
 						commandCell.customClickHandler();
 					}
-				});
+				};
+				commandCell.addEventListener('mousedown', touchDown);
+				commandCell.addEventListener('mouseup', touchUp);
+				commandCell.addEventListener('touchstart', touchDown);
+				commandCell.addEventListener('touchend', touchUp);
 				commandCell.customClickHandler = () => {
 					if(combatModel.currentTurnOwner.canAffordCost(abl)) {
 						// we can afford the cost of the chosen abl, so go ahead with targeting etc.
