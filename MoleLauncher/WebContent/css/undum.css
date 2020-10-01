@@ -442,10 +442,6 @@ img.float_left {
 .character-image-container {
   text-align: center;
   position: relative;
-  /*height: 75%;/*leaving the requested height empty allows it to wrap-content; 
-  having it unset may upset defining height of children percentage, tho.  
-  That said, height of child canvas does not currently respond even if height is defined here in parent, so...*/
-  max-height: 100%;/*75%;*/
 }
 
 .character-image-enemy {
