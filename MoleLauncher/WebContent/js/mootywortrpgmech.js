@@ -440,6 +440,17 @@ class MootyWortRpgMech {
 		// todo: update Undum page with/based on results
 	}
 	/**
+	 * Displays a status effect icon stack on the afflicted character's portrait
+	 * @param character the afflicted Character object
+	 * @param statusEffect the status effect causing the affliction
+	 * @param remainingDuration the number of rounds this status effect has left;
+	 * 		  this value will determine how many effect icons we drop in the stack 
+	 */
+	displayStatusEffectIcon(character, statusEffect, remainingDuration) {
+		// todo: look up the character's canvas element and shove an inline-block DIV holding a
+		//  stack of block IMG elements hosting status effect icons onto it
+	}
+	/**
 	 * Set up the battle UI, associating character objects with their associated HTML elements 
 	 * @param combatModel the current Combat object
 	 */
