@@ -117,3 +117,7 @@ https://opengameart.org/content/cc0-axe-icons
 cave exit - cave_exit.png
 "Cave Exit 1" by back from the silo is licensed under CC BY-SA 2.0
 https://search.creativecommons.org/photos/c4def176-3de0-44e2-bbcd-357dd49a8edd
+
+status icons [poison_effect.png, shield_effect.png, stone_effect.png] 
+public domain by OwlishMedia
+https://opengameart.org/content/rpg-ui-icons
