@@ -449,6 +449,9 @@ class MootyWortRpgMech {
 	displayStatusEffectIcon(character, statusEffect, remainingDuration) {
 		// todo: look up the character's canvas element and shove an inline-block DIV holding a
 		//  stack of block IMG elements hosting status effect icons onto it
+		var targetCanvas = this.characterUiDict[character.id].canvasElement;
+		// todo: add icon gfx source file to StatusEffect objects
+		
 	}
 	/**
 	 * Set up the battle UI, associating character objects with their associated HTML elements 
@@ -469,6 +472,7 @@ class MootyWortRpgMech {
 		for(let playerCharacter of combatModel.playerParty) {
 			// player character sprites
 			let playerCharacterSprite_Span = document.createElement("span");
+			playerCharacterSprite_Span.className = 'character-image-player-span';
 			let playerCharacterSprite_Canvas = document.createElement("canvas");
 			playerCharacterSprite_Canvas.className = "character-image-player";
 			// need an HTML Image whose load cb will draw itself on the Canvas
@@ -534,7 +538,7 @@ class MootyWortRpgMech {
 		var enemyCharacterData_Div = document.getElementById("enemyDataContainer");
 		for(let enemyCharacter of combatModel.enemyParty) {
 			let enemyCharacterSprite_Span = document.createElement("span");
-			enemyCharacterSprite_Span.style.display = "inline-block";
+			enemyCharacterSprite_Span.className = 'character-image-enemy-span';
 			enemyCharacterImageContainer_Div.appendChild(enemyCharacterSprite_Span);
 			let enemyCharacterSprite_Canvas = document.createElement("canvas");
 			enemyCharacterSprite_Canvas.id = enemyCharacter.id;
