@@ -446,12 +446,27 @@ class MootyWortRpgMech {
 	 * @param remainingDuration the number of rounds this status effect has left;
 	 * 		  this value will determine how many effect icons we drop in the stack 
 	 */
-	displayStatusEffectIcon(character, statusEffect, remainingDuration) {
-		// todo: look up the character's canvas element and shove an inline-block DIV holding a
-		//  stack of block IMG elements hosting status effect icons onto it
+	displayStatusEffectStack(character, statusEffect, remainingDuration) {
 		var targetCanvas = this.characterUiDict[character.id].canvasElement;
 		// todo: add icon gfx source file to StatusEffect objects
-		
+		// create the DIV that will be our stack column
+		var stackDiv = document.createElement('div');
+		stackDiv.className = 'character-status-effect-stack';
+		// load up the image icon; it's dupped for each icon in the stack, so we only need
+		// the one resource
+		var effectImage = new Image();
+		effectImage.addEventListener('load', () => {
+			for(durationIdx = 0; durationIdx < remainingDuration; durationIdx++) {
+				// create our icon img tag and set its src to the Image we loaded earlier
+				let icon = document.createElement('img');
+				icon.className = 'character-status-effect-stack-image';
+				icon.src = effectImage;
+				// gradually offset up from the bottom to simulate dropping icons in a stack
+				icon.style.bottom = (durationIdx * icon.offsetHeight) + 'px';
+				stackDiv.appendChild(icon);
+			}
+		});
+		effectImage.src = statusEffect.imageUrl;
 	}
 	/**
 	 * Set up the battle UI, associating character objects with their associated HTML elements 

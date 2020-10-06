@@ -31,6 +31,7 @@ export class Defended extends StatusEffect {
 		super({id:"defended", name: "Defended", duration: 1});
 		this.isBuff = true;
 		this.descriptors.push("buff", "defense");
+		Defended.prototype.imageUrl = 'images/shield_effect.png';
 	}
 	effect(targetChar) {
 	    console.log("defending mole's core def is "+targetChar.coreStats.def+" and core res is "+targetChar.coreStats.res);
@@ -57,6 +58,7 @@ export class WoolilyShielded extends StatusEffect {
 		this.isBuff = true;
 		this.descriptors.push("buff", "defense");
 		this.sourceCharacter = sourceCharacter;
+		WoolilyShielded.prototype.imageUrl = 'images/stone_effect.png';
 	}
 	effect(targetChar) {
 	    targetChar.stats["def"] += MoleUndum.prettyDarnRound(
@@ -227,6 +229,7 @@ export class Poison extends StatusEffect {
 		this.isBuff = false;
 		this.descriptors.push("debuff", "health");
 		this.psnDmg = 0;
+		Poison.prototype.imageUrl = 'images/poison_effect.png';
 	}
 	effect(targetChar) {
 	    targetChar.stats["atk"] *= 0.5;
