@@ -448,9 +448,19 @@ class MootyWortRpgMech {
 	 */
 	displayStatusEffectStack(character, statusEffect, remainingDuration) {
 		var targetCanvas = this.characterUiDict[character.id].canvasElement;
-		// todo: add icon gfx source file to StatusEffect objects
+		
+		// todo: remove any current icon stack we have for this status effect for this character
+		//  such that we'll be drawing the stack afresh with the appropriate number of icons
+		//  OR check if the div stack already exists and if so remove the img element
+		//  at the top of the stack -- that would be more performant and correct, but also trickier;
+		//  much easier to just wipe the slate clean and redraw... although then again, if we
+		//  have more than one status effect stack going the clean slate approach could cause
+		//  stacks to get re-ordered on update if we're not careful about maintaining the order
+		//  in which we call this function for them.
+		
 		// create the DIV that will be our stack column
 		var stackDiv = document.createElement('div');
+		stackDiv.id = character.id+'_'+statusEffect.id+'_icon_stack';
 		stackDiv.className = 'character-status-effect-stack';
 		// load up the image icon; it's dupped for each icon in the stack, so we only need
 		// the one resource
