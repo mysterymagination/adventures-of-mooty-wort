@@ -31,7 +31,7 @@ export class Defended extends StatusEffect {
 		super({id:"defended", name: "Defended", duration: 1});
 		this.isBuff = true;
 		this.descriptors.push("buff", "defense");
-		Defended.prototype.imageUrl = 'images/shield_effect.png';
+		Defended.prototype.imageUrl = 'images/status_effect/defended_effect.png';
 	}
 	effect(targetChar) {
 	    console.log("defending mole's core def is "+targetChar.coreStats.def+" and core res is "+targetChar.coreStats.res);
@@ -58,7 +58,7 @@ export class WoolilyShielded extends StatusEffect {
 		this.isBuff = true;
 		this.descriptors.push("buff", "defense");
 		this.sourceCharacter = sourceCharacter;
-		WoolilyShielded.prototype.imageUrl = 'images/stone_effect.png';
+		WoolilyShielded.prototype.imageUrl = 'images/status_effect/woolilyshielded_effect.png';
 	}
 	effect(targetChar) {
 	    targetChar.stats["def"] += MoleUndum.prettyDarnRound(
@@ -80,6 +80,7 @@ export class Defenseless extends StatusEffect {
 		super({id:"defenseless", name: "Defenseless", duration: 3});
 		this.isBuff = false;
 		this.descriptors.push("debuff", "defense");
+		Defenseless.prototype.imageUrl = 'images/status_effects/defenseless_effect.png';
 	}
 	effect(targetChar) {
 	    targetChar.stats["def"] *= 0.5;
@@ -99,6 +100,7 @@ export class Temper extends StatusEffect {
 		super({id:"temper", name: "Temper", duration: 3});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
+		Temper.prototype.imageUrl = 'images/status_effects/temper_effect.png';
 	}
 	effect(targetChar) {
 	    targetChar.stats["atk"] *= 2;
@@ -116,6 +118,7 @@ export class Focus extends StatusEffect {
 		super({id:"focus", name:"Focus", duration: 3});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
+		Focus.prototype.imageUrl = 'images/status_effects/focus_effect.png';
 	}
 	effect(targetChar) {
 	    targetChar.stats["pwr"] *= 2;
@@ -133,6 +136,7 @@ export class ThirdEye extends StatusEffect {
 		super({id: "third_eye", name: "Third Eye", duration: 3});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
+		ThirdEye.prototype.imageUrl = 'images/status_effects/thirdeye_effect.png';
 	}
 	effect(targetChar) {
 	    targetChar.stats["pwr"] *= 4;
@@ -154,6 +158,7 @@ export class Regen extends StatusEffect {
 		super({id: "regen", name: "Regen", duration: 3});
 		this.isBuff = true;
 		this.descriptors.push("buff", "health");
+		Regen.prototype.imageUrl = 'images/status_effects/regen_effect.png';
 	}
 	effect(targetChar) {
 	    console.log("Wounds close and gaping wounds knit themselves shut as " + targetChar.name + " regenerates " + targetChar.stats["res"] + " HP!");
@@ -171,6 +176,7 @@ export class Bloodlust extends StatusEffect {
 		super({id: "bloodlust", name: "Bloodlust", duration: 2});
 		this.isBuff = true;
 		this.descriptors.push("buff", "offense");
+		Bloodlust.prototype.imageUrl = 'images/status_effects/bloodlust_effect.png';
 	}
 	effect(targetChar) {
 	    targetChar.stats["atk"] *= 4;
@@ -196,6 +202,7 @@ export class Frozen extends StatusEffect {
 		this.isBuff = false;
 		this.descriptors.push("debuff", "physical", "atk", "def");
 		this.isBurst = false;
+		Frozen.prototype.imageUrl = 'images/status_effects/frozen_effect.png';
 	}
 	/**
 	 * Frozen's effect divides atk and def by whatever duration
@@ -229,7 +236,7 @@ export class Poison extends StatusEffect {
 		this.isBuff = false;
 		this.descriptors.push("debuff", "health");
 		this.psnDmg = 0;
-		Poison.prototype.imageUrl = 'images/poison_effect.png';
+		Poison.prototype.imageUrl = 'images/status_effects/poison_effect.png';
 	}
 	effect(targetChar) {
 	    targetChar.stats["atk"] *= 0.5;
@@ -249,6 +256,7 @@ export class Burn extends StatusEffect {
 		this.isBuff = false;
 		this.descriptors.push("debuff", "health", "elemental,fire");
 		this.brnDmg = 0;
+		Burn.prototype.imageUrl = 'images/status_effects/burn_effect.png';
 	}
 	effect(targetChar) {
 	    targetChar.stats["atk"] *= 0.25;
@@ -265,6 +273,7 @@ export class Stun extends StatusEffect {
 		super({id: "stun", name: "Stun", duration: 2});
 		this.isBuff = false;
 		this.descriptors.push("debuff", "turns", "elemental:lightning");
+		Stun.prototype.imageUrl = 'images/status_effects/stun_effect.png';
 	}
 }
 // todo: initial vs. ongoing effect() methods?

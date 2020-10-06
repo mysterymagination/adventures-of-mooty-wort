@@ -118,6 +118,11 @@ cave exit - cave_exit.png
 "Cave Exit 1" by back from the silo is licensed under CC BY-SA 2.0
 https://search.creativecommons.org/photos/c4def176-3de0-44e2-bbcd-357dd49a8edd
 
-status icons [poison_effect.png, shield_effect.png, stone_effect.png] 
+status icons [poison_effect.png, frozen_effect.png, burn_effect.png, defenseless_effect.png, stun_effect.png] 
 public domain by OwlishMedia
 https://opengameart.org/content/rpg-ui-icons
+
+status icons [temper_effect.png, thirdeye_effect.png, regen_effect.png, focus_effect.png, defended_effect.png, bloodlust_effect.png, woolilyshielded_effect.png]
+CC-BY 3.0, CC-BY-SA 3.0, GPL 3.0, GPL 2.0 by J.W. Bjerk and submitted by eleazzaar
+https://opengameart.org/content/painterly-spell-icons-part-1
+https://opengameart.org/content/painterly-spell-icons-part-3
