@@ -460,26 +460,31 @@ class MootyWortRpgMech {
 			stackDiv = document.createElement('div');
 			stackDiv.id = character.id+'_'+statusEffect.id+'_icon_stack';
 			stackDiv.className = 'character-status-effect-stack';
+			// todo: offset stack div from left by its index in the character's status effect array
 			
 			// load up the image icon; it's dupped for each icon in the stack, so we only need
 			// the one resource
 			var effectImage = new Image();
 			effectImage.addEventListener('load', () => {
+				targetCanvasContainer.appendChild(stackDiv);
+				console.log("status stack; adding stackdiv with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight+
+						" to targetcanvascontainer with offset dimens "+targetCanvasContainer.offsetWidth+"x"+targetCanvasContainer.offsetHeight);
 				for(let durationIdx = 0; durationIdx < statusEffect.ticks; durationIdx++) {
 					// create our icon canvasi tag and set its src to the Image we loaded earlier
 					let icon = document.createElement('canvas');
 					icon.className = 'character-status-effect-stack-image';
-					icon.getContext('2d').drawImage(effectImage, 0, 0, icon.offsetWidth, icon.offsetHeight);
+					// append to parent so our offset dimens are applied
+					stackDiv.appendChild(icon);
 					// gradually offset up from the bottom to simulate dropping icons in a stack
 					icon.style.bottom = (durationIdx * icon.offsetHeight) + 'px';
-					stackDiv.appendChild(icon);
+					// now that we have offset dimens, define canvas raw dimens and draw
+					icon.width = icon.offsetWidth;
+					icon.height = icon.offsetHeight;
+					icon.getContext('2d').drawImage(effectImage, 0, 0, icon.offsetWidth, icon.offsetHeight);
 					console.log("status stack; adding icon canvas with dimens "+icon.width+"x"+icon.height+
 							" and offset dimens "+icon.offsetWidth+"x"+icon.offsetHeight);
 					console.log("status stack; icon canvas added to stackdiv with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight);
 				}
-				targetCanvasContainer.appendChild(stackDiv);
-				console.log("status stack; adding stackdiv with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight+
-						" to targetcanvascontainer with offset dimens "+targetCanvasContainer.offsetWidth+"x"+targetCanvasContainer.offsetHeight);
 			});
 			effectImage.src = statusEffect.imageUrl;
 		}

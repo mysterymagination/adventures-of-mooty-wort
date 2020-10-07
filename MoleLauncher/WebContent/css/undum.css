@@ -440,7 +440,7 @@ img.float_left {
 }
 
 .character-status-effect-stack {
-	max-height: 100%;
+	height: 100%;
 	width: 10%;
 	position: absolute;
 	display: inline-block;
@@ -450,11 +450,11 @@ img.float_left {
 }
 
 .character-status-effect-stack-image {
-	max-height: 20%;
+	height: 20%;
 	width: 100%;
-	position: relative;
+	position: absolute;
 	display: block;
-	bottom: 0px; /*we start at bottom and then we'll offset up from the bottom by image height * position in the stack*/
+	bottom: 0; /*we start at bottom and then we'll offset up from the bottom by image height * position in the stack*/
 }
 
 .character-image-container-enemy {
