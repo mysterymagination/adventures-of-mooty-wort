@@ -436,7 +436,7 @@ img.float_left {
   opacity: 1.0;
   width: 0%;
   height: 0%;
-  z-index: 2;
+  z-index: 3;
 }
 
 .character-status-effect-stack {
@@ -444,6 +444,9 @@ img.float_left {
 	width: 10%;
 	position: absolute;
 	display: inline-block;
+	left: 0;
+	bottom: 0;
+	z-index: 2;
 }
 
 .character-status-effect-stack-image {

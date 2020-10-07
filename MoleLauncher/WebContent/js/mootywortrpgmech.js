@@ -31,6 +31,7 @@ class MootyWortRpgMech {
 				"mole": {
 					"characterObj": playerCharacter, // would be this.charactersDict["mole"]
 					"canvasElement": playerCharacterSprite_Canvas, 
+					"canvasContainerElement": layerCharacterSprite_Span
 					"nameElement": playerCharacterName_Div,
 					"hpElement": playerCharacterCurrentHp_Span,
 					"hpProgressElement": playerCharacterHp_Progress,
@@ -98,6 +99,7 @@ class MootyWortRpgMech {
 			this.updateCharacterBattleImages(combatModel);
 			// sync character stat display with data model
 			this.updateCharacterData(combatModel);
+			this.updateCharacterStatusStacks(combatModel);
 			if(postStatusState === Combat.ControllerState.processCombatResult) {
 				this.handleCombatResult(combatModel.combatResult);
 			} else if(postStatusState === Combat.ControllerState.playerInput) {
@@ -443,40 +445,44 @@ class MootyWortRpgMech {
 	 * Displays a status effect icon stack on the afflicted character's portrait
 	 * @param character the afflicted Character object
 	 * @param statusEffect the status effect causing the affliction
-	 * @param remainingDuration the number of rounds this status effect has left;
-	 * 		  this value will determine how many effect icons we drop in the stack 
 	 */
-	displayStatusEffectStack(character, statusEffect, remainingDuration) {
-		var targetCanvas = this.characterUiDict[character.id].canvasElement;
-		
-		// todo: remove any current icon stack we have for this status effect for this character
-		//  such that we'll be drawing the stack afresh with the appropriate number of icons
-		//  OR check if the div stack already exists and if so remove the img element
-		//  at the top of the stack -- that would be more performant and correct, but also trickier;
-		//  much easier to just wipe the slate clean and redraw... although then again, if we
-		//  have more than one status effect stack going the clean slate approach could cause
-		//  stacks to get re-ordered on update if we're not careful about maintaining the order
-		//  in which we call this function for them.
-		
-		// create the DIV that will be our stack column
-		var stackDiv = document.createElement('div');
-		stackDiv.id = character.id+'_'+statusEffect.id+'_icon_stack';
-		stackDiv.className = 'character-status-effect-stack';
-		// load up the image icon; it's dupped for each icon in the stack, so we only need
-		// the one resource
-		var effectImage = new Image();
-		effectImage.addEventListener('load', () => {
-			for(durationIdx = 0; durationIdx < remainingDuration; durationIdx++) {
-				// create our icon img tag and set its src to the Image we loaded earlier
-				let icon = document.createElement('img');
-				icon.className = 'character-status-effect-stack-image';
-				icon.src = effectImage;
-				// gradually offset up from the bottom to simulate dropping icons in a stack
-				icon.style.bottom = (durationIdx * icon.offsetHeight) + 'px';
-				stackDiv.appendChild(icon);
-			}
-		});
-		effectImage.src = statusEffect.imageUrl;
+	displayStatusEffectStack(character, statusEffect) {
+		var targetCanvasContainer = this.characterUiDict[character.id].canvasContainerElement;
+		var stackId = character.id+'_'+statusEffect.id+'_icon_stack';
+		var stackDiv = document.getElementById(stackId);
+		if(stackDiv) {
+			stackDiv.remove();
+		}
+		// only bother with icon images if remaining duration is gt 0; else we'll just remove the stack
+		// and do nothing more
+		if(statusEffect.ticks > 0) {
+			// create the DIV that will be our stack column
+			stackDiv = document.createElement('div');
+			stackDiv.id = character.id+'_'+statusEffect.id+'_icon_stack';
+			stackDiv.className = 'character-status-effect-stack';
+			
+			// load up the image icon; it's dupped for each icon in the stack, so we only need
+			// the one resource
+			var effectImage = new Image();
+			effectImage.addEventListener('load', () => {
+				for(let durationIdx = 0; durationIdx < statusEffect.ticks; durationIdx++) {
+					// create our icon canvasi tag and set its src to the Image we loaded earlier
+					let icon = document.createElement('canvas');
+					icon.className = 'character-status-effect-stack-image';
+					icon.getContext('2d').drawImage(effectImage, 0, 0, icon.offsetWidth, icon.offsetHeight);
+					// gradually offset up from the bottom to simulate dropping icons in a stack
+					icon.style.bottom = (durationIdx * icon.offsetHeight) + 'px';
+					stackDiv.appendChild(icon);
+					console.log("status stack; adding icon canvas with dimens "+icon.width+"x"+icon.height+
+							" and offset dimens "+icon.offsetWidth+"x"+icon.offsetHeight);
+					console.log("status stack; icon canvas added to stackdiv with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight);
+				}
+				targetCanvasContainer.appendChild(stackDiv);
+				console.log("status stack; adding stackdiv with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight+
+						" to targetcanvascontainer with offset dimens "+targetCanvasContainer.offsetWidth+"x"+targetCanvasContainer.offsetHeight);
+			});
+			effectImage.src = statusEffect.imageUrl;
+		}
 	}
 	/**
 	 * Set up the battle UI, associating character objects with their associated HTML elements 
@@ -551,6 +557,7 @@ class MootyWortRpgMech {
 			this.characterUiDict[playerCharacter.id] = {
 					"characterObj": playerCharacter,
 					"canvasElement": playerCharacterSprite_Canvas, 
+					"canvasContainerElement": playerCharacterSprite_Span,
 					"nameElement": playerCharacterName_Div,
 					"hpElement": playerCharacterCurrentHp_Span,
 					"hpProgressElement": playerCharacterHp_Progress,
@@ -594,6 +601,7 @@ class MootyWortRpgMech {
 			this.characterUiDict[enemyCharacter.id] = {
 					"characterObj": enemyCharacter,
 					"canvasElement": enemyCharacterSprite_Canvas, 
+					"canvasContainerElement": enemyCharacterSprite_Span,
 					"hpProgressElement": enemyCharacterHp_Progress
 			};
 		}
@@ -653,6 +661,22 @@ class MootyWortRpgMech {
 		for(const enemy of combatModel.enemyParty) {
 			let uiHandle = this.characterUiDict[enemy.id];
 			uiHandle.hpProgressElement.value = enemy.stats["hp"] / enemy.stats["maxHP"];
+		}
+	}
+	/**
+	 * Update the Character status effects image stacks
+	 * @param combatModel current Combat object
+	 */
+	updateCharacterStatusStacks(combatModel) {
+		for(const player of combatModel.playerParty) {
+			for(const statusEffect of player.statusEffects) {
+				this.displayStatusEffectStack(player, statusEffect);
+			}
+		}
+		for(const enemy of combatModel.enemyParty) {
+			for(const statusEffect of enemy.statusEffects) {
+				this.displayStatusEffectStack(enemy, statusEffect);
+			}
 		}
 	}
 	/**
@@ -799,6 +823,13 @@ class MootyWortRpgMech {
 			// indicate we're starting a new round
 			combatModel.controllerState = Combat.ControllerState.beginNewRound;
 		}
+		
+		// todo: ideally we'd be calling this updateCharacterStatusStacks outside of the beginNewRound state
+		//  up in stepCombat if we just added a status effect, so we could e.g. have relevant abilities' effect()
+		//  return a status effect if one was applied? 
+		
+		// update status stacks 
+		this.updateCharacterStatusStacks(combatModel);
 		this.combatLoop(combatModel);
 	}
 	/**
@@ -821,6 +852,8 @@ class MootyWortRpgMech {
 			// put us in runEnemy state so the next loop will start processing AI decision
 			combatModel.controllerState = Combat.ControllerState.runEnemy;
 		}
+		// update status stacks 
+		this.updateCharacterStatusStacks(combatModel);
 		this.combatLoop(combatModel);
 	}
 	/**

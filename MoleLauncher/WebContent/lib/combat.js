@@ -102,7 +102,6 @@ export class Combat {
                         console.log(enemyCharacter.name+" takes "+effect.psnDmg+" damage due to poison coursing through "+enemyCharacter.getPronoun_possessive()+" poor system!");
                     	enemyCharacter.stats["hp"] -= effect.psnDmg;
                     }
-
                     effect.tickDown();
                     console.log("ticking down "+enemyCharacter.name+"'s "+effect.name+" to "+effect.ticks);
                     // lt 0 because we don't want to count the turn in which the effect is applied
