@@ -442,11 +442,13 @@ class MootyWortRpgMech {
 		// todo: update Undum page with/based on results
 	}
 	/**
-	 * Displays a status effect icon stack on the afflicted character's portrait
+	 * Processes (displays or removes) a status effect icon stack on the afflicted character's portrait;
+	 * if the status effect stack is empty and removed, the status effect object is removed from the
+	 * character
 	 * @param character the afflicted Character object
 	 * @param statusEffect the status effect causing the affliction
 	 */
-	displayStatusEffectStack(character, statusEffect) {
+	processStatusEffectStack(character, statusEffect) {
 		var targetCanvasContainer = this.characterUiDict[character.id].canvasContainerElement;
 		var stackId = character.id+'_'+statusEffect.id+'_icon_stack';
 		var stackDiv = document.getElementById(stackId);
@@ -460,7 +462,6 @@ class MootyWortRpgMech {
 			stackDiv = document.createElement('div');
 			stackDiv.id = character.id+'_'+statusEffect.id+'_icon_stack';
 			stackDiv.className = 'character-status-effect-stack';
-			// todo: offset stack div from left by its index in the character's status effect array
 			
 			// load up the image icon; it's dupped for each icon in the stack, so we only need
 			// the one resource
@@ -469,6 +470,11 @@ class MootyWortRpgMech {
 				targetCanvasContainer.appendChild(stackDiv);
 				console.log("status stack; adding stackdiv with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight+
 						" to targetcanvascontainer with offset dimens "+targetCanvasContainer.offsetWidth+"x"+targetCanvasContainer.offsetHeight);
+				// todo: offset stack div from left by its index in the character's status effect array
+				var effectIndex = character.statusEffects.findIndex(element => {
+		            return element.id === statusEffect.id;
+		        });
+				stackDiv.style.left = (stackDiv.offsetWidth * effectIndex)+'px';
 				for(let durationIdx = 0; durationIdx < statusEffect.ticks; durationIdx++) {
 					// create our icon canvasi tag and set its src to the Image we loaded earlier
 					let icon = document.createElement('canvas');
@@ -487,6 +493,9 @@ class MootyWortRpgMech {
 				}
 			});
 			effectImage.src = statusEffect.imageUrl;
+		} else {
+			// we're done with this status effect in the ui, so go ahead and remove from model
+			MoleUndum.removeStatusEffect(character, statusEffect);
 		}
 	}
 	/**
@@ -675,12 +684,12 @@ class MootyWortRpgMech {
 	updateCharacterStatusStacks(combatModel) {
 		for(const player of combatModel.playerParty) {
 			for(const statusEffect of player.statusEffects) {
-				this.displayStatusEffectStack(player, statusEffect);
+				this.processStatusEffectStack(player, statusEffect);
 			}
 		}
 		for(const enemy of combatModel.enemyParty) {
 			for(const statusEffect of enemy.statusEffects) {
-				this.displayStatusEffectStack(enemy, statusEffect);
+				this.processStatusEffectStack(enemy, statusEffect);
 			}
 		}
 	}
