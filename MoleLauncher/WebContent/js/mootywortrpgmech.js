@@ -447,8 +447,10 @@ class MootyWortRpgMech {
 	 * character
 	 * @param character the afflicted Character object
 	 * @param statusEffect the status effect causing the affliction
+	 * @param tickedOffEffectIds an array to be filled with the IDs any status effects whose duration has ended and whose
+	 *        icon stack has been removed
 	 */
-	processStatusEffectStack(character, statusEffect) {
+	processStatusEffectStack(character, statusEffect, tickedOffEffectIds) {
 		var targetCanvasContainer = this.characterUiDict[character.id].canvasContainerElement;
 		var stackId = character.id+'_'+statusEffect.id+'_icon_stack';
 		var stackDiv = document.getElementById(stackId);
@@ -470,7 +472,7 @@ class MootyWortRpgMech {
 				targetCanvasContainer.appendChild(stackDiv);
 				console.log("status stack; adding stackdiv with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight+
 						" to targetcanvascontainer with offset dimens "+targetCanvasContainer.offsetWidth+"x"+targetCanvasContainer.offsetHeight);
-				// todo: offset stack div from left by its index in the character's status effect array
+				// offset stack div from left by its index in the character's status effect array
 				var effectIndex = character.statusEffects.findIndex(element => {
 		            return element.id === statusEffect.id;
 		        });
@@ -494,8 +496,7 @@ class MootyWortRpgMech {
 			});
 			effectImage.src = statusEffect.imageUrl;
 		} else {
-			// we're done with this status effect in the ui, so go ahead and remove from model
-			MoleUndum.removeStatusEffect(character, statusEffect);
+			tickedOffEffectIds.push(statusEffect.id);
 		}
 	}
 	/**
@@ -682,15 +683,26 @@ class MootyWortRpgMech {
 	 * @param combatModel current Combat object
 	 */
 	updateCharacterStatusStacks(combatModel) {
+		var tickedOffEffectIds = [];
 		for(const player of combatModel.playerParty) {
 			for(const statusEffect of player.statusEffects) {
-				this.processStatusEffectStack(player, statusEffect);
+				this.processStatusEffectStack(player, statusEffect, tickedOffEffectIds);
 			}
+			for(const id of tickedOffEffectIds) {
+				// we're done with this status effect in the ui, so go ahead and remove from model
+				MoleUndum.removeStatusEffectById(player, id);
+			}
+			tickedOffEffectIds.splice(0, tickedOffEffectIds.length);
 		}
 		for(const enemy of combatModel.enemyParty) {
 			for(const statusEffect of enemy.statusEffects) {
-				this.processStatusEffectStack(enemy, statusEffect);
+				this.processStatusEffectStack(enemy, statusEffect, tickedOffEffectIds);
 			}
+			for(const id of tickedOffEffectIds) {
+				// we're done with this status effect in the ui, so go ahead and remove from model
+				MoleUndum.removeStatusEffectById(enemy, id);
+			}
+			tickedOffEffectIds.splice(0, tickedOffEffectIds.length);
 		}
 	}
 	/**

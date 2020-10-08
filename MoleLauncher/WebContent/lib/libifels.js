@@ -219,6 +219,17 @@ export class Libifels {
         character.statusEffects.splice(effectIndex, 1);
     }
     /**
+     * Removes the a status effect with the given id from the given character iff they are afflicted by it
+     * @param character a Character object from whom the given status is to be removed
+     * @param effectId the string ID of a StatusEffect object to remove from the given character
+     */
+    static removeStatusEffectById(character, effectId) {
+        var effectIndex = character.statusEffects.findIndex(element => {
+            return element.id === effectId;
+        });
+        character.statusEffects.splice(effectIndex, 1);
+    }
+    /**
      * Approximately rounds the given floating point number to two decimal points of precision
      * @param floatingNum the floating point number that needs to be rounded
      * @return a floating point approximately rounded to 2 decimal places e.g. 1.34567 -> 1.35
