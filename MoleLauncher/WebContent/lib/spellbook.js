@@ -264,6 +264,16 @@ export class Ability {
 		Ability.prototype.cost = { "mp": 0 };
 		Ability.prototype.telegraph = new Telegraph();
 	}// end new instance ctor
+	/**
+	 * Appends the cost of this ability to its name
+	 */
+	displayCostInName() {
+		var prettyCostString = '';
+		for(const [resource, amount] of Object.entries(this.cost)){
+			prettyCostString += amount+' '+resource+'; ';
+		}
+		this.name += ': '+prettyCostString;
+	}
 	generateRandomTelegraph() {
 		return this.telegraph.generateRandomTelegraph();
 	}
@@ -464,6 +474,7 @@ export class MoleVenom extends Spell {
 		// so stick 'em on the prototype
 		MoleVenom.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		MoleVenom.prototype.cost = { "mp": 15 };
+		this.displayCostInName();
 	}
 	// methods are placed on the object prototype and shared between all instances
 	calcDmg(sourceChar, targetChar) {
@@ -498,6 +509,7 @@ export class WarmestHug extends Spell {
 		super({id: "warmest_hug", name: "Warmest Hug"});
 		WarmestHug.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		WarmestHug.prototype.cost = { "mp": 15 };
+		this.displayCostInName();
 	}
 	calcDmg(sourceChar, targetChar) {
 	    return Math.max(MoleUndum.prettyDarnRound(sourceChar.stats["atk"] * 2, 1));
@@ -530,6 +542,7 @@ export class WoollyShield extends Spell {
 		super({id: "woolly_shield", name: "Woolly Shield"});
 		WoollyShield.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		WoollyShield.prototype.cost = { "mp": 30 };
+		this.displayCostInName();
 	}
 	effect(sourceChar, targetChar) {
 		MoleUndum.addUniqueStatusEffect(targetChar, new Alchemy.WoolilyShielded(sourceChar));
@@ -553,6 +566,7 @@ export class BurrowFurrow extends Spell {
 		super({ id: "burrow_furrow", name: "Burrow Furrowed Brow" });
 		BurrowFurrow.prototype.targetType = Ability.TargetTypesEnum.personal;
 		BurrowFurrow.prototype.cost = { "mp": 10 };
+		this.displayCostInName();
 	}
 	effect(sourceChar) {
 		MoleUndum.addUniqueStatusEffect(sourceChar, new Alchemy.Temper());
@@ -576,6 +590,7 @@ export class DeepMeditation extends Spell {
 		super({ id: "deep_meditation", name: "Meditation Upon The Deepness" });
 		DeepMeditation.prototype.targetType = Ability.TargetTypesEnum.personal;
 		DeepMeditation.prototype.cost = { "mp": 25 };
+		this.displayCostInName();
 	}
 	effect(sourceChar) {
 		MoleUndum.addUniqueStatusEffect(sourceChar, new Alchemy.ThirdEye());
@@ -602,6 +617,7 @@ export class ShadowFlare extends Spell {
 		super({ id: "shadowflare", name: "Shadow Flare" });
 		ShadowFlare.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		ShadowFlare.prototype.cost = { "mp": 50 };
+		this.displayCostInName();
 	}
 	calcDmg(sourceChar, targetChar) {
 	    return Math.max(
@@ -634,6 +650,7 @@ export class MagmaBlast extends Spell {
 		super({ id: "magma_blast", name: "Magma Blast" });
 		MagmaBlast.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		MagmaBlast.prototype.cost = { "mp": 25 };
+		this.displayCostInName();
 	}
 	calcDmg(sourceChar, targetChar) {
 	    return Math.max(MoleUndum.prettyDarnRound(sourceChar.stats["pwr"] + Math.random() * 21 + 10), 1);
@@ -663,6 +680,7 @@ export class StaticBolt extends Spell {
 		super({ id: "static_bolt", name: "Static Bolt" });
 		StaticBolt.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		StaticBolt.prototype.cost = { "mp": 30 };
+		this.displayCostInName();
 	}
 	calcDmg(sourceChar, targetChar) {
 	    return Math.max(MoleUndum.prettyDarnRound(sourceChar.stats["pwr"] + MoleUndum.rollD20()), 1);
