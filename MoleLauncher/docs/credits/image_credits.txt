@@ -84,9 +84,9 @@ https://opengameart.org/content/pixel-flame-vfx
 CC-BY 3.0 by TheValar
 https://opengameart.org/content/boulder-creation-animation
 
-static bolt - lit.png
-CC-BY-SA 4.0 by Hansjörg Malthaner
-http://opengameart.org/users/varkalandar
+static bolt - Lightning_Cyan.png
+CC-BY 4.0 by Marco L.
+https://opengameart.org/content/pixel-lightning
 
 shadow flare - ArcaneEffect.png
 public domain by Cethiel

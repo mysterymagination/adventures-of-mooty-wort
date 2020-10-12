@@ -1,0 +1,9 @@
+-spell FX sounds 
+public domain by phoenix1291/SwissArcadeGameEntertainment
+https://opengameart.org/content/sfx-the-ultimate-2017-8-bit-mini-pack
+
+-creature sounds
+public domain by greg300: Skeleton Roar.mp3
+https://opengameart.org/content/retro-monster-roar
+public domain by rubberduck: 
+https://opengameart.org/content/80-cc0-rpg-sfx

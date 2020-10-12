@@ -1,10 +1,10 @@
 {
 	"type": "spritesheet",
-	"resName": "images/fx/battle/lit.png",	
-    "columns": 3,
-    "rows": 1,
-    "frameWidthPx": 2000,
-    "frameHeightPx": 2000,
-    "frameCount": 3,
-    "frameRate": 30
+	"resName": "images/fx/battle/Lightning_Cyan.png",	
+    "columns": 6,
+    "rows": 2,
+    "frameWidthPx": 100,
+    "frameHeightPx": 175,
+    "frameCount": 12,
+    "frameRate": 50
 }
