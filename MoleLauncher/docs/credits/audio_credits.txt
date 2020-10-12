@@ -1,6 +1,16 @@
 -spell FX sounds 
-public domain by phoenix1291/SwissArcadeGameEntertainment
-https://opengameart.org/content/sfx-the-ultimate-2017-8-bit-mini-pack
+--static bolt SFX: rock_breaking.flac
+CC-BY 3.0 by Blender Foundation (Submitted by Lamoot)
+https://opengameart.org/content/rockbreaking
+
+-music
+--yawning_god_theme.wav
+CC-BY 3.0 CC-BY 4.0 by nene
+https://opengameart.org/content/finalboss-battle-1
+
+--grue_theme.wav
+public domain by nene
+https://opengameart.org/content/boss-battle-2-8-bit-re-upload
 
 -creature sounds
 public domain by greg300: Skeleton Roar.mp3
