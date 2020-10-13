@@ -2,12 +2,30 @@
 --static bolt SFX: rock_breaking.flac
 CC-BY 3.0 by Blender Foundation (Submitted by Lamoot)
 https://opengameart.org/content/rockbreaking
+--brass lantern SFX brasslantern.mp3
+CC-BY 3.0 by bart
+https://opengameart.org/content/8-bit-platformer-sfx
+--burrow furrow SFX Rise01.aif
+public domain by wobbleboxx.com
+https://opengameart.org/content/level-up-power-up-coin-get-13-sounds
+--chill beyond SFX chillbeyond.flac
+CC-BY-SA 3.0 by qubodup
+https://opengameart.org/content/elemental-spell
+--consume SFX consume.flac
+public domain by Independent.nu (Submitted by qubodup)
+https://opengameart.org/content/2-wooden-squish-splatter-sequences
+--dark star SFX darkstar.mp3
+public domain by Julien Matthey (Submitted by diligentcircle) and qubodup
+https://opengameart.org/content/ghost-breath
+https://opengameart.org/content/fireball-1
+--pestilence SFX pestilence.wav
+CC-BY 3.0 by spookymodem
+https://opengameart.org/content/magic-death
 
 -music
 --yawning_god_theme.wav
 CC-BY 3.0 CC-BY 4.0 by nene
 https://opengameart.org/content/finalboss-battle-1
-
 --grue_theme.wav
 public domain by nene
 https://opengameart.org/content/boss-battle-2-8-bit-re-upload

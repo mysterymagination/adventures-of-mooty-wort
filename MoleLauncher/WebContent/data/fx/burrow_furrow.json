@@ -6,5 +6,6 @@
     "frameWidthPx": 32,
     "frameHeightPx": 32,
     "frameCount": 52,
-    "frameRate": 60
+    "frameRate": 60,
+    "audio": "audio/spells/Rise01.aif"
 }

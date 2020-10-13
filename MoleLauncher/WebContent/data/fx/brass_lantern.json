@@ -19,5 +19,6 @@
 		    "frameCount": 7,
 		    "frameRate": 55
     	}
-    ]
+    ],
+    "audio": "audio/spells/brasslantern.mp3"
 }

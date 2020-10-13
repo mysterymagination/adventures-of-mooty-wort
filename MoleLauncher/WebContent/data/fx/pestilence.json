@@ -6,5 +6,6 @@
     "frameWidthPx": 128,
     "frameHeightPx": 128,
     "frameCount": 16,
-    "frameRate": 55
+    "frameRate": 55,
+    "audio": "pestilence.wav"
 }

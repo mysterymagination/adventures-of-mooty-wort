@@ -6,5 +6,6 @@
     "frameWidthPx": 256,
     "frameHeightPx": 256,
     "frameCount": 8,
-    "frameRate": 50
+    "frameRate": 50,
+    "audio": "audio/spells/consume.flac"
 }

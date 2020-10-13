@@ -6,5 +6,6 @@
     "frameWidthPx": 100,
     "frameHeightPx": 175,
     "frameCount": 12,
-    "frameRate": 50
+    "frameRate": 50,
+    "audio": "audio/spells/rock_breaking.flac"
 }
