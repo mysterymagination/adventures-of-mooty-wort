@@ -6,5 +6,6 @@
     "frameWidthPx": 32,
     "frameHeightPx": 32,
     "frameCount": 7,
-    "frameRate": 50
+    "frameRate": 50,
+    "audio": "audio/spells/lava.wav"
 }

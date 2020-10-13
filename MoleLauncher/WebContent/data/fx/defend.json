@@ -6,5 +6,6 @@
     "frameWidthPx": 128,
     "frameHeightPx": 128,
     "frameCount": 4,
-    "frameRate": 45
+    "frameRate": 45,
+    "audio": "audio/spells/defend.mp3"
 }

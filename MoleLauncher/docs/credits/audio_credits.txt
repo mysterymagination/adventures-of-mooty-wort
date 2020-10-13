@@ -18,6 +18,25 @@ https://opengameart.org/content/2-wooden-squish-splatter-sequences
 public domain by Julien Matthey (Submitted by diligentcircle) and qubodup
 https://opengameart.org/content/ghost-breath
 https://opengameart.org/content/fireball-1
+--deep meditation SFX deep_meditation.wav
+public domain by bart
+https://opengameart.org/content/space-laser
+CC-BY-SA 3.0 by Ulrich Metzner (Submitted by qubodup)
+https://opengameart.org/content/church-bell
+--defend SFX defend.mp3
+GPL 2.0 GPL 3.0 by Jute (Submitted by qubodup)
+https://opengameart.org/content/items-door-fire-weapon-hits
+--dummy attack SFX hit07.mp3.flac
+public domain by Independent.nu (Submitted by qubodup)
+https://opengameart.org/content/37-hitspunches
+--hero attack SFX hit01.mp3.flac
+public domain by Independent.nu (Submitted by qubodup)
+https://opengameart.org/content/37-hitspunches
+--magma blast SFX lava.wav
+CC-BY 3.0 by Michel Baradari (Submitted by qubodup)
+https://opengameart.org/content/lava-splash
+CC-BY 3.0 by bart
+https://opengameart.org/content/8-bit-platformer-sfx
 --pestilence SFX pestilence.wav
 CC-BY 3.0 by spookymodem
 https://opengameart.org/content/magic-death
