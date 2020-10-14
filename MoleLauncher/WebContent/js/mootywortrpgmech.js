@@ -483,6 +483,7 @@ class MootyWortRpgMech {
 		// only bother with icon images if remaining duration is gt 0; else we'll just remove the stack
 		// and do nothing more
 		if(statusEffect.ticks > 0) {
+			console.log("status stack; preparing to add stackdiv for "+statusEffect.id+", who still has "+statusEffect.ticks+" ticks left");
 			// create the DIV that will be our stack column
 			stackDiv = document.createElement('div');
 			stackDiv.id = character.id+'_'+statusEffect.id+'_icon_stack';
@@ -493,7 +494,7 @@ class MootyWortRpgMech {
 			var effectImage = new Image();
 			effectImage.addEventListener('load', () => {
 				targetCanvasContainer.appendChild(stackDiv);
-				console.log("status stack; adding stackdiv with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight+
+				console.log("status stack; adding stackdiv for "+statusEffect.id+", who still has "+statusEffect.ticks+" ticks left, with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight+
 						" to targetcanvascontainer with offset dimens "+targetCanvasContainer.offsetWidth+"x"+targetCanvasContainer.offsetHeight);
 				// offset stack div from left by its index in the character's status effect array
 				var effectIndex = character.statusEffects.findIndex(element => {
@@ -512,9 +513,6 @@ class MootyWortRpgMech {
 					icon.width = icon.offsetWidth;
 					icon.height = icon.offsetHeight;
 					icon.getContext('2d').drawImage(effectImage, 0, 0, icon.offsetWidth, icon.offsetHeight);
-					console.log("status stack; adding icon canvas with dimens "+icon.width+"x"+icon.height+
-							" and offset dimens "+icon.offsetWidth+"x"+icon.offsetHeight);
-					console.log("status stack; icon canvas added to stackdiv with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight);
 				}
 			});
 			effectImage.src = statusEffect.imageUrl;
