@@ -1078,7 +1078,7 @@ class PassStunnedTelegraph extends Telegraph {
 		PassStunnedTelegraph.prototype.fxTagArray = ["aura", "energy", "quake"];
 		PassStunnedTelegraph.prototype.telegraphTemplateStringArray = [
 			"Bolts of coruscating lightning flash along the paralyzed body of your foe, [aura].",
-			"Strangled frustration is the only, [quake], is all your foe can manage through its bonds.",
+			"Strangled frustration, [quake], is all your foe can manage through its bonds.",
 			"Rippling muscles strain to no avail against unyielding fetters, [energy]."
 			];
 		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);

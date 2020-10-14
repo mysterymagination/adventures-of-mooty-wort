@@ -467,8 +467,11 @@ class MootyWortRpgMech {
 	 *        icon stack has been removed
 	 */
 	processStatusEffectStack(character, statusEffect, tickedOffEffectIds) {
-		if(statusEffect.id === "stun" && statusEffect.ticks == 0) {
-			console.log("breaktime");
+		if(statusEffect.id === "stun") {
+			console.log("stun has "+statusEffect.ticks+" ticks remaining");
+			if(statusEffect.ticks === 0) {
+				console.log("breaktime");
+			}
 		}
 		
 		var targetCanvasContainer = this.characterUiDict[character.id].canvasContainerElement;
