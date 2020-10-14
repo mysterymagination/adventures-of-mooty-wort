@@ -360,7 +360,7 @@ export class Grue extends Character {
                 } // end if abl needs a target
                 /// end target installation block ///
 
-                combat.currentSelectedAbility = chosenAbility;
+                combat.currentAISelectedAbility = chosenAbility;
                 combatModel.currentTargetCharacter = chosenTarget
                 console.log("The Grue's chosen abl is " + chosenAbility.name
                 		+ (chosenTarget ? ", targetting "+chosenTarget.name : ""));
@@ -514,7 +514,7 @@ export class YawningGod extends Character {
                 
                 console.log("The Yawning God's chosen abl is " + chosenAbility.name
                 		+ (chosenTarget ? ", targeting "+chosenTarget.name : ""));
-                combat.currentSelectedAbility = chosenAbility;
+                combat.currentAISelectedAbility = chosenAbility;
                 combat.currentTargetCharacter = chosenTarget;
                 return chosenAbility;
             }// if role is enemy

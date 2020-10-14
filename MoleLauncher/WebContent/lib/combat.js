@@ -1,5 +1,6 @@
 import {Libifels} from "./libifels.js";
 import {Ability} from "./spellbook.js";
+import {PassStunned} from "./spellbook.js";
 
 /**
  * Combat object takes two arrays of Character objects, the player's party and the enemy's party.
@@ -15,7 +16,7 @@ export class Combat {
         
         // tracks the currently selected player and enemy abilities
         this.playerSelectedAbility = undefined;
-        this.currentSelectedAbility = undefined;
+        this.currentAISelectedAbility = undefined;
 
         // tracks the turn as either player or enemy group
         this.turnGroup = "player";
@@ -88,6 +89,7 @@ export class Combat {
      * Handle upkeep related to a new round beginning (i.e. top of the round to ye!)
      */
 	processRoundTop() {
+		this.currentAISelectedAbility = undefined;
 		this.roundCount++;
         // tick down and process status effects for enemy party
 		// todo: death processing from status effects 
@@ -97,16 +99,28 @@ export class Combat {
         for (let enemyCharacter of this.enemyParty) {
             for (let effect of enemyCharacter.statusEffects) {
                 if (enemyCharacter.stats.hp > 0) {
-                    if (effect.id === "poison") {
+                    // apply next-turn chip damage effects
+                	// todo: subclass of damage over time effects with a common chipDmg field would eliminate these if chains
+                	if (effect.id === "poison") {
                         console.log(enemyCharacter.name+" takes "+effect.psnDmg+" damage due to poison coursing through "+enemyCharacter.getPronoun_possessive()+" poor system!");
                     	enemyCharacter.stats["hp"] -= effect.psnDmg;
-                    }
+                    } else if (effect.id === "burn") {
+                    	console.log(enemyCharacter.name+" takes "+effect.brnDmg+" damage due to "+enemyCharacter.getPronoun_possessive()+" poor crisped flesh crackling and flaking off in bloodful chunks!");
+                    	enemyCharacter.stats["hp"] -= effect.brnDmg;
+                    } 
+                	
                     effect.tickDown();
                     console.log("ticking down "+enemyCharacter.name+"'s "+effect.name+" to "+effect.ticks);
                     // lt 0 because we don't want to count the turn in which the effect is applied
                     if (effect.ticks <= 0) {
                         // reverse the effect now that it is over
                         effect.reverseEffect(enemyCharacter);
+                    } else {
+                    	// apply same-turn interrupts etc.
+                    	if (effect.id === "stun") {
+                        	console.log(enemyCharacter.name+" takes no action due to "+enemyCharacter.getPronoun_possessive()+" limbs being paralyzed by corruscating electricity!");
+                        	this.currentAISelectedAbility = new PassStunned();
+                        }
                     }
                 } else {
                     // reverse the effect now that char is dead
@@ -119,9 +133,13 @@ export class Combat {
             for (let effect of playerCharacter.statusEffects) {
                 if (playerCharacter.stats.hp > 0) {
                 	// todo: frozen processing: player needs to choose whether to break free
+                	// todo: stun processing: player needs to be informed they are unable to act due to stun
                 	if (effect.id === "poison") {
                 		console.log(playerCharacter.name+" takes "+effect.psnDmg+" damage due to poison coursing through "+playerCharacter.getPronoun_possessive()+" poor system!");
                 		playerCharacter.stats["hp"] -= effect.psnDmg;
+                    } else if (effect.id === "burn") {
+                    	console.log(playerCharacter.name+" takes "+effect.brnDmg+" damage due to "+playerCharacter.getPronoun_possessive()+" poor crisped flesh crackling and flaking off in bloodful chunks!");
+                    	playerCharacter.stats["hp"] -= effect.brnDmg;
                     }
 
                     effect.tickDown();
@@ -147,8 +165,11 @@ export class Combat {
         } else {
         	// todo: check for any status effects that might prevent enemy from acting
         	for(let enemy of this.enemyParty) {
-        		// todo: support for multiple enemies
-        		this.currentSelectedAbility = enemy.runAI(this, "enemy");	
+        		// skip AI abl determination if something has already determined the action, e.g. paralysis
+        		if(!this.currentAISelectedAbility) {
+        			// todo: support for multiple enemies
+        			this.currentAISelectedAbility = enemy.runAI(this, "enemy");	
+        		}
         	}
         	// tell viewcontroller we're moving on to player input
         	return Combat.ControllerState.playerInput;

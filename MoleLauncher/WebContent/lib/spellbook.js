@@ -457,7 +457,10 @@ export class Run extends Ability {
 		return "There is no escape!";
 	}
 }
-
+/**
+ * Subclass of Ability for magical spells
+ * todo: any reason to have this differentiation?
+ */
 export class Spell extends Ability {
 	constructor(configObj) {
 		super(configObj);
@@ -1053,6 +1056,36 @@ class PrimordialMandateTelegraph extends Telegraph {
 }
 
 /**
+ * PassedStunned is the placeholder action the enemy takes when afflicted with the Stun status effect 
+ */
+export class PassStunned extends Ability {
+	constructor() {
+		super({ id: "pass_stunned", name: "Pass turn due to Stun" });
+		PassStunned.prototype.targetType = Ability.TargetTypesEnum.personal;
+		PassStunned.prototype.telegraph = new PassStunnedTelegraph();
+	}
+	effect(sourceChar) {}
+	generateFlavorText(sourceChar, targetChar) {
+	    return ""+sourceChar.name+" struggles against the forces binding "+sourceChar.getPronoun_personal_object()+", but remains paralyzed!"; 
+	}
+}
+/**
+ * Reminds the player that the AI character is stunned this round
+ */
+class PassStunnedTelegraph extends Telegraph {
+	constructor() {
+		super();
+		PassStunnedTelegraph.prototype.fxTagArray = ["aura", "energy", "quake"];
+		PassStunnedTelegraph.prototype.telegraphTemplateStringArray = [
+			"Bolts of coruscating lightning flash along the paralyzed body of your foe, [aura].",
+			"Strangled frustration is the only, [quake], is all your foe can manage through its bonds.",
+			"Rippling muscles strain to no avail against unyielding fetters, [energy]."
+			];
+		this.telegraphString = this.generateRandomTelegraph(this.telegraphTemplateStringArray);
+	}
+}
+
+/**
  * Dark Star deals massive non-elemental damage to all enemies
  */
 export class DarkStar extends Spell {
@@ -1146,7 +1179,8 @@ export class EldritchHorror extends Entity {
 				"primordial_mandate": new PrimordialMandate(),
 				"pestilence": new Pestilence(),
 				"dark_star": new DarkStar(),
-				"dummy_attack": new DummyAttack()
+				"dummy_attack": new DummyAttack(),
+				"pass_stunned": new PassStunned()
 		}
 	}
 }
@@ -1161,7 +1195,8 @@ export class HeartOfDarkness extends Entity {
 				"touch_of_the_void": new TouchVoid(),
 				"consume": new Consume(),
 				"brass_lantern": new BrassLantern(),
-				"chill_beyond": new ChillBeyond()
+				"chill_beyond": new ChillBeyond(),
+				"pass_stunned": new PassStunned()
 		}
 		Object.assign(HeartOfDarkness.prototype.spellsDict, Entity.prototype.spellsDict);
 	}

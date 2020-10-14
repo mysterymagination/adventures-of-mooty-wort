@@ -1,8 +1,9 @@
-// imports
+//imports
 import {MoleUndum} from "../lib/libifels_undum.js";
 import * as Characters from "../lib/characters.js";
 import {Combat} from "../lib/combat.js";
 import {Ability} from "../lib/spellbook.js";
+import {PassStunned} from "../lib/spellbook.js"
 /*
  * Lunar inspired telegraph hint (1:many, but not all) and induction (many similar:1) systems:
  * 1. (hint) "The grue sharpens its claws in a sliver of moonlight" -> he might use Quicksilver Cut, Shadow Slash, or Rake.
@@ -17,17 +18,17 @@ import {Ability} from "../lib/spellbook.js";
 class MootyWortRpgMech {
 	constructor() {
 		this.charactersDict = {
-		        "mole": new Characters.Mole(),
-		        "yawning_god": new Characters.YawningGod(),
-		        "grue": new Characters.Grue()
+				"mole": new Characters.Mole(),
+				"yawning_god": new Characters.YawningGod(),
+				"grue": new Characters.Grue()
 		};
 		// establish Player party
-	    this.party = [this.charactersDict["mole"]];
+		this.party = [this.charactersDict["mole"]];
 		/**
 		 * Object literal association of Character ids to associated UI objects sack
 		 */
 		this.characterUiDict = {
-		/* e.g.
+				/* e.g.
 				"mole": {
 					"characterObj": playerCharacter, // would be this.charactersDict["mole"]
 					"canvasElement": playerCharacterSprite_Canvas, 
@@ -38,10 +39,10 @@ class MootyWortRpgMech {
 					"mpElement": playerCharacterCurrentMp_Span,
 					"mpProgressElement": playerCharacterMp_Progress
 				}
-		*/
+				 */
 		};
 	}
-	
+
 	/**
 	 * Prepares combat UI and manages Combat object
 	 * @param configObj an object literal of the form
@@ -113,18 +114,24 @@ class MootyWortRpgMech {
 		} else if(state === Combat.ControllerState.playerInput) {
 			// Lunar-inspired hyyype!
 			this.combatLogPrint(
-				combatModel.telegraphAction(
-					combatModel.currentSelectedAbility
-				),
-				MootyWortRpgMech.MessageCat.CAT_ENEMY_TELEGRAPH
+					combatModel.telegraphAction(
+							combatModel.currentAISelectedAbility
+					),
+					MootyWortRpgMech.MessageCat.CAT_ENEMY_TELEGRAPH
 			);
 			// command selection subphase of player input phase
 			this.populatePlayerCommandList(combatModel);
 		} else if(state === Combat.ControllerState.runEnemy) {
+			// stun status effect proc
+			if(MoleUndum.hasStatusEffect(combatModel.currentTurnOwner, "stun")) {
+				// hijack selected ability and replace with PassStunned so that 
+				// stun interrupts the current action
+				combatModel.currentAISelectedAbility = new PassStunned();
+			}
 			// todo: check enemy status effects for anything that would prevent the use of their
 			// chosen ability
 			// todo: probably at least some of this should be moved to Combat model class
-			let selectedAbility = combatModel.currentSelectedAbility;
+			let selectedAbility = combatModel.currentAISelectedAbility;
 			let sourceCharacter = combatModel.currentTurnOwner;
 			let targetCharacters = undefined;
 			// check if currently active enemy can still afford their chosen abl
@@ -134,7 +141,7 @@ class MootyWortRpgMech {
 				case Ability.TargetTypesEnum.personal:
 					targetCharacters = [sourceCharacter];
 					selectedAbility.effect(sourceCharacter);
-					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.currentTurnOwner);
+					combatModel.combatLogContent = selectedAbility.generateFlavorText(sourceCharacter);
 					break;
 				case Ability.TargetTypesEnum.allAllies:
 					targetCharacters = combatModel.enemyParty;
@@ -159,8 +166,8 @@ class MootyWortRpgMech {
 				});
 			} else {
 				this.combatLogPrint(
-					combatModel.currentTurnOwner.name + " feebly attempts to enact " + combatModel.currentSelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!",
-					MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION
+						combatModel.currentTurnOwner.name + " feebly attempts to enact " + combatModel.currentAISelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!",
+						MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION
 				);
 				this.handleEnemyTurnComplete(combatModel);
 			}
@@ -197,8 +204,7 @@ class MootyWortRpgMech {
 	 */
 	showSpellEffect(sourceCharacter, targetCharacters, spellId, callbackFunction) {
 		var rpgMechHandle = this;
-		var overlayCanvas = this.showSpellEffectOverlay();
-		
+
 		// XMLHTTPRequest on up our json fx data file, and put the usage of its data in a lambda
 		//  that'll get called once the file is loaded 
 		var spell = sourceCharacter.entity.spellsDict[spellId];
@@ -206,57 +212,67 @@ class MootyWortRpgMech {
 		request.open('GET', spell.fxDataFileName);
 		request.responseType = 'json';
 		request.onload = function() {
-			// since we indicated responseType json, our response should already by a JS object defining our FX data
-			var fxData = request.response;
-			var fxType = fxData.type;
-			var sheetDataArray = undefined;
-			if(fxType === "spritesheet") {
-				sheetDataArray = [fxData];
-			} else if(fxType === "spritesheet_array") {
-				sheetDataArray = fxData.resArray;
-			}
-			var sheetDataIdx = 0;
-			for(let sheetData of sheetDataArray) {
-				let fps = sheetData.frameRate;
-				// load spritesheet image file
-				let fxImage = new Image();
-				fxImage.addEventListener('load', function() {
-					// show spell anim in overlay
-					let frameSkipCount = 0;
-					let frameIdx = 0;
-					let sheetAnimFn = function(elapsedTime) {
-						if (frameSkipCount == 0) {
-							// action frame!
-							rpgMechHandle.drawSpellFxFrame(fxImage, sheetData, frameIdx, overlayCanvas);
-							frameIdx++;
-						}
-	
-						if (frameIdx < sheetData.frameCount) {
-							window.requestAnimationFrame(sheetAnimFn);
-						} else {
-							// inc sheet count and only hide overlay/forward cb
-							// once we're done with all spritesheets we need to anim
-							sheetDataIdx++;
-							if(sheetDataIdx === sheetDataArray.length) {
-								rpgMechHandle.hideSpellEffectOverlay();
-								// forward our cb to the next anim
-								rpgMechHandle.playPainAnimation(
-									targetCharacters, callbackFunction
-								);
+			console.log("XHR status says "+request.status);
+			if(request.status == 200) {
+				var overlayCanvas = rpgMechHandle.showSpellEffectOverlay();
+				// since we indicated responseType json, our response should already by a JS object defining our FX data
+				var fxData = request.response;
+				var fxType = fxData.type;
+				var sheetDataArray = undefined;
+				if(fxType === "spritesheet") {
+					sheetDataArray = [fxData];
+				} else if(fxType === "spritesheet_array") {
+					sheetDataArray = fxData.resArray;
+				}
+				var sheetDataIdx = 0;
+				for(let sheetData of sheetDataArray) {
+					let fps = sheetData.frameRate;
+					// load spritesheet image file
+					let fxImage = new Image();
+					fxImage.addEventListener('load', function() {
+						// show spell anim in overlay
+						let frameSkipCount = 0;
+						let frameIdx = 0;
+						let sheetAnimFn = function(elapsedTime) {
+							if (frameSkipCount == 0) {
+								// action frame!
+								rpgMechHandle.drawSpellFxFrame(fxImage, sheetData, frameIdx, overlayCanvas);
+								frameIdx++;
+							}
+
+							if (frameIdx < sheetData.frameCount) {
+								window.requestAnimationFrame(sheetAnimFn);
+							} else {
+								// inc sheet count and only hide overlay/forward cb
+								// once we're done with all spritesheets we need to anim
+								sheetDataIdx++;
+								if(sheetDataIdx === sheetDataArray.length) {
+									rpgMechHandle.hideSpellEffectOverlay();
+									// forward our cb to the next anim
+									rpgMechHandle.playPainAnimation(
+											targetCharacters, callbackFunction
+									);
+								}
+							}
+
+							frameSkipCount++;
+							// skip a number of frames equal to the frames/second we're likely to get from
+							// requestAnimationFrame() (60fps) minus the desired frames/second for this particular
+							// animation
+							if(frameSkipCount >= 60 - fps) {
+								frameSkipCount = 0;
 							}
 						}
-	
-						frameSkipCount++;
-						// skip a number of frames equal to the frames/second we're likely to get from
-						// requestAnimationFrame() (60fps) minus the desired frames/second for this particular
-						// animation
-						if(frameSkipCount >= 60 - fps) {
-							frameSkipCount = 0;
-						}
-					}
-					window.requestAnimationFrame(sheetAnimFn);
-				}, false);
-				fxImage.src = sheetData.resName;
+						window.requestAnimationFrame(sheetAnimFn);
+					}, false);
+					fxImage.src = sheetData.resName;
+				}
+			} else {
+				// follow through with endpoint transition out of anim pipeline immediately  
+				// since we won't actually be animating anything
+				if(callbackFunction) {
+					callbackFunction();
+				}
 			}
 		}
 		request.send();
@@ -326,11 +342,11 @@ class MootyWortRpgMech {
 		reticleImage.addEventListener('load', () => {
 			// draw the image frame
 			context2d.drawImage(
-				reticleImage,
-				0,
-				0,
-				canvas.width,
-				canvas.height
+					reticleImage,
+					0,
+					0,
+					canvas.width,
+					canvas.height
 			);
 		});
 		reticleImage.src = "images/reticle.png";
@@ -365,7 +381,7 @@ class MootyWortRpgMech {
 	playPainAnimation(characters, callbackFunction) {
 		// track completed animations
 		var completedAnimationsCounter = 0;
-		
+
 		for(character of characters) {
 			// show hurt anim on target sprite
 			var characterUiData = this.characterUiDict[character.id];
@@ -381,7 +397,7 @@ class MootyWortRpgMech {
 				// start shake anim
 				characterCanvas.style.animation = "shake 0.5s";
 				characterCanvas.style.animationIterationCount = "infinite";
-	
+
 				// define animation loop
 				var painAnimFn = function(frameTimestamp) {
 					// init assign
@@ -391,7 +407,7 @@ class MootyWortRpgMech {
 					// measure time since last frame (initially 0)
 					var elapsedTimeSinceLastFrame = frameTimestamp - lastFrameTime;
 					frameCount++;
-	
+
 					// redraw sprite 
 					context2d.drawImage(characterImage, 0, 0);
 					// draw increasingly translucent red over the sprite
@@ -451,6 +467,10 @@ class MootyWortRpgMech {
 	 *        icon stack has been removed
 	 */
 	processStatusEffectStack(character, statusEffect, tickedOffEffectIds) {
+		if(statusEffect.id === "stun" && statusEffect.ticks == 0) {
+			console.log("breaktime");
+		}
+		
 		var targetCanvasContainer = this.characterUiDict[character.id].canvasContainerElement;
 		var stackId = character.id+'_'+statusEffect.id+'_icon_stack';
 		var stackDiv = document.getElementById(stackId);
@@ -464,7 +484,7 @@ class MootyWortRpgMech {
 			stackDiv = document.createElement('div');
 			stackDiv.id = character.id+'_'+statusEffect.id+'_icon_stack';
 			stackDiv.className = 'character-status-effect-stack';
-			
+
 			// load up the image icon; it's dupped for each icon in the stack, so we only need
 			// the one resource
 			var effectImage = new Image();
@@ -474,8 +494,8 @@ class MootyWortRpgMech {
 						" to targetcanvascontainer with offset dimens "+targetCanvasContainer.offsetWidth+"x"+targetCanvasContainer.offsetHeight);
 				// offset stack div from left by its index in the character's status effect array
 				var effectIndex = character.statusEffects.findIndex(element => {
-		            return element.id === statusEffect.id;
-		        });
+					return element.id === statusEffect.id;
+				});
 				stackDiv.style.left = (stackDiv.offsetWidth * effectIndex)+'px';
 				for(let durationIdx = 0; durationIdx < statusEffect.ticks; durationIdx++) {
 					// create our icon canvasi tag and set its src to the Image we loaded earlier
@@ -510,7 +530,7 @@ class MootyWortRpgMech {
 		// show the combat mode modal
 		var combatUI = document.getElementById("combatModal");
 		combatUI.style.display = "flex";
-	    
+
 		// player party UI 
 		var playerView_Div = document.getElementById("playerView");
 		var playerCharacterImageContainer_Div = document.getElementById("playerSpritesContainer");
@@ -528,12 +548,12 @@ class MootyWortRpgMech {
 				playerCharacterSprite_Canvas.width = this.width;
 				playerCharacterSprite_Canvas.height = this.height;
 				playerCharacterSprite_Canvas.getContext('2d').drawImage(this, 0, 0, playerCharacterSprite_Canvas.width, playerCharacterSprite_Canvas.height);
-		        console.log("player "+playerCharacter.name+"'s canvas dimens are "+playerCharacterSprite_Canvas.width+"x"+playerCharacterSprite_Canvas.height);
-		    }, false);
+				console.log("player "+playerCharacter.name+"'s canvas dimens are "+playerCharacterSprite_Canvas.width+"x"+playerCharacterSprite_Canvas.height);
+			}, false);
 			playerCharacterSprite_Image.src = playerCharacter.battleSprites[0];
 			playerCharacterSprite_Span.appendChild(playerCharacterSprite_Canvas);
 			playerCharacterImageContainer_Div.appendChild(playerCharacterSprite_Span);
-			
+
 			// player character data
 			let playerCharacterData_Div = document.createElement("div");
 			let playerCharacterName_Div = document.createElement("div");
@@ -567,7 +587,7 @@ class MootyWortRpgMech {
 			playerCharacterMp_Progress.value = playerCharacter.stats["mp"]/playerCharacter.stats["maxMP"];
 			playerCharacterData_Div.appendChild(playerCharacterMp_Progress);
 			playerCharacterDataContainer_Div.appendChild(playerCharacterData_Div);
-			
+
 			// associate elements with keys in UI dict
 			this.characterUiDict[playerCharacter.id] = {
 					"characterObj": playerCharacter,
@@ -598,10 +618,10 @@ class MootyWortRpgMech {
 				enemyCharacterSprite_Canvas.height = this.height;
 				enemyCharacterSprite_Canvas.getContext('2d').drawImage(this, 0, 0, enemyCharacterSprite_Canvas.width, enemyCharacterSprite_Canvas.height);
 				console.log("enemy "+enemyCharacter.name+"'s canvas dimens are "+enemyCharacterSprite_Canvas.width+"x"+enemyCharacterSprite_Canvas.height);
-		    }, false);
+			}, false);
 			enemyCharacterSprite_Image.src = enemyCharacter.battleSprites[0];
 			enemyCharacterSprite_Span.appendChild(enemyCharacterSprite_Canvas);
-			
+
 			let enemyCharacterName_Span = document.createElement("span");
 			enemyCharacterName_Span.className = "enemy-name";
 			enemyCharacterName_Span.innerHTML = enemyCharacter.name + " ";
@@ -612,7 +632,7 @@ class MootyWortRpgMech {
 			enemyCharacterHp_Progress.value = 
 				enemyCharacter.stats["hp"]/enemyCharacter.stats["maxHP"];
 			enemyCharacterData_Div.appendChild(enemyCharacterHp_Progress);
-			
+
 			this.characterUiDict[enemyCharacter.id] = {
 					"characterObj": enemyCharacter,
 					"canvasElement": enemyCharacterSprite_Canvas, 
@@ -620,14 +640,14 @@ class MootyWortRpgMech {
 					"hpProgressElement": enemyCharacterHp_Progress
 			};
 		}
-		
+
 		// now that modal content is loaded, do centering calc
 		// todo: call this from window resize events
 		this.centerElementInWindow(combatUI);
 		// center the center of combat log vertically
 		this.alignByElementCenterOnY(document.getElementById("combatLog"));
 	}
-	
+
 	/**
 	 * Translates the element on Y by -0.5*offsetHeight to account for the fact that
 	 * origin point aligns with upper left corner of the element rather than its center
@@ -639,28 +659,28 @@ class MootyWortRpgMech {
 		console.log("alignByElementCenterOnY; nudging "+element.id+" up by "+nudgeUp+" pixels");
 		element.style.transform = "translateY("+nudgeUp+"px)";
 	}
-	
+
 	/**
 	 * Centers the element
 	 * @param element the DOM element to be centered
 	 */
 	centerElementInWindow(element) {
-        var elementWidth = element.offsetWidth;
-        // todo: why is offsetHeight not accounting for the height 75% constraint?
-        var elementHeight = element.offsetHeight;
-        var windowWidth = window.innerWidth;
-        var windowHeight = window.innerHeight;
-        element.style.top = ((windowHeight - elementHeight) / 2 + window.pageYOffset) + "px";
-        if(parseInt(element.style.top, 10) < 0) {
-        	element.style.top = "0px";
-        }
-        element.style.left = ((windowWidth - elementWidth) / 2 + window.pageXOffset) + "px";
-        if(parseInt(element.style.left, 10) < 0) {
-        	element.style.left = "0px";
-        }
-        console.log("centerElement; window height is "+windowHeight+" and elem height is "+elementHeight+", and pageYOffset is "+window.pageYOffset+
-        		", so we're going to set top to "+element.style.top);
-    }
+		var elementWidth = element.offsetWidth;
+		// todo: why is offsetHeight not accounting for the height 75% constraint?
+		var elementHeight = element.offsetHeight;
+		var windowWidth = window.innerWidth;
+		var windowHeight = window.innerHeight;
+		element.style.top = ((windowHeight - elementHeight) / 2 + window.pageYOffset) + "px";
+		if(parseInt(element.style.top, 10) < 0) {
+			element.style.top = "0px";
+		}
+		element.style.left = ((windowWidth - elementWidth) / 2 + window.pageXOffset) + "px";
+		if(parseInt(element.style.left, 10) < 0) {
+			element.style.left = "0px";
+		}
+		console.log("centerElement; window height is "+windowHeight+" and elem height is "+elementHeight+", and pageYOffset is "+window.pageYOffset+
+				", so we're going to set top to "+element.style.top);
+	}
 	/**
 	 * Update the Character stat display based on combat data model
 	 * @param combatModel current Combat object
@@ -810,17 +830,17 @@ class MootyWortRpgMech {
 					} else {
 						// tell user to pick something else
 						this.combatLogPrint(
-							""+combatModel.currentTurnOwner.name+" lacks the reserves to manage "+abl.name+"; try something else.  Remember that your heroic attacks can revitalize your mana!",
-							MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION
+								""+combatModel.currentTurnOwner.name+" lacks the reserves to manage "+abl.name+"; try something else.  Remember that your heroic attacks can revitalize your mana!",
+								MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION
 						);
 					}
-					
+
 				};
-				
+
 				var commandText = document.createTextNode(abl.name);
 				commandCell.appendChild(commandText);
 				combatCommandList.appendChild(commandCell);
-				
+
 				// inc col count and check for col cap
 				colCount++;
 				if(colCount >= 3) {
@@ -849,11 +869,11 @@ class MootyWortRpgMech {
 			// indicate we're starting a new round
 			combatModel.controllerState = Combat.ControllerState.beginNewRound;
 		}
-		
+
 		// todo: ideally we'd be calling this updateCharacterStatusStacks outside of the beginNewRound state
 		//  up in stepCombat if we just added a status effect, so we could e.g. have relevant abilities' effect()
 		//  return a status effect if one was applied? 
-		
+
 		// update status stacks 
 		this.updateCharacterStatusStacks(combatModel);
 		this.combatLoop(combatModel);
@@ -914,27 +934,27 @@ class MootyWortRpgMech {
 			var logTextNode = document.createTextNode(logString);
 			combatLog.appendChild(logTextNode);
 			switch(category) {
-				case MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION:
-					catImg.src = "images/mole_icon.png";
-					// scroll to current bottom of combat log so player's eye lands on the first
-					// event after they input a command, the outcome of that command
-					this.scrollCombatLog();
-					break;
-				case MootyWortRpgMech.MessageCat.CAT_ABILITY_HINT:
-					catImg.src = "images/info_icon.svg";
-					// scroll to current bottom of combat log so player's eye lands on the 
-					// ability hint text
-					this.scrollCombatLog();
-					break;
-				case MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION:
-					catImg.src = "images/skull_icon.jpg";
-					break;
-				case MootyWortRpgMech.MessageCat.CAT_ENEMY_TELEGRAPH:
-					catImg.src = "images/Apport_logo.svg";
-					break;
-				case MootyWortRpgMech.MessageCat.CAT_INFO:
-					catImg.src = "images/info_icon.svg";
-					break;
+			case MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION:
+				catImg.src = "images/mole_icon.png";
+				// scroll to current bottom of combat log so player's eye lands on the first
+				// event after they input a command, the outcome of that command
+				this.scrollCombatLog();
+				break;
+			case MootyWortRpgMech.MessageCat.CAT_ABILITY_HINT:
+				catImg.src = "images/info_icon.svg";
+				// scroll to current bottom of combat log so player's eye lands on the 
+				// ability hint text
+				this.scrollCombatLog();
+				break;
+			case MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION:
+				catImg.src = "images/skull_icon.jpg";
+				break;
+			case MootyWortRpgMech.MessageCat.CAT_ENEMY_TELEGRAPH:
+				catImg.src = "images/Apport_logo.svg";
+				break;
+			case MootyWortRpgMech.MessageCat.CAT_INFO:
+				catImg.src = "images/info_icon.svg";
+				break;
 			}
 		}
 	}
@@ -961,11 +981,11 @@ class MootyWortRpgMech {
 			var doorDestX = overlayCanvas.width/2 - doorWidth/2;
 			var doorDestY = overlayCanvas.height - doorHeight;
 			context2d.drawImage(
-				exitDoorImage,
-				doorDestX,
-				doorDestY,
-				doorWidth,
-				doorHeight
+					exitDoorImage,
+					doorDestX,
+					doorDestY,
+					doorWidth,
+					doorHeight
 			);
 			// install onclick handler in the door image that hides div combatModal and shows div page
 			overlayCanvas.onclick = (clickEvent) => {
@@ -1024,8 +1044,8 @@ class MootyWortRpgMech {
 				}
 			}
 			context2d.fillText(
-				subStr.substring(0, endCharacterIndex+1), 
-				canvas.width/2, canvas.height/2 + lineIdx*heightPx
+					subStr.substring(0, endCharacterIndex+1), 
+					canvas.width/2, canvas.height/2 + lineIdx*heightPx
 			);
 		}
 	}
@@ -1047,24 +1067,24 @@ class MootyWortRpgMech {
 	 * Display victory or defeat message and provide battle exit UI 
 	 */
 	handleCombatResult(enumCombatResult) {
-    	// combat over scenario
+		// combat over scenario
 		switch(enumCombatResult) {
-        case Combat.CombatResultEnum.playerVictory:
-        	// display player victory message and battle exit UI
-        	this.displayResult("🦔 evil is vanquished and the Deepness saved for all time🦉!", MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
-        	break;
-        case Combat.CombatResultEnum.enemyVictory:
-        	// display player defeat message and game over UI, ideally a dark soulsy 'you died'
-        	this.displayResult("💀...and with the mole's death, darkness swept o'er all the land...💀");
-        	break;
-        case Combat.CombatResultEnum.draw:
-        	// display draw message and battle exit UI
-        	this.displayResult("💥the titanic clash of the mole and the mighty devil from the depths consumes them both in a conflagration quenched only by the tsunami of shed blood💥");
-        	break;
-        default:
-        	throw "handleCombatResult called with unrecognized result enum "+enumCombatResult;
-        	break;
-        }
+		case Combat.CombatResultEnum.playerVictory:
+			// display player victory message and battle exit UI
+			this.displayResult("🦔 evil is vanquished and the Deepness saved for all time🦉!", MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+			break;
+		case Combat.CombatResultEnum.enemyVictory:
+			// display player defeat message and game over UI, ideally a dark soulsy 'you died'
+			this.displayResult("💀...and with the mole's death, darkness swept o'er all the land...💀");
+			break;
+		case Combat.CombatResultEnum.draw:
+			// display draw message and battle exit UI
+			this.displayResult("💥the titanic clash of the mole and the mighty devil from the depths consumes them both in a conflagration quenched only by the tsunami of shed blood💥");
+			break;
+		default:
+			throw "handleCombatResult called with unrecognized result enum "+enumCombatResult;
+		break;
+		}
 	}
 	/**
 	 * Hides one element and makes another visible by setting
@@ -1084,23 +1104,23 @@ class MootyWortRpgMech {
  * Enum of combat log message categories
  */
 MootyWortRpgMech.MessageCat = Object.freeze(
-    {
-    	/**
-    	 * A message regarding player action
-    	 */
-        CAT_PLAYER_ACTION: 1,
-        /**
-         * A message regarding enemy action
-         */
-        CAT_ENEMY_ACTION: 2,
-        /**
-         * A message regarding enemy telegraph
-         */
-        CAT_ENEMY_TELEGRAPH: 3,
-        /**
-         * A message regarding general info
-         */
-        CAT_INFO: 4
-    }
+		{
+			/**
+			 * A message regarding player action
+			 */
+			CAT_PLAYER_ACTION: 1,
+			/**
+			 * A message regarding enemy action
+			 */
+			CAT_ENEMY_ACTION: 2,
+			/**
+			 * A message regarding enemy telegraph
+			 */
+			CAT_ENEMY_TELEGRAPH: 3,
+			/**
+			 * A message regarding general info
+			 */
+			CAT_INFO: 4
+		}
 );
 export {MootyWortRpgMech};
