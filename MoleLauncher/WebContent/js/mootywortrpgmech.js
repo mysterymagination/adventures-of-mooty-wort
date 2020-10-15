@@ -466,11 +466,9 @@ class MootyWortRpgMech {
 	 *        icon stack has been removed
 	 */
 	processStatusEffectStack(character, statusEffect, tickedOffEffectIds) {
-		if(statusEffect.id === "stun") {
-			console.log("stun has "+statusEffect.ticks+" ticks remaining");
-			if(statusEffect.ticks === 0) {
-				console.log("issue #16 breaktime");
-			}
+		console.log(statusEffect.id+" has "+statusEffect.ticks+" ticks remaining");
+		if(statusEffect.id === "stun" && statusEffect.ticks === 0) {
+			console.log("issue #16 breaktime");
 		}
 		
 		var targetCanvasContainer = this.characterUiDict[character.id].canvasContainerElement;
@@ -479,6 +477,8 @@ class MootyWortRpgMech {
 		if(stackDiv) {
 			console.log("status stack; removing stack div "+stackDiv+" with id "+stackId);
 			stackDiv.remove();
+		} else {
+			console.log("status stack; no stack div to remove for id "+stackId);
 		}
 		// only bother with icon images if remaining duration is gt 0; else we'll just remove the stack
 		// and do nothing more
@@ -714,6 +714,7 @@ class MootyWortRpgMech {
 			}
 			for(const id of tickedOffEffectIds) {
 				// we're done with this status effect in the ui, so go ahead and remove from model
+				console.log("status stack; removing status "+id+" from "+player.name);
 				MoleUndum.removeStatusEffectById(player, id);
 			}
 			tickedOffEffectIds.splice(0, tickedOffEffectIds.length);
@@ -724,6 +725,7 @@ class MootyWortRpgMech {
 			}
 			for(const id of tickedOffEffectIds) {
 				// we're done with this status effect in the ui, so go ahead and remove from model
+				console.log("status stack; removing status "+id+" from "+enemy.name);
 				MoleUndum.removeStatusEffectById(enemy, id);
 			}
 			tickedOffEffectIds.splice(0, tickedOffEffectIds.length);
