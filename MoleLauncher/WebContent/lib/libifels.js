@@ -164,7 +164,7 @@ export class Libifels {
     static findFirstLivingCharacter(characterArray, afterIndex) {
         // ensure there is something at the afterIndex + 1, accounting for 0-based index
     	if(characterArray.length >= afterIndex+2) {
-	    	for (let index = startingIndex+1; index < characterArray.length; index++) {
+	    	for (let index = afterIndex+1; index < characterArray.length; index++) {
 	            let currentCharacter = characterArray[index];
 	            console.log("findFirstLivingCharacter; character with id " + currentCharacter.id + " is " + (currentCharacter.stats.hp > 0 ? "living" : "dead"));
 	            if (currentCharacter.stats.hp > 0) {
