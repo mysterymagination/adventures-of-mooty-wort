@@ -9,7 +9,6 @@ import {PassStunned} from "./spellbook.js";
 export class Combat {
 	constructor(config) {
 		this.playerParty = config.playerParty;
-        console.log("in Combat ctor, playerParty[0].name says " + this.playerParty[0].name);
         this.enemyParty = config.enemyParty;
         this.controllerState = Combat.ControllerState.beginNewRound;
         this.combatResult = undefined;
@@ -59,7 +58,6 @@ export class Combat {
 			// raise the floor now that more range has been allocated by the amount allocated
 			currentFloor += rangesObj[probKey][1] - rangesObj[probKey][0];
 		}
-		console.log(JSON.stringify(rangesObj));
 		var roll = Libifels.rollPercentage();
 		// look up match
 		for (let range in rangesObj) {
@@ -102,10 +100,8 @@ export class Combat {
                     // apply next-turn chip damage effects
                 	// todo: subclass of damage over time effects with a common chipDmg field would eliminate these if chains
                 	if (effect.id === "poison") {
-                        console.log(enemyCharacter.name+" takes "+effect.psnDmg+" damage due to poison coursing through "+enemyCharacter.getPronoun_possessive()+" poor system!");
-                    	enemyCharacter.stats["hp"] -= effect.psnDmg;
+                        enemyCharacter.stats["hp"] -= effect.psnDmg;
                     } else if (effect.id === "burn") {
-                    	console.log(enemyCharacter.name+" takes "+effect.brnDmg+" damage due to "+enemyCharacter.getPronoun_possessive()+" poor crisped flesh crackling and flaking off in bloodful chunks!");
                     	enemyCharacter.stats["hp"] -= effect.brnDmg;
                     } 
                 	
@@ -135,10 +131,8 @@ export class Combat {
                 	// todo: frozen processing: player needs to choose whether to break free
                 	// todo: stun processing: player needs to be informed they are unable to act due to stun
                 	if (effect.id === "poison") {
-                		console.log(playerCharacter.name+" takes "+effect.psnDmg+" damage due to poison coursing through "+playerCharacter.getPronoun_possessive()+" poor system!");
                 		playerCharacter.stats["hp"] -= effect.psnDmg;
                     } else if (effect.id === "burn") {
-                    	console.log(playerCharacter.name+" takes "+effect.brnDmg+" damage due to "+playerCharacter.getPronoun_possessive()+" poor crisped flesh crackling and flaking off in bloodful chunks!");
                     	playerCharacter.stats["hp"] -= effect.brnDmg;
                     }
 
@@ -203,7 +197,6 @@ export class Combat {
             }
         }
 		// check victory conditions 
-        console.log("Dead players: " + dedPlayers + ", dead enemies: " + dedEnemies);
         var bPlayersDefeated = false;
         var bEnemiesDefeated = false;
         if (dedEnemies >= this.enemyParty.length) {

@@ -392,7 +392,6 @@ class MootyWortRpgMech {
 			var frameCount = 0;
 			var characterImage = new Image();
 			characterImage.addEventListener('load', function() {
-				console.log("character sprite loaded");
 				// ok, we've got our sprite image ref afresh
 				// start shake anim
 				characterCanvas.style.animation = "shake 0.5s";
@@ -470,7 +469,7 @@ class MootyWortRpgMech {
 		if(statusEffect.id === "stun") {
 			console.log("stun has "+statusEffect.ticks+" ticks remaining");
 			if(statusEffect.ticks === 0) {
-				console.log("breaktime");
+				console.log("issue #16 breaktime");
 			}
 		}
 		
@@ -549,7 +548,6 @@ class MootyWortRpgMech {
 				playerCharacterSprite_Canvas.width = this.width;
 				playerCharacterSprite_Canvas.height = this.height;
 				playerCharacterSprite_Canvas.getContext('2d').drawImage(this, 0, 0, playerCharacterSprite_Canvas.width, playerCharacterSprite_Canvas.height);
-				console.log("player "+playerCharacter.name+"'s canvas dimens are "+playerCharacterSprite_Canvas.width+"x"+playerCharacterSprite_Canvas.height);
 			}, false);
 			playerCharacterSprite_Image.src = playerCharacter.battleSprites[0];
 			playerCharacterSprite_Span.appendChild(playerCharacterSprite_Canvas);
@@ -618,7 +616,6 @@ class MootyWortRpgMech {
 				enemyCharacterSprite_Canvas.width = this.width;
 				enemyCharacterSprite_Canvas.height = this.height;
 				enemyCharacterSprite_Canvas.getContext('2d').drawImage(this, 0, 0, enemyCharacterSprite_Canvas.width, enemyCharacterSprite_Canvas.height);
-				console.log("enemy "+enemyCharacter.name+"'s canvas dimens are "+enemyCharacterSprite_Canvas.width+"x"+enemyCharacterSprite_Canvas.height);
 			}, false);
 			enemyCharacterSprite_Image.src = enemyCharacter.battleSprites[0];
 			enemyCharacterSprite_Span.appendChild(enemyCharacterSprite_Canvas);
@@ -657,7 +654,6 @@ class MootyWortRpgMech {
 	 */
 	alignByElementCenterOnY(element) {
 		var nudgeUp = -0.5 * element.offsetHeight;
-		console.log("alignByElementCenterOnY; nudging "+element.id+" up by "+nudgeUp+" pixels");
 		element.style.transform = "translateY("+nudgeUp+"px)";
 	}
 
@@ -679,8 +675,6 @@ class MootyWortRpgMech {
 		if(parseInt(element.style.left, 10) < 0) {
 			element.style.left = "0px";
 		}
-		console.log("centerElement; window height is "+windowHeight+" and elem height is "+elementHeight+", and pageYOffset is "+window.pageYOffset+
-				", so we're going to set top to "+element.style.top);
 	}
 	/**
 	 * Update the Character stat display based on combat data model
@@ -791,7 +785,6 @@ class MootyWortRpgMech {
 										this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
 										this.updateCharacterData(combatModel);
 										this.handlePlayerTurnComplete(combatModel);
-										console.log("command list item onclick closure; this is "+this+" with own props "+Object.entries(this));
 										// clear onclicks now that we've used them
 										uiEntry.canvasElement.onclick = null;
 										commandCell.onclick = null;

@@ -288,7 +288,6 @@ export class Ability {
 	}
 	processCost(character) {
 		for (let statCost in this.cost) {
-			console.log("processCost; "+character.name+"'s "+this.name+" costs "+character.getPronoun_personal_object()+" "+Object.entries(this.cost));
 			character.stats[statCost] -= this.cost[statCost];
 		}
 	}
@@ -330,8 +329,6 @@ export class Attack extends Ability {
     };
     effect(sourceCharacter, targetCharacter) {
         this.dmg = this.calcDmg(sourceCharacter, targetCharacter);
-        console.log(this.dmg + " dealt by Attack to " + targetCharacter.name);
-        // todo: AC? Any other miss chance?
         targetCharacter.stats.hp -= this.dmg;
     }
     generateFlavorText(sourceCharacter, targetCharacter) {
@@ -355,7 +352,6 @@ export class DummyAttack extends Ability {
     };
     effect(sourceCharacter, targetCharacter) {
         this.dmg = this.calcDmg(sourceCharacter, targetCharacter);
-        console.log(this.dmg + " dealt by Attack to " + targetCharacter.name);
         targetCharacter.stats.hp -= this.dmg;
     }
     generateFlavorText(sourceCharacter, targetCharacter) {
@@ -401,16 +397,12 @@ export class HeroAttack extends Attack {
         this.dmg = this.calcDmg(sourceCharacter, targetCharacter);
         this.mpBonus = this.mpBonusCoefficient * sourceCharacter.stats.maxMP;
         sourceCharacter.stats.mp += this.mpBonus; 
-        console.log(this.dmg + " dealt by Attack to " + targetCharacter.name +
-        		", and the hero regains " + this.mpBonus + " MP due to heroism!");
-        // todo: AC? Any other miss chance?
         targetCharacter.stats.hp -= this.dmg;
     }
 	getHint() {
 		return "Performs a basic physical attack against a single target, and restores some of the hero's MP";
 	}
 }
-
 /**
  * Ability that adds the Defended status effect, increasing def and res
  */
@@ -442,7 +434,6 @@ export class Run extends Ability {
 		return false;
 	}
 	generateFlavorText(playerParty) {
-        console.log("run::generateFlavorText -- The player party consists of " + playerParty);
         var flavorText = "";
         for (let i = 0; i < playerParty.length; i++) {
             if (i < playerParty.length - 1) {
@@ -934,7 +925,6 @@ export class ManyfoldEmbrace extends Spell {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
 	    // now that we have calc'd damage, we can determine the rest of the cost
 	    this.cost["hp"] = this.dmg * 0.25;
-	    console.log("manyfold embrace deals "+this.dmg+" dmg, costing "+sourceChar.name+" a whopping "+Object.entries(this.cost)+". BTW, "+sourceChar.name+"'s atk is "+sourceChar.stats["atk"]+" and pwr is "+sourceChar.stats["pwr"]+" whereas "+targetChar.name+"'s def is merely "+targetChar.stats["def"]);
 	    targetChar.stats["hp"] -= this.dmg;
 	    // regain some MP from our good ol' huggle
 	    sourceChar.stats.mp += this.dmg * 0.5;
@@ -1111,7 +1101,6 @@ export class DarkStar extends Spell {
 	    	let dmg = this.calcDmg(sourceChar, targetChars[index]);
 	    	targetChars[index].stats["hp"] -= dmg;
 	    	this.characterDamageDict[targetChars[index].id] = dmg;
-	    	console.log("dark star effect; dealing "+dmg+" dmg to "+targetChars[index].name);
 	    }
 
 	    // MP cost

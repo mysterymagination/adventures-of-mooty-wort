@@ -259,7 +259,6 @@ export class Grue extends Character {
 	    	];
 	}
 	runAI(combat, role) {
-        console.log("reached grue runAI fn... have fn!");
         if (role) {
             if (role === "enemy") {
                 // defaults for action to be taken
@@ -362,8 +361,6 @@ export class Grue extends Character {
 
                 combat.currentAISelectedAbility = chosenAbility;
                 combatModel.currentTargetCharacter = chosenTarget
-                console.log("The Grue's chosen abl is " + chosenAbility.name
-                		+ (chosenTarget ? ", targetting "+chosenTarget.name : ""));
                 return chosenAbility;
             }// if role is enemy
         }// if role is defined
@@ -391,7 +388,6 @@ export class YawningGod extends Character {
 	    ];
 	}
 	runAI(combat, role) {
-        console.log("reached The Yawning God runAI fn... have fn!");
         if (role) {
             if (role === "enemy") {
             	// defaults for targeting and ability
@@ -409,11 +405,8 @@ export class YawningGod extends Character {
 
                 /// begin gathering player data ///
                 for (let player of combat.playerParty) {
-                	
-                	console.log("looking at player character with id " + player.id);
-                    // set our mole handle
+                	// set our mole handle
                 	if(player.id === "mole") {
-                		console.log("the mole snuffles off to undefined...");
                     	moleHandle = player;
                     }
 

@@ -134,7 +134,6 @@ export class Libifels {
     static findLastLivingCharacter(characterArray) {
         for (let index = characterArray.length - 1; index >= 0; index--) {
         	let currentCharacter = characterArray[index];
-            console.log("findLastLivingCharacter; character with id " + currentCharacter.id + " is " + (currentCharacter.stats.hp > 0 ? "living" : "dead"));
             if (currentCharacter.stats.hp > 0) {
                 return currentCharacter;
             }
@@ -148,7 +147,6 @@ export class Libifels {
     static findFirstLivingCharacter(characterArray) {
         for (let index = 0; index < characterArray.length; index++) {
             let currentCharacter = characterArray[index];
-            console.log("findFirstLivingCharacter; character with id " + currentCharacter.id + " is " + (currentCharacter.stats.hp > 0 ? "living" : "dead"));
             if (currentCharacter.stats.hp > 0) {
                 return currentCharacter;
             }
@@ -166,7 +164,6 @@ export class Libifels {
     	if(characterArray.length >= afterIndex+2) {
 	    	for (let index = afterIndex+1; index < characterArray.length; index++) {
 	            let currentCharacter = characterArray[index];
-	            console.log("findFirstLivingCharacter; character with id " + currentCharacter.id + " is " + (currentCharacter.stats.hp > 0 ? "living" : "dead"));
 	            if (currentCharacter.stats.hp > 0) {
 	                return currentCharacter;
 	            }
