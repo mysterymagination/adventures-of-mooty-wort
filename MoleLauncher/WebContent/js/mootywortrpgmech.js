@@ -477,41 +477,50 @@ class MootyWortRpgMech {
 		var stackId = character.id+'_'+statusEffect.id+'_icon_stack';
 		var stackDiv = document.getElementById(stackId);
 		if(stackDiv) {
+			console.log("status stack; removing stack div "+stackDiv+" with id "+stackId);
 			stackDiv.remove();
 		}
 		// only bother with icon images if remaining duration is gt 0; else we'll just remove the stack
 		// and do nothing more
 		if(statusEffect.ticks > 0) {
 			console.log("status stack; preparing to add stackdiv for "+statusEffect.id+", who still has "+statusEffect.ticks+" ticks left");
-			// create the DIV that will be our stack column
-			stackDiv = document.createElement('div');
-			stackDiv.id = character.id+'_'+statusEffect.id+'_icon_stack';
-			stackDiv.className = 'character-status-effect-stack';
-
 			// load up the image icon; it's dupped for each icon in the stack, so we only need
 			// the one resource
 			var effectImage = new Image();
 			effectImage.addEventListener('load', () => {
-				targetCanvasContainer.appendChild(stackDiv);
-				console.log("status stack; adding stackdiv for "+statusEffect.id+", who still has "+statusEffect.ticks+" ticks left, with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight+
-						" to targetcanvascontainer with offset dimens "+targetCanvasContainer.offsetWidth+"x"+targetCanvasContainer.offsetHeight);
-				// offset stack div from left by its index in the character's status effect array
-				var effectIndex = character.statusEffects.findIndex(element => {
-					return element.id === statusEffect.id;
-				});
-				stackDiv.style.left = (stackDiv.offsetWidth * effectIndex)+'px';
-				for(let durationIdx = 0; durationIdx < statusEffect.ticks; durationIdx++) {
-					// create our icon canvasi tag and set its src to the Image we loaded earlier
-					let icon = document.createElement('canvas');
-					icon.className = 'character-status-effect-stack-image';
-					// append to parent so our offset dimens are applied
-					stackDiv.appendChild(icon);
-					// gradually offset up from the bottom to simulate dropping icons in a stack
-					icon.style.bottom = (durationIdx * icon.offsetHeight) + 'px';
-					// now that we have offset dimens, define canvas raw dimens and draw
-					icon.width = icon.offsetWidth;
-					icon.height = icon.offsetHeight;
-					icon.getContext('2d').drawImage(effectImage, 0, 0, icon.offsetWidth, icon.offsetHeight);
+				// need to check again that we haven't expired between the image req and the actual load;
+				// that can happen pretty easily between bottom of a round and top of the next round -- see issue #16
+				if(statusEffect.ticks > 0) {
+					// create the DIV that will be our stack column
+					stackDiv = document.createElement('div');
+					stackDiv.id = character.id+'_'+statusEffect.id+'_icon_stack';
+					stackDiv.className = 'character-status-effect-stack';
+				
+					targetCanvasContainer.appendChild(stackDiv);
+					console.log("status stack; adding stackdiv for "+statusEffect.id+", who still has "+statusEffect.ticks+" ticks left, with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight+
+							" to targetcanvascontainer with offset dimens "+targetCanvasContainer.offsetWidth+"x"+targetCanvasContainer.offsetHeight);
+					// offset stack div from left by its index in the character's status effect array
+					var effectIndex = character.statusEffects.findIndex(element => {
+						return element.id === statusEffect.id;
+					});
+					console.log("status stack; effect with id "+statusEffect.id+(effectIndex === -1 ? " was not found in the status effect array" : "was found at "+effectIndex+" of the status effect array"));
+					stackDiv.style.left = (stackDiv.offsetWidth * effectIndex)+'px';
+					console.log("status stack; stack div left is "+stackDiv.style.left+" based on offsetWidth "+stackDiv.offsetWidth+" * effect index "+effectIndex);
+					for(let durationIdx = 0; durationIdx < statusEffect.ticks; durationIdx++) {
+						// create our icon canvasi tag and set its src to the Image we loaded earlier
+						let icon = document.createElement('canvas');
+						icon.className = 'character-status-effect-stack-image';
+						// append to parent so our offset dimens are applied
+						stackDiv.appendChild(icon);
+						// gradually offset up from the bottom to simulate dropping icons in a stack
+						icon.style.bottom = (durationIdx * icon.offsetHeight) + 'px';
+						// now that we have offset dimens, define canvas raw dimens and draw
+						icon.width = icon.offsetWidth;
+						icon.height = icon.offsetHeight;
+						icon.getContext('2d').drawImage(effectImage, 0, 0, icon.offsetWidth, icon.offsetHeight);
+					}
+				} else {
+					console.log("status stack; status effect icon for "+statusEffect.id+" is not needed as the effect has expired");
 				}
 			});
 			effectImage.src = statusEffect.imageUrl;
