@@ -41,12 +41,13 @@ class MootyWortRpgMech {
 				}
 				 */
 		};
+		this.battleMusic = new Audio();
 	}
 
 	/**
 	 * Prepares combat UI and manages Combat object
 	 * @param configObj an object literal of the form
-	 * {playerParty: [playerCharacter1, playerCharacter2...], enemyParty: [enemyCharacter1, enemyCharacter2...]}
+	 * {playerParty: [playerCharacter1, playerCharacter2...], enemyParty: [enemyCharacter1, enemyCharacter2...], musicUrl: "music.mp3"}
 	 * 
 	 */
 	enterCombat(configObj) {
@@ -54,6 +55,9 @@ class MootyWortRpgMech {
 		var combatDriver = new Combat(configObj);
 		// setup UI
 		this.openBattleUi(combatDriver);
+		// start loading music
+		this.battleMusic.src = configObj.musicUrl;
+		this.battleMusic.loop = true;
 		// kick off combat 
 		this.combatLoop(combatDriver);
 	}
@@ -545,6 +549,24 @@ class MootyWortRpgMech {
 		// show the combat mode modal
 		var combatUI = document.getElementById("combatModal");
 		combatUI.style.display = "flex";
+		// muuuuzak!
+		this.battleMusic.addEventListener("canplaythrough", event => {
+			combatUI.onclick = e => {
+				// todo: add in a music/sfx button since Chrome's autoplay restrictions won't let
+				//  us start this up immediately.  Wouldn't be an issue in real usage since we wouldn't
+				//  normally jump right into the combat, but it makes sense to have anyway and
+				//  enables audio during battle programming
+				// check to make sure combat has not somehow ended already before starting music
+				if(!combatModel.combatResult) {
+					this.battleMusic.play();
+				}
+				combatUI.onclick = null;
+			}
+		});
+			
+		
+		
+		
 
 		// player party UI 
 		var playerView_Div = document.getElementById("playerView");
@@ -1079,6 +1101,9 @@ class MootyWortRpgMech {
 	 */
 	handleCombatResult(enumCombatResult) {
 		// combat over scenario
+		// end music 
+		this.battleMusic.pause();
+		// display results!
 		switch(enumCombatResult) {
 		case Combat.CombatResultEnum.playerVictory:
 			// display player victory message and battle exit UI
