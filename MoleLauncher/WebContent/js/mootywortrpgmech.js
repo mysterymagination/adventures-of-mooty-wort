@@ -217,6 +217,12 @@ class MootyWortRpgMech {
 				var overlayCanvas = rpgMechHandle.showSpellEffectOverlay();
 				// since we indicated responseType json, our response should already by a JS object defining our FX data
 				var fxData = request.response;
+				var audioElement = new Audio(fxData.audio);
+				audioElement.addEventListener("canplaythrough", event => {
+					  /* the audio is now playable; play it if permissions allow */
+					  audioElement.play();
+				});
+				
 				var fxType = fxData.type;
 				var sheetDataArray = undefined;
 				if(fxType === "spritesheet") {

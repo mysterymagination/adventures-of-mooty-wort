@@ -7,5 +7,5 @@
     "frameHeightPx": 128,
     "frameCount": 16,
     "frameRate": 55,
-    "audio": "pestilence.wav"
+    "audio": "audio/spells/pestilence.wav"
 }
