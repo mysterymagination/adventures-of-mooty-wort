@@ -6,5 +6,6 @@
     "frameWidthPx": 320,
     "frameHeightPx": 240,
     "frameCount": 20,
-    "frameRate": 55
+    "frameRate": 55,
+    "audio": "audio/spells/SFX_Powerup_01.wav"
 }

@@ -6,5 +6,6 @@
     "frameWidthPx": 150,
     "frameHeightPx": 150,
     "frameCount": 25,
-    "frameRate": 55
+    "frameRate": 55,
+    "audio": "audio/spells/MonsterCreaturesVoiceSound002.mp3"
 }

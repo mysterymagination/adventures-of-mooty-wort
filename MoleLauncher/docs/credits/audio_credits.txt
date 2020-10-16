@@ -40,6 +40,26 @@ https://opengameart.org/content/8-bit-platformer-sfx
 --pestilence SFX pestilence.wav
 CC-BY 3.0 by spookymodem
 https://opengameart.org/content/magic-death
+--woolly shield SFX_Powerup_01.wav
+CC-BY 3.0 by jalastram
+https://opengameart.org/content/8-bit-powerup-1
+--manyfold embrace SFX stop.flac
+CC-BY 3.0 by Blender Foundation (Submitted by Lamoot)
+https://opengameart.org/content/stop
+--primordial mandate SFX MonsterCreaturesVoiceSound002.mp3
+CC-BY 3.0 by jalastram
+https://opengameart.org/content/monster-and-creatures-sound-effects-pack-001
+--shadow flare SFX shadowflare.mp3
+public domain by messersm
+https://opengameart.org/content/space-sound-effects
+CC-BY 3.0 by qubodup
+https://opengameart.org/content/fire-loop
+--chill beyond SFX chillbeyond.mp3
+public domain by Baŝto
+https://opengameart.org/content/nes-sounds
+--warmest hug SFX warmesthug.mp3
+public domain by Baŝto
+https://opengameart.org/content/nes-sounds
 
 -music
 --yawning_god_theme.wav
@@ -52,5 +72,3 @@ https://opengameart.org/content/boss-battle-2-8-bit-re-upload
 -creature sounds
 public domain by greg300: Skeleton Roar.mp3
 https://opengameart.org/content/retro-monster-roar
-public domain by rubberduck: 
-https://opengameart.org/content/80-cc0-rpg-sfx

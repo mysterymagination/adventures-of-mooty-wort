@@ -6,5 +6,6 @@
     "frameWidthPx": 125,
     "frameHeightPx": 108,
     "frameCount": 42,
-    "frameRate": 55
+    "frameRate": 55,
+    "audio": "audio/spells/shadowflare.mp3"
 }

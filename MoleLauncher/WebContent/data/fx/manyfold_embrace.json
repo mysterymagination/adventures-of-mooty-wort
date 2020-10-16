@@ -6,5 +6,6 @@
     "frameWidthPx": 155,
     "frameHeightPx": 231,
     "frameCount": 6,
-    "frameRate": 53
+    "frameRate": 53,
+    "audio": "audio/spells/stop.flac"
 }
