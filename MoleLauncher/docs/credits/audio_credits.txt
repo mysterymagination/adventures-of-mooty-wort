@@ -68,6 +68,12 @@ https://opengameart.org/content/finalboss-battle-1
 --grue_theme.wav
 public domain by nene
 https://opengameart.org/content/boss-battle-2-8-bit-re-upload
+--Victory.mp3
+public domain by celestialghost8
+https://opengameart.org/content/victory
+--game over The World Stood Still.mp3
+CC-BY 4.0 by Insydnis
+https://opengameart.org/content/game-over-4
 
 -creature sounds
 public domain by greg300: Skeleton Roar.mp3

@@ -1009,8 +1009,10 @@ class MootyWortRpgMech {
 	/**
 	 * Hides the combat UI and draws the combat result message on the spell FX overlay canvas
 	 * @param resultString a string to replace the UI with
+	 * @param endAudio an Audio element that will already by loading/loaded and may be playing, and which must be paused
+	 *        when the player clicks the exit image
 	 */ 
-	displayResult(resultString) {
+	displayResult(resultString, endAudio) {
 		// prepare overlay and hide combat UI
 		this.showSpellEffectOverlay();
 		this.hideModalContent();
@@ -1043,6 +1045,7 @@ class MootyWortRpgMech {
 					combatModal.style.display = 'none';
 					var undumPage = document.getElementById('page');
 					undumPage.style.display = 'block';
+					endAudio.pause();
 				}
 			};
 		});
@@ -1116,26 +1119,37 @@ class MootyWortRpgMech {
 	 */
 	handleCombatResult(enumCombatResult) {
 		// combat over scenario
-		// end music 
+		// end battle music 
 		this.battleMusic.pause();
+		// init end music element
+		var endAudio = new Audio();
 		// display results!
 		switch(enumCombatResult) {
 		case Combat.CombatResultEnum.playerVictory:
+			// load victory fanfare
+			endAudio.src = 'audio/music/Victory.mp3';
 			// display player victory message and battle exit UI
-			this.displayResult("🦔 evil is vanquished and the Deepness saved for all time🦉!", MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+			this.displayResult("🦔 evil is vanquished and the Deepness saved for all time🦉!", endAudio);
 			break;
 		case Combat.CombatResultEnum.enemyVictory:
+			// load death fanfare
+			endAudio.src = 'audio/music/The World Stood Still.mp3';
 			// display player defeat message and game over UI, ideally a dark soulsy 'you died'
-			this.displayResult("💀...and with the mole's death, darkness swept o'er all the land...💀");
+			this.displayResult("💀...and with the mole's death, darkness swept o'er all the land...💀", endAudio);
 			break;
 		case Combat.CombatResultEnum.draw:
+			// load death fanfare, I guess?
+			endAudio.src = 'audio/music/The World Stood Still.mp3';
 			// display draw message and battle exit UI
-			this.displayResult("💥the titanic clash of the mole and the mighty devil from the depths consumes them both in a conflagration quenched only by the tsunami of shed blood💥");
+			this.displayResult("💥the titanic clash of the mole and the mighty devil from the depths consumes them both in a conflagration quenched only by the tsunami of shed blood💥", endAudio);
 			break;
 		default:
 			throw "handleCombatResult called with unrecognized result enum "+enumCombatResult;
 		break;
 		}
+		endAudio.addEventListener('canplaythrough', event => {
+			endAudio.play();
+		})
 	}
 	/**
 	 * Hides one element and makes another visible by setting
