@@ -221,6 +221,7 @@ class MootyWortRpgMech {
 				var overlayCanvas = rpgMechHandle.showSpellEffectOverlay();
 				// since we indicated responseType json, our response should already by a JS object defining our FX data
 				var fxData = request.response;
+				// go play, audio
 				var audioElement = new Audio(fxData.audio);
 				audioElement.addEventListener("canplaythrough", event => {
 					  /* the audio is now playable; play it if permissions allow */
@@ -789,13 +790,27 @@ class MootyWortRpgMech {
 				// todo: check if we can afford the cost here instead of in onclick, and if not then gray-out the button and don't install onclick
 				let longClickTimerFn;
 				let longClicked = false;
-				let touchDown = e => { 
+				let touchDownHandler = e => { 
 					longClickTimerFn = window.setTimeout(() => {
 						this.combatLogPrint(abl.getHint(), MootyWortRpgMech.MessageCat.CAT_ABILITY_HINT);
 						longClicked = true;
 					}, 500);
 				};
-				let touchUp = e => {
+				let touchUpHandler = e => {
+					// only clear our longpress detection here -- on mobile we'll also get mouseup
+					// so we can just handle the abl anim flow kickoff there
+					window.clearTimeout(longClickTimerFn);
+					if(longClicked) {
+						longClicked = false;
+					}
+				};
+				let mouseDownHandler = e => { 
+					longClickTimerFn = window.setTimeout(() => {
+						this.combatLogPrint(abl.getHint(), MootyWortRpgMech.MessageCat.CAT_ABILITY_HINT);
+						longClicked = true;
+					}, 500);
+				};
+				let mouseUpHandler = e => {
 					window.clearTimeout(longClickTimerFn);
 					// don't want to block the onclick handler if we didn't wait 
 					// requisite time for longpress
@@ -805,10 +820,10 @@ class MootyWortRpgMech {
 						commandCell.customClickHandler();
 					}
 				};
-				commandCell.addEventListener('mousedown', touchDown);
-				commandCell.addEventListener('mouseup', touchUp);
-				commandCell.addEventListener('touchstart', touchDown);
-				commandCell.addEventListener('touchend', touchUp);
+				commandCell.addEventListener('mousedown', mouseDownHandler);
+				commandCell.addEventListener('mouseup', mouseUpHandler);
+				commandCell.addEventListener('touchstart', touchDownHandler);
+				commandCell.addEventListener('touchend', touchUpHandler);
 				commandCell.customClickHandler = () => {
 					if(combatModel.currentTurnOwner.canAffordCost(abl)) {
 						// we can afford the cost of the chosen abl, so go ahead with targeting etc.

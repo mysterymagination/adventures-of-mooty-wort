@@ -160,7 +160,10 @@ export class Libifels {
      * @return the first living character subsequent to afterIndex, or undefined if there are none
      */
     static findFirstLivingCharacter(characterArray, afterIndex) {
-        // ensure there is something at the afterIndex + 1, accounting for 0-based index
+        if(afterIndex < 0) {
+        	throw "IndexOutOfBoundsException: the given afterIndex is "+afterIndex+" which is not valid";
+        }
+    	// ensure there is something at the afterIndex + 1, accounting for 0-based index
     	if(characterArray.length >= afterIndex+2) {
 	    	for (let index = afterIndex+1; index < characterArray.length; index++) {
 	            let currentCharacter = characterArray[index];

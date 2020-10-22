@@ -782,6 +782,11 @@ undum.game.situations = {
         	//  auto saving/loading since I definitely hit this without even being able to hit load.
             enter: function (character, system, from) {
                 // boss fight hyyyyype!  Give a combat UI within the transcript main content window; I'm thinking a relatively simple table plus some text and image output divs?
+            	// play the Yawning God cute lil' roar
+            	var yawningGodRoar = new Audio('audio/creatures/Skeleton Roar.mp3');
+            	yawningGodRoar.addEventListener('canplaythrough', e => {
+            		yawningGodRoar.play();
+            	})
             	var mech = undum.game.rpgMech;
             	mech.enterCombat({playerParty: [mech.charactersDict["mole"]], enemyParty: [mech.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav"});
             	// todo: if the player wins against the yawning god and they aggro'ed the grue, drop the modal and give transcript text about grue coming in and then raise modal for next combat!
