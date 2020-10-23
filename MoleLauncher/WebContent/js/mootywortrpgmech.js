@@ -478,15 +478,12 @@ class MootyWortRpgMech {
 	 */
 	processStatusEffectStack(character, statusEffect, tickedOffEffectIds) {
 		console.log(statusEffect.id+" has "+statusEffect.ticks+" ticks remaining");
-		if(statusEffect.id === "stun" && statusEffect.ticks === 0) {
-			console.log("issue #16 breaktime");
-		}
-		
 		var targetCanvasContainer = this.characterUiDict[character.id].canvasContainerElement;
 		var stackId = character.id+'_'+statusEffect.id+'_icon_stack';
 		var stackDiv = document.getElementById(stackId);
 		if(stackDiv) {
 			console.log("status stack; removing stack div "+stackDiv+" with id "+stackId);
+			//stackDiv.innerHTML = "";
 			stackDiv.remove();
 		} else {
 			console.log("status stack; no stack div to remove for id "+stackId);
@@ -504,7 +501,7 @@ class MootyWortRpgMech {
 				if(statusEffect.ticks > 0) {
 					// create the DIV that will be our stack column
 					stackDiv = document.createElement('div');
-					stackDiv.id = character.id+'_'+statusEffect.id+'_icon_stack';
+					stackDiv.id = stackId;
 					stackDiv.className = 'character-status-effect-stack';
 				
 					targetCanvasContainer.appendChild(stackDiv);
@@ -529,6 +526,7 @@ class MootyWortRpgMech {
 						icon.width = icon.offsetWidth;
 						icon.height = icon.offsetHeight;
 						icon.getContext('2d').drawImage(effectImage, 0, 0, icon.offsetWidth, icon.offsetHeight);
+						console.log("status stack; drawing duration index "+durationIdx+" of status effect stack for "+statusEffect.id+" with "+statusEffect.ticks+" ticks remaining");
 					}
 				} else {
 					console.log("status stack; status effect icon for "+statusEffect.id+" is not needed as the effect has expired");

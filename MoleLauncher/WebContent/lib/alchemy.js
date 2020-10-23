@@ -16,10 +16,10 @@ export class StatusEffect {
 		this.ticks--;
 	}
 	effect(afflictedCharacter) {
-		console.log("status effect unset");
+		console.log("status effect effect() unset for "+this.id);
 	}
 	reverseEffect(afflictedChar) {
-        console.log("status effect reversal unset");
+        console.log("status effect reverseEffect() unset for "+this.id);
     }
 } // end StatusEffect class def
 
