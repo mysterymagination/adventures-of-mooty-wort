@@ -483,7 +483,6 @@ class MootyWortRpgMech {
 		var stackDiv = document.getElementById(stackId);
 		if(stackDiv) {
 			console.log("status stack; removing stack div "+stackDiv+" with id "+stackId);
-			//stackDiv.innerHTML = "";
 			stackDiv.remove();
 		} else {
 			console.log("status stack; no stack div to remove for id "+stackId);
@@ -496,14 +495,23 @@ class MootyWortRpgMech {
 			// the one resource
 			var effectImage = new Image();
 			effectImage.addEventListener('load', () => {
+				// need to ensure we have a 1:1 or many:1 ratio of removes to adds;
+				// issue #19 was caused by having an effectively 1:many ratio of removes to adds
+				var stackDiv = document.getElementById(stackId);
+				if(stackDiv) {
+					console.log("status stack; inside load cb, removing stack div "+stackDiv+" with id "+stackId);
+					stackDiv.remove();
+				} else {
+					console.log("status stack; no stack div to remove for id "+stackId);
+				}
 				// need to check again that we haven't expired between the image req and the actual load;
 				// that can happen pretty easily between bottom of a round and top of the next round -- see issue #16
 				if(statusEffect.ticks > 0) {
 					// create the DIV that will be our stack column
+					console.log("status stack; about to create a new stack with id "+stackId+" and "+(document.getElementById(stackId) !== null ? "whoops there already is one... toss another comment onto the issue #19 fire" : "there isn't one already so we're ok"));
 					stackDiv = document.createElement('div');
 					stackDiv.id = stackId;
 					stackDiv.className = 'character-status-effect-stack';
-				
 					targetCanvasContainer.appendChild(stackDiv);
 					console.log("status stack; adding stackdiv for "+statusEffect.id+", who still has "+statusEffect.ticks+" ticks left, with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight+
 							" to targetcanvascontainer with offset dimens "+targetCanvasContainer.offsetWidth+"x"+targetCanvasContainer.offsetHeight);
