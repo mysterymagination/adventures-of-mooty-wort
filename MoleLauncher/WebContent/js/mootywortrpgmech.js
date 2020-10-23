@@ -497,6 +497,8 @@ class MootyWortRpgMech {
 			effectImage.addEventListener('load', () => {
 				// need to ensure we have a 1:1 or many:1 ratio of removes to adds;
 				// issue #19 was caused by having an effectively 1:many ratio of removes to adds
+				// and is fixed by making sure we have a chance to remove before adding here on the image
+				// load cb timeline
 				var stackDiv = document.getElementById(stackId);
 				if(stackDiv) {
 					console.log("status stack; inside load cb, removing stack div "+stackDiv+" with id "+stackId);
