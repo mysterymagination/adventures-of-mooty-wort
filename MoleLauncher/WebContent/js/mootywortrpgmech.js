@@ -58,6 +58,10 @@ class MootyWortRpgMech {
 		// start loading music
 		this.battleMusic.src = configObj.musicUrl;
 		this.battleMusic.loop = true;
+		// muuuuzak!
+		this.battleMusic.addEventListener("canplaythrough", event => {
+			this.battleMusic.play();
+		});
 		// kick off combat 
 		this.combatLoop(combatDriver);
 	}
@@ -558,25 +562,6 @@ class MootyWortRpgMech {
 		// show the combat mode modal
 		var combatUI = document.getElementById("combatModal");
 		combatUI.style.display = "flex";
-		// muuuuzak!
-		this.battleMusic.addEventListener("canplaythrough", event => {
-			combatUI.onclick = e => {
-				// todo: add in a music/sfx button since Chrome's autoplay restrictions won't let
-				//  us start this up immediately.  Wouldn't be an issue in real usage since we wouldn't
-				//  normally jump right into the combat, but it makes sense to have anyway and
-				//  enables audio during battle programming
-				// check to make sure combat has not somehow ended already before starting music
-				if(!combatModel.combatResult) {
-					this.battleMusic.play();
-				}
-				combatUI.onclick = null;
-			}
-		});
-			
-		
-		
-		
-
 		// player party UI 
 		var playerView_Div = document.getElementById("playerView");
 		var playerCharacterImageContainer_Div = document.getElementById("playerSpritesContainer");
