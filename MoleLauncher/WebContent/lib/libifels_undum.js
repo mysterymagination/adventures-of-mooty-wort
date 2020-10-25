@@ -4,22 +4,9 @@ import {Libifels} from "./libifels.js";
  */
 export class MoleUndum extends Libifels{
 	constructor() {
-	     // todo: this global function handler business is weird and (I'm fairly certain) unnecessary.  Might be cleaner make a custom Item class in JS that derives from something that can be the content of an anchor tag (HTML text element?) and has a name property and an onUse handler function, and then add those to the item_list ul.  Alternatively, maybe just shove a handler function into the li or div containing the text describing an item.  Regardless, we'd at least need a global CSS ID selector value for the currently active item, but otherwise could lose the weird global stuff here as well as ability to cleanly package up a particular item's behavior in an object instance so that items can be removed and re-added without having to copy-paste a mostly boilerplate handler function each time or naming a hundred different global handler functions that new item instances would refer back to.  Actually, said unique ID could be used as the key in a simple object map of string item name : item handler function data model to back the UI, and then the actual UI list items could just stay on their side of the bed; only 'disadvantage' there is that to add/remove items we'd need to hit both UI and data model separately, but then sep of data and view is desired anyway.  It'd be easy to write a util function here that hits both view and model for common add/remove ops.
-	    /**
-	     * Boolean flag to be set when the user clicks an item, indicating that a usage on something is pending
-	     */
-	    this.bUsingItem = false,
-	    /**
-	     * The string name of the last item activated
-	     */
-	    this.sUsedItemName = "",
-	    /**
-	     * Item usage handler function; it gets installed when the player clicks on an item to activate it (and bUsingItem flag is raised and sUsedItemName is set), and gets called on this libifels object when the target of the item usage is selected (meaning we have all the info we need) with the activated item name (retrieved from sUsedItemName here) and the target name we just learned 
-	     * @param {string} itemName the item the player is trying to use
-	     * @param {string} targetName the object the player is trying to use the item on
-	     */
-	    this.fnUsedItemHandler = function (itemName, targetName) {
-	        system.write("<p>You can't use " + itemName + " on " + targetName + "</p>");
-	    }
+		// todo: add an equipment div horizontally opposite the inventory div for semblance of symmetry
+		// todo: need Item and ItemManager data model classes to track the functionality of an item, its applicable targets, and which item is currently 'in use'
+		// todo: need a util function handleItemUse() here that basically takes in the story ViewController (mootywortadv.game.en.js) and a clicked item entry string; this function will be called in response to onclick on the item anchor tag text nodes.  The handleItemUse() function will lookup the input item name in a map owned by ItemManager (who is owned by the story ViewModel) and call its onReady() fn, essentially meaning that the mole has pulled out the item from his compartment which may or may not do anything.  The handleItemUse will set the clicked item object as the activeItem in ItemManager.
+		// todo: need util function handleItemUsedOn() that takes the story ViewModel object and a string identifying the in-story object that the user is trying to use the active item on.  This function will look up the active Item from ItemManager (from the story ViewModel) and run its onUse() fn with the target object string passed in.  From there... maybe switch over the exact string?  Some sort of descriptor thing that we could parse through more intelligently and even have kinda sorta generative gameplay out of e.g. you use the rubber ball on a hard surface => it bounces could be cool.
 	}
 }
