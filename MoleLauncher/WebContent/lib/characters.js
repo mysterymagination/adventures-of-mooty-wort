@@ -39,6 +39,10 @@ export class Character {
             "res": 10,
             "spd": 10
         }
+        // todo: we should really be handling stat mods by accounting for modifiers tracked back to
+        //   a unique source, e.g. "caustic_claws": {"stat" : "atk", "value": 25} such that we don't run into
+        //   non-commutative issues when stats mods can stack OR the alternative problem of simply returning
+        //   to core stats and effectively ending a competing effect prematurely.
         this.coreStats = {};
         Object.assign(this.coreStats, this.stats);
         /** 
