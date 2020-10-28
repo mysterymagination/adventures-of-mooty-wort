@@ -20,10 +20,12 @@ export class Item {
 	}
 	/**
 	 * Handles using this Item on the target object identified by the given string
+	 * @param story the ViewController object for the story
 	 * @param targetString string ID of the in-universe object we're using this Item on
 	 */
-	useOn(targetString) {
+	useOn(story, targetString) {
 		// todo: parse descriptor and look for a useOn attr, and then match the input targetString to a regex string key in the useOn array of possible matches. Finally call the relevant functions of this Item that were found mapped to matching regex key strings.
+		// todo: gonna need some kind of story ViewController abstraction, unless we don't mind tying this class to Undum; I'm thinking the flow here will be: {determine functions to call -> pass in story -> endpoint specific Item functions modify story state and/or print story text}.  With Undum, that could be something like system.doLink(target situation id) but ideally everyone here in lib that doesn't have Undum in the title should stand alone as libifels for any JS interactive fiction.
 	}
 }
 /**
@@ -157,8 +159,9 @@ export class PulsatingFuzz extends Item {
 	}
 	/**
 	 * Tickle the Nakedest Molerat out of his reverie
+	 * @param story the ViewController for the story
 	 */
-	tickle() {
+	tickle(story) {
 		// todo: communicate the state change of the molerat and/or a text string announcing same
 	}
 }
