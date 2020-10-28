@@ -23,18 +23,27 @@ export class Item {
 	 * @param targetString string ID of the in-universe object we're using this Item on
 	 */
 	useOn(targetString) {
-		console.log(this.name+" has no effect on "+targetString);
+		// todo: parse descriptor and look for a useOn attr, and then match the input targetString to a regex string key in the useOn array of possible matches. Finally call the relevant functions of this Item that were found mapped to matching regex key strings.
 	}
 }
-
+/**
+ * An Item that runs an effect function when it is equipped to a character whose effects stay active until
+ * it is unequipped
+ */
 export class Equipment extends Item {
 	constructor(configObj) {
 		super(configObj);
 	}
-	equipEffect(equippedCharacter){
+	/**
+	 * Modifies stats etc. upon equip action
+	 */
+	equipEffect(equippedCharacter) {
 		console.log(this.name+" seems to have no effect when equipped by "+equippedCharacter.name);
 	}
-	unequipEffect(unequippedCharacter){
+	/**
+	 * Reverses the stat etc. modification applied by equipEffect()
+	 */
+	unequipEffect(unequippedCharacter) {
 		console.log(this.name+" seems to have no effect when unequipped by "+unequippedCharacter.name);
 	}
 }
@@ -50,7 +59,7 @@ export class Weapon extends Equipment {
 	 * @param attackingCharacter the attacking Character object
 	 * @param defendingCharacter the attacked Character object
 	 */
-	onAttackEffect(attackingCharacter, defendingCharacter){
+	onAttackEffect(attackingCharacter, defendingCharacter) {
 		console.log("There is no effect other than the usual splitting pain inflicted by "+this.name);
 	}
 }
@@ -66,7 +75,7 @@ export class Armor extends Equipment {
 	 * @param attackingCharacter the attacking Character object
 	 * @param defendingCharacter the attacked Character object
 	 */
-	onDefendEffect(attackingCharacter, defendingCharacter){
+	onDefendEffect(attackingCharacter, defendingCharacter) {
 		console.log(this.name+" refuses to even so much as shout back at "+attackingCharacter.name+", but it does soften "+attackingCharacter.getPronoun_possessive()+" blows a bit... I suppose.");
 	}
 }
@@ -78,13 +87,7 @@ export class CausticClaws extends Weapon {
 		var configObj = {
 			"id": "caustic_claws",
 			"name": "Caustic Claws",
-			"descriptor": {
-				"equipment": {
-					"equipEffect": this.equipEffect,
-					"unequipEffect": this.unequipEffect,
-					"onAttack": this.acidEffect
-				}
-			}
+			"descriptor": {}
 		}
 		super(configObj);
 		this.atkBuf = 25;
@@ -96,7 +99,7 @@ export class CausticClaws extends Weapon {
 	 * @param defendingCharacter the attacked Character object
 	 * @return the number of acid damage dealt
 	 */
-	onAttackEffect(attackingCharacter, defendingCharacter){
+	onAttackEffect(attackingCharacter, defendingCharacter) {
 		this.acidDmg = attackingCharacter.stats.pwr * 3;
 		defendingCharacter.stats.hp -= this.acidDmg;
 		return this.acidDmg;
@@ -104,14 +107,59 @@ export class CausticClaws extends Weapon {
 	/**
 	 * Effect that equipping this item has on the character
 	 */
-	equipEffect(equippedCharacter){
+	equipEffect(equippedCharacter) {
 		equippedCharacter.stats.atk += this.atkBuf;
 	}
 	/**
 	 * Effect that removing this equipped item has on the character
 	 */
-	unequipEffect(unequippedCharacter){
+	unequipEffect(unequippedCharacter) {
 		unequippedCharacter.stats.atk -= this.atkBuf;
+	}
+}
+export class OdditineObol extends Equipment {
+	constructor() {
+		var configObj = {
+			"id": "odditine_obol",
+			"name": "Odditine Obol",
+			"descriptor": {}
+		}
+		super(configObj);
+		this.resBuf = 2;
+	}
+	/**
+	 * Effect that equipping this item has on the character
+	 */
+	equipEffect(equippedCharacter) {
+		equippedCharacter.stats.res *= this.resBuf;
+	}
+	/**
+	 * Effect that removing this equipped item has on the character
+	 */
+	unequipEffect(unequippedCharacter) {
+		unequippedCharacter.stats.res /= this.resBuf;
+	}
+}
+export class PulsatingFuzz extends Item {
+	constructor() {
+		var configObj = {
+			"id": "pulsating_fuzz",
+			"name": "gently_pulsating_fuzz",
+			"descriptor": {
+				"useOn": [
+					{
+						"nakedest molerat": this.tickle
+					}
+				]
+			}
+		}
+		super(configObj);
+	}
+	/**
+	 * Tickle the Nakedest Molerat out of his reverie
+	 */
+	tickle() {
+		// todo: communicate the state change of the molerat and/or a text string announcing same
 	}
 }
 export class ItemManager {
