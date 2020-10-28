@@ -18,7 +18,15 @@ export class Item {
 		 */
 		this.descriptor = configObj.descriptor;
 	}
+	/**
+	 * Handles using this Item on the target object identified by the given string
+	 * @param targetString string ID of the in-universe object we're using this Item on
+	 */
+	useOn(targetString) {
+		console.log(this.name+" has no effect on "+targetString);
+	}
 }
+
 export class Equipment extends Item {
 	constructor(configObj) {
 		super(configObj);
