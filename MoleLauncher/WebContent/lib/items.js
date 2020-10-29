@@ -9,11 +9,10 @@ export class Item {
 		 * {
 		 *  "equipment": true,
 		 * 	"weight": "heavy",
-		 * 	"useOn": [
-		 * 				{
-		 * 					"*wall *": breakWallFn // for any sort of wall target story object, run breakWallFn()
-		 * 				}
-		 * 			 ]
+		 * 	"useOn": {
+		 * 				"/wall/i": breakWallFn // for any sort of wall target story object, run breakWallFn()
+		 * 			 }
+		 * 			 
 		 * }
 		 */
 		this.descriptor = configObj.descriptor;
@@ -24,7 +23,15 @@ export class Item {
 	 * @param targetString string ID of the in-universe object we're using this Item on
 	 */
 	useOn(story, targetString) {
-		// todo: parse descriptor and look for a useOn attr, and then match the input targetString to a regex string key in the useOn array of possible matches. Finally call the relevant functions of this Item that were found mapped to matching regex key strings.
+		// parse descriptor and look for a useOn attr, and then match the input targetString to a regex string key in the useOn array of possible matches. Finally call the relevant functions of this Item that were found mapped to matching regex key strings.
+		if(this.descriptor.useOn) {
+			for(const [keyRegex, effectFn] in Object.entries(this.descriptor.useOn)) {
+				if(targetString.match(keyRegex)) {
+					effectFn();
+				}
+			}
+		}
+		// todo: instead of hyperlinked words and phrases for potential useOn target objects, maybe it would be possible to do like a highlight text and hit 'use on' button in the UI?  Not very slick, but means we avoid the hypertext adventure issue of calling out the interactables in a scene.  You can use mouseup/touchend on the story text container if an item is active to listen for potential highlight events and then use window.getSelection() to retrieve any selected text.  In that case, might not even need a 'use on' button -- could just expect user to highlight and then process whatever was highlighted at the up/end event.  Immediate trouble with that would be the fact that you often have to adjust highlights on mobile... could work tho.
 		// todo: gonna need some kind of story ViewController abstraction, unless we don't mind tying this class to Undum; I'm thinking the flow here will be: {determine functions to call -> pass in story -> endpoint specific Item functions modify story state and/or print story text}.  With Undum, that could be something like system.doLink(target situation id) but ideally everyone here in lib that doesn't have Undum in the title should stand alone as libifels for any JS interactive fiction.
 	}
 }
@@ -150,7 +157,7 @@ export class PulsatingFuzz extends Item {
 			"descriptor": {
 				"useOn": [
 					{
-						"nakedest molerat": this.tickle
+						"/nakedest molerat/i": this.tickle
 					}
 				]
 			}
