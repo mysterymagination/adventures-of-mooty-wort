@@ -47,6 +47,15 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 //-----end undum extension-----//
 
 //-----game logic-----//
+var content = document.getElementById('content');
+var selectedTextHandler = () => {
+	console.log("selectedTextHandler; selected text says \""+window.getSelection()+"\"");
+	// todo: check for selected text
+	// todo: if selected text, check ItemManager for an active Item
+	// todo: if both selected text and active item, call item's useOn(selected text)
+};
+content.addEventListener('mouseup', selectedTextHandler);
+content.addEventListener('touchend', selectedTextHandler);
 undum.game.rpgMech = new MootyWortRpgMech();
 undum.game.situations = {
     /* hardcoded link choice -- I wanna figure out how to use Undum's awesome System.writeChoices() and System.getSituationIdChoices() to gen up these same options with literal style
