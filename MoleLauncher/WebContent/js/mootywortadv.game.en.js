@@ -2,6 +2,7 @@
 import {MootyWortRpgMech} from "./mootywortrpgmech.js";
 import {MoleUndum} from "../lib/libifels_undum.js";
 import {Combat} from "../lib/combat.js";
+import {UndumStoryViewController} from "./storyviewcontrollers.js"
 
 //-----undum config-----//
 /**
@@ -50,6 +51,7 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 // todo: story ViewController with Characters and ItemManager
 // create RPG combat ViewController
 undum.game.rpgMech = new MootyWortRpgMech();
+undum.game.storyViewController = new UndumStoryViewController();
 var content = document.getElementById('content');
 var selectedTextHandler = () => {
 	console.log("selectedTextHandler; selected text says \""+window.getSelection()+"\"");
