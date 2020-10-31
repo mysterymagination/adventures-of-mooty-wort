@@ -3,7 +3,7 @@ import {MoleUndum} from "../lib/libifels_undum.js";
 import * as Characters from "../lib/characters.js";
 import {Combat} from "../lib/combat.js";
 import {Ability} from "../lib/spellbook.js";
-import {PassStunned} from "../lib/spellbook.js"
+import {PassStunned} from "../lib/spellbook.js";
 /*
  * Lunar inspired telegraph hint (1:many, but not all) and induction (many similar:1) systems:
  * 1. (hint) "The grue sharpens its claws in a sliver of moonlight" -> he might use Quicksilver Cut, Shadow Slash, or Rake.
@@ -13,10 +13,13 @@ import {PassStunned} from "../lib/spellbook.js"
  */
 
 /**
- * Class responsible for defining the RPG mechanics of the Mooty Wort adventure and running combat
+ * Class responsible for defining the RPG combat mechanics of the Mooty Wort adventure and running combat
  */
 class MootyWortRpgMech {
 	constructor() {
+		// todo: since Character models are used by both this (the combat ViewController_
+		//  and the pending story ViewController (which sits at a higher tier in arch hierarchy than combat)
+		//  we should move Character creation/ownership to the story ViewController
 		this.charactersDict = {
 				"mole": new Characters.Mole(),
 				"yawning_god": new Characters.YawningGod(),

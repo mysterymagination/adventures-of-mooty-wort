@@ -47,16 +47,22 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 //-----end undum extension-----//
 
 //-----game logic-----//
+// todo: story ViewController with Characters and ItemManager
+// create RPG combat ViewController
+undum.game.rpgMech = new MootyWortRpgMech();
 var content = document.getElementById('content');
 var selectedTextHandler = () => {
 	console.log("selectedTextHandler; selected text says \""+window.getSelection()+"\"");
 	// todo: check for selected text
+	var selectedText = window.getSelection();
+	if(selectedTex){
+		
+	}
 	// todo: if selected text, check ItemManager for an active Item
 	// todo: if both selected text and active item, call item's useOn(selected text)
 };
 content.addEventListener('mouseup', selectedTextHandler);
 content.addEventListener('touchend', selectedTextHandler);
-undum.game.rpgMech = new MootyWortRpgMech();
 undum.game.situations = {
     /* hardcoded link choice -- I wanna figure out how to use Undum's awesome System.writeChoices() and System.getSituationIdChoices() to gen up these same options with literal style
     <p>What's your move?</p>\
@@ -797,6 +803,7 @@ undum.game.situations = {
             		yawningGodRoar.play();
             	})
             	var mech = undum.game.rpgMech;
+            	// todo: characters should be owned by the story ViewController and drawn from there at this point
             	mech.enterCombat({playerParty: [mech.charactersDict["mole"]], enemyParty: [mech.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav"});
             	// todo: if the player wins against the yawning god and they aggro'ed the grue, drop the modal and give transcript text about grue coming in and then raise modal for next combat!
             	if(character.mole.stats.hp > 0) {
