@@ -53,13 +53,13 @@ undum.game.rpgMech = new MootyWortRpgMech();
 var content = document.getElementById('content');
 var selectedTextHandler = () => {
 	console.log("selectedTextHandler; selected text says \""+window.getSelection()+"\"");
-	// todo: check for selected text
 	var selectedText = window.getSelection();
-	if(selectedTex){
-		
+	if(selectedText){
+		var activeItem = undum.game.storyViewController.itemManager.activeItem;
+		if(activeItem) {
+			activeItem.useOn(selectedText);
+		}
 	}
-	// todo: if selected text, check ItemManager for an active Item
-	// todo: if both selected text and active item, call item's useOn(selected text)
 };
 content.addEventListener('mouseup', selectedTextHandler);
 content.addEventListener('touchend', selectedTextHandler);
