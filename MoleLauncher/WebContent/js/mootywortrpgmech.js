@@ -17,16 +17,6 @@ import {PassStunned} from "../lib/spellbook.js";
  */
 class MootyWortRpgMech {
 	constructor() {
-		// todo: since Character models are used by both this (the combat ViewController_
-		//  and the pending story ViewController (which sits at a higher tier in arch hierarchy than combat)
-		//  we should move Character creation/ownership to the story ViewController
-		this.charactersDict = {
-				"mole": new Characters.Mole(),
-				"yawning_god": new Characters.YawningGod(),
-				"grue": new Characters.Grue()
-		};
-		// establish Player party
-		this.party = [this.charactersDict["mole"]];
 		/**
 		 * Object literal association of Character ids to associated UI objects sack
 		 */
