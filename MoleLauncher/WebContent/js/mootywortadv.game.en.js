@@ -782,8 +782,9 @@ undum.game.situations = {
             		yawningGodRoar.play();
             	})
             	var mech = undum.game.rpgMech;
+            	var story = undum.game.storyViewController;
             	// todo: characters should be owned by the story ViewController and drawn from there at this point
-            	mech.enterCombat({playerParty: [mech.charactersDict["mole"]], enemyParty: [mech.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav"});
+            	mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav"});
             	// todo: if the player wins against the yawning god and they aggro'ed the grue, drop the modal and give transcript text about grue coming in and then raise modal for next combat!
             	if(character.mole.stats.hp > 0) {
             		var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
