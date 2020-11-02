@@ -51,7 +51,7 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 // todo: story ViewController with Characters and ItemManager
 // create RPG combat ViewController
 undum.game.rpgMech = new MootyWortRpgMech();
-undum.game.storyViewController = new UndumStoryViewController();
+undum.game.storyViewController = new UndumStoryViewController(undum.system);
 undum.game.situations = {
     /* hardcoded link choice -- I wanna figure out how to use Undum's awesome System.writeChoices() and System.getSituationIdChoices() to gen up these same options with literal style
     <p>What's your move?</p>\

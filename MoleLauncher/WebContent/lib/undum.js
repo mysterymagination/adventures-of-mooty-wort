@@ -1868,7 +1868,7 @@
         addHighlight: addHighlight,
         removeHighlight: removeHighlight,
         QualityGroup: QualityGroup,
-
+		system: system,
         game: game,
 
         isInteractive: function() { return interactive; },

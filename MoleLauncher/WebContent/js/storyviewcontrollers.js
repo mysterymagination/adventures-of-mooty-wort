@@ -1,4 +1,5 @@
 import * as Items from "../lib/items.js";
+import * as Characters from "../lib/characters.js";
 export class StoryViewController {
 	constructor(configObj) {
 		this.name = configObj.name;
