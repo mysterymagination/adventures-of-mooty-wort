@@ -786,14 +786,16 @@ undum.game.situations = {
             	// todo: characters should be owned by the story ViewController and drawn from there at this point
             	mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav"});
             	// todo: if the player wins against the yawning god and they aggro'ed the grue, drop the modal and give transcript text about grue coming in and then raise modal for next combat!
+            	// todo: look into Promise API and see if we could await on enterCombat even though it calls a bunch of async stuff internally.  If so, then we can effectively pase execution of this function until combat returns and then use this hp check as written.  Else, we'll need traditional cb.
             	if(character.mole.stats.hp > 0) {
             		var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
             		undum.game.storyViewController.writeParagraph(yawningGodVictoryString);
             		// todo: grue attack string if grue was aggro'ed
             		if(undum.game.storyViewController.bGrueChallengeActivated) {
-            			// todo: transition to the grue fight iff grue was aggro'ed;
+            			// transition to the grue fight iff grue was aggro'ed;
             			//  make it a choice list thing with no other choice so that
             			//  user has a chance to read the text before being dropped into battle again.
+            			system.writeChoices(["basement3_encounter_grue"]);
             			// todo: when grue is beaten proceed to dark mole epilogue below
             		} else {
             			var deepOneString = "Before you can fully process what has transpired, you feel a shadowy mantle slip over your shoulders, and thorned crown make its nest in bloody fur atop your noodle, clasping shut like a manacle.  A great and terrible something has come upon you, a power unwanted but irrepressible and undeniable.  Its poisonous whispers flit through your mind like tendrils of blight, corrupting your thoughts more thoroughly with each passing moment.";
@@ -815,6 +817,22 @@ undum.game.situations = {
             optionText: "Burrow towards the Deepest Deepness"
         }
     ),
+    "basement3_encounter_grue": new undum.SimpleSituation(
+        "",
+        {
+        	enter: function (character, system, from) {
+        		var grueRoar = new Audio('audio/creatures/eatmind.wav');
+            	grueRoar.addEventListener('canplaythrough', e => {
+            		grueRoar.play();
+            	});
+            	var mech = undum.game.rpgMech;
+            	var story = undum.game.storyViewController;
+            	mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav"});
+        	},
+        	optionText: "Something stirs just out of sight, and shadows slither closer..."
+        }
+    ),
+    // todo: need a combat result situation(s) for the two encounters to land back in; since obviously enterCombat() doesn't block and I don't think we can make use of async/await since Undum is ES5, we'll need to feed a handle to the story VC into the combat VC and have combat VC tell story where to go based on combat result.
     death: new undum.SimpleSituation(
         "<strong>💀 IT IS A SAD THING THAT YOUR ADVENTURES HAVE ENDED HERE 💀</strong>\
         <div class='transient'><a href='main'>Oh, Mother of Moles!  Try Again?</a></div>\
