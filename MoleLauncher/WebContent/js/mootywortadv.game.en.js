@@ -449,10 +449,9 @@ undum.game.situations = {
         {
             enter: function (character, system, from) {
                 var stringArrayChoices = ["basement1_hub", "basement3_encounter_yawning_god"];
-                if (undum.game.situations.basement2_hub.actions.bTickled) {
-                    // todo: change heading to reflect rolling rat
+                if (undum.game.storyViewController.eventFlags.molerat_tickled) {
                     system.write(
-                        "<p>As the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the emerald eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.</p>"
+                        "<p>The molerat's riotous laughter shatters the chamber's calm, stabbing into the cool darkness like thorns through a rose assaulting a curious nose.  He's rolled well away from the <a href='./examine_oracle_emerald'>massive carved emerald</a> breaching outward from the ancient walls.</p>"
                     );
                     stringArrayChoices.concat("basement2_grue_hub");
                 } else {
@@ -463,7 +462,6 @@ undum.game.situations = {
                 system.writeChoices(stringArrayChoices);
             },
             actions: {
-                bTickled: false,
                 "examine_oracle_emerald": function (character, system, action) {
                     system.write(
                         "<p>Beneath the nakedest molerat's pathetic pawing and the resultant trails of dried blood you can make out an archaic script carved into the gem.  You could have sworn at first glance that it was unintelligible, but as you gaze longer it seems to resolve into the familiar common script of Underwere, if a bit more formal and stuffy than you're used to. It reads: </p>\
@@ -494,6 +492,7 @@ undum.game.situations = {
                     character.stringArrayInventory.push("crystal_lash");
                 },
                 "check_molerat_target": function (character, system, action) {
+                	// todo: call fuzz.useOn("nakedest molerat");
                     if (libifels_undum.bUsingItem) {
                         // call item handler with the second and final piece of information, the target being nakedest molerat!
                         libifels_undum.fnUsedItemHandler(system, libifels_undum.sUsedItemName, "nakedest molerat");

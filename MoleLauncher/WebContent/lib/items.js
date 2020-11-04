@@ -27,12 +27,10 @@ export class Item {
 		if(this.descriptor.useOn) {
 			for(const [keyRegex, effectFn] in Object.entries(this.descriptor.useOn)) {
 				if(targetString.match(keyRegex)) {
-					effectFn();
+					effectFn(story);
 				}
 			}
 		}
-		// todo: instead of hyperlinked words and phrases for potential useOn target objects, maybe it would be possible to do like a highlight text and hit 'use on' button in the UI?  Not very slick, but means we avoid the hypertext adventure issue of calling out the interactables in a scene.  You can use mouseup/touchend on the story text container if an item is active to listen for potential highlight events and then use window.getSelection() to retrieve any selected text.  In that case, might not even need a 'use on' button -- could just expect user to highlight and then process whatever was highlighted at the up/end event.  Immediate trouble with that would be the fact that you often have to adjust highlights on mobile... could work tho.
-		// todo: gonna need some kind of story ViewController abstraction, unless we don't mind tying this class to Undum; I'm thinking the flow here will be: {determine functions to call -> pass in story -> endpoint specific Item functions modify story state and/or print story text}.  With Undum, that could be something like system.doLink(target situation id) but ideally everyone here in lib that doesn't have Undum in the title should stand alone as libifels for any JS interactive fiction.
 	}
 }
 /**
@@ -169,7 +167,13 @@ export class PulsatingFuzz extends Item {
 	 * @param story the ViewController for the story
 	 */
 	tickle(story) {
-		// todo: communicate the state change of the molerat and/or a text string announcing same
+		// write item use feedback
+		story.writeParagraph("As the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the emerald eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.");
+		// modify story state to reflect tickled molerat
+		story.eventFlags.molerat_tickled = true;
+		// add grue hub access to the array of choices the player currently has in the story,
+		// to be printed as the specific story paradigm directs
+		story.appendChoice("basement2_grue_hub");
 	}
 }
 export class ItemManager {
