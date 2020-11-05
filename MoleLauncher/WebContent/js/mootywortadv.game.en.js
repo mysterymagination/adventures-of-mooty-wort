@@ -785,7 +785,7 @@ undum.game.situations = {
             	// todo: characters should be owned by the story ViewController and drawn from there at this point
             	mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav"});
             	// todo: if the player wins against the yawning god and they aggro'ed the grue, drop the modal and give transcript text about grue coming in and then raise modal for next combat!
-            	// todo: look into Promise API and see if we could await on enterCombat even though it calls a bunch of async stuff internally.  If so, then we can effectively pase execution of this function until combat returns and then use this hp check as written.  Else, we'll need traditional cb.
+            	// todo: look into Promise API and see if we could await on enterCombat even though it calls a bunch of async stuff internally.  If so, then we can effectively pause execution of this function until combat returns and then use this hp check as written.  Else, we'll need traditional cb mech OR simply pass in a handle to the storyVC to combat along with a destination situation for after combat.
             	if(character.mole.stats.hp > 0) {
             		var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
             		undum.game.storyViewController.writeParagraph(yawningGodVictoryString);
