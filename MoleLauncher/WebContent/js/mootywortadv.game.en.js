@@ -774,16 +774,30 @@ undum.game.situations = {
         	//  the expected modal over transcript up to that point.  Also, there seems to potentially be
         	//  auto saving/loading since I definitely hit this without even being able to hit load.
             enter: function (character, system, from) {
-                // boss fight hyyyyype!  Give a combat UI within the transcript main content window; I'm thinking a relatively simple table plus some text and image output divs?
-            	// play the Yawning God cute lil' roar
-            	var yawningGodRoar = new Audio('audio/creatures/Skeleton Roar.mp3');
-            	yawningGodRoar.addEventListener('canplaythrough', e => {
-            		yawningGodRoar.play();
+            	// todo: so I read the Promise docs... and I think I'm still somewhat sane. Anyway, take home point is that a promise doesn't 'activate' and start towards resolving until a then() is called on it and passes in resolve/reject handlers.  So for the issue of pausing here until combat resolves, we could maybe wrap the combat call in a new Promise and pass in a resolve functor to combat which we can go ahead and call only when combat his finished -- that miiight mean that a chained then() which could contain the code we want to run here in the event of combat victory/defeat for the player.
+            	/*
+            	var promiseOfWar = new Promise((resolve, reject) => {
+            		
+            	*/
+            		// boss fight hyyyyype!  Give a combat UI within the transcript main content window; I'm thinking a relatively simple table plus some text and image output divs?
+                	// play the Yawning God cute lil' roar
+                	var yawningGodRoar = new Audio('audio/creatures/Skeleton Roar.mp3');
+                	yawningGodRoar.addEventListener('canplaythrough', e => {
+                		yawningGodRoar.play();
+                	});
+                	var mech = undum.game.rpgMech;
+                	var story = undum.game.storyViewController;
+                	// todo: characters should be owned by the story ViewController and drawn from there at this point
+                	mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav"});
+
+                /*	
+            	    resolve();
             	})
-            	var mech = undum.game.rpgMech;
-            	var story = undum.game.storyViewController;
-            	// todo: characters should be owned by the story ViewController and drawn from there at this point
-            	mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav"});
+            	.then(() => {
+            		
+            	}
+            	*/
+                
             	// todo: if the player wins against the yawning god and they aggro'ed the grue, drop the modal and give transcript text about grue coming in and then raise modal for next combat!
             	// todo: look into Promise API and see if we could await on enterCombat even though it calls a bunch of async stuff internally.  If so, then we can effectively pause execution of this function until combat returns and then use this hp check as written.  Else, we'll need traditional cb mech OR simply pass in a handle to the storyVC to combat along with a destination situation for after combat.
             	if(character.mole.stats.hp > 0) {
