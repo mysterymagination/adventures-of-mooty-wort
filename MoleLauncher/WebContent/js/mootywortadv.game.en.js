@@ -336,7 +336,7 @@ undum.game.situations = {
             enter: function (character, system, from) {
                 system.write(
                     "<p>As she comes down the far side of the tunnel, and as soon after her direction reverses as you can manage, you shove your shovel-like claw beneath her spinnerets.  With a *crunch*, the memory of which will sicken you for years to come, her mighty momentum is zeroed out on your paw.  As soon as she has a good few legs on the ground she hops away as if burned.</p>\
-                    <p>\"Ooh, wow!  Watch that wandering paw, mister.  But, um, thank you for rescuing me!\" she chitters, her fangs and complicated-looking mandibles clacking upsettingly and a blush the fell scarlet of moonlit blood spreading over her cephalothorax.  \"This blasted urn has brought me nothing but trouble.  Would you like it?  Here, take it with my compliments!\" She hastily shoves the rusty urn into your compartment and skuttles away, her eyes still rolling in the cycle of her erstwhile dizzy purgatory.</p>"
+                    <p>\"Ooh, wow!  Watch that wandering paw, mister.  But, um, thank you for rescuing me!\" she chitters, her fangs and complicated-looking razor-edged mouth-parts clacking upsettingly and a blush the fell scarlet of moonlit blood spreading over her cephalothorax.  \"This blasted urn has brought me nothing but trouble.  Would you like it?  Here, take it with my compliments!\" She hastily shoves the rusty urn into your compartment and skuttles away, her eyes still rolling in the cycle of her erstwhile dizzy purgatory.</p>"
                 );
 
                 // now that she's bee unrolled, we want to update the flag and option text
@@ -775,10 +775,10 @@ undum.game.situations = {
         	//  auto saving/loading since I definitely hit this without even being able to hit load.
             enter: function (character, system, from) {
             	// todo: so I read the Promise docs... and I think I'm still somewhat sane. Anyway, take home point is that a promise doesn't 'activate' and start towards resolving until a then() is called on it and passes in resolve/reject handlers.  So for the issue of pausing here until combat resolves, we could maybe wrap the combat call in a new Promise and pass in a resolve functor to combat which we can go ahead and call only when combat his finished -- that miiight mean that a chained then() which could contain the code we want to run here in the event of combat victory/defeat for the player.
-            	/*
-            	var promiseOfWar = new Promise((resolve, reject) => {
+            	
+            	var promiseOfWar = new Promise((resolve) => {
             		
-            	*/
+            	
             		// boss fight hyyyyype!  Give a combat UI within the transcript main content window; I'm thinking a relatively simple table plus some text and image output divs?
                 	// play the Yawning God cute lil' roar
                 	var yawningGodRoar = new Audio('audio/creatures/Skeleton Roar.mp3');
@@ -788,44 +788,32 @@ undum.game.situations = {
                 	var mech = undum.game.rpgMech;
                 	var story = undum.game.storyViewController;
                 	// todo: characters should be owned by the story ViewController and drawn from there at this point
-                	mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav"});
-
-                /*	
-            	    resolve();
-            	})
-            	.then(() => {
-            		
-            	}
-            	*/
-                
-            	// todo: if the player wins against the yawning god and they aggro'ed the grue, drop the modal and give transcript text about grue coming in and then raise modal for next combat!
-            	// todo: look into Promise API and see if we could await on enterCombat even though it calls a bunch of async stuff internally.  If so, then we can effectively pause execution of this function until combat returns and then use this hp check as written.  Else, we'll need traditional cb mech OR simply pass in a handle to the storyVC to combat along with a destination situation for after combat.
-            	if(character.mole.stats.hp > 0) {
-            		var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
-            		undum.game.storyViewController.writeParagraph(yawningGodVictoryString);
-            		// todo: grue attack string if grue was aggro'ed
-            		if(undum.game.storyViewController.bGrueChallengeActivated) {
-            			// transition to the grue fight iff grue was aggro'ed;
-            			//  make it a choice list thing with no other choice so that
-            			//  user has a chance to read the text before being dropped into battle again.
-            			system.writeChoices(["basement3_encounter_grue"]);
-            			// todo: when grue is beaten proceed to dark mole epilogue below
-            		} else {
-            			var deepOneString = "Before you can fully process what has transpired, you feel a shadowy mantle slip over your shoulders, and thorned crown make its nest in bloody fur atop your noodle, clasping shut like a manacle.  A great and terrible something has come upon you, a power unwanted but irrepressible and undeniable.  Its poisonous whispers flit through your mind like tendrils of blight, corrupting your thoughts more thoroughly with each passing moment.";
+                	mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav", resultFn: resolve}); 
+            	}).then((playerVictory) => {
+            		if(playerVictory) {
+						var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
+						undum.game.storyViewController.writeParagraph(yawningGodVictoryString);	
+						// todo: so I guess the thing to do re: promises would be to return a new gruePromise here whose behavior lambda is to resolve immediately if the grue was not aggroed and otherwise resolves when combat with grue is done, and then put the dark mole epilogue stuff in a then() chained onto this one.  Trouble with that is that we're going to be running the grue combat over in basement3_encounter_grue so that the user has time to read the message about the yawning god being barbecued and the grue approaching, so how do we communicate the resolve fn passed in by the next then() in our chain here to that Situation? I think trying to bend Undum backwards and sideways to kind of get promises working around it when they really aren't necessary or wise might be a bad plan.
+						return new Promise((resolver) => {
+							if(undum.game.storyViewController.bGrueChallengeActivated) {
+		            			// transition to the grue fight 
+								var grueApproachethString = "Something's veeeery wrong; the darkness surrounding you and the ruins of your smitten foe is purring.  Your insticts beg you to flee, but a quick glance around reveals that the darkness has solidified betwixt you and the exit tunnel whence you came into this outre nightmare.";
+						undum.game.storyViewController.writeParagraph(grueApproachethString);	
+		            			system.writeChoices(["basement3_encounter_grue"]);
+		            			// todo: pass resolver to basement3_encounter_grue situation somehow... maybe just a common undum.game.story property that holds an active resolver reference?  Seems weird and stupid but I'm not sure how else you'd handle a situation like this where you wanna mix async via promises with required pause step to consume user input (i.e. clicking the grue encounter choice so that we have the chance to show new text explaining what's coming)
+		            		} else {
+								// grue was not angered, so we resolve immediately with grue death arg false
+								resolver(false);
+							}
+						}).then((isGrueKilled) => {
+							var deepOneString = "Before you can fully process what has transpired, you feel a shadowy mantle slip over your shoulders, and thorned crown make its nest in bloody fur atop your noodle, clasping shut like a manacle.  A great and terrible something has come upon you, a power unwanted but irrepressible and undeniable.  Its poisonous whispers flit through your mind like tendrils of blight, corrupting your thoughts more thoroughly with each passing moment.";
             			// todo: proceed directly to dark mole epilogue but hint that something vile remains in the Deepness, a cheschire cat grin all of teeth flashing out of the distant void for an instant.
+						});
+					} else {
+            			system.doLink('death');
             		}
-            		
-            		 
-            		// todo: dark mole epilogue: send player to basement2 hub and let them do as they please with new
-            		//  skull of mondain style evil actions with each character; characters should recognize him
-            		//  as the source of the rapturous rumble now, too.  Player can do with them as they see
-            		//  fit, and upon surfacing they can choose to wash off the Darkness in the sunlight
-            		//  or harness it to darken the sky and wage war upon the humans and other surfacers...
-            		
-            	} else {
-            		system.doLink('death');
-            	}
-            	// todo: once all fights are complete, process victory condition with transcript text appropriate to choice details
+            	});
+// todo: dark mole epilogue: send player to basement2 hub and let them do as they please with new skull of mondain style evil actions with each character; characters should recognize him as the source of the rapturous rumble now, too.  Player can do with them as they see fit, and upon surfacing they can choose to wash off the Darkness in the sunlight or harness it to darken the sky and wage war upon the humans and other surfacers...
             },
             optionText: "Burrow towards the Deepest Deepness"
         }
@@ -842,7 +830,7 @@ undum.game.situations = {
             	var story = undum.game.storyViewController;
             	mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav"});
         	},
-        	optionText: "Something stirs just out of sight, and shadows slither closer..."
+        	optionText: "Something stirs just out of sight, and shadows slither closer...  Show this new abomination what a mole is made of!"
         }
     ),
     // todo: need a combat result situation(s) for the two encounters to land back in; since obviously enterCombat() doesn't block and I don't think we can make use of async/await since Undum is ES5, we'll need to feed a handle to the story VC into the combat VC and have combat VC tell story where to go based on combat result.
