@@ -449,15 +449,23 @@ undum.game.situations = {
         {
             enter: function (character, system, from) {
                 var stringArrayChoices = ["basement1_hub", "basement3_encounter_yawning_god"];
-                if (undum.game.storyViewController.eventFlags.molerat_tickled) {
-                    system.write(
-                        "<p>The molerat's riotous laughter shatters the chamber's calm, stabbing into the cool darkness like thorns through a rose assaulting a curious nose.  He's rolled well away from the <a href='./examine_oracle_emerald'>massive carved emerald</a> breaching outward from the ancient walls.</p>"
-                    );
-                    stringArrayChoices.concat("basement2_grue_hub");
+                if (!undum.game.storyViewController.eventFlags.dark_mole) {
+	                if (undum.game.storyViewController.eventFlags.molerat_tickled) {
+	                    system.write(
+	                        "<p>The molerat's riotous laughter shatters the chamber's calm, stabbing into the cool darkness like thorns through a rose assaulting a curious nose.  He's rolled well away from the <a href='./examine_oracle_emerald'>massive carved emerald</a> breaching outward from the ancient walls.</p>"
+	                    );
+	                    stringArrayChoices.concat("basement2_grue_hub");
+	                } else {
+	                    system.write(
+	                        "<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a <a href='./check_molerat_target'>naked molerat</a>, perhaps the nakedest you've seen, twitching and clawing feebly at the gently convex surface of a <a href='./examine_oracle_emerald'>massive carved emerald</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
+	                    );
+	                }
                 } else {
-                    system.write(
-                        "<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a <a href='./check_molerat_target'>naked molerat</a>, perhaps the nakedest you've seen, twitching and clawing feebly at the gently convex surface of a <a href='./examine_oracle_emerald'>massive carved emerald</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
-                    );
+                	// the depths are sealed... for now
+                	stringArrayChoices = ["basement1_hub"];
+                	// todo: molerat interaction options now that player has the powers of a Dark Mole
+                	var awestruckMoleratString = "The Nakedest Molerat's laughter has ceased.  He cowers in a corner, his beady bloodshot eyes fixed, unblinking, upon you. \"You are... not what I was expecting.  Perhaps this form is intended to make your splendor comprehensible to my limited intellect?  It matters not -- please, free me!\"  He prostrates himself before you as best as his still-bleeding claw-stumps will allow.";
+                	undum.game.storyViewController.writeParagraph(awestruckMoleratString);
                 }
                 system.writeChoices(stringArrayChoices);
             },
@@ -794,7 +802,7 @@ undum.game.situations = {
 						var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
 						undum.game.storyViewController.writeParagraph(yawningGodVictoryString);	
 						// todo: so I guess the thing to do re: promises would be to return a new gruePromise here whose behavior lambda is to resolve immediately if the grue was not aggroed and otherwise resolves when combat with grue is done, and then put the dark mole epilogue stuff in a then() chained onto this one.  Trouble with that is that we're going to be running the grue combat over in basement3_encounter_grue so that the user has time to read the message about the yawning god being barbecued and the grue approaching, so how do we communicate the resolve fn passed in by the next then() in our chain here to that Situation? I think trying to bend Undum backwards and sideways to kind of get promises working around it when they really aren't necessary or wise might be a bad plan.
-						return new Promise((resolver) => {
+						var promiseOfDarkness = new Promise((resolver) => {
 							if(undum.game.storyViewController.bGrueChallengeActivated) {
 		            			// transition to the grue fight 
 								var grueApproachethString = "Something's veeeery wrong; the darkness surrounding you and the ruins of your smitten foe is purring.  Your insticts beg you to flee, but a quick glance around reveals that the darkness has solidified betwixt you and the exit tunnel whence you came into this outre nightmare.";
@@ -803,17 +811,34 @@ undum.game.situations = {
 		            			// todo: pass resolver to basement3_encounter_grue situation somehow... maybe just a common undum.game.story property that holds an active resolver reference?  Seems weird and stupid but I'm not sure how else you'd handle a situation like this where you wanna mix async via promises with required pause step to consume user input (i.e. clicking the grue encounter choice so that we have the chance to show new text explaining what's coming)
 		            		} else {
 								// grue was not angered, so we resolve immediately with grue death arg false
-								resolver(false);
+								resolver("shadowed");
 							}
-						}).then((isGrueKilled) => {
-							var deepOneString = "Before you can fully process what has transpired, you feel a shadowy mantle slip over your shoulders, and thorned crown make its nest in bloody fur atop your noodle, clasping shut like a manacle.  A great and terrible something has come upon you, a power unwanted but irrepressible and undeniable.  Its poisonous whispers flit through your mind like tendrils of blight, corrupting your thoughts more thoroughly with each passing moment.";
-            			// todo: proceed directly to dark mole epilogue but hint that something vile remains in the Deepness, a cheschire cat grin all of teeth flashing out of the distant void for an instant.
 						});
 					} else {
-            			system.doLink('death');
+            			var promiseOfDeath = new Promise((resolver) => {
+            				resolver("death");
+            			});
             		}
-            	});
-// todo: dark mole epilogue: send player to basement2 hub and let them do as they please with new skull of mondain style evil actions with each character; characters should recognize him as the source of the rapturous rumble now, too.  Player can do with them as they see fit, and upon surfacing they can choose to wash off the Darkness in the sunlight or harness it to darken the sky and wage war upon the humans and other surfacers...
+            	}).then((resultString) => {
+            		switch(resultString) {
+            		case "death":
+            			system.doLink('death');
+            			break;
+            		case "shadowed":
+            			// todo: hint that something vile remains in the Deepness, a cheschire cat grin all of teeth flashing out of the distant void for an instant.
+            			break;
+            		case "dark_king":
+            			// todo: reduce sanity cost of Dark Mole powers by half; this combined with the Odditine Obol is the only circumstance where the player can achieve a score in the best hero/villain ending threshold!
+            			break;
+            		}
+            		if(resultString !== "death") {
+	            		var deepOneString = "Before you can fully process what has transpired, you feel a shadowy mantle slip over your shoulders, and thorned crown make its nest in bloody fur atop your noodle, clasping shut like a manacle.  A great and terrible something has come upon you, a power unwanted but irrepressible and undeniable.  Its poisonous whispers flit through your mind like tendrils of blight, corrupting your thoughts more thoroughly with each passing moment.";
+	            		undum.game.storyViewController.writeParagraph(deepOneString);
+	            		undum.game.storyViewController.eventFlags.dark_mole = true;
+	            		system.doLink("basement2_hub");
+            		}
+				});
+// todo: dark mole epilogue: send player to basement2 hub and let them do as they please with new skull of mondain style evil actions with each character AND magical good actions e.g. curing them of their Rumbly corruption; each usage costs sanity but adds to the hero/villain scores greatly.  Characters should recognize him as the source of the rapturous rumble now, too.  Player can do with them as they see fit, and upon surfacing they can choose to wash off the Darkness in the sunlight or harness it to darken the sky and wage war upon the humans and other surfacers...
             },
             optionText: "Burrow towards the Deepest Deepness"
         }
