@@ -47,7 +47,7 @@ export class Defended extends StatusEffect {
 }
 
 /**
- * Woolily Shielded increases a character's defense massively for 3 rounds 
+ * Woolily Shielded increases a character's physical defense and magic resistance massively for 3 rounds 
  */
 export class WoolilyShielded extends StatusEffect {
 	/**
@@ -56,7 +56,7 @@ export class WoolilyShielded extends StatusEffect {
 	constructor(sourceCharacter) {
 		super({id:"woolily_shielded", name: "Woolily Shielded", duration: 3});
 		this.isBuff = true;
-		this.descriptors.push("buff", "defense");
+		this.descriptors.push("buff", "defense", "resistance");
 		this.sourceCharacter = sourceCharacter;
 		WoolilyShielded.prototype.imageUrl = 'images/status_effects/woolilyshielded_effect.png';
 	}
@@ -64,10 +64,14 @@ export class WoolilyShielded extends StatusEffect {
 	    targetChar.stats["def"] += MoleUndum.prettyDarnRound(
     		Math.max(Math.max(this.sourceCharacter.stats["def"], this.sourceCharacter.stats["res"]), 1) * 2
     	);
+	    targetChar.stats["res"] += MoleUndum.prettyDarnRound(
+	    	Math.max(Math.max(this.sourceCharacter.stats["def"], this.sourceCharacter.stats["res"]), 1) * 2
+	    );
 	    //console.log("woolily shielded mole def is now "+targetChar.stats.def+"; core def is "+targetChar.coreStats.def);
 	}
 	reverseEffect(targetChar) {
 	    targetChar.stats["def"] = targetChar.coreStats.def;
+	    targetChar.stats["res"] = targetChar.coreStats.res;
 	    //console.log("woolily shielded no longer, the mole's def is now "+targetChar.stats.def);
 	}
 }
