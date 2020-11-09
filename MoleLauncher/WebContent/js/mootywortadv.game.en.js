@@ -809,6 +809,7 @@ undum.game.situations = {
 						undum.game.storyViewController.writeParagraph(grueApproachethString);	
 		            			system.writeChoices(["basement3_encounter_grue"]);
 		            			// todo: pass resolver to basement3_encounter_grue situation somehow... maybe just a common undum.game.story property that holds an active resolver reference?  Seems weird and stupid but I'm not sure how else you'd handle a situation like this where you wanna mix async via promises with required pause step to consume user input (i.e. clicking the grue encounter choice so that we have the chance to show new text explaining what's coming)
+		            			undum.game.storyViewController.activeResolver = resolver;
 		            		} else {
 								// grue was not angered, so we resolve immediately with grue death arg false
 								resolver("shadowed");
@@ -853,7 +854,8 @@ undum.game.situations = {
             	});
             	var mech = undum.game.rpgMech;
             	var story = undum.game.storyViewController;
-            	mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav"});
+            	// up in basement3_encounter_yawning_god::enter() I shoved the latest Promise resolver (for promiseOfDarkness) onto the storyVC as activeResolver, so pass in here so it can be resolved when combat is over
+            	mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav", resultFn: undum.game.storyViewController.activeResolver});
         	},
         	optionText: "Something stirs just out of sight, and shadows slither closer...  Show this new abomination what a mole is made of!"
         }
