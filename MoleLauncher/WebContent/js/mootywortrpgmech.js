@@ -35,6 +35,10 @@ class MootyWortRpgMech {
 				 */
 		};
 		this.battleMusic = new Audio();
+		/**
+		 * Callback function or possibly Resolver function for a Promise our combat subsystem is wrapped by, if any, to be called upon combat completion
+		 */
+		this.resultFn = null;
 	}
 
 	/**
@@ -46,6 +50,8 @@ class MootyWortRpgMech {
 	enterCombat(configObj) {
 		// gamelogic
 		var combatDriver = new Combat(configObj);
+		// assign callback/resolver if any for combat resolution
+		this.resultFn = configObj.resultFn;
 		// setup UI
 		this.openBattleUi(combatDriver);
 		// start loading music
@@ -997,8 +1003,9 @@ class MootyWortRpgMech {
 	 * @param resultString a string to replace the UI with
 	 * @param endAudio an Audio element that will already by loading/loaded and may be playing, and which must be paused
 	 *        when the player clicks the exit image
+     * @param resolverFn a Promise resolver function that our handleCombatResult execution will be awaiting on; to be called when the user presses the exit door image
 	 */ 
-	displayResult(resultString, endAudio) {
+	async displayResult(resultString, endAudio, resolverFn) {
 		// prepare overlay and hide combat UI
 		this.showSpellEffectOverlay();
 		this.hideModalContent();
@@ -1032,6 +1039,9 @@ class MootyWortRpgMech {
 					var undumPage = document.getElementById('page');
 					undumPage.style.display = 'block';
 					endAudio.pause();
+					
+					// settle our handleCombatResult promiseOfResults
+					resolverFn();
 				}
 			};
 		});
@@ -1103,7 +1113,7 @@ class MootyWortRpgMech {
 	/**
 	 * Display victory or defeat message and provide battle exit UI 
 	 */
-	handleCombatResult(enumCombatResult) {
+	async handleCombatResult(enumCombatResult) {
 		// combat over scenario
 		// end battle music 
 		this.battleMusic.pause();
@@ -1115,19 +1125,22 @@ class MootyWortRpgMech {
 			// load victory fanfare
 			endAudio.src = 'audio/music/Victory.mp3';
 			// display player victory message and battle exit UI
-			this.displayResult("🦔 evil is vanquished and the Deepness saved for all time🦉!", endAudio);
+			await this.displayResult("🦔 evil is vanquished and the Deepness saved for all time🦉!", endAudio, () => true);
+			this.resultFn(true);
 			break;
 		case Combat.CombatResultEnum.enemyVictory:
 			// load death fanfare
 			endAudio.src = 'audio/music/The World Stood Still.mp3';
 			// display player defeat message and game over UI, ideally a dark soulsy 'you died'
-			this.displayResult("💀...and with the mole's death, darkness swept o'er all the land...💀", endAudio);
+			await this.displayResult("💀...and with the mole's death, darkness swept o'er all the land...💀", endAudio, () => true);
+			this.resultFn(false);
 			break;
 		case Combat.CombatResultEnum.draw:
 			// load death fanfare, I guess?
 			endAudio.src = 'audio/music/The World Stood Still.mp3';
 			// display draw message and battle exit UI
-			this.displayResult("💥the titanic clash of the mole and the mighty devil from the depths consumes them both in a conflagration quenched only by the tsunami of shed blood💥", endAudio);
+			this.displayResult("💥the titanic clash of the mole and the mighty devil from the depths consumes them both in a conflagration quenched only by the tsunami of shed blood💥", endAudio, () => true);
+			this.resultFn(false);
 			break;
 		default:
 			throw "handleCombatResult called with unrecognized result enum "+enumCombatResult;

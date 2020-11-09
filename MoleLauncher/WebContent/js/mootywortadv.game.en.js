@@ -815,10 +815,12 @@ undum.game.situations = {
 								resolver("shadowed");
 							}
 						});
+						return promiseOfDarkness;
 					} else {
             			var promiseOfDeath = new Promise((resolver) => {
             				resolver("death");
             			});
+						return promiseOfDeath;
             		}
             	}).then((resultString) => {
             		switch(resultString) {
