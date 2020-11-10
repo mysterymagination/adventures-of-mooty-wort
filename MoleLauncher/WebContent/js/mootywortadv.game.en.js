@@ -836,8 +836,10 @@ undum.game.situations = {
             			break;
             		}
             		if(resultString !== "death") {
-	            		var deepOneString = "Before you can fully process what has transpired, you feel a shadowy mantle slip over your shoulders, and thorned crown make its nest in bloody fur atop your noodle, clasping shut like a manacle.  A great and terrible something has come upon you, a power unwanted but irrepressible and undeniable.  Its poisonous whispers flit through your mind like tendrils of blight, corrupting your thoughts more thoroughly with each passing moment.";
+	            		const deepOneString = "Before you can fully process what has transpired, you feel a shadowy mantle slip over your shoulders, and thorned crown make its nest in bloody fur atop your noodle, clasping shut like a manacle.  A great and terrible something has come upon you, a power unwanted but irrepressible and undeniable.  Its poisonous whispers flit through your mind like tendrils of blight, corrupting your thoughts more thoroughly with each passing moment.";
+						const breachTheDeepString = "With a burst of effort you manage to clamber back up to the Middlin Depths to the Nakedest Molerat's demesne.  He eyes you warily as you emerge, steam and volcanic gases whicking off your coat like a thousand thousand wildfire candles all snuffed by your very presence, but you pay him no mind and simply flop down in an exhausted puddle of fuzz.  The Deep tunnel behind you collapses soundlessly, the last gasp vibrations of a rumbling quake serving as the humble herald of its passing.";
 	            		undum.game.storyViewController.writeParagraph(deepOneString);
+						undum.game.storyViewController.writeParagraph(breachTheDeepString);
 	            		undum.game.storyViewController.eventFlags.dark_mole = true;
 	            		system.doLink("basement2_hub");
             		}
