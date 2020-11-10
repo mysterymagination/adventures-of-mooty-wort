@@ -453,12 +453,12 @@ undum.game.situations = {
                 if (!undum.game.storyViewController.eventFlags.dark_mole) {
 	                if (undum.game.storyViewController.eventFlags.molerat_tickled) {
 	                    system.write(
-	                        "<p>The molerat's riotous laughter shatters the chamber's calm, stabbing into the cool darkness like thorns through a rose assaulting a curious nose.  He's rolled well away from the <a href='./examine_oracle_emerald'>massive carved emerald</a> breaching outward from the ancient walls.</p>"
+	                        "<p>The molerat's riotous laughter shatters the chamber's calm, stabbing into the cool darkness like thorns through a rose assaulting a curious nose.  He's rolled well away from the <a href='./examine_oracle_opal'>massive carved opal</a> breaching outward from the ancient walls.</p>"
 	                    );
 	                    stringArrayChoices.concat("basement2_grue_hub");
 	                } else {
 	                    system.write(
-	                        "<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a <a href='./check_molerat_target'>naked molerat</a>, perhaps the nakedest you've seen, twitching and clawing feebly at the gently convex surface of a <a href='./examine_oracle_emerald'>massive carved emerald</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
+	                        "<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a <a href='./check_molerat_target'>naked molerat</a>, perhaps the nakedest you've seen, twitching and clawing feebly at the gently convex surface of a <a href='./examine_oracle_opal'>massive carved opal</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
 	                    );
 	                }
                 } else {
@@ -471,7 +471,7 @@ undum.game.situations = {
                 system.writeChoices(stringArrayChoices);
             },
             actions: {
-                "examine_oracle_emerald": function (character, system, action) {
+                "examine_oracle_opal": function (character, system, action) {
                     system.write(
                         "<p>Beneath the nakedest molerat's pathetic pawing and the resultant trails of dried blood you can make out an archaic script carved into the gem.  You could have sworn at first glance that it was unintelligible, but as you gaze longer it seems to resolve into the familiar common script of Underwere, if a bit more formal and stuffy than you're used to. It reads: </p>\
                         <div class='featured_text_centered'>\
@@ -513,7 +513,7 @@ undum.game.situations = {
                     if (this.bTickled) {
                         return "The nakedest molerat rolls about in the musty dust, desperately euphoric in the throes of tickles";
                     } else {
-                        return "A naked molerat scrabbles furiously at an emerald nearby, a decoration of broken claw bits and streaks of blood his only impact on it";
+                        return "A naked molerat scrabbles furiously at an opal nearby, a decoration of broken claw bits and streaks of blood his only impact on it";
                     }
                 }
             },
@@ -525,7 +525,7 @@ undum.game.situations = {
         }
     ),
     "basement2_molerat_tickle": new undum.SimpleSituation(
-        "<p>As you touch the caterpillar's fuzz (still pulsing with an oily darkness) to the molerat's toes and wiggle it about, he goes totally rigid.  A wheezing whistle coughs into being and in the next moment your newest friend is rolling on his back in fits of laughter, the menacing emerald evidently forgotten.</p>",
+        "<p>As you touch the caterpillar's fuzz (still pulsing with an oily darkness) to the molerat's toes and wiggle it about, he goes totally rigid.  A wheezing whistle coughs into being and in the next moment your newest friend is rolling on his back in fits of laughter, the menacing opal evidently forgotten.</p>",
         {
             enter: function (character, system, from) {
                 undum.game.situations.basement2_hub.actions.bTickled = true;
@@ -806,7 +806,7 @@ undum.game.situations = {
 						var promiseOfDarkness = new Promise((resolver) => {
 							if(undum.game.storyViewController.bGrueChallengeActivated) {
 		            			// transition to the grue fight 
-								var grueApproachethString = "Something's veeeery wrong; the darkness surrounding you and the ruins of your smitten foe is purring.  Your insticts beg you to flee, but a quick glance around reveals that the darkness has solidified betwixt you and the exit tunnel whence you came into this outre nightmare.";
+								var grueApproachethString = "Something's veeeery wrong; the darkness surrounding you and the ruins of your smitten foe is purring.  Your insticts beg you to flee, but a quick glance around reveals that the darkness has solidified betwixt you and the exit tunnel whence you came into this outré nightmare.";
 						undum.game.storyViewController.writeParagraph(grueApproachethString);	
 		            			system.writeChoices(["basement3_encounter_grue"]);
 		            			// todo: pass resolver to basement3_encounter_grue situation somehow... maybe just a common undum.game.story property that holds an active resolver reference?  Seems weird and stupid but I'm not sure how else you'd handle a situation like this where you wanna mix async via promises with required pause step to consume user input (i.e. clicking the grue encounter choice so that we have the chance to show new text explaining what's coming)
@@ -837,7 +837,7 @@ undum.game.situations = {
             		}
             		if(resultString !== "death") {
 	            		const deepOneString = "Before you can fully process what has transpired, you feel a shadowy mantle slip over your shoulders, and thorned crown make its nest in bloody fur atop your noodle, clasping shut like a manacle.  A great and terrible something has come upon you, a power unwanted but irrepressible and undeniable.  Its poisonous whispers flit through your mind like tendrils of blight, corrupting your thoughts more thoroughly with each passing moment.";
-						const breachTheDeepString = "With a burst of effort you manage to clamber back up to the Middlin Depths to the Nakedest Molerat's demesne.  He eyes you warily as you emerge, steam and volcanic gases whicking off your coat like a thousand thousand wildfire candles all snuffed by your very presence, but you pay him no mind and simply flop down in an exhausted puddle of fuzz.  The Deep tunnel behind you collapses soundlessly, the last gasp vibrations of a rumbling quake serving as the humble herald of its passing.";
+						const breachTheDeepString = "With a burst of effort you manage to clamber back up to the Middlin Depths and the Nakedest Molerat's demesne.  He eyes you warily as you emerge, steam and volcanic gases whicking off your coat like a thousand thousand wildfire candles all snuffed by your very presence, but you pay him no mind and simply flop down in an exhausted puddle of fuzz.  The Deep tunnel behind you collapses soundlessly, swallowing the eldritch opal eye; the gentle last-gasp vibrations of a fading quake serve as the lone humble herald of its passing.";
 	            		undum.game.storyViewController.writeParagraph(deepOneString);
 						undum.game.storyViewController.writeParagraph(breachTheDeepString);
 	            		undum.game.storyViewController.eventFlags.dark_mole = true;
