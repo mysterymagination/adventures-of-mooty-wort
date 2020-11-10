@@ -73,7 +73,8 @@ undum.game.situations = {
             // makes links out of the situation ids anyway, so maybe write alternate functions that check for action link syntax
             // and format the link appropriately?  Maybe also add canChoose etc. functions to action...
             enter: function (character, system, from) {
-                //console.log("in main.opts.enter; main's optionText is "+undum.game.situations.main.optionText); // just the optionText boilerplate function
+                // back to baseline
+            	undum.game.init(character, system);
                 character.stringArrayInventory = [];
                 system.write("<h1>Of Moles and Holes</h1>\
                 <img src='images/mole-opening.png' class='float_right'>\
@@ -914,6 +915,7 @@ undum.game.qualityGroups = {
  * to configure the character at the start of play. */
 undum.game.init = function (character, system) {
     character.mole = undum.game.storyViewController.charactersDict.mole;
+    character.mole.resetStatus();
 
     // inform UI viewmodel 
     character.qualities.health = character.mole.stats.maxHP;

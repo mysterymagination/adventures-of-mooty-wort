@@ -156,7 +156,35 @@ export class Character {
 	    // we're good!
 	    return true;
 	}
-
+	/**
+	 * Reset this character instance's combat fields
+	 */
+	resetCombatStatus() {
+		this.stats.maxHP = this.coreStats.maxHP;
+		this.stats.hp = this.coreStats.maxHP;
+		this.stats.maxMP = this.coreStats.maxMP;
+		this.stats.mp = this.coreStats.maxMP;
+		this.stats.atk = this.coreStats.atk;
+		this.stats.def = this.coreStats.def;
+		this.stats.pwr = this.coreStats.pwr;
+		this.stats.res = this.coreStats.res;
+		this.stats.spd = this.coreStats.spd;
+		this.combatFlags = 0;
+		this.statusEffects = [];
+	}
+	/**
+	 * Return Character stats, status effects, inventory, and equipment to baseline
+	 */
+	resetStatus() {
+		this.resetCombatStatus();
+		
+		// reset associations and (potentially) non-combat fields
+		this.affinities = new Map();
+        this.inventory = [];
+        this.equipment = [];
+        this.statusEffects = [];
+        this.inductive_bias = [];
+	}
 	/**
 	 * Runs NPC combat AI to determine what it should do based on current combat variable
 	 * @param combat current Combat model

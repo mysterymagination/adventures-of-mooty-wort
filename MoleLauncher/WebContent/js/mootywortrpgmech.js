@@ -53,7 +53,8 @@ class MootyWortRpgMech {
 		// assign callback/resolver if any for combat resolution
 		this.resultFn = configObj.resultFn;
 		// setup UI
-		this.openBattleUi(combatDriver);
+		this.clearBattleUi();
+		this.createBattleUi(combatDriver);
 		// start loading music
 		this.battleMusic.src = configObj.musicUrl;
 		this.battleMusic.loop = true;
@@ -551,16 +552,46 @@ class MootyWortRpgMech {
 		}
 	}
 	/**
+	 * Clears out the UI objects related to the combat model
+	 */
+	clearBattleUi() {
+		const enemySpritesContainer = document.getElementById("enemySpritesContainer");
+		while (enemySpritesContainer.firstChild) {
+			enemySpritesContainer.removeChild(enemySpritesContainer.lastChild);
+		}
+		const enemyDataContainer = document.getElementById("enemyDataContainer");
+		while (enemyDataContainer.firstChild) {
+			enemyDataContainer.removeChild(enemyDataContainer.lastChild);
+		}
+		const playerSpritesContainer = document.getElementById("playerSpritesContainer");
+		while (playerSpritesContainer.firstChild) {
+			playerSpritesContainer.removeChild(playerSpritesContainer.lastChild);
+		}
+		const playerDataContainer = document.getElementById("playerDataContainer");
+		while (playerDataContainer.firstChild) {
+			playerDataContainer.removeChild(playerDataContainer.lastChild);
+		}
+		const combatCommands = document.getElementById("combatCommands");
+		while (combatCommands.firstChild) {
+			combatCommands.removeChild(combatCommands.lastChild);
+		}
+		const combatLog = document.getElementById("combatLog");
+		while (combatLog.firstChild) {
+			combatLog.removeChild(combatLog.lastChild);
+		}
+	}
+	/**
 	 * Set up the battle UI, associating character objects with their associated HTML elements 
 	 * @param combatModel the current Combat object
 	 */
-	openBattleUi(combatModel) {
+	createBattleUi(combatModel) {
 		// hide the normal Undum UI
 		var undumPage = document.getElementById("page");
 		undumPage.style.display = "none";
 		// show the combat mode modal
 		var combatUI = document.getElementById("combatModal");
 		combatUI.style.display = "flex";
+		this.showModalContent();
 		// player party UI 
 		var playerView_Div = document.getElementById("playerView");
 		var playerCharacterImageContainer_Div = document.getElementById("playerSpritesContainer");
@@ -1039,6 +1070,8 @@ class MootyWortRpgMech {
 					var undumPage = document.getElementById('page');
 					undumPage.style.display = 'block';
 					endAudio.pause();
+					context2d.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+					this.hideSpellEffectOverlay();
 					
 					// settle our handleCombatResult promiseOfResults
 					resolverFn();

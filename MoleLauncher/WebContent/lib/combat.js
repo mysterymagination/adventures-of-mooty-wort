@@ -10,6 +10,7 @@ export class Combat {
 	constructor(config) {
 		this.playerParty = config.playerParty;
         this.enemyParty = config.enemyParty;
+        this.resetPartyStatuses();
         this.controllerState = Combat.ControllerState.beginNewRound;
         this.combatResult = undefined;
         
@@ -32,6 +33,11 @@ export class Combat {
          * The integer number of rounds that have passed in this combat so far; incremented at the top of each round
          */
         this.roundCount = 0;
+	}
+	resetPartyStatuses() {
+		for(let character of this.playerParty.concat(this.enemyParty)) {
+			character.resetCombatStatus();
+		}
 	}
 	/**
 	 * Searches player and enemy parties for the character given by characterId
