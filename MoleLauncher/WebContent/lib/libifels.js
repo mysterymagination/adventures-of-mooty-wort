@@ -116,6 +116,14 @@ export class Libifels {
     static isCharacterWithIdInArray(characterId, array) {
         return array.some(characterUnderTest => characterId === characterUnderTest.id);
     }
+	/**
+     * Checks the Character object's inventory Item array for an Item object with the given id
+     * @param character the Character object whose inventory is to be searched
+	 * @param itemId the string id of the Item we're searching for
+     */
+    static isItemInInventory(character, itemId) {
+        return character.inventory.some(itemUnderTest => itemId === itemUnderTest.id);
+    }
     /**
     Removes a Character from an array of Characters using splice()
     @param character the Character to be removed from the array

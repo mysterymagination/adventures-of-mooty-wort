@@ -2,7 +2,8 @@
 import {MootyWortRpgMech} from "./mootywortrpgmech.js";
 import {MoleUndum} from "../lib/libifels_undum.js";
 import {Combat} from "../lib/combat.js";
-import {UndumStoryViewController} from "./storyviewcontrollers.js"
+import {UndumStoryViewController} from "./storyviewcontrollers.js";
+import * as Items from "../lib/items.js";
 
 //-----undum config-----//
 /**
@@ -174,34 +175,15 @@ undum.game.situations = {
                 'take-fuzz': function (character, system, action) {
                     sFuzzMessage = "As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!  "
 
-                    if (!character.stringArrayInventory.includes("fuzz")) {
+                    if (!MoleUndum.isItemInInventory(character.mole, "pulsating_fuzz")) {
                         // system.setQuality() will update the value and its UI representation together
                         system.setQuality("health", character.qualities.health - character.stats.maxHealth * 0.1);
                         console.log("health is " + character.qualities.health);
                         if (character.qualities.health > 0) {
                             system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
-                            // push the fuzz item to the item UI element, a ul HTML tag called items_list, and install fuzz handler
-                            // todo: can we check current situation id?  It'll get really awkward trying to call through to another situation without making sure we're coming from the right place -- in this particular case we only have the molerat as a player-accessible target in basement2_hub, but that's not always going to be the case.  Other approach would be to avoid situation transition from these floating handlers since we don't implicitly know where we are when calling them
-                            $("#items_list").append("\
-                                <li>\
-                                    <div class='item' id='item_fuzz'>\
-                                    <a onclick='\
-                                        undum.removeHighlight($(\".item\"));\
-                                        undum.addHighlight($(\"#item_fuzz\"));\
-                                        libifels_undum.bUsingItem = true;\
-                                        libifels_undum.sUsedItemName = \"fuzz\";\
-                                        libifels_undum.fnUsedItemHandler = function(system, itemName, targetName) {\
-                                            undum.removeHighlight($(\"#item_fuzz\"));\
-                                            if(targetName === \"nakedest molerat\") {\
-                                                system.doLink(\"basement2_molerat_tickle\");\
-                                            } else {\
-                                                system.write(\"<p>You cannot use the fuzz on \"+targetName+\"</p>\");\
-                                            }\
-                                        }\
-                                    '>Gently Pulsating Fuzz</a>\
-                                    </div>\
-                                </li>");
-                            character.stringArrayInventory.push("fuzz");
+                            // push the fuzz item to the mole's inventory
+                            character.mole.inventory.push(new Items.PulsatingFuzz());
+							// todo: refresh inventory UI
                         } else {
                             system.write(sFuzzMessage + "</p>");
                             system.doLink('death');
@@ -802,7 +784,7 @@ undum.game.situations = {
             		if(playerVictory) {
 						var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
 						undum.game.storyViewController.writeParagraph(yawningGodVictoryString);	
-						// todo: so I guess the thing to do re: promises would be to return a new gruePromise here whose behavior lambda is to resolve immediately if the grue was not aggroed and otherwise resolves when combat with grue is done, and then put the dark mole epilogue stuff in a then() chained onto this one.  Trouble with that is that we're going to be running the grue combat over in basement3_encounter_grue so that the user has time to read the message about the yawning god being barbecued and the grue approaching, so how do we communicate the resolve fn passed in by the next then() in our chain here to that Situation? I think trying to bend Undum backwards and sideways to kind of get promises working around it when they really aren't necessary or wise might be a bad plan.
+						// todo: so the dark Promises approach works, but it's wretchedly unintuitive for what we're making it do here specifically, and Undum story paradigm in general.  Simply passing a string id indicating what location/context the player should be returned to after combat (situation id in Undum) into combat and then call a storyViewController abstraction like travelTo(id) which for Undum would inoke doLink(situation id) would be much easier and clearer.
 						var promiseOfDarkness = new Promise((resolver) => {
 							if(undum.game.storyViewController.bGrueChallengeActivated) {
 		            			// transition to the grue fight 
