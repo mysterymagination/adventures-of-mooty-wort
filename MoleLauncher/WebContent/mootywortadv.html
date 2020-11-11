@@ -91,7 +91,7 @@
                  <ul id="items_list">
                  	<li>test item 1</li>
                  	<li>test item 2</li>
-                   <!-- items are added to this list programmatically during gameplay.  They exist as anchor tags with no href.  Each item has an onclick however that installs its own custom item handler into a global item handler slot, which is checked when a potential target that an item could be used on is clicked. -->
+                   <!-- items are added to this list programmatically during gameplay.  They exist as anchor tags with no href.  Each item has an onclick however that calls ItemManager.playerUseItem(item id). -->
                  </ul>
               </div>
               

@@ -54,25 +54,10 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 undum.game.rpgMech = new MootyWortRpgMech();
 undum.game.storyViewController = new UndumStoryViewController(undum.system);
 undum.game.situations = {
-    /* hardcoded link choice -- I wanna figure out how to use Undum's awesome System.writeChoices() and System.getSituationIdChoices() to gen up these same options with literal style
-    <p>What's your move?</p>\
-        <p class='transient'><a href='./fight-humans'>Fight the belligerent human!</a></p>\
-        <p class='transient'><a href='dig-escape-human'>Dive and burrow!</a></p>\
-    */
     main: new undum.SimpleSituation(
         "",
         {
-            // at the point when we set optionText for the first time, the situation hasn't yet been added (I think) and thus comes up undefined.
-            //sTitle: "mainSit",
-            //optionText: undum.game.situations.main.opts.sTitle, // opts doesn't get stored, nor does optiontext
-            //optionText: undum.game.situations.main.actions.sTitle, // actions is copied over.  TODO: does this work for whenever/however optiontext gets set? UPDATE: nope, main situation is not defined yet at that point.
-            //optionText: this.sTitle, // todo: so since the optiontext is getting set before the situation object is even added to Undum's awareness, does that imply its this would refer to itself? UPDATE: I'm having trouble even getting at the optionText field -- it isn't copied over to the SimpleSituation object's fields during ctor, and the opts object is dropped after ctor (there is no obvious SimpleSituation.opts field that stores 'em all). 
-            // UPDATE2: apparently keyword this in the context of creating key:value objects like this points to global object for some reason.  We actually do get a value in optionText via this.sTitle, but it's the function from undum that determines optionText rather than mainSit.  Setting optionText to a string literal gives the same result, since again this is actually the main.opts object which isn't stored and its optionText field isn't directly extracted.
-            //
-            // todo: hmm, seems you can't generate choices that are actions or situations with an action arg; it would be nice
-            // to be able to do anything you can do with links with choice sets.  It looks like system.writeChoices() basically just 
-            // makes links out of the situation ids anyway, so maybe write alternate functions that check for action link syntax
-            // and format the link appropriately?  Maybe also add canChoose etc. functions to action...
+            // todo: hmm, seems you can't generate choices that are actions or situations with an action arg; it would be nice to be able to do anything you can do with links with choice sets.  It looks like system.writeChoices() basically just makes links out of the situation ids anyway, so maybe write alternate functions that check for action link syntax and format the link appropriately?  Maybe also add canChoose etc. functions to action...
             enter: function (character, system, from) {
                 // back to baseline
             	undum.game.init(character, system);
@@ -85,28 +70,7 @@ undum.game.situations = {
                 system.writeChoices(["dig-escape-human"]);
             },
             actions: {
-                // at the point when we set optintext for the first time, the situation hasn't yet been added (I think) and thus comes up undefined.
-                sTitle: "mainSitActions",
-                oSelf: this,
-                testMethod: function () {
-                    // this example works
-                    return "hello from test method; our title is " + undum.game.situations.main.actions.sTitle;
-                    /* this example does not work; apparently the this keyword in the context of defining an object in key:value form points to the Window object.
-                     return "hello from test method; our title is "+oSelf.sTitle;
-                    */
-                },
                 'fight-humans': function (character, system, action) {
-                    // problem was that in the context in which our action functions is called, keyword this apparently refers to Window object.  So basically we need to fully qualify the object and method we want to call in this case. The key thing to remember is JS is all about the calling context rather than the called context:
-                    /*
-                    var obj = {
-                        sExample: "test",
-                        testMethod: function() {
-                            console.log("our example member string says "+this.sExample);
-                        }
-                    }
-                    obj.testMethod(); // this is OK because we are calling the testMethod fn on an instance of the object for which we expect it to be a method; that calling context is what makes it a method and specifically sets keyword this to point to the object instance.  If the testMethod function were invoked in another way though, keyword this could be different depending on the details.
-                    */
-                    //console.log("testMethod for main situation says: "+this.testMethod());
                     console.log("testMethod for main situation says: " + undum.game.situations.main.actions.testMethod());
                     system.write(
                         "<p>You cock your snout at the approaching human questioningly, crossing your little paws with their giant claws in a peaceful but steadfast manner.  As the human reaches you and raises his shovel to strike, you realize he cares nothing for diplomacy and is intent on bringing violence to your non-violent protest. You must defend yourself!</p>\
@@ -213,12 +177,6 @@ undum.game.situations = {
             optionText: "You OK, buddy?",
             enter: function (character, system, from) {
                 system.printBuffer = "The caterpillar stops wiggling when you speak and his head twisssssts ever so slowly around to face you... 270 degrees.  He's an invertebrate and all, but that's not really a thing caterpillars usually do, right?  \"Greetings, moleson.  I am better than ever before, for today I know the glory of the Rapturous Rumble!\"";
-                /* so the problem with this is that I wanna say similar stuff in multiple branches of questioning.  Best way to handle that is to fork at diffs and then merge back into a mainline when the situation becomes common again.  If we write out at each point however, our formatting will be awful so I'm going to see how annoying using a printBuffer in the system object is.
-                system.write(
-                    "<p>The caterpillar stops wiggling when you speak and his head twisssssts ever so slowly around to face you... 270 degrees.  He's an invertebrate and all, but that's not really a thing caterpillars usually do, right?  \"Greetings, moleson.  I am better than ever before, for today I know the glory of the Rapturous Rumble!\"  He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
-                );
-                */
-
                 // in this case, since it's really sort of a forked helper situation that has no standalone capabilities and is short, it makes sense to hop right over to the merge point
                 system.doLink("basement1_fuzzy_caterpillar_rapture");
             },
