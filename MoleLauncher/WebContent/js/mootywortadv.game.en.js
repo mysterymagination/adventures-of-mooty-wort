@@ -148,6 +148,8 @@ undum.game.situations = {
                             // push the fuzz item to the mole's inventory
                             character.mole.inventory.push(new Items.PulsatingFuzz());
 							// todo: refresh inventory UI
+                            //  it's tough to avoid and semblance of awkward HTML interfacing here, but I think we can keep it pretty simple -- basically write a util function StoryViewController.addItem(character object, item object) that generates and installs our <a> to our <li> in the <ul>, and then installs an onclick to the generated <li> that runs common code to the tune of StoryViewController.activateItem(item id string from passed in item object).  The activateItem fn will take care of highlighting the active item and telling ItemManager that it is active.  Each interactable object in the current context of the story will be surrounded in anchor tags that go nowhere and call a util function StoryViewController.activeItemUseOn(target thingamajig string) which calls ItemManager.activeItem.useOn(passed in target string) and then removes the active item from ItemManager's reckoning and removes the highlight effect on its UI list item.
+                            
                         } else {
                             system.write(sFuzzMessage + "</p>");
                             system.doLink('death');
