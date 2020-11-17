@@ -81,9 +81,28 @@ export class Libifels {
      * find index of a particular character id in a character array
      * @param characterArray an array of Character objects
      * @param characterID the string id of a searched-for Character object
+     * @return the index of the character in the array
      */
     static findCharacterIndex(characterArray, characterID) {
         return characterArray.findIndex(character => character.id === characterID);
+    }
+    /** 
+     * find index of a particular item id in a character's inventory
+     * @param character Character object whose inventory is searched
+     * @param itemId the string id of a searched-for Item object in the given Character's inventory array
+     * @return the index of the item in the array
+     */
+    static findInventoryItemIndex(character, itemId) {
+        return character.inventory.findIndex(item => item.id === itemId);
+    }
+    /** 
+     * find a particular item in a character's inventory
+     * @param character Character object whose inventory is searched
+     * @param itemId the string id of a searched-for Item object in the given Character's inventory array
+     * @return the Item object whose id matches the given item id
+     */
+    static findInventoryItem(character, itemId) {
+        return character.inventory.find(item => item.id === itemId);
     }
     /** 
      * find a particular Character by id in a Character array
@@ -134,6 +153,17 @@ export class Libifels {
         var index = this.findCharacterIndex(characterArray, character.id);
         // splice the character out of the array; this modified the given array
         characterArray.splice(index, 1);
+    }
+    /**
+     * Removes an Item from a Character's inventory
+     * @param character the Character whose inventory should be modified
+     * @param itemId the string id of the Item we want to remove
+    */
+    static removeItemFromInventory(character, itemId) {
+        // find the index of the target item in the inventory
+        var index = this.findInventoryItemIndex(character, itemId);
+        // splice the item out of the inventory
+        character.inventory.splice(index, 1);
     }
     /**
      * Finds the last living character in the given array (first living character starting from back of the array)

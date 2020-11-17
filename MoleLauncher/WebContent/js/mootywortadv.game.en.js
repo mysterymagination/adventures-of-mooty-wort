@@ -146,10 +146,8 @@ undum.game.situations = {
                         if (character.qualities.health > 0) {
                             system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
                             // push the fuzz item to the mole's inventory
-                            character.mole.inventory.push(new Items.PulsatingFuzz());
-							// todo: refresh inventory UI
-                            //  it's tough to avoid and semblance of awkward HTML interfacing here, but I think we can keep it pretty simple -- basically write a util function StoryViewController.addItem(character object, item object) that generates and installs our <a> to our <li> in the <ul>, and then installs an onclick to the generated <li> that runs common code to the tune of StoryViewController.activateItem(item id string from passed in item object).  The activateItem fn will take care of highlighting the active item and telling ItemManager that it is active.  Each interactable object in the current context of the story will be surrounded in anchor tags that go nowhere and call a util function StoryViewController.activeItemUseOn(target thingamajig string) which calls ItemManager.activeItem.useOn(passed in target string) and then removes the active item from ItemManager's reckoning and removes the highlight effect on its UI list item.
-                            
+                            undum.game.storyViewController.addItem(undum.game.storyViewController.charactersDict.mole, new Items.PulsatingFuzz());
+							// todo: Each interactable object in the current context of the story will be surrounded in anchor tags that go nowhere and call a util function StoryViewController.activeItemUseOn(target thingamajig string) which calls ItemManager.activeItem.useOn(passed in target string) and then removes the active item from ItemManager's reckoning and removes the highlight effect on its UI list item.                        
                         } else {
                             system.write(sFuzzMessage + "</p>");
                             system.doLink('death');
@@ -807,7 +805,6 @@ undum.game.situations = {
         	optionText: "Something stirs just out of sight, and shadows slither closer...  Show this new abomination what a mole is made of!"
         }
     ),
-    // todo: need a combat result situation(s) for the two encounters to land back in; since obviously enterCombat() doesn't block and I don't think we can make use of async/await since Undum is ES5, we'll need to feed a handle to the story VC into the combat VC and have combat VC tell story where to go based on combat result.
     death: new undum.SimpleSituation(
         "<strong>💀 IT IS A SAD THING THAT YOUR ADVENTURES HAVE ENDED HERE 💀</strong>\
         <div class='transient'><a href='main'>Oh, Mother of Moles!  Try Again?</a></div>\

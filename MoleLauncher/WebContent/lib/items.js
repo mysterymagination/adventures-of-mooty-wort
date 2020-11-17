@@ -179,9 +179,9 @@ export class PulsatingFuzz extends Item {
 export class ItemManager {
 	constructor() {
 		/**
-		 * The item that the player has started using
+		 * The string item id of the Item that the player has started using
 		 */
-		this.activeItem = null;
+		this.activeItemId = null;
 		/**
 		 * Associative mapping of item id strings to corresponding Item objects
 		 */
