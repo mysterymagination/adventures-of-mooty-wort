@@ -1,6 +1,6 @@
 import * as Items from "../lib/items.js";
 import * as Characters from "../lib/characters.js";
-import Libifels from "../lib/libifels.js";
+import {Libifels} from "../lib/libifels.js";
 
 export class StoryViewController {
 	constructor(configObj) {
@@ -47,10 +47,12 @@ export class StoryViewController {
 		listItemTag.onclick = () => {
 			this.activateItem(item.id);
 		}
-		const anchorTag = document.createElement('a');
+		// todo: getting a crash from Undum because it tries to style specially using the href of any found anchor tags, so we can't leave href absent
+		//const anchorTag = document.createElement('a');
 		const textNode = document.createTextNode(item.name);
-		anchorTag.appendChild(textNode);
-		listItemTag.appendChild(anchorTag);
+		//anchorTag.appendChild(textNode);
+		//listItemTag.appendChild(anchorTag);
+		listItemTag.appendChild(textNode);
 		const listTag = document.getElementById('items_list');
 		listTag.appendChild(listItemTag);
 		character.inventory.push(item);

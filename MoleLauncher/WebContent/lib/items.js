@@ -149,6 +149,7 @@ export class OdditineObol extends Equipment {
 }
 export class PulsatingFuzz extends Item {
 	constructor() {
+		// todo: can't do this exactly; js will throw exception if you access keyword this before calling super()
 		var configObj = {
 			"id": "pulsating_fuzz",
 			"name": "gently_pulsating_fuzz",
