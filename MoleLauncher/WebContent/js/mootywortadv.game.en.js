@@ -144,7 +144,8 @@ undum.game.situations = {
 
 									if (!MoleUndum.isItemInInventory(character.mole, "pulsating_fuzz")) {
 										// system.setQuality() will update the value and its UI representation together
-										system.setQuality("health", character.qualities.health - character.mole.stats.maxHP * 0.1);
+										character.mole.stats.hp -= character.mole.stats.maxHP * 0.1;
+										system.setQuality("health", character.mole.stats.hp);
 										console.log("health is " + character.qualities.health);
 										if (character.qualities.health > 0) {
 											system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
@@ -209,10 +210,11 @@ undum.game.situations = {
 						// from is given as the string id of the situation we came from
 						if (from === "basement1_fuzzy_caterpillar_you_ok") {
 							// the cost of befriending madness is... fairly predictable
-							system.setQuality("Sanity", character.qualities.sanity - character.stats.maxSanity * 0.25);
+							character.mole.stats.sanity -= character.mole.stats.maxSanity * 0.25;
+							system.setQuality("sanity", character.mole.stats.sanity);
 						}
 						system.write(
-								"<p>" + system.printBuffer + "  He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
+								"<p>" + system.printBuffer + "</p>  <p>He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
 						);
 						system.doLink("basement1_fuzzy_caterpillar_hub");
 					},

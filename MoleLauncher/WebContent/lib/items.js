@@ -1,7 +1,7 @@
 export class Item {
-	contructor(configObj) {
-		this.id = configObj.id;
-		this.name = configObj.name;
+	contructor() {
+		this.id = null;
+		this.name = null;
 		/**
 		 * An object literal containing string tags and functional relationship hints to be used by a Puzzlio system, or possibly something as simple as a useOn -> literal expected target name -> behavior fn.  Probably just the simple case for now; puzzlio is sort of an antipattern sort of thing since its notion of arbitrary input -> arbitrary context and solve condition -> arbitrary output possibly using only text and regex is pretty far-fetched and better approached with context-specific simulation (e.g. physics and ray-tracing) of reality and puzzles built around said simulation systems.
 		 * e.g. 
@@ -15,7 +15,7 @@ export class Item {
 		 * 			 
 		 * }
 		 */
-		this.descriptor = configObj.descriptor;
+		this.descriptor = null;
 	}
 	/**
 	 * Handles using this Item on the target object identified by the given string
@@ -38,8 +38,8 @@ export class Item {
  * it is unequipped
  */
 export class Equipment extends Item {
-	constructor(configObj) {
-		super(configObj);
+	constructor() {
+		super();
 	}
 	/**
 	 * Modifies stats etc. upon equip action
@@ -58,8 +58,8 @@ export class Equipment extends Item {
  * An equippable Item which may run an effect when striking something
  */
 export class Weapon extends Equipment {
-	constructor(configObj) {
-		super(configObj)
+	constructor() {
+		super();
 	}
 	/**
 	 * An effect to be run when striking a target with this weapon
@@ -74,8 +74,8 @@ export class Weapon extends Equipment {
  * An equippable Item which may run an effect when stricken by something
  */
 export class Armor extends Equipment {
-	constructor(configObj) {
-		super(configObj)
+	constructor() {
+		super();
 	}
 	/**
 	 * An effect to be run when the source character wearing this armor is stricken by the target character
@@ -91,12 +91,10 @@ export class Armor extends Equipment {
  */
 export class CausticClaws extends Weapon {
 	constructor() {
-		var configObj = {
-			"id": "caustic_claws",
-			"name": "Caustic Claws",
-			"descriptor": {}
-		}
-		super(configObj);
+		super();
+		this.id = "caustic_claws";
+		this.name = "Caustic Claws";
+		this.descriptor = {};
 		this.atkBuf = 25;
 		this.acidDmg = 0;
 	}
@@ -126,12 +124,10 @@ export class CausticClaws extends Weapon {
 }
 export class OdditineObol extends Equipment {
 	constructor() {
-		var configObj = {
-			"id": "odditine_obol",
-			"name": "Odditine Obol",
-			"descriptor": {}
-		}
-		super(configObj);
+		super();
+		this.id = "odditine_obol";
+		this.name = "Odditine Obol";
+		this.descriptor = {}
 		this.resBuf = 2;
 	}
 	/**
@@ -149,19 +145,16 @@ export class OdditineObol extends Equipment {
 }
 export class PulsatingFuzz extends Item {
 	constructor() {
-		// todo: can't do this exactly; js will throw exception if you access keyword this before calling super()
-		var configObj = {
-			"id": "pulsating_fuzz",
-			"name": "gently_pulsating_fuzz",
-			"descriptor": {
-				"useOn": [
-					{
-						"/nakedest molerat/i": this.tickle
-					}
-				]
-			}
-		}
-		super(configObj);
+		super();
+		this.id = "pulsating_fuzz";
+		this.name = "Gently Pulsating Fuzz";
+		this.descriptor = {
+			"useOn": [
+				{
+					"/nakedest molerat/i": this.tickle
+				}
+			]
+		}	
 	}
 	/**
 	 * Tickle the Nakedest Molerat out of his reverie
