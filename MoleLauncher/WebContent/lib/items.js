@@ -25,9 +25,11 @@ export class Item {
 	useOn(story, targetString) {
 		// parse descriptor and look for a useOn attr, and then match the input targetString to a regex string key in the useOn array of possible matches. Finally call the relevant functions of this Item that were found mapped to matching regex key strings.
 		if(this.descriptor.useOn) {
-			for(const [keyRegex, effectFn] in Object.entries(this.descriptor.useOn)) {
-				if(targetString.match(keyRegex)) {
-					effectFn(story);
+			for(const matcherObj of this.descriptor.useOn) {
+				for(const [keyRegex, effectFn] of Object.entries(matcherObj)) {
+					if(targetString.match(new RegExp(keyRegex, 'i'))) {
+						effectFn(story);
+					}
 				}
 			}
 		}
@@ -151,7 +153,7 @@ export class PulsatingFuzz extends Item {
 		this.descriptor = {
 			"useOn": [
 				{
-					"/nakedest molerat/i": this.tickle
+					"nakedest.*molerat": this.tickle
 				}
 			]
 		}	

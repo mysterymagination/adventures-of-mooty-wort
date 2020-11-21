@@ -151,7 +151,7 @@ undum.game.situations = {
 											system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
 											// push the fuzz item to the mole's inventory
 											undum.game.storyViewController.addItem(undum.game.storyViewController.charactersDict.mole, new Items.PulsatingFuzz());
-											// todo: Each interactable object in the current context of the story will be surrounded in anchor tags that go nowhere (or Undum action anchor tag syntax?) and call a util function StoryViewController.activeItemUseOn(target thingamajig string) which calls ItemManager.activeItem.useOn(passed in target string) and then removes the active item from ItemManager's reckoning and removes the highlight effect on its UI list item.  The trouble with that approach is that it could effectively leave dead looking links all over.  A quick fix might be to take inspiration from Lucid Dreams and let interactables be described by default and then have special handling when clicked if an item is active; they used handy different interact icons to make this behavior change transparent, but it's probably fine enough without it... the other option is to tag interactables in text and then change styling on all that are in the current situation context to indicate that they can be targets of an inventory item whenever an inventory item is activated.  Actually, this might be a good job for an innocuous span tag with a css selector that is specific to the relevant situation id -- that way we could simply say upon item activation, ok CSS go find all the fellas with class interactable_mysituationid and style them with hyperlink effects or highlights or whatever.                      
+											// todo: Each interactable object in the current context of the story will be surrounded in anchor tags that go nowhere (or Undum action anchor tag syntax?) and call a util function StoryViewController.activeItemUseOn(target thingamajig string) which calls ItemManager.activeItem.useOn(passed in target string) and then removes the active item from ItemManager's reckoning and removes the highlight effect on its UI list item.  The trouble with that approach is that it could effectively leave dead looking links all over.  A quick fix might be to take inspiration from Lucid Dreams and let interactables be described by default and then have special handling when clicked if an item is active; they used handy different interact icons to make this behavior change transparent, but it's probably fine enough without it... the other option is to tag interactables in text and then change styling on all that are in the current situation context to indicate that they can be targets of an inventory item whenever an inventory item is activated.  Actually, this might be a good job for an innocuous span tag in the markup text with a css selector that is specific to the relevant situation id -- that way we could simply say upon item activation, ok CSS go find all the fellas with class interactable_mysituationid and style them with hyperlink effects or highlights or whatever.                      
 										} else {
 											system.write(sFuzzMessage + "</p>");
 											system.doLink('death');
@@ -397,13 +397,13 @@ undum.game.situations = {
 				"",
 				{
 					enter: function (character, system, from) {
-						var stringArrayChoices = ["basement1_hub", "basement3_encounter_yawning_god"];
+						undum.game.storyViewController.choiceStringArray = ["basement1_hub", "basement3_encounter_yawning_god"];
 						if (!undum.game.storyViewController.eventFlags.dark_mole) {
 							if (undum.game.storyViewController.eventFlags.molerat_tickled) {
 								system.write(
 										"<p>The molerat's riotous laughter shatters the chamber's calm, stabbing into the cool darkness like thorns through a rose assaulting a curious nose.  He's rolled well away from the <a href='./examine_oracle_opal'>massive carved opal</a> breaching outward from the ancient walls.</p>"
 								);
-								stringArrayChoices.concat("basement2_grue_hub");
+								undum.game.storyViewController.choiceStringArray.concat("basement2_grue_hub");
 							} else {
 								system.write(
 										"<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a <a href='./check_molerat_target'>naked molerat</a>, perhaps the nakedest you've seen, twitching and clawing feebly at the gently convex surface of a <a href='./examine_oracle_opal'>massive carved opal</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
@@ -411,12 +411,12 @@ undum.game.situations = {
 							}
 						} else {
 							// the depths are sealed... for now
-							stringArrayChoices = ["basement1_hub"];
+							undum.game.storyViewController.choiceStringArray = ["basement1_hub"];
 							// todo: molerat interaction options now that player has the powers of a Dark Mole
 							var awestruckMoleratString = "The Nakedest Molerat's laughter has ceased.  He cowers in a corner, his beady bloodshot eyes fixed, unblinking, upon you. \"You are... not what I was expecting.  Perhaps this form is intended to make your splendor comprehensible to my limited intellect?  It matters not -- please, free me!\"  He prostrates himself before you as best as his still-bleeding claw-stumps will allow.";
 							undum.game.storyViewController.writeParagraph(awestruckMoleratString);
 						}
-						system.writeChoices(stringArrayChoices);
+						system.writeChoices(undum.game.storyViewController.choiceStringArray);
 					},
 					actions: {
 						"examine_oracle_opal": function (character, system, action) {
@@ -449,12 +449,17 @@ undum.game.situations = {
 							character.stringArrayInventory.push("crystal_lash");
 						},
 						"check_molerat_target": function (character, system, action) {
-							// todo: call fuzz.useOn("nakedest molerat");
-							if (libifels_undum.bUsingItem) {
-								// call item handler with the second and final piece of information, the target being nakedest molerat!
-								libifels_undum.fnUsedItemHandler(system, libifels_undum.sUsedItemName, "nakedest molerat");
-							} else {
-								system.write("<p>Examining this nakedest of molerats yields little but subtle nausea.</p>");
+							if(action) {
+								try {
+									const story = undum.game.storyViewController;
+									if (story.itemManager.activeItemId) {
+										story.activeItemUseOn("nakedest molerat");
+									} else {
+										system.write("<p>Examining this nakedest of molerats yields little but subtle nausea and an appreciation for the fortitude of female molerats.</p>");
+									}
+								} catch(err) {
+									console.log(err);
+								}
 							}
 						},
 						calculateHeading: function () {

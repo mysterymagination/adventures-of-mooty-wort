@@ -85,12 +85,12 @@ export class StoryViewController {
 	 * Uses the active item on the given string target
 	 * @param targetString a text string from the story that is to be the target Y of a 'use X on Y' scenario
 	 */
-	activateItemUseOn(targetString) {
+	activeItemUseOn(targetString) {
 		const activeItemId = this.itemManager.activeItemId;
 		if(activeItemId) {
 			const listItemTag = document.getElementById(activeItemId);
 			listItemTag.classList.remove('highlight_simple');
-			Libifels.findInventoryItem(this.charactersDict.mole, activeItemId).useOn(targetString);
+			Libifels.findInventoryItem(this.charactersDict.mole, activeItemId).useOn(this, targetString);
 			this.itemManager.activeItemId = null;
 		}
 	}
@@ -107,6 +107,7 @@ export class UndumStoryViewController extends StoryViewController {
 		this.undumSystem.write("<p>"+passageString+"</p>");
 	}
 	appendChoice(choiceString) {
-		this
+		super.appendChoice(choiceString);
+		this.undumSystem.writeChoices(this.choiceStringArray);
 	}
 }
