@@ -28,7 +28,7 @@ export class Item {
 			for(const matcherObj of this.descriptor.useOn) {
 				for(const [keyRegex, effectFn] of Object.entries(matcherObj)) {
 					if(targetString.match(new RegExp(keyRegex, 'i'))) {
-						effectFn(story);
+						effectFn.call(this, story);
 					}
 				}
 			}
@@ -174,7 +174,7 @@ export class PulsatingFuzz extends Item {
 	 */
 	tickle(story) {
 		// write item use feedback
-		story.writeParagraph("You reach out and wiggle the fuzz playfully over your molerat friend's snoot; he tries to resist an upwelling of mirth that threatens to fracture his zealous persona, but no will can resist the captivating grip of the tickle monster -- as the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the emerald eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.");
+		story.writeParagraph("You reach out and wiggle the fuzz playfully over your molerat friend's snoot; he tries to resist an upwelling of mirth that threatens to fracture his zealous persona, but no will can resist the captivating grip of the tickle monster -- as the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the opal eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.");
 		// modify story state to reflect tickled molerat
 		story.eventFlags.molerat_tickled = true;
 		// add grue hub access to the array of choices the player currently has in the story,
@@ -193,7 +193,13 @@ export class LastLash extends Item {
 		this.descriptor = {
 			"useOn": [
 				{
+					"character": this.partVeil
+				},
+				{
 					"mole": this.partVeil
+				},
+				{
+					"mooty.*wort": this.partVeil
 				}
 			],
 			"descriptionString": this.name+" is a brilliant amethyst eyelash from a gargantuan statue.  The air shimmers around it, and through it you can glimpse undreamt-of alien vistas.  It vibrates with a sort of crystalline anticipation when you bring it anywhere near your head and a hundred whispers just beyond hearing flood your mind."
@@ -205,7 +211,7 @@ export class LastLash extends Item {
 	 */
 	partVeil(story) {
 		// write item use feedback
-		story.writeParagraph(".");
+		story.writeParagraph("As you touch the tip of the Last Lash to your forehead, every fiber of fur over your entire body suddenly stands rigidly on end -- power surges through you, and in a bloody flash a mystic third eye has ripped through your forehead fuzz!  This eye imparts sight beyond sight and knowledge that no mortal creature's brain was ever meant to host to your velvety little body.  Everything is clearer now, though your vision is obscured by bloody fuzz and forehead bits.  The very air seems to whisper unfamthomable secrets, and the mysteries of the shadows are more addictively alluring than ever before.  The Last Lash crumbles to dust, it's job done.");
 		// modify story state to reflect parted veil
 		story.eventFlags.veil_parted = true;
 		// modify mole stats, doubling base and current pwr and halving base and current res
@@ -213,6 +219,8 @@ export class LastLash extends Item {
 		story.charactersDict.mole.coreStats.pwr *= 2;
 		story.charactersDict.mole.stats.res /= 2;
 		story.charactersDict.mole.coreStats.res /= 2;
+		// last lash is one-time use, so remove from inventory
+		story.removeItem(story.charactersDict.mole, this);
 	}
 }
 export class ItemManager {

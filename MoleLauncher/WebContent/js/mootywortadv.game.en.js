@@ -432,21 +432,16 @@ undum.game.situations = {
 							);
 						},
 						"take_eyelash": function (character, system, action) {
-							system.write(
-									"<p>You carefully pluck the impossibly delicate crystal from its socket and place it snuggly in your compartment.</p>"
-							);
-							$("#items_list").append("\
-									<li>\
-									<div class='item' id='item_lash'>\
-									<a onclick='\
-									undum.removeHighlight($(\".item\"));\
-									undum.addHighlight($(\"#item_lash\"));\
-									libifels_undum.bUsingItem = true;\
-									libifels_undum.sUsedItemName = \"lash\";\
-									'>Crystalline Last Lash</a>\
-									</div>\
-							</li>");
-							character.stringArrayInventory.push("crystal_lash");
+							try {
+								if(action) {
+									system.write(
+											"<p>You carefully pluck the impossibly delicate crystal from its socket and place it snuggly in your compartment.</p>"
+									);
+									undum.game.storyViewController.addItem(character.mole, new Items.LastLash());
+								}
+							} catch(err) {
+								console.log("error taking Last Lash: "+err);
+							}
 						},
 						"check_molerat_target": function (character, system, action) {
 							if(action) {

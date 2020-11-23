@@ -67,10 +67,11 @@ export class StoryViewController {
 		while (listItemTag.firstChild) {
 			listItemTag.removeChild(listItemTag.lastChild);
 		}
+		listItemTag.remove();
 		if(this.itemManager.activeItemId === item.id) {
 			this.itemManager.activeItemId = null;
 		}
-		Libifels.removeInventoryItem(character, item.id);
+		Libifels.removeItemFromInventory(character, item.id);
 	}
 	/**
 	 * Marks an item as the active item in use in ItemManager and highlights it in the UI
