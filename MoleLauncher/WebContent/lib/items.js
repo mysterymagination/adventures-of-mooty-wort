@@ -34,6 +34,12 @@ export class Item {
 			}
 		}
 	}
+	/**
+	 * Print out the item's description 
+	 */
+	describe(story) {
+		story.writeParagraph(this.descriptor.descriptionString);
+	}
 }
 /**
  * An Item that runs an effect function when it is equipped to a character whose effects stay active until
@@ -145,6 +151,9 @@ export class OdditineObol extends Equipment {
 		unequippedCharacter.stats.res /= this.resBuf;
 	}
 }
+/**
+ * The PulsatingFuzz serves to distract any creature whose flesh it can reach
+ */
 export class PulsatingFuzz extends Item {
 	constructor() {
 		super();
@@ -155,7 +164,8 @@ export class PulsatingFuzz extends Item {
 				{
 					"nakedest.*molerat": this.tickle
 				}
-			]
+			],
+			"descriptionString": "This "+this.name+" wiggles enthusiastically in your compartment.  It's a bit jagged, but soft at certain angles; given the hairless nature of your compartment, you have to keep shifting it to avoid being poked or being tickled into a fit of giggles."
 		}	
 	}
 	/**
@@ -164,12 +174,45 @@ export class PulsatingFuzz extends Item {
 	 */
 	tickle(story) {
 		// write item use feedback
-		story.writeParagraph("As the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the emerald eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.");
+		story.writeParagraph("You reach out and wiggle the fuzz playfully over your molerat friend's snoot; he tries to resist an upwelling of mirth that threatens to fracture his zealous persona, but no will can resist the captivating grip of the tickle monster -- as the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the emerald eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.");
 		// modify story state to reflect tickled molerat
 		story.eventFlags.molerat_tickled = true;
 		// add grue hub access to the array of choices the player currently has in the story,
 		// to be printed as the specific story paradigm directs
 		story.appendChoice("basement2_grue_hub");
+	}
+}
+/**
+ * The mighty amethyst LastLash e  be used on the mole to permanently open his third eye, doubling his magical prowess permanently at the cost of the madness that comes of protracted sight beyond the veil.
+ */
+export class LastLash extends Item {
+	constructor() {
+		super();
+		this.id = "last_lash";
+		this.name = "The Last Lash";
+		this.descriptor = {
+			"useOn": [
+				{
+					"mole": this.partVeil
+				}
+			],
+			"descriptionString": this.name+" is a brilliant amethyst eyelash from a gargantuan statue.  The air shimmers around it, and through it you can glimpse undreamt-of alien vistas.  It vibrates with a sort of crystalline anticipation when you bring it anywhere near your head and a hundred whispers just beyond hearing flood your mind."
+		}	
+	}
+	/**
+	 * Parts the veil for the mole permanently, increasing his magical power and also the amount of sanity damage taken.  It may also yield futher insight into the mysteries of the Deepness.
+	 * @param story the ViewController for the story
+	 */
+	partVeil(story) {
+		// write item use feedback
+		story.writeParagraph(".");
+		// modify story state to reflect parted veil
+		story.eventFlags.veil_parted = true;
+		// modify mole stats, doubling base and current pwr and halving base and current res
+		story.charactersDict.mole.stats.pwr *= 2;
+		story.charactersDict.mole.coreStats.pwr *= 2;
+		story.charactersDict.mole.stats.res /= 2;
+		story.charactersDict.mole.coreStats.res /= 2;
 	}
 }
 export class ItemManager {
