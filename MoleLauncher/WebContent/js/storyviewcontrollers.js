@@ -12,9 +12,15 @@ export class StoryViewController {
 			"grue": new Characters.Grue()
 		};
 		/**
-		 * Boolean flags regarding game switches e.g. molerat_tickled: true
+		 * Boolean flags regarding simple game switches e.g. molerat_tickled: true
 		 */
 		this.eventFlags = {};
+		/**
+		 * String event ids mapped to the number of times they have occurred
+		 */
+		this.eventCount = {
+			"daughter_ooze_conversations": 0
+		};
 		/**
 		 * An array of strings representing choices available to the player
 		 */

@@ -1,3 +1,5 @@
+import {Libifels} from "./libifels.js";
+
 export class Item {
 	contructor() {
 		this.id = null;
@@ -249,10 +251,43 @@ export class RustyUrn extends Item {
 			"useOn": [
 				{
 					"ochre.*ooze": this.deliverDaughterOoze
+				},
+				{
+					"character": this.daughterOozeConvo
+				},
+				{
+					"mole": this.daughterOozeConvo
+				},
+				{
+					"mooty.*wort": this.daughterOozeConvo
 				}
 			],
 			"descriptionString": this.name+" wiggles gently when left to its own devices and sloshes worryingly when touched."
 		}	
+	}
+	/**
+	 * The mole can talk with the daughter ooze and get closer to her... but he probably shouldn't if he wants those claws!
+	 * @param story the StoryViewController
+	 */
+	daughterOozeConvo(story) {
+		const cuteConvoText = "";
+		const roll = Libifels.rollDie(4);
+		switch(roll) {
+		case 1:
+			cuteConvoText += "You carefully open the urn and peer in at the viscous rust-colored gel inside.  Presently, it forms a pair of wide eyes to peer right back and a whisper from unseen lips (?) says \"Hoi! ^_^  My name is Gel (hard G).  Do you love me?  I love you!\"";
+			break;
+		case 2:
+			cuteConvoText += "Tipping the urn experimentally, you see the gel inside frantically clamber towards the bottom and increase its viscosity.  \"Please don't pour me out -- it's cozy in here!  Can we go on adventures together?  I love you, you know.\"";
+			break;
+		case 3:
+			cuteConvoText += "Tapping a digging claw on the side of the urn, you start back as a pair of emerald eyes sparkling with curiosity appear, gazing out at you.  A pair of scarlet-lacquered lips form a bit below the eyes, smiling sweetly, and kiss the inside of the urn where you touched it.  Abruptly, both eyes and lips disappear, and the ooze inside appears several shades pinker for a minute.  You can hear a faint giggling on the wind.";
+			break;
+		case 4:
+			cuteConvoText += "As you examine the transparent urn, your snoot pressed up against it, the ooze inside forms into a small humanoid woman wearing a flowy sundress.  She waves merrily and performs a graceful wiggly twirl.  You grin and clack your mighty claws together in appreciation, and she abruptly disappears into a shy blushy puddle.";
+			break;
+		}
+		story.writeParagraph(cuteConvoText);
+		story.eventCount.daughter_ooze_conversations += 1;
 	}
 	/**
 	 * Condemns the daughter ooze to doom and wins the fleeting favor of her parent.
@@ -265,12 +300,12 @@ export class RustyUrn extends Item {
 		// modify story state to reflect daughter slaughter
 		story.eventFlags.daughter_ooze_sacrificed = true;
 		// sting and stab
-		story.addToCharacterQuality("health", story.charactersDict.mole.stats.maxHP * 0.1);
-		// sting and stab, mentally
-		story.addToCharacterQuality("sanity", story.charactersDict.mole.stats.maxSanity * 0.1);
+		story.subtractFromCharacterQuality("health", story.charactersDict.mole.stats.maxHP * 0.1);
+		// sting and stab, mentally; the more the mole has bonded with her, the worse it hurts
+		story.subtractFromCharacterQuality("sanity", story.charactersDict.mole.stats.maxSanity * Math.max(story.eventCount.daughter_ooze_conversations / 10.0, 0.1));
 		// add Caustic Claws to mole equipment
 		story.addEquipment(story.charactersDict.mole, new CausticClaws());
-		// she's gone...
+		// she's gone forever... RIP cute slime girl
 		story.removeItem(story.charactersDict.mole, this);
 	}
 }
