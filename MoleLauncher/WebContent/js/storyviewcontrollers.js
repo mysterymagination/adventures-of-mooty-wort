@@ -142,6 +142,22 @@ export class StoryViewController {
 			this.itemManager.activeItemId = null;
 		}
 	}
+	/**
+	 * Adds the value to a character quality in the story viewmodel
+	 * @param qualityId string id of a character quality to change
+	 * @param value number value to add to the quality
+	 */
+	addToCharacterQuality(qualityId, value) {
+		console.log("There is no known way to add to character quality "+qualityId+" by "+value);
+	}
+	/**
+	 * Subtracts the value from a character quality in the story viewmodel
+	 * @param qualityId string id of a character quality to change
+	 * @param value number value to subtract from the quality
+	 */
+	subtractFromCharacterQuality(qualityId, value) {
+		console.log("There is no known way to subtract from character quality "+qualityId+" by "+value);
+	}
 }
 /**
  * StoryViewController subclass for writing story text passages into an Undum transcript
@@ -157,5 +173,29 @@ export class UndumStoryViewController extends StoryViewController {
 	appendChoice(choiceString) {
 		super.appendChoice(choiceString);
 		this.undumSystem.writeChoices(this.choiceStringArray);
+	}
+	addToCharacterQuality(qualityId, value) {
+		switch(qualityId) {
+		case "health":
+			this.charactersDict.mole.stats.hp += value; 
+			this.undumSystem.setQuality("health", story.charactersDict.mole.stats.hp);
+			break;
+		case "sanity":
+			this.charactersDict.mole.stats.sanity += value; 
+			this.undumSystem.setQuality("sanity", story.charactersDict.mole.stats.sanity);
+			break;
+		}
+	}
+	subtractFromCharacterQuality(qualityId, value) {
+		switch(qualityId) {
+		case "health":
+			this.charactersDict.mole.stats.hp -= value; 
+			this.undumSystem.setQuality("health", story.charactersDict.mole.stats.hp);
+			break;
+		case "sanity":
+			this.charactersDict.mole.stats.sanity -= value; 
+			this.undumSystem.setQuality("sanity", story.charactersDict.mole.stats.sanity);
+			break;
+		}
 	}
 }

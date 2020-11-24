@@ -265,11 +265,9 @@ export class RustyUrn extends Item {
 		// modify story state to reflect daughter slaughter
 		story.eventFlags.daughter_ooze_sacrificed = true;
 		// sting and stab
-		story.charactersDict.mole.stats.hp -= story.charactersDict.mole.stats.maxHP * 0.1; 
-		system.setQuality("health", story.charactersDict.mole.stats.hp);
+		story.addToCharacterQuality("health", story.charactersDict.mole.stats.maxHP * 0.1);
 		// sting and stab, mentally
-		story.charactersDict.mole.stats.sanity -= story.charactersDict.mole.stats.maxSanity * 0.1; 
-		system.setQuality("sanity", story.charactersDict.mole.stats.sanity);
+		story.addToCharacterQuality("sanity", story.charactersDict.mole.stats.maxSanity * 0.1);
 		// add Caustic Claws to mole equipment
 		story.addEquipment(story.charactersDict.mole, new CausticClaws());
 		// she's gone...

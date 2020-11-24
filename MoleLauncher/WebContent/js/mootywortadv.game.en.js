@@ -327,7 +327,7 @@ undum.game.situations = {
 						system.write(
 								"<p>Atop its crystal platform, the <a href='./sacrifice_ooze_daughter'>ochre ooze</a> quivers and bubbles and burbles with interest.  Hunger will erode its curiosity, however, and with it will go civility.  Best hurry up and get gone from here.</p>"
 						);
-						if(MoleUndum.isItemInInventory("rusty_urn")) {
+						if(MoleUndum.isItemInInventory(character.mole, "rusty_urn")) {
 							undum.game.storyViewController.writeParagraph("The rusty urn you got from the spider vibrates violently in your compartment; its frantic vibrations seem to be tugging you away from the writhing monstrous mass and you're almost certain you hear a smol voice whispering \"Please, no!\".");
 						}
 						system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
@@ -336,9 +336,9 @@ undum.game.situations = {
 						sacrifice_ooze_daughter : function(character, system, action) {
 							if (action) {
 								try {
-									const activeItem = undum.game.storyViewController.itemManager.activeItem;
-									if(activeItem) {
-										activeItem.useOn("ochre ooze");
+									const activeItemId = undum.game.storyViewController.itemManager.activeItemId;
+									if(activeItemId) {
+										MoleUndum.findInventoryItem(character.mole, activeItemId).useOn(undum.game.storyViewController, "ochre ooze");
 									}
 								} catch (err) {
 									console.log("error processing ooze daughter slaughter: "+err);
