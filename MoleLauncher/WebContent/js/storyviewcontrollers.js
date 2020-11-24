@@ -196,11 +196,11 @@ export class UndumStoryViewController extends StoryViewController {
 		switch(qualityId) {
 		case "health":
 			this.charactersDict.mole.stats.hp -= value; 
-			this.undumSystem.setQuality("health", story.charactersDict.mole.stats.hp);
+			this.undumSystem.setQuality("health", this.charactersDict.mole.stats.hp);
 			break;
 		case "sanity":
 			this.charactersDict.mole.stats.sanity -= value; 
-			this.undumSystem.setQuality("sanity", story.charactersDict.mole.stats.sanity);
+			this.undumSystem.setQuality("sanity", this.charactersDict.mole.stats.sanity);
 			break;
 		}
 	}

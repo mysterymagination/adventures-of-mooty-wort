@@ -270,7 +270,7 @@ export class RustyUrn extends Item {
 	 * @param story the StoryViewController
 	 */
 	daughterOozeConvo(story) {
-		const cuteConvoText = "";
+		let cuteConvoText = "";
 		const roll = Libifels.rollDie(4);
 		switch(roll) {
 		case 1:
