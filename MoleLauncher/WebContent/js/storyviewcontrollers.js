@@ -47,12 +47,10 @@ export class StoryViewController {
 		listItemTag.onclick = () => {
 			this.activateItem(item.id);
 		}
-		// todo: getting a crash from Undum because it tries to style specially using the href of any found anchor tags, so we can't leave href absent
-		//const anchorTag = document.createElement('a');
+		const anchorTag = document.createElement('a');
 		const textNode = document.createTextNode(item.name);
-		//anchorTag.appendChild(textNode);
-		//listItemTag.appendChild(anchorTag);
-		listItemTag.appendChild(textNode);
+		anchorTag.appendChild(textNode);
+		listItemTag.appendChild(anchorTag);
 		const listTag = document.getElementById('items_list');
 		listTag.appendChild(listItemTag);
 		character.inventory.push(item);
@@ -72,6 +70,55 @@ export class StoryViewController {
 			this.itemManager.activeItemId = null;
 		}
 		Libifels.removeItemFromInventory(character, item.id);
+	}
+	/**
+	 * Adds a piece of Equipment to the character's inventory and also equips it to them
+	 * @param character the Character object who should be receiving the Item
+	 * @param equipment the Equipment object we want to equip to the Character
+	 */
+	addEquipment(character, equipment) {
+		this.addItem(character, equipment);
+		this.equipItem(character, equipment);
+	}
+	/**
+	 * Removes a piece of Equipment from the character's inventory and also unequips it from them
+	 * @param character the Character object who should be receiving the Item
+	 * @param equipment the Equipment object we want to equip to the Character
+	 */
+	removeEquipment(character, equipment) {
+		this.removeItem(character, equipment);
+		this.unequipItem(character, equipment);
+	}
+	/**
+	 * Equips an item to a character and updates the model and view accordingly
+	 * @param character Character object to equip
+	 * @param equipment Equipment object in question
+	 */
+	equipItem(character, equipment) {
+		// view
+		const listItemTag = document.createElement('li');
+		listItemTag.id = equipment.id;
+		const textNode = document.createTextNode(equipment.name);
+		listItemTag.appendChild(textNode);
+		const listTag = document.getElementById('equipment_list');
+		listTag.appendChild(listItemTag);
+		// model
+		equipment.equipEffect(character);
+	}
+	/**
+	 * Unequips equipment from a character and updates the model and view accordingly
+	 * @param character Character object to equip
+	 * @param equipment Equipment object in question
+	 */
+	unequipItem(character, equipment) {
+		// view
+		const listItemTag = document.getElementById(equipment.id);
+		while (listItemTag.firstChild) {
+			listItemTag.removeChild(listItemTag.lastChild);
+		}
+		listItemTag.remove();
+		// model
+		equipment.unequipEffect(character);
 	}
 	/**
 	 * Marks an item as the active item in use in ItemManager and highlights it in the UI

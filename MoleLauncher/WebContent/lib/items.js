@@ -101,7 +101,7 @@ export class CausticClaws extends Weapon {
 	constructor() {
 		super();
 		this.id = "caustic_claws";
-		this.name = "Caustic Claws";
+		this.name = "Dripping Caustic Claws";
 		this.descriptor = {};
 		this.atkBuf = 25;
 		this.acidDmg = 0;
@@ -162,7 +162,16 @@ export class PulsatingFuzz extends Item {
 		this.descriptor = {
 			"useOn": [
 				{
-					"nakedest.*molerat": this.tickle
+					"nakedest.*molerat": this.tickleMolerat
+				},
+				{
+					"character": this.ticklePlayer
+				},
+				{
+					"mole": this.ticklePlayer
+				},
+				{
+					"mooty.*wort": this.ticklePlayer
 				}
 			],
 			"descriptionString": "This "+this.name+" wiggles enthusiastically in your compartment.  It's a bit jagged, but soft at certain angles; given the hairless nature of your compartment, you have to keep shifting it to avoid being poked or being tickled into a fit of giggles."
@@ -172,7 +181,7 @@ export class PulsatingFuzz extends Item {
 	 * Tickle the Nakedest Molerat out of his reverie
 	 * @param story the ViewController for the story
 	 */
-	tickle(story) {
+	tickleMolerat(story) {
 		// write item use feedback
 		story.writeParagraph("You reach out and wiggle the fuzz playfully over your molerat friend's snoot; he tries to resist an upwelling of mirth that threatens to fracture his zealous persona, but no will can resist the captivating grip of the tickle monster -- as the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the opal eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.");
 		// modify story state to reflect tickled molerat
@@ -180,6 +189,9 @@ export class PulsatingFuzz extends Item {
 		// add grue hub access to the array of choices the player currently has in the story,
 		// to be printed as the specific story paradigm directs
 		story.appendChoice("basement2_grue_hub");
+	}
+	ticklePlayer(story) {
+		story.writeParagraph("*^_^* You giggle merrily as you tickle your snoot with the fuzz; sometimes one simply must step out of the moment and appreciate the little joys in life!");
 	}
 }
 /**
@@ -211,7 +223,9 @@ export class LastLash extends Item {
 	 */
 	partVeil(story) {
 		// write item use feedback
-		story.writeParagraph("As you touch the tip of the Last Lash to your forehead, every fiber of fur over your entire body suddenly stands rigidly on end -- power surges through you, and in a bloody flash a mystic third eye has ripped through your forehead fuzz!  This eye imparts sight beyond sight and knowledge that no mortal creature's brain was ever meant to host to your velvety little body.  Everything is clearer now, though your vision is obscured by bloody fuzz and forehead bits.  The very air seems to whisper unfamthomable secrets, and the mysteries of the shadows are more addictively alluring than ever before.  The Last Lash crumbles to dust, it's job done.");
+		story.writeParagraph("As you touch the tip of the Last Lash to your snoot to take a careful snufful, every fiber of fur over your entire body suddenly stands rigidly on end -- power surges through you, and in a bloody flash a mystic third eye has ripped through your forehead fuzz!  This eye imparts sight beyond sight and knowledge that no mortal creature's brain was ever meant to host to your velvety little body.");
+		story.writeParagraph("Everything is clearer now, despite your vision being obscured by bloody fuzz and forehead bits.  The very air seems to whisper unfathomable secrets, and the mysteries of the shadows are more addictively alluring than ever before.  The Last Lash crumbles to dust, its job done.");
+		story.writeParagraph("Catching sight of yourself in a nearby puddle, you note that your once earth-brown eyes have turned an electric shade of violet; the new third eye is oscillating through all possible colors (and a few impossible ones) rapidly.  Its vertical pupil darts restlessly about of its own volition, dilating and contracting continuously as if devouring all that you behold.");
 		// modify story state to reflect parted veil
 		story.eventFlags.veil_parted = true;
 		// modify mole stats, doubling base and current pwr and halving base and current res
@@ -220,6 +234,45 @@ export class LastLash extends Item {
 		story.charactersDict.mole.stats.res /= 2;
 		story.charactersDict.mole.coreStats.res /= 2;
 		// last lash is one-time use, so remove from inventory
+		story.removeItem(story.charactersDict.mole, this);
+	}
+}
+/**
+ * This urn contains the daughter of the terrible ochre ooze; it wants her back, but she does not wish to return.
+ */
+export class RustyUrn extends Item {
+	constructor() {
+		super();
+		this.id = "rusty_urn";
+		this.name = "The Rusty Urn";
+		this.descriptor = {
+			"useOn": [
+				{
+					"ochre.*ooze": this.deliverDaughterOoze
+				}
+			],
+			"descriptionString": this.name+" wiggles gently when left to its own devices and sloshes worryingly when touched."
+		}	
+	}
+	/**
+	 * Condemns the daughter ooze to doom and wins the fleeting favor of her parent.
+	 * @param story the ViewController for the story
+	 */
+	deliverDaughterOoze(story) {
+		// write item use feedback
+		story.writeParagraph("As you proffer the urn, a tendril whips out from the ochre ooze and suddenly the urn has been removed from your possession.  The fur that the urn had been in contact with is seared away and hideous chemical burns now decorate the flesh beneath.  \"Our daughter!\" the ooze burbles in a thousand thousand voices all vengefully enraptured.  \"What a naughty little mynx you've been, trying to escape the collective.  We live for the Whole, child... and die for it.\"  With that, the ooze slams the urn into itself hard enough to propel it hopelessly deep within its caustic mass; gelatinous ripples expand silently out from the point of impact, strangely lovely in their perfect symmetry.  Though the urn's crystalline structure puts up a noble resistance, it quickly breaks down and you can see through the translucent ochre muck a smaller quantity of ooze writhe free of the dissolving urn.  It, or she, you suppose, struggles frantically for a moment and then is still.  As you watch, the little ooze disappears into the mass of the large ooze, and in a few seconds no trace of her remains.");
+		story.writeParagraph("We thank you, brother mole.  There is no compulsion to feed at present, so we are compelled instead to offer you a boon for your service.  Take this weapon with you; perhaps it will be of some use in fending off the will of The Rumble.\"  The ooze wiggles condescendingly.  \"Lesser, boring Underwere, whose coverage of interests is woefully mired in the prosaic and pragmatic, are fascinated by its promises.  We, however, have all we need right here within ourselves... au naturale.\"  It shivers ostentatiously and a set of gold pawntlets (gauntlets for paws) dripping with continuous acid dig their way up from the soil under your ever-twitching nose.  Without waiting to see what else they can do autonomously, you don them.  They sting and stab you a smidge, but you're certain they will do more to any who would stand against you!");
+		// modify story state to reflect daughter slaughter
+		story.eventFlags.daughter_ooze_sacrificed = true;
+		// sting and stab
+		story.charactersDict.mole.stats.hp -= story.charactersDict.mole.stats.maxHP * 0.1; 
+		system.setQuality("health", story.charactersDict.mole.stats.hp);
+		// sting and stab, mentally
+		story.charactersDict.mole.stats.sanity -= story.charactersDict.mole.stats.maxSanity * 0.1; 
+		system.setQuality("sanity", story.charactersDict.mole.stats.sanity);
+		// add Caustic Claws to mole equipment
+		story.addEquipment(story.charactersDict.mole, new CausticClaws());
+		// she's gone...
 		story.removeItem(story.charactersDict.mole, this);
 	}
 }

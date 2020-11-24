@@ -294,20 +294,9 @@ undum.game.situations = {
 						console.log("spider rolling status after we've stopped her rolling: " + undum.game.situations.basement1_bulbous_spider_hub.bRolling);
 
 						// player now has the ooze urn... hooray?
-						$("#items_list").append("\
-								<li>\
-								<div class='item' id='item_urn'>\
-								<a onclick='\
-								undum.removeHighlight($(\".item\"));\
-								undum.addHighlight($(\"#item_urn\"));\
-								libifels_undum.bUsingItem = true;\
-								libifels_undum.sUsedItemName = \"urn\";\
-								'>Rusty Urn of Ooze</a>\
-								</div>\
-						</li>");
+						undum.game.storyViewController.addItem(undum.game.storyViewController.charactersDict.mole, new Items.RustyUrn());
 						character.stringArrayInventory.push("rusty_urn");
 						system.doLink("basement1_bulbous_spider_hub");
-						//system.writeChoices(["basement1_bulbous_spider_hub"]);
 					},
 					canView: function (character, system, host) {
 						console.log("spider rolling status is " + undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling);
@@ -336,12 +325,26 @@ undum.game.situations = {
 				{
 					enter: function (character, system, from) {
 						system.write(
-								"<p>Atop its crystal platform, the ochre ooze quivers and bubbles and burbles with interest.  Hunger will erode its curiosity, however, and with it will go civility.  Best hurry up and get gone from here.</p>"
+								"<p>Atop its crystal platform, the <a href='./sacrifice_ooze_daughter'>ochre ooze</a> quivers and bubbles and burbles with interest.  Hunger will erode its curiosity, however, and with it will go civility.  Best hurry up and get gone from here.</p>"
 						);
+						if(MoleUndum.isItemInInventory("rusty_urn")) {
+							undum.game.storyViewController.writeParagraph("The rusty urn you got from the spider vibrates violently in your compartment; its frantic vibrations seem to be tugging you away from the writhing monstrous mass and you're almost certain you hear a smol voice whispering \"Please, no!\".");
+						}
 						system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
 					},
 					actions: {
-						bDaughterSacrified: false,
+						sacrifice_ooze_daughter : function(character, system, action) {
+							if (action) {
+								try {
+									const activeItem = undum.game.storyViewController.itemManager.activeItem;
+									if(activeItem) {
+										activeItem.useOn("ochre ooze");
+									}
+								} catch (err) {
+									console.log("error processing ooze daughter slaughter: "+err);
+								}
+							}
+						},
 						calculateHeading: function () {
 							if (this.bDaughterSacrified) {
 								return "The monstrous amalgamate ooze swells and contracts contentedly, ignoring you";
@@ -355,42 +358,6 @@ undum.game.situations = {
 					},
 					optionText: "The ooze oozes, patiently (at least for so long as it isn't hungry)...",
 					tags: ["character_interaction_hub"]
-				}
-		),
-		"basement1_ochre_ooze_give_urn": new undum.SimpleSituation(
-				"",
-				{
-					enter: function (character, system, from) {
-						system.write(
-								"<p>As you proffer the urn, a tendril whips out from the ochre ooze and suddenly the urn has been removed from your possession.  The fur that the urn had been in contact with is seared away and hideous chemical burns now decorate the flesh beneath.  \"Our daughter!\" the ooze burbles in a thousand thousand voices all vengefully enraptured.  \"What a naughty little mynx you've been, trying to escape the collective.  We live for the Whole, child... and die for it.\"  With that, the ooze slams the urn into itself hard enough to propel it hopelessly deep within its caustic mass; gelatinous ripples expand silently out from the point of impact, strangely lovely in their perfect symmetry.  Though the urn's crystalline structure puts up a noble resistance, it quickly breaks down and you can see through the translucent ochre muck a smaller quantity of ooze writhe free of the dissolving urn.  It, or she, you suppose, struggles frantically for a moment and then is still.  As you watch, the little ooze disappears into the mass of the large ooze, and in a few seconds no trace of her remains.</p>\
-								<p>\"We thank you, brother mole.  There is no compulsion to feed at present, so we are compelled instead to offer you a boon for your service.  Take this weapon with you; perhaps it will be of some use in fending off the will of The Rumble.\"  The ooze wiggles condescendingly.  \"Lesser, boring Underwere, whose coverage of interests is woefully mired in the prosaic and pragmatic, are fascinated by its promises.  We, however, have all we need right here within ourselves... au naturale.\"  It shivers ostentatiously and a set of gold pawntlets (gauntlets for paws) dripping with continuous acid dig their way up from the soil under your ever-twitching nose.  Without waiting to see what else they can do autonomously, you don them.</p>"
-						);
-						system.setQuality("health", character.qualities.health - character.stats.maxHealth * 0.1);
-						var urnIndex = character.stringArrayInventory.indexOf("rusty_urn");
-						character.stringArrayInventory.splice(urnIndex, 1);
-						$("#items_list").append("\
-								<li>\
-								<div class='item' id='item_claws'>\
-								<a onclick='\
-								undum.removeHighlight($(\".item\"));\
-								undum.addHighlight($(\"#item_claws\"));\
-								libifels_undum.bUsingItem = true;\
-								libifels_undum.sUsedItemName = \"claws\";\
-								'>Dripping Caustic Claws</a>\
-								</div>\
-						</li>");
-						character.stringArrayInventory.push("acid_claws");
-						character.stats.atk += 10;
-
-						// flip the sac switch
-						undum.game.situations.basement1_ochre_ooze_hub.actions.bDaughterSacrified = true;
-						// todo: push acid claw ability?
-					},
-					canView: function (character, system, host) {
-						return character.stringArrayInventory.includes("rusty_urn");
-					},
-					optionText: "The rusty urn you got from the spider vibrates violently in your compartment; it strikes you that the color was similar to the massive ooze before you.  Maybe you should offer it up?",
-					tags: ["ooze_oratory"]
 				}
 		),
 		"basement2_hub": new undum.SimpleSituation(
