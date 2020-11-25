@@ -1,5 +1,5 @@
 //imports
-import {MoleUndum} from "../lib/libifels_undum.js";
+import {Libifels} from "../lib/libifels.js";
 import * as Characters from "../lib/characters.js";
 import {Combat} from "../lib/combat.js";
 import {Ability} from "../lib/spellbook.js";
@@ -131,7 +131,7 @@ class MootyWortRpgMech {
 			this.populatePlayerCommandList(combatModel);
 		} else if(state === Combat.ControllerState.runEnemy) {
 			// stun status effect proc
-			if(MoleUndum.hasStatusEffect(combatModel.currentTurnOwner, "stun")) {
+			if(Libifels.hasStatusEffect(combatModel.currentTurnOwner, "stun")) {
 				// hijack selected ability and replace with PassStunned so that 
 				// stun interrupts the current action
 				combatModel.currentAISelectedAbility = new PassStunned();
@@ -767,7 +767,7 @@ class MootyWortRpgMech {
 			for(const id of tickedOffEffectIds) {
 				// we're done with this status effect in the ui, so go ahead and remove from model
 				console.log("status stack; removing status "+id+" from "+player.name);
-				MoleUndum.removeStatusEffectById(player, id);
+				Libifels.removeStatusEffectById(player, id);
 			}
 			tickedOffEffectIds.splice(0, tickedOffEffectIds.length);
 		}
@@ -778,7 +778,7 @@ class MootyWortRpgMech {
 			for(const id of tickedOffEffectIds) {
 				// we're done with this status effect in the ui, so go ahead and remove from model
 				console.log("status stack; removing status "+id+" from "+enemy.name);
-				MoleUndum.removeStatusEffectById(enemy, id);
+				Libifels.removeStatusEffectById(enemy, id);
 			}
 			tickedOffEffectIds.splice(0, tickedOffEffectIds.length);
 		}
@@ -928,9 +928,9 @@ class MootyWortRpgMech {
 	handleEnemyTurnComplete(combatModel) {
 		// set state to beginNewRound iff there are no more living enemies to process
 		// otherwise, advance turn owner to next enemy
-		var nextLivingEnemy = MoleUndum.findFirstLivingCharacter(
+		var nextLivingEnemy = Libifels.findFirstLivingCharacter(
 				combatModel.enemyParty, 
-				MoleUndum.findCharacterIndex(combatModel.enemyParty, combatModel.currentTurnOwner.id)
+				Libifels.findCharacterIndex(combatModel.enemyParty, combatModel.currentTurnOwner.id)
 		);
 		if(nextLivingEnemy !== undefined) {
 			combatModel.currentTurnOwner = nextLivingEnemy;
@@ -957,9 +957,9 @@ class MootyWortRpgMech {
 	handlePlayerTurnComplete(combatModel) {
 		// set state to runEnemy iff there are no more players to process
 		// otherwise, advance turn owner to next player
-		var nextLivingPlayer = MoleUndum.findFirstLivingCharacter(
+		var nextLivingPlayer = Libifels.findFirstLivingCharacter(
 				combatModel.playerParty, 
-				MoleUndum.findCharacterIndex(combatModel.playerParty, combatModel.currentTurnOwner.id)
+				Libifels.findCharacterIndex(combatModel.playerParty, combatModel.currentTurnOwner.id)
 		);
 		if(nextLivingPlayer !== undefined) {
 			combatModel.currentTurnOwner = nextLivingPlayer; 

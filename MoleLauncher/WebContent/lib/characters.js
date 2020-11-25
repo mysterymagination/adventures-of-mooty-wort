@@ -1,4 +1,4 @@
-import * as Lib from "./libifels_undum.js";
+import {Libifels} from "./libifels.js";
 import * as Spells from "./spellbook.js";
 
 export class Character {
@@ -513,7 +513,7 @@ export class YawningGod extends Character {
                 // todo: make this general by adding ability descriptor tags
                 //  such as "status_effect_add:<id of status effect we add>"
                 if(chosenAbility.id === "primordial_mandate") {
-                	if (Lib.MoleUndum.hasStatusEffect(this, "bloodlust")) {
+                	if (Libifels.hasStatusEffect(this, "bloodlust")) {
                 		// todo: logic for reselection?
                 		chosenAbility = this.entity.spellsDict["dummy_attack"];
                     }

@@ -1,5 +1,5 @@
 import * as Alchemy from "./alchemy.js";
-import {MoleUndum} from "./libifels_undum.js"
+import {Libifels} from "./libifels.js"
 
 export class Description {
 	constructor() {
@@ -323,7 +323,7 @@ export class Attack extends Ability {
 	}
 	calcDmg(sourceCharacter, targetCharacter) {
         // favor the STR since the attacker is the leading participant
-        return MoleUndum.prettyDarnRound(
+        return Libifels.prettyDarnRound(
         			Math.max(sourceCharacter.stats["atk"] * 2 - targetCharacter.stats["def"] / 4 + Math.random() * 10, 1)
         		);
     };
@@ -346,7 +346,7 @@ export class DummyAttack extends Ability {
 		DummyAttack.prototype.telegraph = new DummyAttackTelegraph();
 	}
 	calcDmg(sourceCharacter, targetCharacter) {
-        return MoleUndum.prettyDarnRound(
+        return Libifels.prettyDarnRound(
         			Math.max(sourceCharacter.stats["atk"] * 0.5 - targetCharacter.stats["def"] / 4 + Math.random() * 10, 1)
         		);
     };
@@ -412,7 +412,7 @@ export class Defend extends Ability {
 		this.targetType = Ability.TargetTypesEnum.personal;
 	}
     effect(sourceCharacter) {
-        MoleUndum.addUniqueStatusEffect(
+    	Libifels.addUniqueStatusEffect(
         	sourceCharacter, 
         	new Alchemy.Defended()
         );
@@ -472,7 +472,7 @@ export class MoleVenom extends Spell {
 	}
 	// methods are placed on the object prototype and shared between all instances
 	calcDmg(sourceChar, targetChar) {
-        return MoleUndum.prettyDarnRound(
+        return Libifels.prettyDarnRound(
         			Math.max(sourceChar.stats["pwr"] - targetChar.stats["res"], 1)
         	   );
     }
@@ -482,13 +482,13 @@ export class MoleVenom extends Spell {
         // mix up our poison...
         var poisonStatusEffect = new Alchemy.Poison();
         poisonStatusEffect.psnDmg = sourceChar.stats["pwr"] * 0.5;
-        MoleUndum.addUniqueStatusEffect(targetChar, poisonStatusEffect);
+        Libifels.addUniqueStatusEffect(targetChar, poisonStatusEffect);
 
         // MP cost
         this.processCost(sourceChar);
     }
 	generateFlavorText(sourceChar, targetChar) {
-        return "Not many realize that moles are venomous, because, being peaceful and lovey creatures, they so often choose not to employ it.  Most are willing even to risk death rather than risk becoming a killer, and thus will not use venom when fighting back against predators and similar common foebeasts.  When the sanctity of The Deepness is threatened and the ancient things from dark corners of mole memory stir, however... it is a time to kill.  In a flash and with a violent violet flourish, you flick out your veneom spurs and bury them deeply in the flesh of " + targetChar.name +", dealing "+this.dmg+" points of damage directly and flooding "+targetChar.getPronoun_possessive()+" veins with "+MoleUndum.getStatusEffectById("poison").psnDmg+" poison points per round!";
+        return "Not many realize that moles are venomous, because, being peaceful and lovey creatures, they so often choose not to employ it.  Most are willing even to risk death rather than risk becoming a killer, and thus will not use venom when fighting back against predators and similar common foebeasts.  When the sanctity of The Deepness is threatened and the ancient things from dark corners of mole memory stir, however... it is a time to kill.  In a flash and with a violent violet flourish, you flick out your veneom spurs and bury them deeply in the flesh of " + targetChar.name +", dealing "+this.dmg+" points of damage directly and flooding "+targetChar.getPronoun_possessive()+" veins with "+Libifels.getStatusEffectById("poison").psnDmg+" poison points per round!";
     }
 	getHint() {
 		return "Deals magical acid damage to a single target and leaves a corrosive poison that festers in their bloodstream for 3 rounds";
@@ -506,7 +506,7 @@ export class WarmestHug extends Spell {
 		this.displayCostInName();
 	}
 	calcDmg(sourceChar, targetChar) {
-	    return Math.max(MoleUndum.prettyDarnRound(sourceChar.stats["atk"] * 2, 1));
+	    return Math.max(Libifels.prettyDarnRound(sourceChar.stats["atk"] * 2, 1));
 	}
 	effect(sourceChar, targetChar) {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
@@ -539,7 +539,7 @@ export class WoollyShield extends Spell {
 		this.displayCostInName();
 	}
 	effect(sourceChar, targetChar) {
-		MoleUndum.addUniqueStatusEffect(targetChar, new Alchemy.WoolilyShielded(sourceChar));
+		Libifels.addUniqueStatusEffect(targetChar, new Alchemy.WoolilyShielded(sourceChar));
 
 	    // MP cost
 	    this.processCost(sourceChar);
@@ -563,7 +563,7 @@ export class BurrowFurrow extends Spell {
 		this.displayCostInName();
 	}
 	effect(sourceChar) {
-		MoleUndum.addUniqueStatusEffect(sourceChar, new Alchemy.Temper());
+		Libifels.addUniqueStatusEffect(sourceChar, new Alchemy.Temper());
 
 	    // MP cost
 	    this.processCost(sourceChar);
@@ -587,7 +587,7 @@ export class DeepMeditation extends Spell {
 		this.displayCostInName();
 	}
 	effect(sourceChar) {
-		MoleUndum.addUniqueStatusEffect(sourceChar, new Alchemy.ThirdEye());
+		Libifels.addUniqueStatusEffect(sourceChar, new Alchemy.ThirdEye());
 
 	    // MP cost
 	    this.processCost(sourceChar);
@@ -615,9 +615,9 @@ export class ShadowFlare extends Spell {
 	}
 	calcDmg(sourceChar, targetChar) {
 	    return Math.max(
-	    		MoleUndum.prettyDarnRound(
+	    		Libifels.prettyDarnRound(
 	    				10 * sourceChar.stats["pwr"] + 
-	    				MoleUndum.rollNDM(4,10)
+	    				Libifels.rollNDM(4,10)
 	    			), 
 	    		1);
 	}
@@ -647,14 +647,14 @@ export class MagmaBlast extends Spell {
 		this.displayCostInName();
 	}
 	calcDmg(sourceChar, targetChar) {
-	    return Math.max(MoleUndum.prettyDarnRound(sourceChar.stats["pwr"] + Math.random() * 21 + 10), 1);
+	    return Math.max(Libifels.prettyDarnRound(sourceChar.stats["pwr"] + Math.random() * 21 + 10), 1);
 	}
 	effect(sourceChar, targetChar) {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
 	    targetChar.stats["hp"] -= this.dmg;
 	    var burnEffect = new Alchemy.Burn();
 	    burnEffect.brnDmg = this.dmg * 0.5;
-	    MoleUndum.addUniqueStatusEffect(targetChar, burnEffect);
+	    Libifels.addUniqueStatusEffect(targetChar, burnEffect);
 
 	    // MP cost
 	    this.processCost(sourceChar);
@@ -677,12 +677,12 @@ export class StaticBolt extends Spell {
 		this.displayCostInName();
 	}
 	calcDmg(sourceChar, targetChar) {
-	    return Math.max(MoleUndum.prettyDarnRound(sourceChar.stats["pwr"] + MoleUndum.rollD20()), 1);
+	    return Math.max(Libifels.prettyDarnRound(sourceChar.stats["pwr"] + Libifels.rollD20()), 1);
 	}
 	effect(sourceChar, targetChar) {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
 	    targetChar.stats["hp"] -= this.dmg;
-	    MoleUndum.addUniqueStatusEffect(targetChar, new Alchemy.Stun());
+	    Libifels.addUniqueStatusEffect(targetChar, new Alchemy.Stun());
 
 	    // MP cost
 	    this.processCost(sourceChar);
@@ -724,7 +724,7 @@ export class TouchVoid extends Spell {
 		} else {
 			aspectDamage = sourceChar.stats["atk"] - 0.5 * targetChar.stats["def"];
 		}
-		return Math.max(MoleUndum.prettyDarnRound(aspectDamage), 1);
+		return Math.max(Libifels.prettyDarnRound(aspectDamage), 1);
 	}
 	effect(sourceChar, targetChar) {
 	    if(targetChar.stats["mp"] > 0) {
@@ -861,7 +861,7 @@ export class ChillBeyond extends Spell {
 		ChillBeyond.prototype.telegraph = new ChillBeyondTelegraph();
 	}
 	calcDmg(sourceChar, targetChar) {
-		return MoleUndum.prettyDarnRound(
+		return Libifels.prettyDarnRound(
 					Math.max(sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"], 1)
 				);
 	}
@@ -872,7 +872,7 @@ export class ChillBeyond extends Spell {
 		targetChar.stats["hp"] -= this.dmg;
 	    
 		// apply Freeze status
-		MoleUndum.addUniqueStatusEffect(targetChar, freezeStatusEffect);
+		Libifels.addUniqueStatusEffect(targetChar, freezeStatusEffect);
 
 	    // MP cost
 	    this.processCost(sourceChar);
@@ -916,7 +916,7 @@ export class ManyfoldEmbrace extends Spell {
 	    // idea is the source is transforming tentacles into mighty spiked cudgels
 		// using magic and then buffeting the target with them
 		return Math.max(
-				MoleUndum.prettyDarnRound(
+				Libifels.prettyDarnRound(
 					sourceChar.stats["atk"] + 0.5*sourceChar.stats["pwr"]
 					- 0.5*targetChar.stats["def"]), 1
 				);
@@ -963,7 +963,7 @@ export class Pestilence extends Spell {
 	}
 	calcDmg(sourceChar, targetChar) {
 		return Math.max(
-				MoleUndum.prettyDarnRound(
+				Libifels.prettyDarnRound(
 					sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"]), 1
 				);
 	}
@@ -976,9 +976,9 @@ export class Pestilence extends Spell {
 		    	this.dmg = this.calcDmg(sourceChar, targetChars[index]);
 		    	targetChars[index].stats["hp"] -= this.dmg;
 		    	// possibly apply poison
-		    	let roll = MoleUndum.rollPercentage();
+		    	let roll = Libifels.rollPercentage();
 		    	if(roll >= 50) {
-		    		MoleUndum.addUniqueStatusEffect(targetChars[index], poisonStatusEffect);
+		    		Libifels.addUniqueStatusEffect(targetChars[index], poisonStatusEffect);
 		    	}
 	    	}
 
@@ -1019,7 +1019,7 @@ export class PrimordialMandate extends Spell {
 	}
 	effect(sourceChar) {
 	    // bloodlust on self
-	    MoleUndum.addUniqueStatusEffect(sourceChar, new Alchemy.Bloodlust());
+		Libifels.addUniqueStatusEffect(sourceChar, new Alchemy.Bloodlust());
 	    	
 	    // MP cost
 	    this.processCost(sourceChar);
@@ -1091,8 +1091,8 @@ export class DarkStar extends Spell {
 	}
 	calcDmg(sourceChar, targetChar) {
 		return Math.max(
-				MoleUndum.prettyDarnRound(
-					2 * sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"] + MoleUndum.rollD20()), 1
+				Libifels.prettyDarnRound(
+					2 * sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"] + Libifels.rollD20()), 1
 				);
 	}
 	effect(sourceChar, targetChars) {

@@ -1,4 +1,4 @@
-import {MoleUndum} from "./libifels_undum.js"
+import {Libifels} from "./libifels.js"
 
 /**
  * A StatusEffect performs some behavior each round for a set duration in rounds.
@@ -61,10 +61,10 @@ export class WoolilyShielded extends StatusEffect {
 		WoolilyShielded.prototype.imageUrl = 'images/status_effects/woolilyshielded_effect.png';
 	}
 	effect(targetChar) {
-	    targetChar.stats["def"] += MoleUndum.prettyDarnRound(
+	    targetChar.stats["def"] += Libifels.prettyDarnRound(
     		Math.max(Math.max(this.sourceCharacter.stats["def"], this.sourceCharacter.stats["res"]), 1) * 2
     	);
-	    targetChar.stats["res"] += MoleUndum.prettyDarnRound(
+	    targetChar.stats["res"] += Libifels.prettyDarnRound(
 	    	Math.max(Math.max(this.sourceCharacter.stats["def"], this.sourceCharacter.stats["res"]), 1) * 2
 	    );
 	    //console.log("woolily shielded mole def is now "+targetChar.stats.def+"; core def is "+targetChar.coreStats.def);
