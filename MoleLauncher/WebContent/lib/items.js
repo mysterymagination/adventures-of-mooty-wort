@@ -170,7 +170,7 @@ export class PulsatingFuzz extends Item {
 					"character": this.ticklePlayer
 				},
 				{
-					"mole": this.ticklePlayer
+					"\s+mole\s+": this.ticklePlayer
 				},
 				{
 					"mooty.*wort": this.ticklePlayer
@@ -210,7 +210,7 @@ export class LastLash extends Item {
 					"character": this.partVeil
 				},
 				{
-					"mole": this.partVeil
+					"\s+mole\s+": this.partVeil
 				},
 				{
 					"mooty.*wort": this.partVeil
@@ -256,7 +256,7 @@ export class RustyUrn extends Item {
 					"character": this.daughterOozeConvo
 				},
 				{
-					"mole": this.daughterOozeConvo
+					"\s+mole\s+": this.daughterOozeConvo
 				},
 				{
 					"mooty.*wort": this.daughterOozeConvo

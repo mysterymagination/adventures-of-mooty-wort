@@ -460,8 +460,7 @@ undum.game.situations = {
 				{
 					enter: function (character, system, from) {
 						// so the idea here is that we'll have various convo trees to traverse with one root at a time (I guess?).  Each leaf will send us back here, and the convo topic will change based on response details or maybe just be advanced.  
-						if (undum.game.situations.basement2_grue_hub.actions.sQuestionTopic === "darkness") {
-							if (character.sMoleMajorDestiny === undefined) {
+						if (character.sMoleMajorDestiny === undefined) {
 								// default inititial handling and question
 								system.write(
 										"<p>As you touch the tip of your snuffly pink nose to the darkness, and then snuffle it, you are instantly enveloped.  Your entire life has been submerged in dank shadow, but this is more than the absence of light -- the darkness here pulses with nothing made manifest, like the beat of a missing heart.  You wiggle and scooch, but the world seems to have condensed to a single point in space.  Even still, something detaches itself from the gloom and creates space ahead of you from which to slither ever nearer.</p><p>\"Greetings, Deepness Scion.  Tell me, what is the purpose of deep places?\"</p>"
@@ -473,9 +472,9 @@ undum.game.situations = {
 										"<p>\"Have this small treasure and go with my blessing, moleson.  You may find it a lodestone to your current perception of reality, helping you to stand even when the ground drops out beneath you... and it will.\"</p><p>A heavy weight drops into your compartment, and in the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
 								)
 								// Grue cares nothing about the mole at this point and thus has no reason to kill him, but is also intrigued by his position on Darkness
-								undum.game.storyViewController.bGrueChallengeActivated = false;
+								undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 								// give character the obol
-								libifels.addItem("Odditine Obol");
+								undum.game.storyVieController.addItem(character.mole, new Items.OdditineObol());
 								// send the mole back to molerat hub
 								system.doLink("basement2_hub");
 							} else if (character.sMoleMajorDestiny === "king of the deep") {
@@ -484,7 +483,7 @@ undum.game.situations = {
 									system.write(
 											"<p>A sigh like a deflating bellows ruffles your fur, from all possible angles surrounding you simultaneously, and the Grue queries, \"Tell me -- if you found a crown in these depths, what sort of king would you be?\"</p>"
 									)
-									undum.game.situations.basement2_grue_hub.actions.sQuestionTopic = "crown";
+									
 									system.writeChoices(system.getSituationIdChoices("#grue_gab_crown"));
 								} else if (character.sMoleMinorDestiny === "tyrant") {
 									// grue follow-up for a rival king of the deep
@@ -492,9 +491,10 @@ undum.game.situations = {
 											"<p>Howling laughter buffets your from all angles, reminiscent of the fearsome sound of a tree tearing loose from its desperate grip on the earth before the relentless fury of a tornado.  \"What an intriguing specimen you are!  We will have much work to do together when the immediate threat is past.  Take this trinket and go, moleson.  It will anchor your mind to this world; the inexorable pull of all possible Elsewheres may consume you all the same, but this will give you a chance.\"</p><p>A heavy weight drops into your compartment, and in the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
 									)
 									// flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The Yawning God
-									undum.game.storyViewController.bGrueChallengeActivated = true;
+									undum.game.storyViewController.eventFlags.grue_challenge_activated = true;
 									// give character the obol
-									libifels.addItem("Odditine Obol");
+									// todo: creating items on the fly like this that are supposed to be unique is sloppy; it should be the case that we can only reach this gameplay path once, but the item instance sanity shouldn't depend on that.
+									undum.game.storyViewController.addItem(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								} else if (character.sMoleMinorDestiny === "groovy") {
@@ -503,9 +503,9 @@ undum.game.situations = {
 											"<p>Silence reigns for an uncomfortable span.  Soon your fur stands on end as you get the distinct impression that you are being heavily considered by an unknown and likely dangerous observer; it's the same feeling you get when passing a serpent's den.  Finally, a humid sigh issuing from much, much too close passes over you and frizzes your fur 'til you're a spherical fluffball.  \"How interesting, moleson.  Well, they always say those who do not desire leadership are the best leaders; don't pass up the opportunity too lightly if it comes your way... Take this coin with you -- it will help you to ground your mind even when psychic gravity turns off!\"</p><p>A heavy weight drops into your compartment, and in the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
 									)
 									// flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The Yawning God
-									undum.game.storyViewController.bGrueChallengeActivated = false;
+									undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 									// give character the obol
-									libifels.addItem("Odditine Obol");
+									undum.game.storyViewController.addItem(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								} else if (character.sMoleMinorDestiny === "paladin") {
@@ -516,7 +516,7 @@ undum.game.situations = {
 									// flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The Yawning God
 									// No obol this time since the Grue will recognize the mole as a dangerous enemy and would prefer that he go mad and fail 
 									// to inherit The Yawning God's power rather than become a potentially insurmountable foe
-									undum.game.storyViewController.bGrueChallengeActivated = true;
+									undum.game.storyViewController.eventFlags.grue_challenge_activated = true;
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								}
@@ -530,7 +530,7 @@ undum.game.situations = {
 											"<p>Your hackles rise and a fearful lightning bolt shoots down your spine as it becomes abundantly obvious that something out in the darkness is weighing your worth.  From all possible angles at once.  Finally, the voice rumbles, \"A fair stance.  Conservative, perhaps, but careful regarding a subject that demands care.  Hm.  Well, I tire of you; begone.\"</p><p>In the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
 									)
 									// Grue favors the mole as a potential puppet here, but only if he's legit -- defeating The Yawning God without the obol is a necessary test
-									undum.game.storyViewController.bGrueChallengeActivated = false;
+									undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								} else if (character.sMoleMinorDestiny === "enlightener") {
@@ -539,7 +539,7 @@ undum.game.situations = {
 											"<p>A bark like the rebuke of all Hell's lords become one in their arrogant disdain flattens you against an adjacent wall. \"Fool!  The Surfacers must not know of our splendor, lest they should covet it and infect our shadows with their sun.  They are not fit for our mysteries, and neither are you!\"</p><p>In the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
 									)
 									// Grue recognizes the mole as a terrible threat to the integrity of The Deepness
-									undum.game.storyViewController.bGrueChallengeActivated = true;
+									undum.game.storyViewController.eventFlags.grue_challenge_activated = true;
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								} else if (character.sMoleMinorDestiny === "tingler") {
@@ -548,20 +548,13 @@ undum.game.situations = {
 											"<p>Rumbles quake your surroundings and resonate perfectly with your molecules, all of them, such that every tuft of fur and every drop of blood hums along. \"I know that feeling well, moleson.  We are like-minded, you and I, quivering with pleasure before mysteries of all stripes.  Remember, though, that not every moment can be pleasure.  You must be prepared for war; it draws near.\"  You get the distinct impression that the presence in the room has moved well within your bubble of personal space.</p><p>A heavy weight drops into your compartment, and in the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
 									)
 									// Grue likes the mole genuinely and wants him to survive
-									undum.game.storyViewController.bGrueChallengeActivated = false;
+									undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 									// give character the obol
-									libifels.addItem("Odditine Obol");
+									undum.game.storyViewController.addItem(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								}
-							} /* end of eldritch delver major destiny*/
-						}
-					},
-					actions: {
-						/**
-						 * String representation of Grue's current line of questioning of the mole
-						 */
-						sQuestionTopic: "darkness",
+							} /* end of eldritch delver major destiny*/				
 					},
 					optionText: "An ominous darkness pulses beyond the pit-beneath-a-molerat...",
 					tags: ["character_interaction_hub"]
@@ -641,7 +634,7 @@ undum.game.situations = {
 				}
 		),
 		"basement2_grue_convo_crown_ruthless": new undum.SimpleSituation(
-				"<p></p>",
+				"",
 				{
 					enter: function (character, system, from) {
 						// mod character to reflect the moleson's desire for tyrant status
@@ -649,7 +642,7 @@ undum.game.situations = {
 						system.doLink("basement2_grue_hub");
 					},
 					optionText: function (character, system, situation) {
-						return "I would rule with an " + (character.stringArrayInventory.includes("acid_claws") ? "acidic" : "iron") + " digging claw -- I would suffer no compromises with the surfacers, snuffing out their precious sun if they encroach upon The Deepness."
+						return "I would rule with an " + (Libifels.isItemInInventory(character.mole, "caustic_claws") ? "acidic" : "iron") + " digging claw -- I would suffer no compromises with the surfacers, snuffing out their precious sun if they encroach upon The Deepness."
 					},
 					tags: ["grue_gab_crown"]
 				}
@@ -719,7 +712,7 @@ undum.game.situations = {
 								undum.game.storyViewController.writeParagraph(yawningGodVictoryString);	
 								// todo: so the dark Promises approach works, but it's wretchedly unintuitive for what we're making it do here specifically, and Undum story paradigm in general.  Simply passing a string id indicating what location/context the player should be returned to after combat (situation id in Undum) into combat and then call a storyViewController abstraction like travelTo(id) which for Undum would inoke doLink(situation id) would be much easier and clearer.
 								var promiseOfDarkness = new Promise((resolver) => {
-									if(undum.game.storyViewController.bGrueChallengeActivated) {
+									if(undum.game.storyViewController.eventFlags.grue_challenge_activated) {
 										// transition to the grue fight 
 										var grueApproachethString = "Something's veeeery wrong; the darkness surrounding you and the ruins of your smitten foe is purring.  Your insticts beg you to flee, but a quick glance around reveals that the darkness has solidified betwixt you and the exit tunnel whence you came into this outré nightmare.";
 										undum.game.storyViewController.writeParagraph(grueApproachethString);	

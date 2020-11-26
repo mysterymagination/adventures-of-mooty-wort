@@ -48,6 +48,7 @@ export class StoryViewController {
 	 * @param item the Item object we want to add to the Character
 	 */
 	addItem(character, item) {
+		// todo: check that they don't already have something with this id
 		const listItemTag = document.createElement('li');
 		listItemTag.id = item.id;
 		listItemTag.onclick = () => {
@@ -67,6 +68,7 @@ export class StoryViewController {
 	 * @param item Item object to match and remove from the inventory
 	 */
 	removeItem(character, item) {
+		// todo: check if the character actually has an item with this id
 		const listItemTag = document.getElementById(item.id);
 		while (listItemTag.firstChild) {
 			listItemTag.removeChild(listItemTag.lastChild);
