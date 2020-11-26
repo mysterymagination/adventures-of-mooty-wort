@@ -346,7 +346,7 @@ undum.game.situations = {
 							}
 						},
 						calculateHeading: function () {
-							if (this.bDaughterSacrified) {
+							if (undum.game.storyViewController.eventFlags.daughter_ooze_sacrificed) {
 								return "The monstrous amalgamate ooze swells and contracts contentedly, ignoring you";
 							} else {
 								return "An ochre ooze quivers nearby, somehow looking at your hungrily despite lacking eyes";
@@ -395,8 +395,13 @@ undum.game.situations = {
 									Take of my flesh a horned crown<br />\
 									'Neath sea of night all light shall drown\
 									</div>\
-									<p>A quiver runs down your spine as you read these words, and something atavistic in your innermost being stirs.  Peering at the edges of the gem, where it is hidden again by impassable slate, you can make out what could be a fold of flesh with minute slots that suggest hair follicles.  An eyelid, perhaps, and the gem itself a gargantuan eye?  A lone gossamer strand of cultivated amethyst remains as its <a href='./take_eyelash'>last eyelash</a>.</p>"
-							);
+									<p>A quiver runs down your spine as you read these words, and something atavistic in your innermost being stirs.  Peering at the edges of the gem, where it is hidden again by impassable slate, you can make out what could be a fold of flesh with minute slots that suggest hair follicles.  An eyelid, perhaps, and the gem itself a gargantuan eye?</p>"
+									); 
+							if(!undum.game.storyViewController.eventFlags.last_lash_taken) {
+								system.write(
+									"<p>A lone gossamer strand of cultivated amethyst remains as its <a href='./take_eyelash'>last eyelash</a>.</p>"
+								);
+							}
 						},
 						"take_eyelash": function (character, system, action) {
 							try {
@@ -405,6 +410,7 @@ undum.game.situations = {
 											"<p>You carefully pluck the impossibly delicate crystal from its socket and place it snuggly in your compartment.</p>"
 									);
 									undum.game.storyViewController.addItem(character.mole, new Items.LastLash());
+									undum.game.storyViewController.eventFlags.last_lash_taken = true;
 								}
 							} catch(err) {
 								console.log("error taking Last Lash: "+err);
@@ -474,7 +480,7 @@ undum.game.situations = {
 								// Grue cares nothing about the mole at this point and thus has no reason to kill him, but is also intrigued by his position on Darkness
 								undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 								// give character the obol
-								undum.game.storyVieController.addItem(character.mole, new Items.OdditineObol());
+								undum.game.storyViewController.addItem(character.mole, new Items.OdditineObol());
 								// send the mole back to molerat hub
 								system.doLink("basement2_hub");
 							} else if (character.sMoleMajorDestiny === "king of the deep") {
@@ -585,12 +591,15 @@ undum.game.situations = {
 				}
 		),
 		"basement2_grue_convo_grow_secrets": new undum.SimpleSituation(
-				"<p>A carronade of sound like the weaponized wail of tearing metal surrounded by a thunderclap rolls over you, presumably a bark of laughter.  \"Secrets, eh?  You'll find more than enough of those down here, to be sure.\"  Something slithers 'round your rump and casually rips a clump of fur free, then uses it to tickle your footpaws as it retracts back into the void.  \"Lost am I now, amidst wandrous wondering and wondrous wandering of a cerebral nature.  Does he hunt secret things to expand esotericism, casting shadows longer than ever, or to burn them all away with some such light of <i>truth</i>?  And which of these serves me?  Functional truth is whatever we choose to believe, after all, and as such light can be an infection vector as easily as a sterilizer...\"</p>",
+				"",
 				{
 					enter: function (character, system, from) {
+						system.write(
+								"<p>A carronade of sound like the weaponized wail of tearing metal surrounded by a thunderclap rolls over you, presumably a bark of laughter.  \"Secrets, eh?  You'll find more than enough of those down here, to be sure.\"  Something slithers 'round your rump and casually rips a clump of fur free, then uses it to tickle your footpaws as it retracts back into the void.  \"Lost am I now, amidst wandrous wondering and wondrous wandering of a cerebral nature.  Does he hunt secret things to expand esotericism, casting shadows longer than ever, or to burn them all away with some such light of <i>truth</i>?  And which of these serves me?  Functional truth is whatever we choose to believe, after all, and as such light can be an infection vector as easily as a sterilizer...\"</p>"
+						);
 						// mod character to reflect the moleson's curious mystery
 						character.sMoleMajorDestiny = "eldritch delver";
-						system.getSituationIdChoices("#basement2_grue_convo_grow_secrets_elaboration_on_usage");
+						system.writeChoices(system.getSituationIdChoices("#basement2_grue_convo_grow_secrets_elaboration_on_usage"));
 					},
 					optionText: "Deep places, dark corners, out-of-the-way alleys -- these are the soil in which secrets grow best",
 					tags: ["grue_gab_purpose_deeps"]
