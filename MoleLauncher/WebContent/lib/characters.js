@@ -332,7 +332,7 @@ export class Grue extends Character {
                 
                 // set abl probabilities as floating point percentages; default to mostly buffing and hugging to death
                 var ablProbsConfig = {
-                	"touch_of_the_void": 0.5,
+                	"touch_of_void": 0.5,
                 	"brass_lantern": 0.3,
                 	"chill_beyond": 0.15,
                 	"consume": 0.05
@@ -340,20 +340,20 @@ export class Grue extends Character {
                 if(this.stats.hp <= this.stats.maxHP * 0.75 && 
                 		this.stats.hp > this.stats.maxHP * 0.5) {
                 	// now we wanna increase chances of freezing player
-                	ablProbsConfig["touch_of_the_void"] = 0.2;
+                	ablProbsConfig["touch_of_void"] = 0.2;
                 	ablProbsConfig["brass_lantern"] = 0.35;
                 	ablProbsConfig["chill_beyond"] = 0.4;
                 	ablProbsConfig["consume"] = 0.05;
                 } else if (this.stats.hp <= this.stats.maxHP * 0.5 &&
                 		this.stats.hp > this.stats.maxHP * 0.25) {
                 	// never mind the fondling and maybe freezing further, just burn!
-                	ablProbsConfig["touch_of_the_void"] = 0.0;
+                	ablProbsConfig["touch_of_void"] = 0.0;
                 	ablProbsConfig["brass_lantern"] = 0.6;
                 	ablProbsConfig["chill_beyond"] = 0.2;
                 	ablProbsConfig["consume"] = 0.2;
                 } else if (this.stats.hp <= this.stats.maxHP * 0.25) {
                 	// F E A S T
-                	ablProbsConfig["touch_of_the_void"] = 0.0;
+                	ablProbsConfig["touch_of_void"] = 0.0;
                 	ablProbsConfig["brass_lantern"] = 0.4;
                 	ablProbsConfig["chill_beyond"] = 0.0;
                 	ablProbsConfig["consume"] = 0.6;
@@ -367,12 +367,12 @@ export class Grue extends Character {
                 
                 // make sure we can afford the cost, else use MP steal
                 if(!this.canAffordCost(chosenAbility)) {
-                	chosenAbility = this.entity.spellsDict["touch_of_the_void"];
+                	chosenAbility = this.entity.spellsDict["touch_of_void"];
                 }
                 
                 /// install target if necessary ///
                 if(chosenAbility.targetType === Spells.Ability.TargetTypesEnum.singleTarget) {    
-                    if(chosenAbility === this.entity.spellsDict["touch_of_the_void"]) {
+                    if(chosenAbility.id === "touch_of_void") {
                     	// this one's all about mage draining
                     	chosenTarget = combat.playerParty[0];
                     	for(let character of combat.playerParty) {

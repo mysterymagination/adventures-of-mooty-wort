@@ -873,7 +873,7 @@ export class ChillBeyond extends Spell {
 			targetChar.stats["hp"] -= this.dmg;
 		    
 			// apply Freeze status
-			Libifels.addUniqueStatusEffect(targetChar, freezeStatusEffect);
+			Libifels.addUniqueStatusEffect(targetChar, new Alchemy.Defenseless());
 		}
 
 	    // MP cost

@@ -287,8 +287,9 @@ undum.game.situations = {
 								"<p>As she comes down the far side of the tunnel, and as soon after her direction reverses as you can manage, you shove your shovel-like claw beneath her spinnerets.  With a *crunch*, the memory of which will sicken you for years to come, her mighty momentum is zeroed out on your paw.  As soon as she has a good few legs on the ground she hops away as if burned.</p>\
 								<p>\"Ooh, wow!  Watch that wandering paw, mister.  But, um, thank you for rescuing me!\" she chitters, her fangs and complicated-looking razor-edged mouth-parts clacking upsettingly and a blush the fell scarlet of moonlit blood spreading over her cephalothorax.  \"This blasted urn has brought me nothing but trouble.  Would you like it?  Here, take it with my compliments!\" She hastily shoves the rusty urn into your compartment and skuttles away, her eyes still rolling in the cycle of her erstwhile dizzy purgatory.</p>"
 						);
+						undum.game.storyViewController.subtractFromCharacterQuality("health", character.mole.stats.maxHP * 0.4);
 
-						// now that she's bee unrolled, we want to update the flag and option text
+						// now that she's been unrolled, we want to update the flag and option text
 						undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling = false;
 						//undum.game.situations.basement1_bulbous_spider_hub.actions.updateOptionText();
 						console.log("spider rolling status after we've stopped her rolling: " + undum.game.situations.basement1_bulbous_spider_hub.bRolling);
@@ -799,7 +800,7 @@ undum.game.situations = {
 //(iframe?) or maybe more simply a div that we can shove into the transcript UI someplace or maybe overlay on top of it like a modal.
 
 /* The id of the starting situation. */
-undum.game.start = "basement3_encounter_grue";//"main";
+undum.game.start = "main";
 
 /* Here we define all the qualities that our characters could
  * possess. We don't have to be exhaustive, but if we miss one out then
