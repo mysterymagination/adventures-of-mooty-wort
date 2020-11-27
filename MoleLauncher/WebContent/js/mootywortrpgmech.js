@@ -159,7 +159,7 @@ class MootyWortRpgMech {
 				case Ability.TargetTypesEnum.allEnemies:
 					targetCharacters = combatModel.playerParty;
 					selectedAbility.effect(combatModel.currentTurnOwner, targetCharacters);
-					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.playerParty);
+					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.currentTurnOwner, combatModel.playerParty);
 					break;
 				case Ability.TargetTypesEnum.singleTarget:
 					targetCharacters = [combatModel.currentTargetCharacter];

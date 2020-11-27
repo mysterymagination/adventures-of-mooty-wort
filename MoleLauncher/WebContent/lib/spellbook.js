@@ -701,7 +701,7 @@ export class StaticBolt extends Spell {
  */
 export class TouchVoid extends Spell {
 	constructor() {
-		super({ id: "touch_of_the_void", name: "Touch of the Void" });
+		super({ id: "touch_of_void", name: "Touch of the Void" });
 		TouchVoid.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		TouchVoid.prototype.cost = { "mp": 0, "hp": 15 };
 		TouchVoid.prototype.telegraph = new TouchVoidTelegraph();
@@ -865,19 +865,21 @@ export class ChillBeyond extends Spell {
 					Math.max(sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"], 1)
 				);
 	}
-	effect(sourceChar, targetChar) {
+	effect(sourceChar, targetChars) {
 		
-		// apply damage to target
-		this.dmg = this.calcDmg(sourceChar, targetChar);
-		targetChar.stats["hp"] -= this.dmg;
-	    
-		// apply Freeze status
-		Libifels.addUniqueStatusEffect(targetChar, freezeStatusEffect);
+		// apply damage to all targets
+		for(const targetChar of targetChars) {
+			this.dmg = this.calcDmg(sourceChar, targetChar);
+			targetChar.stats["hp"] -= this.dmg;
+		    
+			// apply Freeze status
+			Libifels.addUniqueStatusEffect(targetChar, freezeStatusEffect);
+		}
 
 	    // MP cost
 	    this.processCost(sourceChar);
 	}
-	generateFlavorText(sourceChar, targetChar) {
+	generateFlavorText(sourceChar, targetChars) {
 	    return "While the darkness in your beloved Deepness gets warmer as it closes in thanks to the proximity to magma, the darkness of the infinite Void beyond all worlds is a place of unfathomable cold.  With all the gentleness and decorum of a voratious graveworm, this alien darkness wriggles into the comforting blanket of blackness surrounding you.  Its inception robs your world of warmth entirely and in an instant you are frozen solid!  Refracted through the infinite facets of the glacial translucence is a rictus grin bursting with fangs... this is quite terrifying, as is the "+this.dmg+" points of damage it brings!"; 
 	}
 }
@@ -1181,7 +1183,7 @@ export class HeartOfDarkness extends Entity {
 	constructor() {
 		super({id: "heart_of_darkness", name: "Heart of Darkness"});
 		HeartOfDarkness.prototype.spellsDict = {
-				"touch_of_the_void": new TouchVoid(),
+				"touch_of_void": new TouchVoid(),
 				"consume": new Consume(),
 				"brass_lantern": new BrassLantern(),
 				"chill_beyond": new ChillBeyond(),

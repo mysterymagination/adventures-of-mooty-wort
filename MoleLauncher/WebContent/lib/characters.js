@@ -298,8 +298,8 @@ export class Grue extends Character {
                 var chosenTarget = undefined;
 
                 // defaults for outliers and statistical points of interest
-                var playerLeastDefense = chosenTarget;
-                var playerLeastHP = chosenTarget;
+                var playerLeastDefense = combat.playerParty[0];
+                var playerLeastHP = combat.playerParty[0];
                 var playerWithTargetBuff = undefined;
                 var anyPlayerOffenseBuffed = false;
                 var maxHealth = true; // assume true and let contradiction flip it
@@ -392,7 +392,7 @@ export class Grue extends Character {
                 /// end target installation block ///
 
                 combat.currentAISelectedAbility = chosenAbility;
-                combatModel.currentTargetCharacter = chosenTarget
+                combat.currentTargetCharacter = chosenTarget
                 return chosenAbility;
             }// if role is enemy
         }// if role is defined
