@@ -281,13 +281,13 @@ export class Grue extends Character {
 	    Grue.prototype.entity = new Spells.HeartOfDarkness();
 	    this.spriteIdx = 0;
 	    this.battleSprites = [
-	    	this.battleSpritePath+"/grue/grue_nightmare_0.png",
-	    	this.battleSpritePath+"/grue/grue_nightmare_1.png",
-	    	this.battleSpritePath+"/grue/grue_nightmare_2.png",
-	    	this.battleSpritePath+"/grue/grue_nightmare_3.png",
-	    	this.battleSpritePath+"/grue/grue_nightmare_4.png",
-	    	this.battleSpritePath+"/grue/grue_nightmare_5.png",
-	    	this.battleSpritePath+"/grue/grue_nightmare_6.png"
+	    	this.battleSpritePath+"/grue/grue0.png",
+	    	this.battleSpritePath+"/grue/grue1.png",
+	    	this.battleSpritePath+"/grue/grue2.png",
+	    	this.battleSpritePath+"/grue/grue3.png",
+	    	this.battleSpritePath+"/grue/grue4.png",
+	    	this.battleSpritePath+"/grue/grue5.png",
+	    	this.battleSpritePath+"/grue/grue6.png"
 	    	];
 	}
 	runAI(combat, role) {
