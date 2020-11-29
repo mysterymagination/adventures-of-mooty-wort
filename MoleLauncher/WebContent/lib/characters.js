@@ -281,14 +281,19 @@ export class Grue extends Character {
 	    Grue.prototype.entity = new Spells.HeartOfDarkness();
 	    this.spriteIdx = 0;
 	    this.battleSprites = [
-	    	this.battleSpritePath+"/grue/grue0.png",
-	    	this.battleSpritePath+"/grue/grue1.png",
-	    	this.battleSpritePath+"/grue/grue2.png",
-	    	this.battleSpritePath+"/grue/grue3.png",
-	    	this.battleSpritePath+"/grue/grue4.png",
-	    	this.battleSpritePath+"/grue/grue5.png",
-	    	this.battleSpritePath+"/grue/grue6.png"
-	    	];
+	    	this.battleSpritePath+"/grue/grue.png"
+	    ];
+	    /**
+	     * *sigh* the glowy eyes weren't glowy ENOUGH with transparency applied, but I needed the ghostly whisperyness to the rest of 'im... so I'm making a whole new layer for the *drumroll* nightglo eyes!
+	     */
+	    this.battleOverlaySprites = [
+	    	this.battleSpritePath+"/grue/nightglo0.png",
+	    	this.battleSpritePath+"/grue/nightglo1.png",
+	    	this.battleSpritePath+"/grue/nightglo2.png",
+	    	this.battleSpritePath+"/grue/nightglo3.png",
+	    	this.battleSpritePath+"/grue/nightglo4.png",
+	    	this.battleSpritePath+"/grue/nightglo5.png"
+	    ];
 	}
 	runAI(combat, role) {
         if (role) {
