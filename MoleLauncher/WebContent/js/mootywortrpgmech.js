@@ -244,6 +244,7 @@ class MootyWortRpgMech {
 					let fps = sheetData.frameRate;
 					// load spritesheet image file
 					let fxImage = new Image();
+					// todo: should use Promises or passed in callbacks to enforce serial processing of spell FX spritesheets
 					fxImage.addEventListener('load', function() {
 						// show spell anim in overlay
 						let frameSkipCount = 0;
