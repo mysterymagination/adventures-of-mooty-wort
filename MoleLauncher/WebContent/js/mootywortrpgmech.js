@@ -672,14 +672,33 @@ class MootyWortRpgMech {
 			enemyCharacterSprite_Canvas.id = enemyCharacter.id;
 			enemyCharacterSprite_Canvas.className = "character-image-enemy";
 			// need an HTML Image whose load cb will draw itself on the Canvas
-			var enemyCharacterSprite_Image = new Image(); // Create new Image element
-			enemyCharacterSprite_Image.addEventListener('load', function() {
-				// execute drawImage statements now that image has loaded
-				enemyCharacterSprite_Canvas.width = this.width;
-				enemyCharacterSprite_Canvas.height = this.height;
-				enemyCharacterSprite_Canvas.getContext('2d').drawImage(this, 0, 0, enemyCharacterSprite_Canvas.width, enemyCharacterSprite_Canvas.height);
-			}, false);
-			enemyCharacterSprite_Image.src = enemyCharacter.battleSprites[0];
+			let primarySpritePromise = new Promise((resolver) => {
+				let enemyCharacterSprite_Image = new Image();
+				enemyCharacterSprite_Image.addEventListener('load', function() {
+					resolver(enemyCharacterSprite_Image);
+				});
+				enemyCharacterSprite_Image.src = enemyCharacter.battleSprites[0];
+			}).then((spriteImage) => {
+				// base sprite load image promise has resolved, so we can setup the canvas dimens and render the base image
+				enemyCharacterSprite_Canvas.width = spriteImage.width;
+				enemyCharacterSprite_Canvas.height = spriteImage.height;
+				// save/restore dance apparently lets us change how drawing works for the canvas for only as many draw calls as occur between save and restore... idk why they didn't just let you pass meta draw commands into the draw call like a normal person, but this works!  Come to think of it, if this was OpenGL it'd be a similar rot(π/2) of the programmer's head situation in terms of intuitive API, except waaaay crazier and like a hundred extra steps so maybe I should be glad it's as simple as this.
+				let ctx = enemyCharacterSprite_Canvas.getContext('2d');
+				ctx.save();
+				ctx.globalAlpha = 0.5;
+				ctx.drawImage(spriteImage, 0, 0, enemyCharacterSprite_Canvas.width, enemyCharacterSprite_Canvas.height);
+				ctx.restore();
+				return new Promise((resolver) => {
+					let overlayImage = new Image();
+					overlayImage.addEventListener('load', function() {
+						resolver(overlayImage);
+					});
+					overlayImage.src = enemyCharacter.battleOverlaySprites[0];
+				});
+			}).then((overlayImage) => {
+				// overlay image load promise has resolved, so we can render the it on our already setup canvas
+				enemyCharacterSprite_Canvas.getContext('2d').drawImage(overlayImage, 0, 0, enemyCharacterSprite_Canvas.width, enemyCharacterSprite_Canvas.height);
+			});
 			enemyCharacterSprite_Span.appendChild(enemyCharacterSprite_Canvas);
 
 			let enemyCharacterName_Span = document.createElement("span");
