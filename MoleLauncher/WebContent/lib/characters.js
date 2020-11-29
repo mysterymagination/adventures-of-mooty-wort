@@ -280,6 +280,7 @@ export class Grue extends Character {
 	    Object.assign(this.coreStats, this.stats);
 	    Grue.prototype.entity = new Spells.HeartOfDarkness();
 	    this.spriteIdx = 0;
+	    this.overlaySpriteIdx = 0; 
 	    this.battleSprites = [
 	    	this.battleSpritePath+"/grue/grue.png"
 	    ];

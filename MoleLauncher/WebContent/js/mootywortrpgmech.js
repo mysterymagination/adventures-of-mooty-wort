@@ -244,7 +244,7 @@ class MootyWortRpgMech {
 					let fps = sheetData.frameRate;
 					// load spritesheet image file
 					let fxImage = new Image();
-					// todo: should use Promises or passed in callbacks to enforce serial processing of spell FX spritesheets
+					// todo: should use Promises or passed in callbacks to enforce serial processing of spell FX spritesheets; I guess it'll be something like defining a promise outside the loop along with the boilerplate behavior function that'll also serve for the first promise and then on down the chain, then in the loop we'll append .then()s with said behavior function.  That should give use a fully constructed chain that enforces the serialization we want, and kicks off automatically when the current setup function exits.
 					fxImage.addEventListener('load', function() {
 						// show spell anim in overlay
 						let frameSkipCount = 0;
@@ -582,6 +582,48 @@ class MootyWortRpgMech {
 		}
 	}
 	/**
+	 * Loads up the character's current base and overlay sprites, and draws them to the canvas
+	 * @param character the Character object whose sprite is to be rendered
+	 * @param canvas the Canvas on which we're drawing
+	 */
+	loadCharacterSprites(character, canvas) {
+		// kick off image loading promise chain
+		let baseSpritePromise = new Promise((resolver) => {
+			let baseImage = new Image();
+			baseImage.addEventListener('load', function() {
+				resolver(baseImage);
+			});
+			baseImage.src = character.battleSprites[0];
+		}).then((baseSpriteImage) => {
+			// base sprite load image promise has resolved, so we can setup the canvas dimens and render the base image
+			canvas.width = baseSpriteImage.width;
+			canvas.height = baseSpriteImage.height;
+			// save/restore dance apparently lets us change how drawing works for the canvas for only as many draw calls as occur between save and restore
+			let ctx = canvas.getContext('2d');
+			ctx.save();
+			ctx.globalAlpha = 0.5;
+			ctx.drawImage(baseSpriteImage, 0, 0, canvas.width, canvas.height);
+			ctx.restore();
+			return new Promise((resolver, rejector) => {
+				if(character.battleOverlaySprites) {
+					let overlaySource = character.battleOverlaySprites[character.overlaySpriteIdx];
+					let overlayImage = new Image();
+					overlayImage.addEventListener('load', function() {
+						resolver(overlayImage);
+					});
+					overlayImage.src = overlaySource;
+				} else {
+					rejector("no overlay sprites exist for character id: "+character.id);
+				}
+			});
+		}).then((overlaySpriteImage) => {
+			// overlay image load promise has resolved, so we can render the it on our already setup canvas
+			canvas.getContext('2d').drawImage(overlaySpriteImage, 0, 0, canvas.width, canvas.height);
+		}, (rejectionReason) => {
+			console.log(rejectionReason);
+		});
+	}
+	/**
 	 * Set up the battle UI, associating character objects with their associated HTML elements 
 	 * @param combatModel the current Combat object
 	 */
@@ -671,34 +713,7 @@ class MootyWortRpgMech {
 			let enemyCharacterSprite_Canvas = document.createElement("canvas");
 			enemyCharacterSprite_Canvas.id = enemyCharacter.id;
 			enemyCharacterSprite_Canvas.className = "character-image-enemy";
-			// need an HTML Image whose load cb will draw itself on the Canvas
-			let primarySpritePromise = new Promise((resolver) => {
-				let enemyCharacterSprite_Image = new Image();
-				enemyCharacterSprite_Image.addEventListener('load', function() {
-					resolver(enemyCharacterSprite_Image);
-				});
-				enemyCharacterSprite_Image.src = enemyCharacter.battleSprites[0];
-			}).then((spriteImage) => {
-				// base sprite load image promise has resolved, so we can setup the canvas dimens and render the base image
-				enemyCharacterSprite_Canvas.width = spriteImage.width;
-				enemyCharacterSprite_Canvas.height = spriteImage.height;
-				// save/restore dance apparently lets us change how drawing works for the canvas for only as many draw calls as occur between save and restore... idk why they didn't just let you pass meta draw commands into the draw call like a normal person, but this works!  Come to think of it, if this was OpenGL it'd be a similar rot(π/2) of the programmer's head situation in terms of intuitive API, except waaaay crazier and like a hundred extra steps so maybe I should be glad it's as simple as this.
-				let ctx = enemyCharacterSprite_Canvas.getContext('2d');
-				ctx.save();
-				ctx.globalAlpha = 0.5;
-				ctx.drawImage(spriteImage, 0, 0, enemyCharacterSprite_Canvas.width, enemyCharacterSprite_Canvas.height);
-				ctx.restore();
-				return new Promise((resolver) => {
-					let overlayImage = new Image();
-					overlayImage.addEventListener('load', function() {
-						resolver(overlayImage);
-					});
-					overlayImage.src = enemyCharacter.battleOverlaySprites[0];
-				});
-			}).then((overlayImage) => {
-				// overlay image load promise has resolved, so we can render the it on our already setup canvas
-				enemyCharacterSprite_Canvas.getContext('2d').drawImage(overlayImage, 0, 0, enemyCharacterSprite_Canvas.width, enemyCharacterSprite_Canvas.height);
-			});
+			this.loadCharacterSprites(enemyCharacter, enemyCharacterSprite_Canvas);
 			enemyCharacterSprite_Span.appendChild(enemyCharacterSprite_Canvas);
 
 			let enemyCharacterName_Span = document.createElement("span");
