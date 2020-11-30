@@ -200,6 +200,39 @@ class MootyWortRpgMech {
 		}
 	}
 	/**
+	 * Load up and run through animating a spritesheet
+	 * @param sheetData JSON config data describing one or more spritesheets and how they should be animated
+	 */
+	animateSpriteSheet(resolver, sheetData) {
+		let fps = sheetData.frameRate;
+		// load spritesheet image file
+		let fxImage = new Image();
+		fxImage.addEventListener('load', function() {
+			// show spell anim in overlay
+			let frameSkipCount = 0;
+			let frameIdx = 0;
+			let sheetAnimFn = function(elapsedTime) {
+				if (frameSkipCount == 0) {
+					// action frame!
+					rpgMechHandle.drawSpellFxFrame(fxImage, sheetData, frameIdx, overlayCanvas);
+					frameIdx++;
+				}
+				if (frameIdx < sheetData.frameCount) {
+					frameSkipCount++;
+					// skip a number of frames equal to the frames/second we're likely to get from requestAnimationFrame() (60fps) minus the desired frames/second for this particular animation
+					if(frameSkipCount >= 60 - fps) {
+						frameSkipCount = 0;
+					}
+					window.requestAnimationFrame(sheetAnimFn);
+				} else {
+					resolver();
+				}
+			}
+			window.requestAnimationFrame(sheetAnimFn);
+		}, false);
+		fxImage.src = sheetData.resName;
+	}
+	/**
 	 * Makes the spell FX overlay canvas visible and populates it with
 	 * the FX data associated with the given spellId available on the given character
 	 * @param sourceCharacter the Character object casting the spell, in whose Entity.spellDict 
@@ -239,50 +272,23 @@ class MootyWortRpgMech {
 				} else if(fxType === "spritesheet_array") {
 					sheetDataArray = fxData.resArray;
 				}
-				var sheetDataIdx = 0;
+				// todo: should use Promises or passed in callbacks to enforce serial processing of spell FX spritesheets; I guess it'll be something like defining a promise outside the loop along with the boilerplate behavior function that'll also serve for the first promise and then on down the chain, then in the loop we'll append .then()s with said behavior function.  That should give use a fully constructed chain that enforces the serialization we want, and kicks off automatically when the current setup function exits.  We also shouldn't need to track the spritesheet idx we're looking at since we can simply append a final .then() after the loop that runs the pain anim at the end of the chain.
+				let animPromise = new Promise((resolver) => {
+					animateSpriteSheet(resolver, sheetData);
+				});
 				for(let sheetData of sheetDataArray) {
-					let fps = sheetData.frameRate;
-					// load spritesheet image file
-					let fxImage = new Image();
-					// todo: should use Promises or passed in callbacks to enforce serial processing of spell FX spritesheets; I guess it'll be something like defining a promise outside the loop along with the boilerplate behavior function that'll also serve for the first promise and then on down the chain, then in the loop we'll append .then()s with said behavior function.  That should give use a fully constructed chain that enforces the serialization we want, and kicks off automatically when the current setup function exits.
-					fxImage.addEventListener('load', function() {
-						// show spell anim in overlay
-						let frameSkipCount = 0;
-						let frameIdx = 0;
-						let sheetAnimFn = function(elapsedTime) {
-							if (frameSkipCount == 0) {
-								// action frame!
-								rpgMechHandle.drawSpellFxFrame(fxImage, sheetData, frameIdx, overlayCanvas);
-								frameIdx++;
-							}
-
-							if (frameIdx < sheetData.frameCount) {
-								window.requestAnimationFrame(sheetAnimFn);
-							} else {
-								// inc sheet count and only hide overlay/forward cb
-								// once we're done with all spritesheets we need to anim
-								sheetDataIdx++;
-								if(sheetDataIdx === sheetDataArray.length) {
-									rpgMechHandle.hideSpellEffectOverlay();
-									// forward our cb to the next anim
-									rpgMechHandle.playPainAnimation(
-											targetCharacters, callbackFunction
-									);
-								}
-							}
-
-							frameSkipCount++;
-							// skip a number of frames equal to the frames/second we're likely to get from
-							// requestAnimationFrame() (60fps) minus the desired frames/second for this particular
-							// animation
-							if(frameSkipCount >= 60 - fps) {
-								frameSkipCount = 0;
-							}
-						}
-						window.requestAnimationFrame(sheetAnimFn);
-					}, false);
-					fxImage.src = sheetData.resName;
+					animPromise = animPromise.then(() => {
+						// todo: wait, who/what us resolver at this point?  I know .then returns an implicit promise that the next .then provides a resolver to (or can), but can we refer to it within the previous resolver?
+						animateSpriteSheet(resolver, sheetData);
+					});
 				}
+				animPromise.then(() => {
+					rpgMechHandle.hideSpellEffectOverlay();
+					// forward our cb to the next anim
+					rpgMechHandle.playPainAnimation(
+							targetCharacters, callbackFunction
+					);
+				});
 			} else {
 				// follow through with endpoint transition out of anim pipeline immediately  
 				// since we won't actually be animating anything
@@ -373,12 +379,27 @@ class MootyWortRpgMech {
 	refreshCharacterCanvas(uiEntry) {
 		// redraw sprite 
 		var context2d = uiEntry.canvasElement.getContext('2d');
-		var characterImage = new Image();
-		characterImage.addEventListener('load', function() {
-			context2d.clearRect(0, 0, uiEntry.canvasElement.width, uiEntry.canvasElement.height);
-			context2d.drawImage(characterImage, 0, 0);
+		new Promise((resolver) => {
+			const characterImage = new Image();
+			characterImage.addEventListener('load', function() {
+				context2d.clearRect(0, 0, uiEntry.canvasElement.width, uiEntry.canvasElement.height);
+				context2d.save();
+				context2d.globalAlpha = 0.5;
+				context2d.drawImage(characterImage, 0, 0);
+				context2d.restore();
+				resolver();
+			});
+			characterImage.src = uiEntry.characterObj.battleSprites[uiEntry.characterObj.spriteIdx];
+		}).then(() => {
+			// now that base sprite has been redrawn, apply any overlay sprite
+			if(uiEntry.characterObj.battleOverlaySprites) {
+				const characterImage = new Image();
+				characterImage.addEventListener('load', function() {
+					context2d.drawImage(characterImage, 0, 0);
+				});
+				characterImage.src = uiEntry.characterObj.battleOverlaySprites[uiEntry.characterObj.overlaySpriteIdx];
+			}
 		});
-		characterImage.src = uiEntry.characterObj.battleSprites[uiEntry.characterObj.spriteIdx];
 	}
 	/**
 	 * Restores all character images as each canvas's only content
