@@ -278,8 +278,10 @@ class MootyWortRpgMech {
 				});
 				for(let sheetData of sheetDataArray) {
 					animPromise = animPromise.then(() => {
-						// todo: wait, who/what us resolver at this point?  I know .then returns an implicit promise that the next .then provides a resolver to (or can), but can we refer to it within the previous resolver?
-						animateSpriteSheet(resolver, sheetData);
+						// todo: wait, who/what us resolver at this point?  I know .then returns an implicit promise that the next .then provides a resolver to (or can), but can we refer to it within the previous resolver?  Looking at the Promise.then() docs, and after collecting my sanity from the floor, I think there's multiple crazy ways to do something like this but what miiiiight be clearest is to return a new unresolved Promise from here as we did in the basesprite -> overlay sprite chain; that way the next .then will be providing a resolver to this new promise and we can call it/pass it as needed.
+						return new Promise((resolver) => {
+							animateSpriteSheet(resolver, sheetData);
+						});
 					});
 				}
 				animPromise.then(() => {
