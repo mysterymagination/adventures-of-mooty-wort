@@ -201,9 +201,12 @@ class MootyWortRpgMech {
 	}
 	/**
 	 * Load up and run through animating a spritesheet
+	 * @param resolver a Promise resolver function
 	 * @param sheetData JSON config data describing one or more spritesheets and how they should be animated
+	 * @param canvas the canvas to draw the spritesheet on
 	 */
-	animateSpriteSheet(resolver, sheetData) {
+	animateSpriteSheet(resolver, sheetData, canvas) {
+		let rpgMechHandle = this;
 		let fps = sheetData.frameRate;
 		// load spritesheet image file
 		let fxImage = new Image();
@@ -214,7 +217,7 @@ class MootyWortRpgMech {
 			let sheetAnimFn = function(elapsedTime) {
 				if (frameSkipCount == 0) {
 					// action frame!
-					rpgMechHandle.drawSpellFxFrame(fxImage, sheetData, frameIdx, overlayCanvas);
+					rpgMechHandle.drawSpellFxFrame(fxImage, sheetData, frameIdx, canvas);
 					frameIdx++;
 				}
 				if (frameIdx < sheetData.frameCount) {
@@ -272,15 +275,13 @@ class MootyWortRpgMech {
 				} else if(fxType === "spritesheet_array") {
 					sheetDataArray = fxData.resArray;
 				}
-				// todo: should use Promises or passed in callbacks to enforce serial processing of spell FX spritesheets; I guess it'll be something like defining a promise outside the loop along with the boilerplate behavior function that'll also serve for the first promise and then on down the chain, then in the loop we'll append .then()s with said behavior function.  That should give use a fully constructed chain that enforces the serialization we want, and kicks off automatically when the current setup function exits.  We also shouldn't need to track the spritesheet idx we're looking at since we can simply append a final .then() after the loop that runs the pain anim at the end of the chain.
-				let animPromise = new Promise((resolver) => {
-					animateSpriteSheet(resolver, sheetData);
-				});
+				// create a resolved promise as a launchpad for our chain generation
+				let animPromise = Promise.resolve();
 				for(let sheetData of sheetDataArray) {
 					animPromise = animPromise.then(() => {
-						// todo: wait, who/what us resolver at this point?  I know .then returns an implicit promise that the next .then provides a resolver to (or can), but can we refer to it within the previous resolver?  Looking at the Promise.then() docs, and after collecting my sanity from the floor, I think there's multiple crazy ways to do something like this but what miiiiight be clearest is to return a new unresolved Promise from here as we did in the basesprite -> overlay sprite chain; that way the next .then will be providing a resolver to this new promise and we can call it/pass it as needed.
+						// forward a new promise on to be the next link in the promise chain
 						return new Promise((resolver) => {
-							animateSpriteSheet(resolver, sheetData);
+							rpgMechHandle.animateSpriteSheet(resolver, sheetData, overlayCanvas);
 						});
 					});
 				}
@@ -288,7 +289,7 @@ class MootyWortRpgMech {
 					rpgMechHandle.hideSpellEffectOverlay();
 					// forward our cb to the next anim
 					rpgMechHandle.playPainAnimation(
-							targetCharacters, callbackFunction
+						targetCharacters, callbackFunction
 					);
 				});
 			} else {
@@ -386,6 +387,7 @@ class MootyWortRpgMech {
 			characterImage.addEventListener('load', function() {
 				context2d.clearRect(0, 0, uiEntry.canvasElement.width, uiEntry.canvasElement.height);
 				context2d.save();
+				// todo: only the enemy canvas is meant to be 0.5 specifically, so we'll need an opacity bound to character viewmodel someplace, i.e. in uiEntry.baseOpacity
 				context2d.globalAlpha = 0.5;
 				context2d.drawImage(characterImage, 0, 0);
 				context2d.restore();
@@ -430,6 +432,7 @@ class MootyWortRpgMech {
 			var lastFrameTime = undefined;
 			var frameCount = 0;
 			var characterImage = new Image();
+			// todo: need to handle our base vs. overlay battle sprites here
 			characterImage.addEventListener('load', function() {
 				// ok, we've got our sprite image ref afresh
 				// start shake anim
