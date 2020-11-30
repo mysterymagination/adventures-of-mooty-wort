@@ -387,8 +387,7 @@ class MootyWortRpgMech {
 			characterImage.addEventListener('load', function() {
 				context2d.clearRect(0, 0, uiEntry.canvasElement.width, uiEntry.canvasElement.height);
 				context2d.save();
-				// todo: only the enemy canvas is meant to be 0.5 specifically, so we'll need an opacity bound to character viewmodel someplace, i.e. in uiEntry.baseOpacity
-				context2d.globalAlpha = 0.5;
+				context2d.globalAlpha = uiEntry.baseOpacity;
 				context2d.drawImage(characterImage, 0, 0);
 				context2d.restore();
 				resolver();
@@ -611,8 +610,10 @@ class MootyWortRpgMech {
 	 * Loads up the character's current base and overlay sprites, and draws them to the canvas
 	 * @param character the Character object whose sprite is to be rendered
 	 * @param canvas the Canvas on which we're drawing
+	 * @param baseOpacity the opacity to be used along with draw commands for the base sprite
+	 * @param overlayOpacity the opacity to be used along with draw commands for the overlay sprite
 	 */
-	loadCharacterSprites(character, canvas) {
+	loadCharacterSprites(character, canvas, baseOpacity, overlayOpacity) {
 		// kick off image loading promise chain
 		let baseSpritePromise = new Promise((resolver) => {
 			let baseImage = new Image();
@@ -671,15 +672,6 @@ class MootyWortRpgMech {
 			playerCharacterSprite_Span.className = 'character-image-player-span';
 			let playerCharacterSprite_Canvas = document.createElement("canvas");
 			playerCharacterSprite_Canvas.className = "character-image-player";
-			// need an HTML Image whose load cb will draw itself on the Canvas
-			var playerCharacterSprite_Image = new Image(); // Create new Image element
-			playerCharacterSprite_Image.addEventListener('load', function() {
-				// execute drawImage statements now that image has loaded
-				playerCharacterSprite_Canvas.width = this.width;
-				playerCharacterSprite_Canvas.height = this.height;
-				playerCharacterSprite_Canvas.getContext('2d').drawImage(this, 0, 0, playerCharacterSprite_Canvas.width, playerCharacterSprite_Canvas.height);
-			}, false);
-			playerCharacterSprite_Image.src = playerCharacter.battleSprites[0];
 			playerCharacterSprite_Span.appendChild(playerCharacterSprite_Canvas);
 			playerCharacterImageContainer_Div.appendChild(playerCharacterSprite_Span);
 
@@ -726,8 +718,12 @@ class MootyWortRpgMech {
 					"hpElement": playerCharacterCurrentHp_Span,
 					"hpProgressElement": playerCharacterHp_Progress,
 					"mpElement": playerCharacterCurrentMp_Span,
-					"mpProgressElement": playerCharacterMp_Progress
+					"mpProgressElement": playerCharacterMp_Progress,
+					"baseOpacity": 0.85
 			};
+			
+			// now that we've got all our containers set up and metadata populated, load up actual content!
+			this.refreshCharacterCanvas(this.characterUiDict[playerCharacter.id]);
 		}
 		// enemy party UI from player perspective
 		var enemyCharacterImageContainer_Div = document.getElementById("enemySpritesContainer");
@@ -757,7 +753,8 @@ class MootyWortRpgMech {
 					"characterObj": enemyCharacter,
 					"canvasElement": enemyCharacterSprite_Canvas, 
 					"canvasContainerElement": enemyCharacterSprite_Span,
-					"hpProgressElement": enemyCharacterHp_Progress
+					"hpProgressElement": enemyCharacterHp_Progress,
+					"baseOpacity": 0.5
 			};
 		}
 
