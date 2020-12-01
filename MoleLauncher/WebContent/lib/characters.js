@@ -260,6 +260,7 @@ export class Mole extends Character {
         Object.assign(this.coreStats, this.stats);
 		this.entity = new Spells.Burrower();
 		this.spriteIdx = 0;
+		this.baseOpacity = 0.85;
 		this.battleSprites = [this.battleSpritePath+"/mole/stoic_determination.jpg"];
 	}
 }
@@ -281,6 +282,8 @@ export class Grue extends Character {
 	    Grue.prototype.entity = new Spells.HeartOfDarkness();
 	    this.spriteIdx = 0;
 	    this.overlaySpriteIdx = 0; 
+	    this.baseOpacity = 0.5;
+	    this.overlayOpacity = 1.0;
 	    this.battleSprites = [
 	    	this.battleSpritePath+"/grue/grue.png"
 	    ];
@@ -421,6 +424,7 @@ export class YawningGod extends Character {
 		Object.assign(this.coreStats, this.stats);
 	    YawningGod.prototype.entity = new Spells.EldritchHorror();
 	    this.spriteIdx = 0;
+	    this.baseOpacity = 0.5;
 	    this.battleSprites = [
 	    	this.battleSpritePath+"/yawning_god/yawning_god_mk4.jpg"
 	    ];

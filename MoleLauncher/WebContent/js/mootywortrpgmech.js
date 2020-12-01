@@ -39,6 +39,10 @@ class MootyWortRpgMech {
 		 * Callback function or possibly Resolver function for a Promise our combat subsystem is wrapped by, if any, to be called upon combat completion
 		 */
 		this.resultFn = null;
+		/**
+		 * Combat data model
+		 */
+		this.combatDriver = null;
 	}
 
 	/**
@@ -49,12 +53,12 @@ class MootyWortRpgMech {
 	 */
 	enterCombat(configObj) {
 		// gamelogic
-		var combatDriver = new Combat(configObj);
+		this.combatDriver = new Combat(configObj);
 		// assign callback/resolver if any for combat resolution
 		this.resultFn = configObj.resultFn;
 		// setup UI
 		this.clearBattleUi();
-		this.createBattleUi(combatDriver);
+		this.createBattleUi(this.combatDriver);
 		// start loading music
 		this.battleMusic.src = configObj.musicUrl;
 		this.battleMusic.loop = true;
@@ -63,7 +67,7 @@ class MootyWortRpgMech {
 			this.battleMusic.play();
 		});
 		// kick off combat 
-		this.combatLoop(combatDriver);
+		this.combatLoop(this.combatDriver);
 	}
 	/**
 	 * Call stepCombat() async so we can establish a loop that can loopback at any point from any place without
@@ -377,42 +381,6 @@ class MootyWortRpgMech {
 		reticleImage.src = "images/reticle.png";
 	}
 	/**
-	 * Restores the character image as its only canvas content
-	 */
-	refreshCharacterCanvas(uiEntry) {
-		// redraw sprite 
-		var context2d = uiEntry.canvasElement.getContext('2d');
-		new Promise((resolver) => {
-			const characterImage = new Image();
-			characterImage.addEventListener('load', function() {
-				context2d.clearRect(0, 0, uiEntry.canvasElement.width, uiEntry.canvasElement.height);
-				context2d.save();
-				context2d.globalAlpha = uiEntry.baseOpacity;
-				context2d.drawImage(characterImage, 0, 0);
-				context2d.restore();
-				resolver();
-			});
-			characterImage.src = uiEntry.characterObj.battleSprites[uiEntry.characterObj.spriteIdx];
-		}).then(() => {
-			// now that base sprite has been redrawn, apply any overlay sprite
-			if(uiEntry.characterObj.battleOverlaySprites) {
-				const characterImage = new Image();
-				characterImage.addEventListener('load', function() {
-					context2d.drawImage(characterImage, 0, 0);
-				});
-				characterImage.src = uiEntry.characterObj.battleOverlaySprites[uiEntry.characterObj.overlaySpriteIdx];
-			}
-		});
-	}
-	/**
-	 * Restores all character images as each canvas's only content
-	 */
-	refreshCharacterCanvases() {
-		for(let [characterId, uiEntry] of Object.entries(this.characterUiDict)) {
-			this.refreshCharacterCanvas(uiEntry);
-		}
-	}
-	/**
 	 * Plays out the pain state wiggle and flash red animation
 	 * on the given character UI data's canvas
 	 * @param characters an array of Character objects whose ids can be used to lookup UI data
@@ -607,6 +575,14 @@ class MootyWortRpgMech {
 		}
 	}
 	/**
+	 * Restores all character images as each canvas's only content
+	 */
+	refreshCharacterCanvases() {
+		for(const character of this.combatDriver.playerParty.concat(this.combatDriver.enemyParty)) {
+			this.loadCharacterSprites(character, this.characterUiDict[character.id].canvasElement, character.baseOpacity, character.overlayOpacity);
+		}
+	}
+	/**
 	 * Loads up the character's current base and overlay sprites, and draws them to the canvas
 	 * @param character the Character object whose sprite is to be rendered
 	 * @param canvas the Canvas on which we're drawing
@@ -614,6 +590,7 @@ class MootyWortRpgMech {
 	 * @param overlayOpacity the opacity to be used along with draw commands for the overlay sprite
 	 */
 	loadCharacterSprites(character, canvas, baseOpacity, overlayOpacity) {
+		let ctx = canvas.getContext('2d');
 		// kick off image loading promise chain
 		let baseSpritePromise = new Promise((resolver) => {
 			let baseImage = new Image();
@@ -626,9 +603,8 @@ class MootyWortRpgMech {
 			canvas.width = baseSpriteImage.width;
 			canvas.height = baseSpriteImage.height;
 			// save/restore dance apparently lets us change how drawing works for the canvas for only as many draw calls as occur between save and restore
-			let ctx = canvas.getContext('2d');
 			ctx.save();
-			ctx.globalAlpha = 0.5;
+			ctx.globalAlpha = baseOpacity;
 			ctx.drawImage(baseSpriteImage, 0, 0, canvas.width, canvas.height);
 			ctx.restore();
 			return new Promise((resolver, rejector) => {
@@ -645,7 +621,10 @@ class MootyWortRpgMech {
 			});
 		}).then((overlaySpriteImage) => {
 			// overlay image load promise has resolved, so we can render the it on our already setup canvas
+			ctx.save();
+			ctx.globalAlpha = overlayOpacity;
 			canvas.getContext('2d').drawImage(overlaySpriteImage, 0, 0, canvas.width, canvas.height);
+			ctx.restore;
 		}, (rejectionReason) => {
 			console.log(rejectionReason);
 		});
@@ -672,6 +651,7 @@ class MootyWortRpgMech {
 			playerCharacterSprite_Span.className = 'character-image-player-span';
 			let playerCharacterSprite_Canvas = document.createElement("canvas");
 			playerCharacterSprite_Canvas.className = "character-image-player";
+			this.loadCharacterSprites(playerCharacter, playerCharacterSprite_Canvas, 0.85, 1.0);
 			playerCharacterSprite_Span.appendChild(playerCharacterSprite_Canvas);
 			playerCharacterImageContainer_Div.appendChild(playerCharacterSprite_Span);
 
@@ -718,12 +698,8 @@ class MootyWortRpgMech {
 					"hpElement": playerCharacterCurrentHp_Span,
 					"hpProgressElement": playerCharacterHp_Progress,
 					"mpElement": playerCharacterCurrentMp_Span,
-					"mpProgressElement": playerCharacterMp_Progress,
-					"baseOpacity": 0.85
+					"mpProgressElement": playerCharacterMp_Progress
 			};
-			
-			// now that we've got all our containers set up and metadata populated, load up actual content!
-			this.refreshCharacterCanvas(this.characterUiDict[playerCharacter.id]);
 		}
 		// enemy party UI from player perspective
 		var enemyCharacterImageContainer_Div = document.getElementById("enemySpritesContainer");
@@ -735,7 +711,7 @@ class MootyWortRpgMech {
 			let enemyCharacterSprite_Canvas = document.createElement("canvas");
 			enemyCharacterSprite_Canvas.id = enemyCharacter.id;
 			enemyCharacterSprite_Canvas.className = "character-image-enemy";
-			this.loadCharacterSprites(enemyCharacter, enemyCharacterSprite_Canvas);
+			this.loadCharacterSprites(enemyCharacter, enemyCharacterSprite_Canvas, 0.5, 1.0);
 			enemyCharacterSprite_Span.appendChild(enemyCharacterSprite_Canvas);
 
 			let enemyCharacterName_Span = document.createElement("span");
@@ -753,8 +729,7 @@ class MootyWortRpgMech {
 					"characterObj": enemyCharacter,
 					"canvasElement": enemyCharacterSprite_Canvas, 
 					"canvasContainerElement": enemyCharacterSprite_Span,
-					"hpProgressElement": enemyCharacterHp_Progress,
-					"baseOpacity": 0.5
+					"hpProgressElement": enemyCharacterHp_Progress
 			};
 		}
 
