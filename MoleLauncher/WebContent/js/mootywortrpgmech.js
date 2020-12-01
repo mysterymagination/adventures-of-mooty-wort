@@ -424,12 +424,10 @@ class MootyWortRpgMech {
 					context2d.restore();
 				
 					// draw increasingly translucent red over the sprite
-					/*
 					context2d.save();
 					context2d.fillStyle = "rgba(255, 0, 0, " + alphaPerc + ")";
 					context2d.fillRect(0, 0, canvas.width, canvas.height);
 					context2d.restore();
-					*/
 					if (frameCount >= 5 && alphaPerc > 0) {
 						// decrease opacity
 						alphaPerc -= elapsedTimeSinceLastFrame / 100;
