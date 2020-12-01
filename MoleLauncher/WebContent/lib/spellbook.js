@@ -747,7 +747,7 @@ export class TouchVoid extends Spell {
 	    this.processCost(sourceChar);
 	}
 	generateFlavorText(sourceChar, targetChar) {
-	    return "Somehow the darkness near your rump becomes material and seizes you!  Cold infects your being as all the warmth and joy of life bleeds away, slaking the implacable thirst of Darkness.  "+(this.rendFlesh ? "Finding "+targetChar.name+" devoid of magical substance, "+sourceChar.name+" inflicts "+sourceChar.getPronoun_possessive()+" full rage upon "+targetChar.getPronoun_personal_object()+" corporeal shell to the tune of "+(2*this.dmg)+"!" : sourceChar.name+" sips lightly from the cup of life and spirit that is "+targetChar.name+" to "+sourceChar.getPronoun_personal_object()+", slurping down "+this.dmg+" damage points worth of blood, bone, and brains in an instant!");
+	    return "Somehow the darkness near your rump becomes material and seizes you!  Cold infects your being as all the warmth and joy of life bleeds away, slaking the implacable thirst of Darkness.  "+(this.rendFlesh ? "Finding "+targetChar.name+" devoid of magical substance, "+sourceChar.name+" inflicts "+sourceChar.getPronoun_possessive()+" full rage upon "+targetChar.getPronoun_personal_object()+" corporeal shell to the tune of "+(2*this.dmg)+" flesh-rendery damages!" : sourceChar.name+" sips lightly from the cup of life and spirit that is "+targetChar.name+" to "+sourceChar.getPronoun_personal_object()+", slurping down "+this.dmg+" damage points worth of blood, bone, and brains in an instant!");
 	}
 }
 /**
