@@ -412,6 +412,8 @@ class MootyWortRpgMech {
 					frameCount++;
 
 					// redraw base and overlay sprites
+					// clear rect to prevent unwanted layering the bothers our translucency
+					context2d.clearRect(0, 0, canvas.width, canvas.height);
 					context2d.save();
 					context2d.globalAlpha = character.baseOpacity;
 					context2d.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
