@@ -400,6 +400,7 @@ class MootyWortRpgMech {
 			var frameCount = 0;
 			var characterImage = new Image();
 			// todo: need to handle our base vs. overlay battle sprites here
+			//  seems like we might want something like loadCharacterSprites() that takes a functor to run when the image loads are complete... or better yet have that function return a promise so we can .then here?
 			characterImage.addEventListener('load', function() {
 				// ok, we've got our sprite image ref afresh
 				// start shake anim
