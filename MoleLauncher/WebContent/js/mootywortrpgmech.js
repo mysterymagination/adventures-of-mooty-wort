@@ -390,7 +390,7 @@ class MootyWortRpgMech {
 		// track completed animations
 		var completedAnimationsCounter = 0;
 
-		for(character of characters) {
+		for(const character of characters) {
 			// show hurt anim on target sprite
 			var characterUiData = this.characterUiDict[character.id];
 			var characterCanvas = characterUiData.canvasElement;
@@ -398,12 +398,9 @@ class MootyWortRpgMech {
 			var alphaPerc = 1.0;
 			var lastFrameTime = undefined;
 			var frameCount = 0;
-			var characterImage = new Image();
 			// todo: need to handle our base vs. overlay battle sprites here
-			//  seems like we might want something like loadCharacterSprites() that takes a functor to run when the image loads are complete... or better yet have that function return a promise so we can .then here?
-			characterImage.addEventListener('load', function() {
-				// ok, we've got our sprite image ref afresh
-				// start shake anim
+			//  seems like we might want something like loadCharacterSprites() that takes a functor to run when the image loads are complete... or better yet have that function return a promise so we can .then here?  The issue with the latter is scope of the loaded image data without something like an output var we won't have the loaded sprite images in this scope, so we won't be able to work with them.  I think passing in a post effect fn is less crazy than using output vars in JS, so here we go.
+			let postEffectFn = (baseImage, overlayImage) => {
 				characterCanvas.style.animation = "shake 0.5s";
 				characterCanvas.style.animationIterationCount = "infinite";
 
@@ -417,11 +414,23 @@ class MootyWortRpgMech {
 					var elapsedTimeSinceLastFrame = frameTimestamp - lastFrameTime;
 					frameCount++;
 
-					// redraw sprite 
-					context2d.drawImage(characterImage, 0, 0);
+					// redraw base and overlay sprites
+					context2d.save();
+					context2d.globalAlpha = character.baseOpacity;
+					context2d.drawImage(baseImage, 0, 0, characterCanvas.width, characterCanvas.height);
+					context2d.restore();
+					context2d.save();
+					context2d.globalAlpha = character.overlayOpacity;
+					context2d.drawImage(overlayImage, 0, 0, characterCanvas.width, characterCanvas.height);
+					context2d.restore();
+				
 					// draw increasingly translucent red over the sprite
+					/*
+					context2d.save();
 					context2d.fillStyle = "rgba(255, 0, 0, " + alphaPerc + ")";
 					context2d.fillRect(0, 0, characterCanvas.width, characterCanvas.height);
+					context2d.restore();
+					*/
 					if (frameCount >= 5 && alphaPerc > 0) {
 						// decrease opacity
 						alphaPerc -= elapsedTimeSinceLastFrame / 100;
@@ -447,11 +456,10 @@ class MootyWortRpgMech {
 				}
 				// kick off animation
 				window.requestAnimationFrame(painAnimFn);
-			}, false);
-			// set image src to kick off loading
-			var character = characterUiData.characterObj;
-			characterImage.src = character.battleSprites[character.spriteIdx];
-		}
+			};
+			// kick off loading up the sprite images and then executing the pain post effect using them
+			this.loadCharacterSprites(character, characterCanvas, character.baseOpacity, character.overlayOpacity, postEffectFn);
+		} // end for each character
 	}
 	/**
 	 * Tear down the battle UI, bringing back Undum story page
@@ -589,12 +597,14 @@ class MootyWortRpgMech {
 	 * @param canvas the Canvas on which we're drawing
 	 * @param baseOpacity the opacity to be used along with draw commands for the base sprite
 	 * @param overlayOpacity the opacity to be used along with draw commands for the overlay sprite
+	 * @param postEffectFn optional functor to be run in a finally at the tail of the image load and init render promise chain, e.g. drawing an animation that makes use of the loaded sprite images
 	 */
-	loadCharacterSprites(character, canvas, baseOpacity, overlayOpacity) {
+	loadCharacterSprites(character, canvas, baseOpacity, overlayOpacity, postEffectFn) {
 		let ctx = canvas.getContext('2d');
+		let baseImage = new Image();
+		let overlayImage = new Image();
 		// kick off image loading promise chain
-		let baseSpritePromise = new Promise((resolver) => {
-			let baseImage = new Image();
+		return new Promise((resolver) => {
 			baseImage.addEventListener('load', function() {
 				resolver(baseImage);
 			});
@@ -611,7 +621,6 @@ class MootyWortRpgMech {
 			return new Promise((resolver, rejector) => {
 				if(character.battleOverlaySprites) {
 					let overlaySource = character.battleOverlaySprites[character.overlaySpriteIdx];
-					let overlayImage = new Image();
 					overlayImage.addEventListener('load', function() {
 						resolver(overlayImage);
 					});
@@ -624,10 +633,14 @@ class MootyWortRpgMech {
 			// overlay image load promise has resolved, so we can render the it on our already setup canvas
 			ctx.save();
 			ctx.globalAlpha = overlayOpacity;
-			canvas.getContext('2d').drawImage(overlaySpriteImage, 0, 0, canvas.width, canvas.height);
+			ctx.drawImage(overlaySpriteImage, 0, 0, canvas.width, canvas.height);
 			ctx.restore;
 		}, (rejectionReason) => {
 			console.log(rejectionReason);
+		}).finally(() => {
+			if(postEffectFn) {
+				postEffectFn(baseImage, overlayImage);
+			}
 		});
 	}
 	/**
