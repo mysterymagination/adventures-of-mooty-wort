@@ -261,7 +261,7 @@ export class Ability {
 		 * associated with integer values. The given value should be
 		 * subtracted from the corresponding stat resource pool.
 		 */
-		Ability.prototype.cost = { "mp": 0 };
+		Ability.prototype.cost = {};
 		Ability.prototype.telegraph = new Telegraph();
 	}// end new instance ctor
 	/**
@@ -720,9 +720,9 @@ export class TouchVoid extends Spell {
 	calcDmg(sourceChar, targetChar, isMagic) {
 		var aspectDamage = 0.0;
 		if(isMagic) {
-			aspectDamage = sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"];
+			aspectDamage = 2*sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"];
 		} else {
-			aspectDamage = sourceChar.stats["atk"] - 0.5 * targetChar.stats["def"];
+			aspectDamage = 2*sourceChar.stats["atk"] - 0.5 * targetChar.stats["def"];
 		}
 		return Math.max(Libifels.prettyDarnRound(aspectDamage), 1);
 	}
@@ -731,13 +731,15 @@ export class TouchVoid extends Spell {
 	    	// target has MP to steal so apply damage to HP and MP, and source's MP is healed
 	    	this.dmg = this.calcDmg(sourceChar, targetChar, true);
 	        targetChar.stats["mp"] -= this.dmg;
-	        sourceChar.stats["mp"] += this.dmg;
+	        sourceChar.stats["mp"] += this.dmg/2;
 	        this.dmg = this.calcDmg(sourceChar, targetChar, false);
 	        targetChar.stats["hp"] -= this.dmg;
+	        sourceChar.stats["hp"] += this.dmg/2;
 	    } else {
-	    	// apply double damage to target HP, no one is healed
+	    	// apply double damage to target HP, and all healing goes to user's HP
 	    	this.dmg = this.calcDmg(sourceChar, targetChar, false);
 	        targetChar.stats["hp"] -= 2 * this.dmg;
+	        sourceChar.stats["hp"] += this.dmg;
 	        this.rendFlesh = true;
 	    }
 

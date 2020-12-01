@@ -269,14 +269,14 @@ export class Grue extends Character {
 	constructor() {
 		super({ id: "grue", name: "Grue" });
 		this.gender = "male";
-	    this.stats["maxHP"] = 250;
+	    this.stats["maxHP"] = 350;
 	    this.stats["maxMP"] = 500;
 	    this.stats["hp"] = this.stats["maxHP"];
 	    this.stats["mp"] = this.stats["maxMP"];
-	    this.stats["atk"] = 8;
-	    this.stats["def"] = 10;
-	    this.stats["pwr"] = 15;
-	    this.stats["res"] = 15; 
+	    this.stats["atk"] = 15;
+	    this.stats["def"] = Infinity; // O_O
+	    this.stats["pwr"] = 35;
+	    this.stats["res"] = 35; 
 	    this.stats["spd"] = 0; // inevitability need not rush
 	    Object.assign(this.coreStats, this.stats);
 	    Grue.prototype.entity = new Spells.HeartOfDarkness();
