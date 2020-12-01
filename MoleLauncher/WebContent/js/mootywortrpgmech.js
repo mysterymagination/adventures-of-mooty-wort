@@ -391,18 +391,15 @@ class MootyWortRpgMech {
 		var completedAnimationsCounter = 0;
 
 		for(const character of characters) {
-			// show hurt anim on target sprite
-			var characterUiData = this.characterUiDict[character.id];
-			var characterCanvas = characterUiData.canvasElement;
-			var context2d = characterCanvas.getContext("2d");
-			var alphaPerc = 1.0;
-			var lastFrameTime = undefined;
-			var frameCount = 0;
 			// todo: need to handle our base vs. overlay battle sprites here
 			//  seems like we might want something like loadCharacterSprites() that takes a functor to run when the image loads are complete... or better yet have that function return a promise so we can .then here?  The issue with the latter is scope of the loaded image data without something like an output var we won't have the loaded sprite images in this scope, so we won't be able to work with them.  I think passing in a post effect fn is less crazy than using output vars in JS, so here we go.
-			let postEffectFn = (baseImage, overlayImage) => {
-				characterCanvas.style.animation = "shake 0.5s";
-				characterCanvas.style.animationIterationCount = "infinite";
+			let postEffectFn = (baseImage, overlayImage, canvas) => {
+				const context2d = canvas.getContext('2d');
+				canvas.style.animation = "shake 0.5s";
+				canvas.style.animationIterationCount = "infinite";
+				let alphaPerc = 1.0;
+				let lastFrameTime = undefined;
+				let frameCount = 0;
 
 				// define animation loop
 				var painAnimFn = function(frameTimestamp) {
@@ -417,18 +414,18 @@ class MootyWortRpgMech {
 					// redraw base and overlay sprites
 					context2d.save();
 					context2d.globalAlpha = character.baseOpacity;
-					context2d.drawImage(baseImage, 0, 0, characterCanvas.width, characterCanvas.height);
+					context2d.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 					context2d.restore();
 					context2d.save();
 					context2d.globalAlpha = character.overlayOpacity;
-					context2d.drawImage(overlayImage, 0, 0, characterCanvas.width, characterCanvas.height);
+					context2d.drawImage(overlayImage, 0, 0, canvas.width, canvas.height);
 					context2d.restore();
 				
 					// draw increasingly translucent red over the sprite
 					/*
 					context2d.save();
 					context2d.fillStyle = "rgba(255, 0, 0, " + alphaPerc + ")";
-					context2d.fillRect(0, 0, characterCanvas.width, characterCanvas.height);
+					context2d.fillRect(0, 0, canvas.width, canvas.height);
 					context2d.restore();
 					*/
 					if (frameCount >= 5 && alphaPerc > 0) {
@@ -438,8 +435,8 @@ class MootyWortRpgMech {
 					}
 					if (alphaPerc == 0) {
 						// end anim and call cb iff all animations have completed
-						characterCanvas.style.animation = "";
-						characterCanvas.style.animationIterationCount = "";
+						canvas.style.animation = "";
+						canvas.style.animationIterationCount = "";
 						completedAnimationsCounter++;
 						if(completedAnimationsCounter == characters.length && callbackFunction) {
 							callbackFunction();
@@ -458,7 +455,7 @@ class MootyWortRpgMech {
 				window.requestAnimationFrame(painAnimFn);
 			};
 			// kick off loading up the sprite images and then executing the pain post effect using them
-			this.loadCharacterSprites(character, characterCanvas, character.baseOpacity, character.overlayOpacity, postEffectFn);
+			this.loadCharacterSprites(this.characterUiDict[character.id], postEffectFn);
 		} // end for each character
 	}
 	/**
@@ -587,19 +584,18 @@ class MootyWortRpgMech {
 	 * Restores all character images as each canvas's only content
 	 */
 	refreshCharacterCanvases() {
-		for(const character of this.combatDriver.playerParty.concat(this.combatDriver.enemyParty)) {
-			this.loadCharacterSprites(character, this.characterUiDict[character.id].canvasElement, character.baseOpacity, character.overlayOpacity);
+		for(const [characterId, uiEntry] of Object.entries(this.characterUiDict)) {
+			this.loadCharacterSprites(uiEntry);
 		}
 	}
 	/**
 	 * Loads up the character's current base and overlay sprites, and draws them to the canvas
-	 * @param character the Character object whose sprite is to be rendered
-	 * @param canvas the Canvas on which we're drawing
-	 * @param baseOpacity the opacity to be used along with draw commands for the base sprite
-	 * @param overlayOpacity the opacity to be used along with draw commands for the overlay sprite
+	 * @param characterUiEntry a viewmodel metadata collection object literal associated with the character whose sprite is to be rendered
 	 * @param postEffectFn optional functor to be run in a finally at the tail of the image load and init render promise chain, e.g. drawing an animation that makes use of the loaded sprite images
 	 */
-	loadCharacterSprites(character, canvas, baseOpacity, overlayOpacity, postEffectFn) {
+	loadCharacterSprites(characterUiEntry, postEffectFn) {
+		let character = characterUiEntry.characterObj;
+		let canvas = characterUiEntry.canvasElement;
 		let ctx = canvas.getContext('2d');
 		let baseImage = new Image();
 		let overlayImage = new Image();
@@ -615,7 +611,7 @@ class MootyWortRpgMech {
 			canvas.height = baseSpriteImage.height;
 			// save/restore dance apparently lets us change how drawing works for the canvas for only as many draw calls as occur between save and restore
 			ctx.save();
-			ctx.globalAlpha = baseOpacity;
+			ctx.globalAlpha = character.baseOpacity;
 			ctx.drawImage(baseSpriteImage, 0, 0, canvas.width, canvas.height);
 			ctx.restore();
 			return new Promise((resolver, rejector) => {
@@ -632,14 +628,14 @@ class MootyWortRpgMech {
 		}).then((overlaySpriteImage) => {
 			// overlay image load promise has resolved, so we can render the it on our already setup canvas
 			ctx.save();
-			ctx.globalAlpha = overlayOpacity;
+			ctx.globalAlpha = character.overlayOpacity;
 			ctx.drawImage(overlaySpriteImage, 0, 0, canvas.width, canvas.height);
 			ctx.restore;
 		}, (rejectionReason) => {
 			console.log(rejectionReason);
 		}).finally(() => {
 			if(postEffectFn) {
-				postEffectFn(baseImage, overlayImage);
+				postEffectFn(baseImage, overlayImage, canvas);
 			}
 		});
 	}
@@ -665,7 +661,7 @@ class MootyWortRpgMech {
 			playerCharacterSprite_Span.className = 'character-image-player-span';
 			let playerCharacterSprite_Canvas = document.createElement("canvas");
 			playerCharacterSprite_Canvas.className = "character-image-player";
-			this.loadCharacterSprites(playerCharacter, playerCharacterSprite_Canvas, 0.85, 1.0);
+			
 			playerCharacterSprite_Span.appendChild(playerCharacterSprite_Canvas);
 			playerCharacterImageContainer_Div.appendChild(playerCharacterSprite_Span);
 
@@ -714,6 +710,8 @@ class MootyWortRpgMech {
 					"mpElement": playerCharacterCurrentMp_Span,
 					"mpProgressElement": playerCharacterMp_Progress
 			};
+			// load up actual content to fill the containers configured above
+			this.loadCharacterSprites(this.characterUiDict[playerCharacter.id]);
 		}
 		// enemy party UI from player perspective
 		var enemyCharacterImageContainer_Div = document.getElementById("enemySpritesContainer");
@@ -725,7 +723,7 @@ class MootyWortRpgMech {
 			let enemyCharacterSprite_Canvas = document.createElement("canvas");
 			enemyCharacterSprite_Canvas.id = enemyCharacter.id;
 			enemyCharacterSprite_Canvas.className = "character-image-enemy";
-			this.loadCharacterSprites(enemyCharacter, enemyCharacterSprite_Canvas, 0.5, 1.0);
+			
 			enemyCharacterSprite_Span.appendChild(enemyCharacterSprite_Canvas);
 
 			let enemyCharacterName_Span = document.createElement("span");
@@ -745,6 +743,8 @@ class MootyWortRpgMech {
 					"canvasContainerElement": enemyCharacterSprite_Span,
 					"hpProgressElement": enemyCharacterHp_Progress
 			};
+			// load content into containers
+			this.loadCharacterSprites(this.characterUiDict[enemyCharacter.id]);
 		}
 
 		// now that modal content is loaded, do centering calc
