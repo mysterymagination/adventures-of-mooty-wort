@@ -677,7 +677,7 @@ export class StaticBolt extends Spell {
 	constructor() {
 		super({ id: "static_bolt", name: "Static Bolt" });
 		StaticBolt.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
-		StaticBolt.prototype.cost = { "mp": 30 };
+		StaticBolt.prototype.cost = { "mp": 40 };
 		this.displayCostInName();
 	}
 	calcDmg(sourceChar, targetChar) {

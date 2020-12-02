@@ -312,6 +312,14 @@ export class Grue extends Character {
 	    	this.battleSpritePath+"/grue/nightglo4.png",
 	    	this.battleSpritePath+"/grue/nightglo5.png"
 	    ];
+	    /**
+	     * Contiguous turns Consume has been used; for balance purposes, the Grue can't use it more than two turns in a row.
+	     */
+	    this.consumeTurns = 0;
+	    /**
+	     * Each use of Brass Lantern starts a timeout turn clock of 1d4 rounds such that he never super spams it
+	     */
+	    this.brassLanterTimeout = 0;
 	}
 	runAI(combat, role) {
         if (role) {
@@ -355,29 +363,29 @@ export class Grue extends Character {
                 
                 // set abl probabilities as floating point percentages; default to mostly buffing and hugging to death
                 var ablProbsConfig = {
-                	"touch_of_void": 0.5,
+                	"touch_of_void": 0.3,
                 	"brass_lantern": 0.3,
-                	"chill_beyond": 0.15,
+                	"chill_beyond": 0.25,
                 	"consume": 0.05
                 }
                 if(this.stats.hp <= this.stats.maxHP * 0.75 && 
                 		this.stats.hp > this.stats.maxHP * 0.5) {
                 	// now we wanna increase chances of freezing player
-                	ablProbsConfig["touch_of_void"] = 0.2;
-                	ablProbsConfig["brass_lantern"] = 0.35;
-                	ablProbsConfig["chill_beyond"] = 0.4;
+                	ablProbsConfig["touch_of_void"] = 0.3;
+                	ablProbsConfig["brass_lantern"] = 0.2;
+                	ablProbsConfig["chill_beyond"] = 0.45;
                 	ablProbsConfig["consume"] = 0.05;
                 } else if (this.stats.hp <= this.stats.maxHP * 0.5 &&
                 		this.stats.hp > this.stats.maxHP * 0.25) {
                 	// never mind the fondling and maybe freezing further, just burn!
-                	ablProbsConfig["touch_of_void"] = 0.0;
-                	ablProbsConfig["brass_lantern"] = 0.6;
-                	ablProbsConfig["chill_beyond"] = 0.2;
+                	ablProbsConfig["touch_of_void"] = 0.3;
+                	ablProbsConfig["brass_lantern"] = 0.4;
+                	ablProbsConfig["chill_beyond"] = 0.1;
                 	ablProbsConfig["consume"] = 0.2;
                 } else if (this.stats.hp <= this.stats.maxHP * 0.25) {
                 	// F E A S T
-                	ablProbsConfig["touch_of_void"] = 0.0;
-                	ablProbsConfig["brass_lantern"] = 0.4;
+                	ablProbsConfig["touch_of_void"] = 0.3;
+                	ablProbsConfig["brass_lantern"] = 0.1;
                 	ablProbsConfig["chill_beyond"] = 0.0;
                 	ablProbsConfig["consume"] = 0.6;
                 }
@@ -387,6 +395,39 @@ export class Grue extends Character {
                 chosenAbility = this.entity.spellsDict[
                 	combat.chooseRandomAbility(ablProbsConfig)
                 ];
+                
+                // special abl usage limiting
+                if(chosenAbility.id === "brass_lantern") {
+                	if(this.brassLanternTimeout > 0) {
+                		// reassign to touch of void since we're in brass lantern timeout
+                		chosenAbility = this.entity.spellsDict["touch_of_void"];
+                	} else {
+                		// brass lantern is happening, so put him in timeout
+                		this.brassLanternTimeout = Libifels.rollNDM(1, 4);
+                	}
+                } else if(chosenAbility.id === "consume") {
+                	if(this.consumeTimeout <= 0) {
+	                	if(this.consumeTurns >= 2) {
+	                		// reassign to touch of void since we've consumed twice in a row
+	                		chosenAbility = this.entity.spellsDict["touch_of_void"];
+	                		// since he hit it twice in a row, give the player a break
+	                		this.consumeTimeout = Libifels.rollNDM(1, 4);
+	                	} else {
+	                		this.consumeTurns++;
+	                	}
+                	}
+                }
+                
+                // tick down limiters
+                if(this.brassLanterTimeout > 0) {
+                	this.brassLanternTimeout--;
+                }
+                if(this.consumeTimeout > 0) {
+                	this.consumeTimeout--;
+                }
+                if(chosenAbility.id !== "consume") {
+                	this.consumeTurns = 0;
+                }
                 
                 // make sure we can afford the cost, else use MP steal
                 if(!this.canAffordCost(chosenAbility)) {

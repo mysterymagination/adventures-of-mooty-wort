@@ -391,8 +391,6 @@ class MootyWortRpgMech {
 		var completedAnimationsCounter = 0;
 
 		for(const character of characters) {
-			// todo: need to handle our base vs. overlay battle sprites here
-			//  seems like we might want something like loadCharacterSprites() that takes a functor to run when the image loads are complete... or better yet have that function return a promise so we can .then here?  The issue with the latter is scope of the loaded image data without something like an output var we won't have the loaded sprite images in this scope, so we won't be able to work with them.  I think passing in a post effect fn is less crazy than using output vars in JS, so here we go.
 			let postEffectFn = (baseImage, overlayImage, canvas) => {
 				const context2d = canvas.getContext('2d');
 				canvas.style.animation = "shake 0.5s";
