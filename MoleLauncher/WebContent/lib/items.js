@@ -280,7 +280,7 @@ export class RustyUrn extends Item {
 			cuteConvoText += "Tipping the urn experimentally, you see the gel inside frantically clamber towards the bottom and increase its viscosity.  \"Please don't pour me out -- it's cozy in here!  Can we go on adventures together?  I love you, you know.\"";
 			break;
 		case 3:
-			cuteConvoText += "Tapping a digging claw on the side of the urn, you start back as a pair of emerald eyes sparkling with curiosity appear, gazing out at you.  A pair of scarlet-lacquered lips form a bit below the eyes, smiling sweetly, and kiss the inside of the urn where you touched it.  Abruptly, both eyes and lips disappear, and the ooze inside appears several shades pinker for a minute.  You can hear a faint giggling on the wind.";
+			cuteConvoText += "Tapping a digging claw on the side of the urn, you start back as a pair of emerald eyes sparkling with curiosity appear, gazing out at you.  A pair of scarlet-lacquered lips form a bit below the eyes, smile sweetly, and kiss the inside of the urn where you touched it.  Abruptly, both eyes and lips disappear, and the ooze inside appears several shades pinker for a minute.  You can hear a faint giggling on the wind.";
 			break;
 		case 4:
 			cuteConvoText += "As you examine the transparent urn, your snoot pressed up against it, the ooze inside forms into a small humanoid woman wearing a flowy sundress.  She waves merrily and performs a graceful wiggly twirl.  You grin and clack your mighty claws together in appreciation, and she abruptly disappears into a shy blushy puddle.";

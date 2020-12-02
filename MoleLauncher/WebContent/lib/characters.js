@@ -365,7 +365,7 @@ export class Grue extends Character {
                 var ablProbsConfig = {
                 	"touch_of_void": 0.3,
                 	"brass_lantern": 0.3,
-                	"chill_beyond": 0.25,
+                	"chill_beyond": 0.35,
                 	"consume": 0.05
                 }
                 if(this.stats.hp <= this.stats.maxHP * 0.75 && 
