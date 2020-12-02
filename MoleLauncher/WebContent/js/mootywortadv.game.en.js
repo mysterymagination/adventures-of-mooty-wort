@@ -727,7 +727,7 @@ undum.game.situations = {
 										var grueApproachethString = "Something's veeeery wrong; the darkness surrounding you and the ruins of your smitten foe is purring.  Your insticts beg you to flee, but a quick glance around reveals that the darkness has solidified betwixt you and the exit tunnel whence you came into this outré nightmare.";
 										undum.game.storyViewController.writeParagraph(grueApproachethString);	
 										system.writeChoices(["basement3_encounter_grue"]);
-										// todo: pass resolver to basement3_encounter_grue situation somehow... maybe just a common undum.game.story property that holds an active resolver reference?  Seems weird and stupid but I'm not sure how else you'd handle a situation like this where you wanna mix async via promises with required pause step to consume user input (i.e. clicking the grue encounter choice so that we have the chance to show new text explaining what's coming)
+										// pass resolver to basement3_encounter_grue situation somehow... maybe just a common undum.game.story property that holds an active resolver reference?  Seems weird and stupid but I'm not sure how else you'd handle a situation like this where you wanna mix async via promises with required pause step to consume user input (i.e. clicking the grue encounter choice so that we have the chance to show new text explaining what's coming)
 										undum.game.storyViewController.activeResolver = resolver;
 									} else {
 										// grue was not angered, so we resolve immediately with grue death arg false
@@ -771,6 +771,7 @@ undum.game.situations = {
 				"",
 				{
 					enter: function (character, system, from) {
+						new Promise((combatResolver) => {
 						var grueRoar = new Audio('audio/creatures/eatmind.wav');
 						grueRoar.addEventListener('canplaythrough', e => {
 							grueRoar.play();
@@ -778,7 +779,17 @@ undum.game.situations = {
 						var mech = undum.game.rpgMech;
 						var story = undum.game.storyViewController;
 						// up in basement3_encounter_yawning_god::enter() I shoved the latest Promise resolver (for promiseOfDarkness) onto the storyVC as activeResolver, so pass in here so it can be resolved when combat is over
-						mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav", resultFn: undum.game.storyViewController.activeResolver});
+						// todo: re: issue #28 we have a bit of problem because we're trying to treat two different resolvers, one expecting a boolean and the other a string, the same way (passing in a bool) in the combat viewcontroller. What we should be doing is modify our promise chain so there's one more link that calls our terminal resolver that expects a string like death/shadowed/dark_king
+						mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav", resultFn: combatResolver});
+						}).then((combatResult) => {
+							const terminusResolver = undum.game.storyViewController.activeResolver;
+							// if we won, call terminres over 'dark_king', else call it with 'death'. 'shadowed' happened up above because we never got into the grue fight in that eventuality.
+							if(combatResult) {
+								terminusResolver('dark_king');
+							} else {
+								terminusResolver('death');
+							}
+						});
 					},
 					optionText: "Something stirs just out of sight, and shadows slither closer...  Show this new abomination what a mole is made of!"
 				}
