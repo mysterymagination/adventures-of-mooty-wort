@@ -2,6 +2,15 @@
  * Libifels, as in lib Interactive Fiction Entity Logic System, provides utility functions and classes for Interactive Fiction in JS
  */
 export class Libifels {
+	/**
+	 * Clamps a given value within the inclusive range min to max
+	 * @param value the number to clamp
+	 * @param min the inclusive minimum bound
+	 * @param max the inclusive maximum bound
+	 */
+	static clampInRange(value, min, max) {
+		return Math.max(Math.min(value, max), min);
+	}
     /**
      * Adds the given element to an array iff its string rep is not present in the array yet
      * @param array the array we're modifying

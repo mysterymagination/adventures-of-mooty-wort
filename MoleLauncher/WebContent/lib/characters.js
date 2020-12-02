@@ -8,6 +8,16 @@ export class Character {
         this.name = config.name;
         this.gender = "";
         this.level = 10;
+        /**
+         * Multipliers for elemental damage; no special affinity is 1, strong weakness is high positive and strong resistance/absorption is low negative
+         */
+        this.elemAffinities = {
+        	"shadow": 1,
+        	"fire": 1,
+        	"lightning": 1,
+        	"ice": 1,
+        	"acid": 1
+        }
 
         // simple object map of categorical descriptor arrays,
         // e.g. descriptors.body = ["fur","spherical"]
@@ -274,7 +284,7 @@ export class Grue extends Character {
 	    this.stats["hp"] = this.stats["maxHP"];
 	    this.stats["mp"] = this.stats["maxMP"];
 	    this.stats["atk"] = 15;
-	    this.stats["def"] = Infinity; // O_O
+	    this.stats["def"] = 10;
 	    this.stats["pwr"] = 35;
 	    this.stats["res"] = 35; 
 	    this.stats["spd"] = 0; // inevitability need not rush
@@ -284,6 +294,10 @@ export class Grue extends Character {
 	    this.overlaySpriteIdx = 0; 
 	    this.baseOpacity = 0.5;
 	    this.overlayOpacity = 1.0;
+	    /**
+	     * Grue absorbs shadow for double the damage that would have been dealt
+	     */
+	    this.elemAffinities.shadow = -2;
 	    this.battleSprites = [
 	    	this.battleSpritePath+"/grue/grue.png"
 	    ];

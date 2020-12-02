@@ -612,6 +612,7 @@ export class ShadowFlare extends Spell {
 		ShadowFlare.prototype.targetType = Ability.TargetTypesEnum.singleTarget;
 		ShadowFlare.prototype.cost = { "mp": 50 };
 		this.displayCostInName();
+		this.element = "shadow";
 	}
 	calcDmg(sourceChar, targetChar) {
 	    return Math.max(
@@ -623,7 +624,10 @@ export class ShadowFlare extends Spell {
 	}
 	effect(sourceChar, targetChar) {
 	    this.dmg = this.calcDmg(sourceChar, targetChar);
-	    targetChar.stats["hp"] -= this.dmg;
+	    targetChar.stats["hp"] -= this.dmg * targetChar.elemAffinities[this.element];
+	    // ensure we didn't heal the Grue up to an impossible value... todo: should be clamping on stats everywhere
+	    targetChar.stats["hp"] = Libifels.clampInRange(targetChar.stats["hp"], 0, targetChar.stats["maxHP"]);
+	    console.log(targetChar.name+" hp is now "+targetChar.stats["hp"]+" after clamping");
 	    targetChar.stats["res"] -= 10;
 
 	    // MP cost
@@ -720,9 +724,9 @@ export class TouchVoid extends Spell {
 	calcDmg(sourceChar, targetChar, isMagic) {
 		var aspectDamage = 0.0;
 		if(isMagic) {
-			aspectDamage = 2*sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"];
+			aspectDamage = 1.2*sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"];
 		} else {
-			aspectDamage = 2*sourceChar.stats["atk"] - 0.5 * targetChar.stats["def"];
+			aspectDamage = 1.2*sourceChar.stats["atk"] - 0.5 * targetChar.stats["def"];
 		}
 		return Math.max(Libifels.prettyDarnRound(aspectDamage), 1);
 	}
@@ -734,12 +738,12 @@ export class TouchVoid extends Spell {
 	        sourceChar.stats["mp"] += this.dmg/2;
 	        this.dmg = this.calcDmg(sourceChar, targetChar, false);
 	        targetChar.stats["hp"] -= this.dmg;
-	        sourceChar.stats["hp"] += this.dmg/2;
+	        sourceChar.stats["hp"] += this.dmg;
 	    } else {
 	    	// apply double damage to target HP, and all healing goes to user's HP
 	    	this.dmg = this.calcDmg(sourceChar, targetChar, false);
 	        targetChar.stats["hp"] -= 2 * this.dmg;
-	        sourceChar.stats["hp"] += this.dmg;
+	        sourceChar.stats["hp"] += 2 * this.dmg;
 	        this.rendFlesh = true;
 	    }
 
