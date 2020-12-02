@@ -285,8 +285,8 @@ export class Grue extends Character {
 	    this.stats["mp"] = this.stats["maxMP"];
 	    this.stats["atk"] = 15;
 	    this.stats["def"] = 10;
-	    this.stats["pwr"] = 35;
-	    this.stats["res"] = 35; 
+	    this.stats["pwr"] = 20;
+	    this.stats["res"] = 25; 
 	    this.stats["spd"] = 0; // inevitability need not rush
 	    Object.assign(this.coreStats, this.stats);
 	    Grue.prototype.entity = new Spells.HeartOfDarkness();
@@ -297,7 +297,7 @@ export class Grue extends Character {
 	    /**
 	     * Grue absorbs shadow for double the damage that would have been dealt
 	     */
-	    this.elemAffinities.shadow = -2;
+	    this.elemAffinities.shadow = -0.1;
 	    this.battleSprites = [
 	    	this.battleSpritePath+"/grue/grue.png"
 	    ];
@@ -363,9 +363,9 @@ export class Grue extends Character {
                 
                 // set abl probabilities as floating point percentages; default to mostly buffing and hugging to death
                 var ablProbsConfig = {
-                	"touch_of_void": 0.3,
+                	"touch_of_void": 0.1,
                 	"brass_lantern": 0.3,
-                	"chill_beyond": 0.35,
+                	"chill_beyond": 0.55,
                 	"consume": 0.05
                 }
                 if(this.stats.hp <= this.stats.maxHP * 0.75 && 
@@ -400,7 +400,7 @@ export class Grue extends Character {
                 if(chosenAbility.id === "brass_lantern") {
                 	if(this.brassLanternTimeout > 0) {
                 		// reassign to touch of void since we're in brass lantern timeout
-                		chosenAbility = this.entity.spellsDict["touch_of_void"];
+                		chosenAbility = this.entity.spellsDict["chill_beyond"];
                 	} else {
                 		// brass lantern is happening, so put him in timeout
                 		this.brassLanternTimeout = Libifels.rollNDM(1, 4);
@@ -409,7 +409,7 @@ export class Grue extends Character {
                 	if(this.consumeTimeout <= 0) {
 	                	if(this.consumeTurns >= 2) {
 	                		// reassign to touch of void since we've consumed twice in a row
-	                		chosenAbility = this.entity.spellsDict["touch_of_void"];
+	                		chosenAbility = this.entity.spellsDict["chill_beyond"];
 	                		// since he hit it twice in a row, give the player a break
 	                		this.consumeTimeout = Libifels.rollNDM(1, 4);
 	                	} else {

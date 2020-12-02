@@ -734,7 +734,9 @@ export class TouchVoid extends Spell {
 	    if(targetChar.stats["mp"] > 0) {
 	    	// target has MP to steal so apply damage to HP and MP, and source's MP is healed
 	    	this.dmg = this.calcDmg(sourceChar, targetChar, true);
-	        targetChar.stats["mp"] -= this.dmg;
+	        targetChar.stats["mp"] -= this.dmg/2;
+	        // negative MP situation is just death on wheels... also stupid
+	        targetChar.stats["mp"] = Libifels.clampInRange(targetChar.stats["mp"], 0 ,targetChar.stats["maxMP"]);
 	        sourceChar.stats["mp"] += this.dmg/2;
 	        this.dmg = this.calcDmg(sourceChar, targetChar, false);
 	        targetChar.stats["hp"] -= this.dmg;
@@ -772,7 +774,7 @@ class TouchVoidTelegraph extends Telegraph {
 }
 
 /**
- * Insatiable Consumption is an instant kill if the mole is below 50% HP and otherwise drops him to 50% HP
+ * Insatiable Consumption is an instant kill if the mole is at or below 25% HP.  If HP > 50%, drop to 50%. If 25% < HP <= 50% drops him to 25% HP.
  */
 export class Consume extends Spell {
 	constructor() {
@@ -784,10 +786,12 @@ export class Consume extends Spell {
 	effect(sourceChar, targetChar) {
 	    var currentHP = targetChar.stats["hp"];
 	    var maxHP = targetChar.stats["maxHP"]
-		if(currentHP <= 0.5 * maxHP) {
+		if(currentHP <= 0.25 * maxHP) {
 			targetChar.stats["hp"] = 0;
+		} else if (0.25 * maxHP < currentHP && currentHP <= 0.5 * maxHP){
+			targetChar.stats["hp"] = 0.25 * maxHP;
 		} else {
-			targetChar.stats["hp"] = maxHP * 0.5;
+			targetChar.stats["hp"] = 0.5 * maxHP;
 		}
 
 	    // MP cost
