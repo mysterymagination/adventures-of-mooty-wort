@@ -53,7 +53,7 @@ export class Combat {
 	 * 	 	  floating point percentage values e.g. 0.3 => 30%.  These should total 1.
 	 * @return the string name of the ability chosen, as specified in the input probConfigObj
 	 */
-	chooseRandomAbility(probConfigObj) {
+	static chooseRandomAbility(probConfigObj) {
 	    // determine ranges of a d100 roll appropriate for each ability based on weights
 	    // track where our range has raised to, starting from 0% and ending at 100%
 		var currentFloor = 0.0;

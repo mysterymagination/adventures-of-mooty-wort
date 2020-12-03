@@ -1,5 +1,6 @@
 import {Libifels} from "./libifels.js";
 import * as Spells from "./spellbook.js";
+import {Combat} from "./combat.js";
 
 export class Character {
 	constructor(config) {
@@ -320,7 +321,72 @@ export class Grue extends Character {
 	     * Each use of Brass Lantern starts a timeout turn clock of 1d4 rounds such that he never super spams it
 	     */
 	    this.brassLanterTimeout = 0;
+	    /**
+	     * Flag indicating we're in the first turn of a consume timeout, signaling the Grue to use touch of void
+	     */
+	    this.firstConsumeTimeoutTurn = false;
 	}
+	/**
+	 * Uses an input ability id string -> weight factor number that represents a percentage chance config object
+	 * in concert with character-specific limiter and tactics logic to determine what ability should be used.
+	 * @param combat the current Combat model
+	 * @param ablProbsConfig an object literal of abl IDs keys mapped to percentage chance floats 
+	 */
+	chooseAbility(ablProbsConfig) {
+		let chosenAbility = this.entity.spellsDict[
+        	Combat.chooseRandomAbility(ablProbsConfig)
+        ];
+        
+        // special abl usage limiting
+        if(chosenAbility.id === "brass_lantern") {
+        	if(this.brassLanternTimeout > 0) {
+        		// reassign to touch of void since we're in brass lantern timeout
+        		chosenAbility = this.entity.spellsDict["chill_beyond"];
+        	} else {
+        		// brass lantern is happening, so put him in timeout
+        		this.brassLanternTimeout = Libifels.rollNDM(1, 4);
+        	}
+        } else if(chosenAbility.id === "consume") {
+        	if(this.consumeTimeout <= 0) {
+            	if(this.consumeTurns >= 2) {
+            		// reassign to chill_beyond since we've consumed twice in a row
+            		chosenAbility = this.entity.spellsDict["chill_beyond"];
+            		// since he hit it twice in a row, give the player a break
+            		this.consumeTimeout = Libifels.rollNDM(1, 4);
+            		this.firstConsumeTimeoutTurn = true;
+            	} else {
+            		this.consumeTurns++;
+            	}
+        	} else {
+        		if(this.firstConsumeTimeoutTurn) {
+        			// reassign to touch_of_void to take advantage of the fact that
+        			// we will have just been redirected to chill_beyond and put defenseless on the target
+            		chosenAbility = this.entity.spellsDict["touch_of_void"];
+            		this.firstConsumeTimeoutTurn = false;
+        		} else {
+        			// reassign to chill_beyond since we're still in timeout, but it's not the first turn this timeout session
+        			chosenAbility = this.entity.spellsDict["chill_beyond"];
+        		}
+        	}
+        }
+        
+        // tick down limiters
+        if(this.brassLanterTimeout > 0) {
+        	this.brassLanternTimeout--;
+        }
+        if(this.consumeTimeout > 0) {
+        	this.consumeTimeout--;
+        }
+        if(chosenAbility.id !== "consume") {
+        	this.consumeTurns = 0;
+        }
+        return chosenAbility;
+	}
+	/**
+	 * Run the Grue's automated combat gamelogic
+	 * @param combat the current Combat model
+	 * @param role string role the Grue is to fulfill; currently just 'enemy' is handled here.
+	 */
 	runAI(combat, role) {
         if (role) {
             if (role === "enemy") {
@@ -390,44 +456,8 @@ export class Grue extends Character {
                 	ablProbsConfig["consume"] = 0.6;
                 }
                 
-                // todo: particular mole attributes or status effects we wanna sniff for?
-                // only actually the one player in this case
-                chosenAbility = this.entity.spellsDict[
-                	combat.chooseRandomAbility(ablProbsConfig)
-                ];
-                
-                // special abl usage limiting
-                if(chosenAbility.id === "brass_lantern") {
-                	if(this.brassLanternTimeout > 0) {
-                		// reassign to touch of void since we're in brass lantern timeout
-                		chosenAbility = this.entity.spellsDict["chill_beyond"];
-                	} else {
-                		// brass lantern is happening, so put him in timeout
-                		this.brassLanternTimeout = Libifels.rollNDM(1, 4);
-                	}
-                } else if(chosenAbility.id === "consume") {
-                	if(this.consumeTimeout <= 0) {
-	                	if(this.consumeTurns >= 2) {
-	                		// reassign to touch of void since we've consumed twice in a row
-	                		chosenAbility = this.entity.spellsDict["chill_beyond"];
-	                		// since he hit it twice in a row, give the player a break
-	                		this.consumeTimeout = Libifels.rollNDM(1, 4);
-	                	} else {
-	                		this.consumeTurns++;
-	                	}
-                	}
-                }
-                
-                // tick down limiters
-                if(this.brassLanterTimeout > 0) {
-                	this.brassLanternTimeout--;
-                }
-                if(this.consumeTimeout > 0) {
-                	this.consumeTimeout--;
-                }
-                if(chosenAbility.id !== "consume") {
-                	this.consumeTurns = 0;
-                }
+                // weighted rando choice
+                chosenAbility = this.chooseAbility(ablProbsConfig);
                 
                 // make sure we can afford the cost, else use MP steal
                 if(!this.canAffordCost(chosenAbility)) {
