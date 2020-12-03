@@ -772,15 +772,14 @@ undum.game.situations = {
 				{
 					enter: function (character, system, from) {
 						new Promise((combatResolver) => {
-						var grueRoar = new Audio('audio/creatures/eatmind.wav');
-						grueRoar.addEventListener('canplaythrough', e => {
-							grueRoar.play();
-						});
-						var mech = undum.game.rpgMech;
-						var story = undum.game.storyViewController;
-						// up in basement3_encounter_yawning_god::enter() I shoved the latest Promise resolver (for promiseOfDarkness) onto the storyVC as activeResolver, so pass in here so it can be resolved when combat is over
-						// todo: re: issue #28 we have a bit of problem because we're trying to treat two different resolvers, one expecting a boolean and the other a string, the same way (passing in a bool) in the combat viewcontroller. What we should be doing is modify our promise chain so there's one more link that calls our terminal resolver that expects a string like death/shadowed/dark_king
-						mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav", resultFn: combatResolver});
+							var grueRoar = new Audio('audio/creatures/eatmind.wav');
+							grueRoar.addEventListener('canplaythrough', e => {
+								grueRoar.play();
+							});
+							var mech = undum.game.rpgMech;
+							var story = undum.game.storyViewController;
+							// up in basement3_encounter_yawning_god::enter() I shoved the latest Promise resolver (for promiseOfDarkness) onto the storyVC as activeResolver, so pass in here so it can be resolved when combat is over
+							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav", resultFn: combatResolver});
 						}).then((combatResult) => {
 							const terminusResolver = undum.game.storyViewController.activeResolver;
 							// if we won, call terminres over 'dark_king', else call it with 'death'. 'shadowed' happened up above because we never got into the grue fight in that eventuality.
