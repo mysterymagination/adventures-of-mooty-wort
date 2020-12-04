@@ -734,12 +734,12 @@ export class TouchVoid extends Spell {
 	    if(targetChar.stats["mp"] > 0) {
 	    	// target has MP to steal so apply damage to HP and MP, and source's MP is healed
 	    	this.dmg = this.calcDmg(sourceChar, targetChar, true);
-	        targetChar.stats["mp"] -= this.dmg/2;
+	        targetChar.stats["mp"] -= Math.ceil(this.dmg/2);
 	        // negative MP situation is just death on wheels... also stupid
 	        targetChar.stats["mp"] = Libifels.clampInRange(targetChar.stats["mp"], 0 ,targetChar.stats["maxMP"]);
 	        sourceChar.stats["mp"] += this.dmg/2;
 	        this.dmg = this.calcDmg(sourceChar, targetChar, false);
-	        targetChar.stats["hp"] -= this.dmg;
+	        targetChar.stats["hp"] -= Math.ceil(this.dmg);
 	        sourceChar.stats["hp"] += this.dmg;
 	    } else {
 	    	// apply double damage to target HP, and all healing goes to user's HP

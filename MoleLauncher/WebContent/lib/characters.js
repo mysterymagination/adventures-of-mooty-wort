@@ -314,6 +314,10 @@ export class Grue extends Character {
 	    	this.battleSpritePath+"/grue/nightglo5.png"
 	    ];
 	    /**
+	     * Every 2 consecutive uses of Consume require  a 1d4 turn timeout before it can be used again
+	     */
+	    this.consumeTimeout = 0;
+	    /**
 	     * Contiguous turns Consume has been used; for balance purposes, the Grue can't use it more than two turns in a row.
 	     */
 	    this.consumeTurns = 0;
@@ -599,7 +603,7 @@ export class YawningGod extends Character {
                 	ablProbsConfig["dark_star"] = 0.6;
                 }
                 
-                var randoAbilityId = combat.chooseRandomAbility(ablProbsConfig);
+                var randoAbilityId = Combat.chooseRandomAbility(ablProbsConfig);
                 chosenAbility = this.entity.spellsDict[
                 	randoAbilityId
                 ];
