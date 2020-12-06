@@ -180,10 +180,14 @@ export class UndumStoryViewController extends StoryViewController {
 		super({name: "UndumStoryViewController"});
 		this.undumSystem = undumSystem;
 	}
+	/**
+	 * Writes the given string in a paragraph to either the story transcript or the combat log, depending on the current feedback context
+	 * @param passageString the text to print
+	 */
 	writeParagraph(passageString) {
-		// todo: add support for writing to story transcript or combat log depending on which view is active... would be better to have items that work both in and out of combat maybe take both story and combat viewcontrollers?  Maybe it would make sense to do like an item use content string in ItemManager and install a combat viewcontroller alongside the story viewcontroller in ItemManager?  Oh wait, ItemManager doesn't have VCs, rather the StoryViewController has an ItemManager currently.  Cleanest approach might be to refactor a bunch of the addItem/useActiveItem... function in StoryVC to be in ItemManager and then have ItemManager have a context field that controls whether its item mod functions visually apply to story and/or combat VC.  That could be a major refactor tho... I'm thinkin the path of least resistance, which is simply to have our endpoint impl boi here check for some inCombat flag I guess on the storyVC and then call static Combat.printCombatLog() stuff in that case instead of system.write()?
 		switch(this.feedbackContext) {
 		case "combat":
+			CombatViewController.printCombatLog(passageString, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
 			break;
 		case "story":
 			default:
