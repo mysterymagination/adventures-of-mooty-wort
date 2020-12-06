@@ -6,6 +6,11 @@ export class StoryViewController {
 	constructor(configObj) {
 		this.name = configObj.name;
 		this.itemManager = new Items.ItemManager();
+		/**
+		 * A string indicating which visual context the user is in, story or combat, which modifies the UI elements story changes are printed to.  
+		 * todo: this blends story and combat VC a bit, but not too badly.  Moving a lot fo the item handlers up to ItemManager and having handles to our storyVC and combatVC in ItemManager along with a flag dictating how/to whom item usage should be reported might be better. 
+		 */
+		this.feedbackContext = "story";
 		this.charactersDict = {
 			"mole": new Characters.Mole(),
 			"yawning_god": new Characters.YawningGod(),
@@ -176,7 +181,15 @@ export class UndumStoryViewController extends StoryViewController {
 		this.undumSystem = undumSystem;
 	}
 	writeParagraph(passageString) {
-		this.undumSystem.write("<p>"+passageString+"</p>");
+		// todo: add support for writing to story transcript or combat log depending on which view is active... would be better to have items that work both in and out of combat maybe take both story and combat viewcontrollers?  Maybe it would make sense to do like an item use content string in ItemManager and install a combat viewcontroller alongside the story viewcontroller in ItemManager?  Oh wait, ItemManager doesn't have VCs, rather the StoryViewController has an ItemManager currently.  Cleanest approach might be to refactor a bunch of the addItem/useActiveItem... function in StoryVC to be in ItemManager and then have ItemManager have a context field that controls whether its item mod functions visually apply to story and/or combat VC.  That could be a major refactor tho... I'm thinkin the path of least resistance, which is simply to have our endpoint impl boi here check for some inCombat flag I guess on the storyVC and then call static Combat.printCombatLog() stuff in that case instead of system.write()?
+		switch(this.feedbackContext) {
+		case "combat":
+			break;
+		case "story":
+			default:
+			this.undumSystem.write("<p>"+passageString+"</p>");
+			break;
+		}
 	}
 	appendChoice(choiceString) {
 		super.appendChoice(choiceString);

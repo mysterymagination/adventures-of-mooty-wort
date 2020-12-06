@@ -39,7 +39,7 @@ Combat flow:
 '/
 @startuml
 start
-:MootyWortRpgMech.enterCombat();
+:CombatViewController.enterCombat();
 :Combat.controllerState = beginNewRound;
 repeat
 :stepCombat();

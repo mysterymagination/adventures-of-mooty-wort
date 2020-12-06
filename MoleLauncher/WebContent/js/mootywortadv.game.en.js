@@ -1,5 +1,5 @@
 //imports
-import {MootyWortRpgMech} from "./mootywortrpgmech.js";
+import {CombatViewController} from "./combatviewcontrollers.js";
 import {Libifels} from "../lib/libifels.js";
 import {Combat} from "../lib/combat.js";
 import {UndumStoryViewController} from "./storyviewcontrollers.js";
@@ -49,9 +49,8 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 //-----end undum extension-----//
 
 //-----game logic-----//
-//todo: story ViewController with Characters and ItemManager
-//create RPG combat ViewController
-undum.game.rpgMech = new MootyWortRpgMech();
+//create RPG combat ViewController and transcript story ViewController
+undum.game.rpgMech = new CombatViewController();
 undum.game.storyViewController = new UndumStoryViewController(undum.system);
 undum.game.situations = {
 		main: new undum.SimpleSituation(
@@ -714,9 +713,10 @@ undum.game.situations = {
 							});
 							var mech = undum.game.rpgMech;
 							var story = undum.game.storyViewController;
-							// todo: characters should be owned by the story ViewController and drawn from there at this point
+							story.feedbackContext = "combat";
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav", resultFn: resolve}); 
 						}).then((playerVictory) => {
+							undum.game.storyViewController.feedbackContext = "story";
 							if(playerVictory) {
 								var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
 								undum.game.storyViewController.writeParagraph(yawningGodVictoryString);	
@@ -778,9 +778,11 @@ undum.game.situations = {
 							});
 							var mech = undum.game.rpgMech;
 							var story = undum.game.storyViewController;
+							story.feedbackContext = "combat";
 							// up in basement3_encounter_yawning_god::enter() I shoved the latest Promise resolver (for promiseOfDarkness) onto the storyVC as activeResolver, so pass in here so it can be resolved when combat is over
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav", resultFn: combatResolver});
 						}).then((combatResult) => {
+							undum.game.storyViewController.feedbackContext = "story";
 							const terminusResolver = undum.game.storyViewController.activeResolver;
 							// if we won, call terminres over 'dark_king', else call it with 'death'. 'shadowed' happened up above because we never got into the grue fight in that eventuality.
 							if(combatResult) {

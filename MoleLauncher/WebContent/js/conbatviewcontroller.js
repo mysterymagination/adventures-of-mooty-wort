@@ -15,7 +15,7 @@ import {PassStunned} from "../lib/spellbook.js";
 /**
  * Class responsible for defining the RPG combat mechanics of the Mooty Wort adventure and running combat
  */
-class MootyWortRpgMech {
+class CombatViewController {
 	constructor() {
 		/**
 		 * Object literal association of Character ids to associated UI objects sack
@@ -106,7 +106,7 @@ class MootyWortRpgMech {
 			let postStatusState = combatModel.processRoundTop();
 			this.combatRoundPrint(combatModel, true);
 			// print anything that happened during top o' the round
-			this.combatLogPrint(combatModel.combatLogContent, MootyWortRpgMech.MessageCat.CAT_INFO);
+			CombatViewController.combatLogPrint(combatModel.combatLogContent, CombatViewController.MessageCat.CAT_INFO);
 			combatModel.combatLogContent = "";
 			// update character portraits with status info
 			this.updateCharacterBattleImages(combatModel);
@@ -125,11 +125,11 @@ class MootyWortRpgMech {
 			}
 		} else if(state === Combat.ControllerState.playerInput) {
 			// Lunar-inspired hyyype!
-			this.combatLogPrint(
+			CombatViewController.combatLogPrint(
 					combatModel.telegraphAction(
 							combatModel.currentAISelectedAbility
 					),
-					MootyWortRpgMech.MessageCat.CAT_ENEMY_TELEGRAPH
+					CombatViewController.MessageCat.CAT_ENEMY_TELEGRAPH
 			);
 			// command selection subphase of player input phase
 			this.populatePlayerCommandList(combatModel);
@@ -171,15 +171,15 @@ class MootyWortRpgMech {
 					combatModel.combatLogContent = selectedAbility.generateFlavorText(combatModel.currentTurnOwner, combatModel.currentTargetCharacter);
 					break;
 				}
-				this.combatLogPrint(combatModel.combatLogContent, MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION);
+				CombatViewController.combatLogPrint(combatModel.combatLogContent, CombatViewController.MessageCat.CAT_ENEMY_ACTION);
 				this.showSpellEffect(sourceCharacter, targetCharacters, selectedAbility.id, () => {
 					this.updateCharacterData(combatModel);
 					this.handleEnemyTurnComplete(combatModel);
 				});
 			} else {
-				this.combatLogPrint(
+				CombatViewController.combatLogPrint(
 						combatModel.currentTurnOwner.name + " feebly attempts to enact " + combatModel.currentAISelectedAbility.name + " but falters in " + combatModel.currentTurnOwner.getPronoun_possessive() + " exhaustion!",
-						MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION
+						CombatViewController.MessageCat.CAT_ENEMY_ACTION
 				);
 				this.handleEnemyTurnComplete(combatModel);
 			}
@@ -191,7 +191,7 @@ class MootyWortRpgMech {
 	/**
 	 * Scrolls the combat log div to the bottom of its current total content
 	 */
-	scrollCombatLog() {
+	static scrollCombatLog() {
 		var combatLog = document.getElementById("combatLog");
 		combatLog.scrollTo(0, combatLog.scrollHeight);
 	}
@@ -860,7 +860,7 @@ class MootyWortRpgMech {
 				let longClicked = false;
 				let touchDownHandler = e => { 
 					longClickTimerFn = window.setTimeout(() => {
-						this.combatLogPrint(abl.getHint(), MootyWortRpgMech.MessageCat.CAT_ABILITY_HINT);
+						CombatViewController.combatLogPrint(abl.getHint(), CombatViewController.MessageCat.CAT_ABILITY_HINT);
 						longClicked = true;
 					}, 500);
 				};
@@ -874,7 +874,7 @@ class MootyWortRpgMech {
 				};
 				let mouseDownHandler = e => { 
 					longClickTimerFn = window.setTimeout(() => {
-						this.combatLogPrint(abl.getHint(), MootyWortRpgMech.MessageCat.CAT_ABILITY_HINT);
+						CombatViewController.combatLogPrint(abl.getHint(), CombatViewController.MessageCat.CAT_ABILITY_HINT);
 						longClicked = true;
 					}, 500);
 				};
@@ -904,7 +904,7 @@ class MootyWortRpgMech {
 									let targetCharacter = combatModel.findCombatant(targetCharacterId);
 									abl.effect(sourceCharacter, targetCharacter);
 									this.showSpellEffect(sourceCharacter, [targetCharacter], abl.id, () => {
-										this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+										CombatViewController.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacter), CombatViewController.MessageCat.CAT_PLAYER_ACTION);
 										this.updateCharacterData(combatModel);
 										this.handlePlayerTurnComplete(combatModel);
 										// clear onclicks now that we've used them
@@ -923,17 +923,17 @@ class MootyWortRpgMech {
 							case Ability.TargetTypesEnum.personal:
 								targetCharacters = [sourceCharacter];
 								abl.effect(sourceCharacter);
-								this.combatLogPrint(abl.generateFlavorText(sourceCharacter), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+								CombatViewController.combatLogPrint(abl.generateFlavorText(sourceCharacter), CombatViewController.MessageCat.CAT_PLAYER_ACTION);
 								break;
 							case Ability.TargetTypesEnum.allEnemies:
 								targetCharacters = combatModel.enemyParty;
 								abl.effect(sourceCharacter, targetCharacters);
-								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+								CombatViewController.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), CombatViewController.MessageCat.CAT_PLAYER_ACTION);
 								break;
 							case Ability.TargetTypesEnum.allAllies:
 								targetCharacters = combatModel.playerParty;
 								abl.effect(sourceCharacter, targetCharacters);
-								this.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION);
+								CombatViewController.combatLogPrint(abl.generateFlavorText(sourceCharacter, targetCharacters), CombatViewController.MessageCat.CAT_PLAYER_ACTION);
 								break;
 							}
 							this.showSpellEffect(sourceCharacter, targetCharacters, abl.id, () => {
@@ -945,9 +945,9 @@ class MootyWortRpgMech {
 						}
 					} else {
 						// tell user to pick something else
-						this.combatLogPrint(
+						CombatViewController.combatLogPrint(
 								""+combatModel.currentTurnOwner.name+" lacks the reserves to manage "+abl.name+"; try something else.  Remember that your heroic attacks can revitalize your mana!",
-								MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION
+								CombatViewController.MessageCat.CAT_PLAYER_ACTION
 						);
 					}
 
@@ -1032,9 +1032,9 @@ class MootyWortRpgMech {
 	/**
 	 * Creates a new \<p\> tag, puts the given text in it, and appends it to the combat log
 	 * @param logString a string to append to the log
-	 * @param category enum ordinal from MootyWortRpgMech.MessageCat indicating what sort of message we're printing
+	 * @param category enum ordinal from CombatViewController.MessageCat indicating what sort of message we're printing
 	 */
-	combatLogPrint(logString, category) {
+	static combatLogPrint(logString, category) {
 		// no need to print anything if we've received nothing
 		if(logString) {
 			var combatLog = document.getElementById("combatLog");
@@ -1050,25 +1050,25 @@ class MootyWortRpgMech {
 			var logTextNode = document.createTextNode(logString);
 			combatLog.appendChild(logTextNode);
 			switch(category) {
-			case MootyWortRpgMech.MessageCat.CAT_PLAYER_ACTION:
+			case CombatViewController.MessageCat.CAT_PLAYER_ACTION:
 				catImg.src = "images/mole_icon.png";
 				// scroll to current bottom of combat log so player's eye lands on the first
 				// event after they input a command, the outcome of that command
-				this.scrollCombatLog();
+				CombatViewController.scrollCombatLog();
 				break;
-			case MootyWortRpgMech.MessageCat.CAT_ABILITY_HINT:
+			case CombatViewController.MessageCat.CAT_ABILITY_HINT:
 				catImg.src = "images/info_icon.svg";
 				// scroll to current bottom of combat log so player's eye lands on the 
 				// ability hint text
-				this.scrollCombatLog();
+				CombatViewController.scrollCombatLog();
 				break;
-			case MootyWortRpgMech.MessageCat.CAT_ENEMY_ACTION:
+			case CombatViewController.MessageCat.CAT_ENEMY_ACTION:
 				catImg.src = "images/skull_icon.jpg";
 				break;
-			case MootyWortRpgMech.MessageCat.CAT_ENEMY_TELEGRAPH:
+			case CombatViewController.MessageCat.CAT_ENEMY_TELEGRAPH:
 				catImg.src = "images/Apport_logo.svg";
 				break;
-			case MootyWortRpgMech.MessageCat.CAT_INFO:
+			case CombatViewController.MessageCat.CAT_INFO:
 				catImg.src = "images/info_icon.svg";
 				break;
 			}
@@ -1245,7 +1245,7 @@ class MootyWortRpgMech {
 /**
  * Enum of combat log message categories
  */
-MootyWortRpgMech.MessageCat = Object.freeze(
+CombatViewController.MessageCat = Object.freeze(
 		{
 			/**
 			 * A message regarding player action
@@ -1265,4 +1265,4 @@ MootyWortRpgMech.MessageCat = Object.freeze(
 			CAT_INFO: 4
 		}
 );
-export {MootyWortRpgMech};
+export {CombatViewController};
