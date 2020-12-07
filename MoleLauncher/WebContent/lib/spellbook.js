@@ -410,8 +410,12 @@ export class Defend extends Ability {
 	constructor() {
 		super({id: "defend", name: "Defend"});
 		this.targetType = Ability.TargetTypesEnum.personal;
+		this.mpBonusCoefficient = 0.25;
+		this.mpBonus = 0;
 	}
     effect(sourceCharacter) {
+    	this.mpBonus = this.mpBonusCoefficient * sourceCharacter.stats.maxMP;
+    	sourceCharacter.stats.mp += this.mpBonus;
     	Libifels.addUniqueStatusEffect(
         	sourceCharacter, 
         	new Alchemy.Defended()

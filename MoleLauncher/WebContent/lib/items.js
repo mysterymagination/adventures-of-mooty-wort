@@ -240,6 +240,90 @@ export class LastLash extends Item {
 	}
 }
 /**
+ * Minor Health Potion restores 50% HP
+ */
+export class MinorHealthPotion extends Item {
+	constructor() {
+		super();
+		this.id = "minor_health_potion";
+		this.name = "Minor Health Potion";
+		this.descriptor = {
+			"useOn": [
+				{
+					"character": this.restoreHealth
+				}
+			],
+			"descriptionString": "The "+this.name+" is a viscous cozy scarlet, the gentle waves within resembling a soothing ocean of velvety blankets."
+		}	
+	}
+	/**
+	 * Restores 50% HP to the player character
+	 * @param story the ViewController for the story
+	 */
+	restoreHealth(story) {
+		// write item use feedback
+		story.writeParagraph("As you imbibe the potion your wounds knit themselves shut and wave of ecstatic elemental love washes over you!");
+		story.charactersDict.mole.stats.hp += 0.5 * story.charactersDict.mole.stats.maxHP;
+		story.removeItem(story.charactersDict.mole, this);
+	}
+}
+/**
+ * Minor Mana Potion restores 25% MP
+ */
+export class MinorManaPotion extends Item {
+	constructor() {
+		super();
+		this.id = "minor_mana_potion";
+		this.name = "Minor Mana Potion";
+		this.descriptor = {
+			"useOn": [
+				{
+					"character": this.restoreMana
+				}
+			],
+			"descriptionString": "The "+this.name+" is a lovely shimmering sapphire hue, and the actual diamond dust within glitters brilliantly."
+		}	
+	}
+	/**
+	 * Restores 25% MP to the player character
+	 * @param story the ViewController for the story
+	 */
+	restoreMana(story) {
+		// write item use feedback
+		story.writeParagraph("As you imbibe the potion your heartbeat quickens and mystic power swells!");
+		story.charactersDict.mole.stats.mp += 0.25 * story.charactersDict.mole.stats.maxMP;
+		story.removeItem(story.charactersDict.mole, this);
+	}
+}
+/**
+ * Major Mana Potion restores 100% MP
+ */
+export class MajorManaPotion extends Item {
+	constructor() {
+		super();
+		this.id = "major_mana_potion";
+		this.name = "Major Mana Potion";
+		this.descriptor = {
+			"useOn": [
+				{
+					"character": this.restoreMana
+				}
+			],
+			"descriptionString": "The "+this.name+" seems to be a bottled-up liquid rainbow!  Every particle of it seems to be a unique and ever-changing fractal, infinite in depth and complexity.  It's wonderfully warm to the touch and fills you with a sense of serene wonder whenever you so much as glance at it."
+		}	
+	}
+	/**
+	 * Restores 100% MP to the player character
+	 * @param story the ViewController for the story
+	 */
+	restoreMana(story) {
+		// write item use feedback
+		story.writeParagraph("As you imbibe the potion your eyes glow with radiant fervor and mystic power sets all your nerves aflame!  Purple lightning arcs between the innumerable tips of your fuzz, which is presently standing on end like you're some sort of land-sea urchin.");
+		story.charactersDict.mole.stats.mp += story.charactersDict.mole.stats.maxMP;
+		story.removeItem(story.charactersDict.mole, this);
+	}
+}
+/**
  * This urn contains the daughter of the terrible ochre ooze; it wants her back, but she does not wish to return.
  */
 export class RustyUrn extends Item {
