@@ -21,16 +21,16 @@ export class Item {
 	}
 	/**
 	 * Handles using this Item on the target object identified by the given string
-	 * @param story the ViewController object for the story
+	 * @param itemManager item wrangler with handles to viewcontrollers
 	 * @param targetString string ID of the in-universe object we're using this Item on
 	 */
-	useOn(story, targetString) {
+	useOn(itemManager, targetString) {
 		// parse descriptor and look for a useOn attr, and then match the input targetString to a regex string key in the useOn array of possible matches. Finally call the relevant functions of this Item that were found mapped to matching regex key strings.
 		if(this.descriptor.useOn) {
 			for(const matcherObj of this.descriptor.useOn) {
 				for(const [keyRegex, effectFn] of Object.entries(matcherObj)) {
 					if(targetString.match(new RegExp(keyRegex, 'i'))) {
-						effectFn.call(this, story);
+						effectFn.call(this, itemManager);
 					}
 				}
 			}
@@ -39,8 +39,8 @@ export class Item {
 	/**
 	 * Print out the item's description 
 	 */
-	describe(story) {
-		story.writeParagraph(this.descriptor.descriptionString);
+	describe(itemManager) {
+		itemManager.describeItem(this.descriptor.descriptionString);
 	}
 }
 /**
@@ -522,6 +522,20 @@ export class ItemManager {
 			listItemTag.classList.remove('highlight_simple');
 			Libifels.findInventoryItem(this.storyViewController.charactersDict.mole, activeItemId).useOn(this, targetString);
 			this.activeItemId = null;
+		}
+	}
+	/**
+	 * Write out the item's description
+	 */
+	describeItem(descriptionString) {
+		switch(this.feedbackContext) {
+		case "combat":
+			this.combatViewController.combatLogPrint(descriptionString, CombatViewController.MessageCat.CAT_ABILITY_HINT);
+			break;
+		case "story":
+		default:
+			this.storyViewController.writeParagraph(descriptionString);	
+			break;
 		}
 	}
 }

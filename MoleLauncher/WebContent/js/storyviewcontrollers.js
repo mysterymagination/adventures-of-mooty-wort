@@ -1,9 +1,8 @@
 import * as Items from "../lib/items.js";
 import * as Characters from "../lib/characters.js";
 import {Libifels} from "../lib/libifels.js";
-import {ViewController} from "../lib/viewcontroller.js"
 
-export class StoryViewController extends ViewController {
+export class StoryViewController {
 	constructor(configObj) {
 		this.name = configObj.name;
 		this.charactersDict = {
@@ -25,6 +24,15 @@ export class StoryViewController extends ViewController {
 		 * An array of strings representing choices available to the player
 		 */
 		this.choiceStringArray = [];
+	}
+	/**
+	 * Writes a given text string out to the story text; what this means and exactly
+	 * how it works will be determined by the current StoryViewController subclass's override
+	 * of this function and what its story text display paradigm is.
+	 * @param passageString a chunk of story text to write within a paragraph
+	 */
+	writeParagraph(passageString) {
+		console.log("We don't know how to write out the passage string \""+passageString+"\"");
 	}
 	/**
 	 * Append a choice to the player's game context
@@ -63,15 +71,7 @@ export class UndumStoryViewController extends StoryViewController {
 	 * @param passageString the text to print
 	 */
 	writeParagraph(passageString) {
-		switch(this.feedbackContext) {
-		case "combat":
-			CombatViewController.printCombatLog(passageString, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
-			break;
-		case "story":
-			default:
-			this.undumSystem.write("<p>"+passageString+"</p>");
-			break;
-		}
+		this.undumSystem.write("<p>"+passageString+"</p>");
 	}
 	appendChoice(choiceString) {
 		super.appendChoice(choiceString);
