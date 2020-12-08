@@ -50,8 +50,11 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 
 //-----game logic-----//
 //create RPG combat ViewController and transcript story ViewController
-undum.game.rpgMech = new CombatViewController();
+undum.game.combatViewController = new CombatViewController();
 undum.game.storyViewController = new UndumStoryViewController(undum.system);
+undum.game.itemManager = new Items.ItemManager();
+undum.game.itemManager.storyViewController = undum.game.storyViewController;
+undum.game.itemManager.combatViewController = undum.game.combatViewController;
 undum.game.situations = {
 		main: new undum.SimpleSituation(
 				"",
@@ -149,8 +152,8 @@ undum.game.situations = {
 										if (character.qualities.health > 0) {
 											system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
 											// push the fuzz item to the mole's inventory
-											undum.game.storyViewController.addItem(undum.game.storyViewController.charactersDict.mole, new Items.PulsatingFuzz());
-											// todo: Each interactable object in the current context of the story will be surrounded in anchor tags that go nowhere (or Undum action anchor tag syntax?) and call a util function StoryViewController.activeItemUseOn(target thingamajig string) which calls ItemManager.activeItem.useOn(passed in target string) and then removes the active item from ItemManager's reckoning and removes the highlight effect on its UI list item.  The trouble with that approach is that it could effectively leave dead looking links all over.  A quick fix might be to take inspiration from Lucid Dreams and let interactables be described by default and then have special handling when clicked if an item is active; they used handy different interact icons to make this behavior change transparent, but it's probably fine enough without it... the other option is to tag interactables in text and then change styling on all that are in the current situation context to indicate that they can be targets of an inventory item whenever an inventory item is activated.  Actually, this might be a good job for an innocuous span tag in the markup text with a css selector that is specific to the relevant situation id -- that way we could simply say upon item activation, ok CSS go find all the fellas with class interactable_mysituationid and style them with hyperlink effects or highlights or whatever.                      
+											undum.game.itemManager.addItem(undum.game.storyViewController.charactersDict.mole, new Items.PulsatingFuzz());
+											// todo: Each interactable object in the current context combatViewControllertory will be surrounded in anchor tags that go nowhere (or Undum action anchor tag syntax?) and call a util function StoryViewController.activeItemUseOn(target thingamajig string) which calls ItemManager.activeItem.useOn(passed in target string) and then removes the active item from ItemManager's reckoning and removes the highlight effect on its UI list item.  The trouble with that approach is that it could effectively leave dead looking links all over.  A quick fix might be to take inspiration from Lucid Dreams and let interactables be described by default and then have special handling when clicked if an item is active; they used handy different interact icons to make this behavior change transparent, but it's probably fine enough without it... the other option is to tag interactables in text and then change styling on all that are in the current situation context to indicate that they can be targets of an inventory item whenever an inventory item is activated.  Actually, this might be a good job for an innocuous span tag in the markup text with a css selector that is specific to the relevant situation id -- that way we could simply say upon item activation, ok CSS go find all the fellas with class interactable_mysituationid and style them with hyperlink effects or highlights or whatever.                      
 										} else {
 											system.write(sFuzzMessage + "</p>");
 											system.doLink('death');
@@ -294,7 +297,7 @@ undum.game.situations = {
 						console.log("spider rolling status after we've stopped her rolling: " + undum.game.situations.basement1_bulbous_spider_hub.bRolling);
 
 						// player now has the ooze urn... hooray?
-						undum.game.storyViewController.addItem(undum.game.storyViewController.charactersDict.mole, new Items.RustyUrn());
+						undum.game.itemManager.addItem(undum.game.storyViewController.charactersDict.mole, new Items.RustyUrn());
 						character.stringArrayInventory.push("rusty_urn");
 						system.doLink("basement1_bulbous_spider_hub");
 					},
@@ -336,9 +339,9 @@ undum.game.situations = {
 						sacrifice_ooze_daughter : function(character, system, action) {
 							if (action) {
 								try {
-									const activeItemId = undum.game.storyViewController.itemManager.activeItemId;
-									if(activeItemId) {
-										Libifels.findInventoryItem(character.mole, activeItemId).useOn(undum.game.storyViewController, "ochre ooze");
+									const itemManager = undum.game.itemManager;
+									if(itemManager.activeItemId) {
+										itemManager.activeItemUseOn("ochre ooze");
 									}
 								} catch (err) {
 									console.log("error processing ooze daughter slaughter: "+err);
@@ -409,7 +412,7 @@ undum.game.situations = {
 									system.write(
 											"<p>You carefully pluck the impossibly delicate crystal from its socket and place it snuggly in your compartment.</p>"
 									);
-									undum.game.storyViewController.addItem(character.mole, new Items.LastLash());
+									undum.game.itemManager.addItem(character.mole, new Items.LastLash());
 									undum.game.storyViewController.eventFlags.last_lash_taken = true;
 								}
 							} catch(err) {
@@ -419,9 +422,9 @@ undum.game.situations = {
 						"check_molerat_target": function (character, system, action) {
 							if(action) {
 								try {
-									const story = undum.game.storyViewController;
-									if (story.itemManager.activeItemId) {
-										story.activeItemUseOn("nakedest molerat");
+									const itemManager = undum.game.itemManager;
+									if (itemManager.activeItemId) {
+										itemManager.activeItemUseOn("nakedest molerat");
 									} else {
 										system.write("<p>Examining this nakedest of molerats yields little but subtle nausea and an appreciation for the fortitude of female molerats.</p>");
 									}
@@ -480,7 +483,7 @@ undum.game.situations = {
 								// Grue cares nothing about the mole at this point and thus has no reason to kill him, but is also intrigued by his position on Darkness
 								undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 								// give character the obol
-								undum.game.storyViewController.addItem(character.mole, new Items.OdditineObol());
+								undum.game.itemManager.addItem(character.mole, new Items.OdditineObol());
 								// send the mole back to molerat hub
 								system.doLink("basement2_hub");
 							} else if (character.sMoleMajorDestiny === "king of the deep") {
@@ -500,7 +503,7 @@ undum.game.situations = {
 									undum.game.storyViewController.eventFlags.grue_challenge_activated = true;
 									// give character the obol
 									// todo: creating items on the fly like this that are supposed to be unique is sloppy; it should be the case that we can only reach this gameplay path once, but the item instance sanity shouldn't depend on that.
-									undum.game.storyViewController.addItem(character.mole, new Items.OdditineObol());
+									undum.game.itemManager.addItem(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								} else if (character.sMoleMinorDestiny === "groovy") {
@@ -511,7 +514,7 @@ undum.game.situations = {
 									// flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The Yawning God
 									undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 									// give character the obol
-									undum.game.storyViewController.addItem(character.mole, new Items.OdditineObol());
+									undum.game.itemManager.addItem(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								} else if (character.sMoleMinorDestiny === "paladin") {
@@ -556,7 +559,7 @@ undum.game.situations = {
 									// Grue likes the mole genuinely and wants him to survive
 									undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 									// give character the obol
-									undum.game.storyViewController.addItem(character.mole, new Items.OdditineObol());
+									undum.game.itemManager.addItem(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								}
@@ -711,7 +714,7 @@ undum.game.situations = {
 							yawningGodRoar.addEventListener('canplaythrough', e => {
 								yawningGodRoar.play();
 							});
-							var mech = undum.game.rpgMech;
+							var mech = undum.game.combatViewController;
 							var story = undum.game.storyViewController;
 							story.feedbackContext = "combat";
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav", resultFn: resolve}); 
@@ -776,7 +779,7 @@ undum.game.situations = {
 							grueRoar.addEventListener('canplaythrough', e => {
 								grueRoar.play();
 							});
-							var mech = undum.game.rpgMech;
+							var mech = undum.game.combatViewController;
 							var story = undum.game.storyViewController;
 							story.feedbackContext = "combat";
 							// up in basement3_encounter_yawning_god::enter() I shoved the latest Promise resolver (for promiseOfDarkness) onto the storyVC as activeResolver, so pass in here so it can be resolved when combat is over

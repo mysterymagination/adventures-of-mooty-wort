@@ -443,7 +443,7 @@ export class RustyUrn extends Item {
 		case "story":
 			const story = itemManager.storyViewController;
 			// write item use feedback
-			story.writeParagraph(urnProferance);
+			story.writeParagraph(paraUrnProfferance);
 			story.writeParagraph(paraKThxMole);
 			// modify story state to reflect daughter slaughter
 			story.eventFlags.daughter_ooze_sacrificed = true;
@@ -452,9 +452,9 @@ export class RustyUrn extends Item {
 			// sting and stab, mentally; the more the mole has bonded with her, the worse it hurts
 			story.subtractFromCharacterQuality("sanity", story.charactersDict.mole.stats.maxSanity * Math.max(story.eventCount.daughter_ooze_conversations / 10.0, 0.1));
 			// add Caustic Claws to mole equipment
-			story.addEquipment(story.charactersDict.mole, new CausticClaws());
+			itemManager.addEquipment(story.charactersDict.mole, new CausticClaws());
 			// she's gone forever... RIP cute slime girl
-			story.removeItem(story.charactersDict.mole, this);
+			itemManager.removeItem(story.charactersDict.mole, this);
 			break;
 		}
 	}
