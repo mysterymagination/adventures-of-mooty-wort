@@ -286,7 +286,7 @@ export class Grue extends Character {
 	    this.stats["mp"] = this.stats["maxMP"];
 	    this.stats["atk"] = 25;
 	    this.stats["def"] = 15;
-	    this.stats["pwr"] = 35;
+	    this.stats["pwr"] = 32;
 	    this.stats["res"] = 25; 
 	    this.stats["spd"] = 0; // inevitability need not rush
 	    Object.assign(this.coreStats, this.stats);

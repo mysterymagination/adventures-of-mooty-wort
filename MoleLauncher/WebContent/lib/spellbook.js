@@ -728,9 +728,9 @@ export class TouchVoid extends Spell {
 	calcDmg(sourceChar, targetChar, isMagic) {
 		var aspectDamage = 0.0;
 		if(isMagic) {
-			aspectDamage = 1.2*sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"];
+			aspectDamage = sourceChar.stats["pwr"] - 0.5 * targetChar.stats["res"];
 		} else {
-			aspectDamage = 1.2*sourceChar.stats["atk"] - 0.5 * targetChar.stats["def"];
+			aspectDamage = sourceChar.stats["atk"] - 0.5 * targetChar.stats["def"];
 		}
 		return Math.max(Libifels.prettyDarnRound(aspectDamage), 1);
 	}
