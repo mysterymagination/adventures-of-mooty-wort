@@ -183,17 +183,28 @@ export class PulsatingFuzz extends Item {
 	 * Tickle the Nakedest Molerat out of his reverie
 	 * @param story the ViewController for the story
 	 */
-	tickleMolerat(story) {
-		// write item use feedback
-		story.writeParagraph("You reach out and wiggle the fuzz playfully over your molerat friend's snoot; he tries to resist an upwelling of mirth that threatens to fracture his zealous persona, but no will can resist the captivating grip of the tickle monster -- as the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the opal eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.");
-		// modify story state to reflect tickled molerat
-		story.eventFlags.molerat_tickled = true;
-		// add grue hub access to the array of choices the player currently has in the story,
-		// to be printed as the specific story paradigm directs
-		story.appendChoice("basement2_grue_hub");
+	tickleMolerat(itemManager) {
+		switch(itemManager.feedbackContext) {
+		case "story":
+			// write item use feedback
+			itemManager.storyViewController.writeParagraph("You reach out and wiggle the fuzz playfully over your molerat friend's snoot; he tries to resist an upwelling of mirth that threatens to fracture his zealous persona, but no will can resist the captivating grip of the tickle monster -- as the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the opal eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.");
+			// modify story state to reflect tickled molerat
+			itemManager.storyViewController.eventFlags.molerat_tickled = true;
+			// add grue hub access to the array of choices the player currently has in the story,
+			// to be printed as the specific story paradigm directs
+			itemManager.storyViewController.appendChoice("basement2_grue_hub");
+		}
 	}
-	ticklePlayer(story) {
-		story.writeParagraph("*^_^* You giggle merrily as you tickle your snoot with the fuzz; sometimes one simply must step out of the moment and appreciate the little joys in life!");
+	ticklePlayer(itemManager) {
+		const tickleString = "*^_^* You giggle merrily as you tickle your snoot with the fuzz; sometimes one simply must step out of the moment and appreciate the little joys in life!";
+	
+		switch(itemManager.feedbackContext) {
+		case "combat":
+			itemManager.combatViewController.combatLogPrint(tickleString);
+		case "story":
+		default:
+			itemManager.storyViewController.writeParagraph(tickleString);
+		}
 	}
 }
 /**
