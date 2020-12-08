@@ -1262,7 +1262,11 @@ CombatViewController.MessageCat = Object.freeze(
 			/**
 			 * A message regarding general info
 			 */
-			CAT_INFO: 4
+			CAT_INFO: 4,
+			/**
+			 * A message describing an ability or giving other generic info
+			 */
+			CAT_ABILITY_HINT: 5
 		}
 );
 export {CombatViewController};

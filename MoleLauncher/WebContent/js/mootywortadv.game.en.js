@@ -822,12 +822,15 @@ undum.game.qualities = {
 		health: new undum.NumericQuality(
 				"Health", { priority: "0001", group: 'stats' }
 		),
+		mana: new undum.NumericQuality(
+				"Mana", { priority: "0002", group: 'stats' }
+		),
 		sanity: new undum.NumericQuality(
-				"Sanity", { priority: "0002", group: 'stats' }
+				"Sanity", { priority: "0003", group: 'stats' }
 		),
 		moleWhole: new BurrowAdjectivesQuality(
 				"<span title='One&apos;s ability to dig is not measured in kilograms of displaced dirt -- rather, it must take into account all the courage, curiosity, and tenacity required of tunnelers of all stripes.  What can your claws do?  Where can they take you?  We shall see!'>Mole Whole</span>",
-				{ priority: "0003", group: 'stats' }
+				{ priority: "0004", group: 'stats' }
 		)
 };
 
@@ -850,6 +853,7 @@ undum.game.init = function (character, system) {
 
 	// inform UI viewmodel 
 	character.qualities.health = character.mole.stats.maxHP;
+	character.qualities.mana = character.mole.stats.maxMP;
 	character.qualities.sanity = character.mole.stats.maxSanity;
 	character.qualities.moleWhole = character.mole.ordinalUnderwere;
 	system.setCharacterText("<p>You are starting on an exciting journey beneath the earth and beyond all reason.</p>");
