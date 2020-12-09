@@ -394,26 +394,6 @@ img.float_left {
   /*padding: 20px;*/
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  
-  /*todo: what's a reasonable way to keep the modal centered within the currently visible area 
-     i.e. keep it centered as the underlying content is scrolled?  The below messes up image-container
-     height constraint for some reason.*/
-  /* idfk, just use JS
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 75%;
-  height: 75%;
-  transform: translate(50%, 50%);
-  */
-  /*
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  position: fixed;
-  max-width: 75%;
-  max-height: 75%;
-  */
 }
 
 /* Modal Content/Box */

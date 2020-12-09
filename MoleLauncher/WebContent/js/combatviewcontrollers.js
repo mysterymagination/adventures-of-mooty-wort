@@ -643,7 +643,7 @@ class CombatViewController {
 	 */
 	createBattleUi(combatModel) {
 		// hide the normal Undum UI
-		var undumPage = document.getElementById("page");
+		var undumPage = document.getElementById("mid_panel");//"page");
 		undumPage.style.display = "none";
 		// show the combat mode modal
 		var combatUI = document.getElementById("combatModal");
