@@ -382,12 +382,13 @@ img.float_left {
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */
-  position: relative; /*constrained by parent*/
-  height: 40em;/*90%; /*todo: where's the extra height coming from that necessitates vertical scroll?*/
+  position: absolute; /*constrained by parent*/
+  width: 57%;
+  height: 90%;/*90%; /*todo: where's the extra height coming from that necessitates vertical scroll?*/
   margin-top: 0; 
   margin-bottom: 0;
-  margin-left: 5.3em;
-  margin-right: 20em;
+  margin-left: auto;
+  margin-right: auto;
   overflow: auto; /* Enable scroll if needed */
   justify-content: center;
   align-items: center;
