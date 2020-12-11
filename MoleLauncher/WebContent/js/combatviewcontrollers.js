@@ -1108,11 +1108,11 @@ class CombatViewController {
 			);
 			// install onclick handler in the door image that hides div combatModal and shows div page
 			overlayCanvas.onclick = (clickEvent) => {
-				if(clickEvent.clientX >= doorDestX && clickEvent.clientX <= doorDestX + doorWidth &&
-						clickEvent.clientY >= doorDestY && clickEvent.clientY <= doorDestY+doorHeight) {
+				if(clickEvent.offsetX >= doorDestX && clickEvent.offsetX <= doorDestX + doorWidth &&
+						clickEvent.offsetY >= doorDestY && clickEvent.offsetY <= doorDestY+doorHeight) {
 					var combatModal = document.getElementById('combatModal');
 					combatModal.style.display = 'none';
-					var undumPage = document.getElementById('page');
+					var undumPage = document.getElementById('mid_panel');
 					undumPage.style.display = 'block';
 					endAudio.pause();
 					context2d.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);

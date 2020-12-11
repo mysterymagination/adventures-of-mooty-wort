@@ -17,6 +17,7 @@ bg_spacer {
 #page {
     margin: 0 auto;
     position: relative;
+    z-index: 4;
 }
 #mid_panel {
     margin: 0 10.5em;
@@ -383,12 +384,11 @@ img.float_left {
 .modal {
   display: none; /* Hidden by default */
   position: absolute; /*constrained by parent*/
-  width: 57%;
-  height: 90%;/*90%; /*todo: where's the extra height coming from that necessitates vertical scroll?*/
-  margin-top: 0; 
+  width: 48%;
+  height: 90%; 
   margin-bottom: 0;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: -0.4em; /*somebody up the hierarchy wants to push us right, idk*/
+  margin-right: 0;
   overflow: auto; /* Enable scroll if needed */
   justify-content: center;
   align-items: center;
