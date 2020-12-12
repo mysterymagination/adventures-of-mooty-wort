@@ -716,10 +716,10 @@ undum.game.situations = {
 							});
 							var mech = undum.game.combatViewController;
 							var story = undum.game.storyViewController;
-							story.feedbackContext = "combat";
+							undum.game.itemManager.feedbackContext = "combat";
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav", resultFn: resolve}); 
 						}).then((playerVictory) => {
-							undum.game.storyViewController.feedbackContext = "story";
+							undum.game.itemManager.feedbackContext = "story";
 							if(playerVictory) {
 								var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
 								undum.game.storyViewController.writeParagraph(yawningGodVictoryString);	
@@ -781,11 +781,11 @@ undum.game.situations = {
 							});
 							var mech = undum.game.combatViewController;
 							var story = undum.game.storyViewController;
-							story.feedbackContext = "combat";
+							undum.game.itemManager.feedbackContext = "combat";
 							// up in basement3_encounter_yawning_god::enter() I shoved the latest Promise resolver (for promiseOfDarkness) onto the storyVC as activeResolver, so pass in here so it can be resolved when combat is over
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav", resultFn: combatResolver});
 						}).then((combatResult) => {
-							undum.game.storyViewController.feedbackContext = "story";
+							undum.game.itemManager.feedbackContext = "story";
 							const terminusResolver = undum.game.storyViewController.activeResolver;
 							// if we won, call terminres over 'dark_king', else call it with 'death'. 'shadowed' happened up above because we never got into the grue fight in that eventuality.
 							if(combatResult) {

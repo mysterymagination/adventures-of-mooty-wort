@@ -1,4 +1,5 @@
 import {Libifels} from "./libifels.js";
+import {CombatViewController} from "../js/combatviewcontrollers.js";
 
 export class Item {
 	contructor() {
@@ -200,7 +201,7 @@ export class PulsatingFuzz extends Item {
 	
 		switch(itemManager.feedbackContext) {
 		case "combat":
-			itemManager.combatViewController.combatLogPrint(tickleString);
+			CombatViewController.combatLogPrint(tickleString, CombatViewController.MessageCat.CAT_ABILITY_HINT);
 		case "story":
 		default:
 			itemManager.storyViewController.writeParagraph(tickleString);
@@ -247,9 +248,9 @@ export class LastLash extends Item {
 			story.writeParagraph(paraVioletEyes);
 			break;
 		case "combat":
-			itemManager.combatViewController.combatLogPrint(paraSnoot);
-			itemManager.combatViewController.combatLogPrint(paraClarity);
-			itemManager.combatViewController.combatLogPrint(paraVioletEyes);
+			CombatViewController.combatLogPrint(paraSnoot, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
+			CombatViewController.combatLogPrint(paraClarity, CombatViewController.MessageCat.CAT_ABILITY_HINT);
+			CombatViewController.combatLogPrint(paraVioletEyes, CombatViewController.MessageCat.CAT_ABILITY_HINT);
 			break;
 		}
 		// modify story state to reflect parted veil
@@ -292,7 +293,7 @@ export class MinorHealthPotion extends Item {
 			itemManager.storyViewController.writeParagraph(paraImbibe);
 			break;
 		case "combat":
-			itemManager.combatViewController.combatLogPrint(paraImbibe);
+			CombatViewController.combatLogPrint(paraImbibe, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
 			break;
 		}
 		itemManager.storyViewController.addToCharacterQuality("health", 0.5 * story.charactersDict.mole.stats.maxHP);
@@ -329,7 +330,7 @@ export class MinorManaPotion extends Item {
 			itemManager.storyViewController.writeParagraph(paraImbibe);
 			break;
 		case "combat":
-			itemManager.combatViewController.combatLogPrint(paraImbibe);
+			CombatViewController.combatLogPrint(paraImbibe, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
 			break;
 		}
 		itemManager.storyViewController.addToCharacterQuality("mana", 0.25 * story.charactersDict.mole.stats.maxMP);
@@ -366,7 +367,7 @@ export class MajorManaPotion extends Item {
 			itemManager.storyViewController.writeParagraph(paraImbibe);
 			break;
 		case "combat":
-			itemManager.combatViewController.combatLogPrint(paraImbibe);
+			CombatViewController.combatLogPrint(paraImbibe, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
 			break;
 		}
 		itemManager.storyViewController.addToCharacterQuality("mana", story.charactersDict.mole.stats.maxMP);
@@ -426,7 +427,7 @@ export class RustyUrn extends Item {
 			itemManager.storyViewController.writeParagraph(cuteConvoText);
 			break;
 		case "combat":
-			itemManager.combatViewController.combatLogPrint(cuteConvoText, CombatViewController.MessageCat.CAT_ABILITY_HINT);
+			CombatViewController.combatLogPrint(cuteConvoText, CombatViewController.MessageCat.CAT_ABILITY_HINT);
 			// todo: need a way to indicate that the player has exhausted their turn
 			break;
 		}
@@ -596,7 +597,7 @@ export class ItemManager {
 	describeItem(descriptionString) {
 		switch(this.feedbackContext) {
 		case "combat":
-			this.combatViewController.combatLogPrint(descriptionString, CombatViewController.MessageCat.CAT_ABILITY_HINT);
+			CombatViewController.combatLogPrint(descriptionString, CombatViewController.MessageCat.CAT_ABILITY_HINT);
 			break;
 		case "story":
 		default:
