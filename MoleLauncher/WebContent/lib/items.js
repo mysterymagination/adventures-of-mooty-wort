@@ -288,6 +288,7 @@ export class MinorHealthPotion extends Item {
 	restoreHealth(itemManager) {
 		const paraImbibe = "As you imbibe the potion your wounds knit themselves shut and wave of ecstatic elemental love washes over you!";
 		const story = itemManager.storyViewController;
+		story.addToCharacterQuality("health", 0.5 * story.charactersDict.mole.stats.maxHP);
 		switch(itemManager.feedbackContext) {
 		case "story":
 			// write item use feedback
@@ -295,9 +296,10 @@ export class MinorHealthPotion extends Item {
 			break;
 		case "combat":
 			CombatViewController.combatLogPrint(paraImbibe, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
+			const combatVC = itemManager.combatViewController;
+			combatVC.updateCharacterData(combatVC.combatDriver);
 			break;
 		}
-		story.addToCharacterQuality("health", 0.5 * story.charactersDict.mole.stats.maxHP);
 		itemManager.removeItem(story.charactersDict.mole, this);
 	}
 }
@@ -326,6 +328,7 @@ export class PuddleOManaPotion extends Item {
 		// write item use feedback
 		const paraImbibe = "As you imbibe the potion your heartbeat quickens and mystic power swells!";
 		const story = itemManager.storyViewController;
+		story.addToCharacterQuality("mana", 0.25 * story.charactersDict.mole.stats.maxMP);
 		switch(itemManager.feedbackContext) {
 		case "story":
 			// write item use feedback
@@ -333,9 +336,10 @@ export class PuddleOManaPotion extends Item {
 			break;
 		case "combat":
 			CombatViewController.combatLogPrint(paraImbibe, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
+			const combatVC = itemManager.combatViewController;
+			combatVC.updateCharacterData(combatVC.combatDriver);
 			break;
 		}
-		story.addToCharacterQuality("mana", 0.25 * story.charactersDict.mole.stats.maxMP);
 		itemManager.removeItem(story.charactersDict.mole, this);
 	}
 }
@@ -364,6 +368,7 @@ export class FontOManaPotion extends Item {
 		// write item use feedback
 		const paraImbibe = "As you imbibe the liquid rainbow potion your eyes glow with radiant fervor and mystic power sets all your nerves aflame!  Purple lightning arcs between the innumerable tips of your fuzz, which is presently standing on end like you're some sort of land-sea urchin.";
 		const story = itemManager.storyViewController;
+		story.addToCharacterQuality("mana", story.charactersDict.mole.stats.maxMP);
 		switch(itemManager.feedbackContext) {
 		case "story":
 			// write item use feedback
@@ -371,9 +376,10 @@ export class FontOManaPotion extends Item {
 			break;
 		case "combat":
 			CombatViewController.combatLogPrint(paraImbibe, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
+			const combatVC = itemManager.combatViewController;
+			combatVC.updateCharacterData(combatVC.combatDriver);
 			break;
 		}
-		story.addToCharacterQuality("mana", story.charactersDict.mole.stats.maxMP);
 		itemManager.removeItem(story.charactersDict.mole, this);
 	}
 }
@@ -466,9 +472,9 @@ export class RustyUrn extends Item {
 export class ItemManager {
 	constructor() {
 		/**
-		 * The string item id of the Item that the player has started using
+		 * The Item object that the player has started using
 		 */
-		this.activeItemId = null;
+		this.activeItem = null;
 		/**
 		 * Associative mapping of item id strings to corresponding Item objects
 		 */
@@ -518,8 +524,8 @@ export class ItemManager {
 			listItemTag.removeChild(listItemTag.lastChild);
 		}
 		listItemTag.remove();
-		if(this.activeItemId === item.id) {
-			this.activeItemId = null;
+		if(this.activeItem.id === item.id) {
+			this.activeItem = null;
 		}
 		Libifels.removeItemFromInventory(character, item.id);
 	}
@@ -577,10 +583,10 @@ export class ItemManager {
 	 * @param item the Item object we want to activate
 	 */
 	activateItem(item) {
-		this.activeItemId = item.id;
+		this.activeItem = item;
 		const listItemTag = document.getElementById(item.id);
 		listItemTag.className = 'highlight_simple';
-		// install a new onclick which prints descriptor; effectively a useon -> self sort of thing
+		// install a new onclick which prints descriptor; effectively a useon -> self/double click sort of thing for the item desc UX
 		listItemTag.onclick = () => {
 			this.describeItem(item);
 		};
@@ -590,12 +596,17 @@ export class ItemManager {
 	 * @param targetString a text string from the story that is to be the target Y of a 'use X on Y' scenario
 	 */
 	activeItemUseOn(targetString) {
-		const activeItemId = this.activeItemId;
-		if(activeItemId) {
-			const listItemTag = document.getElementById(activeItemId);
+		if(this.activeItem) {
+			const listItemTag = document.getElementById(this.activeItem.id);
+			// since we're coming down from using the already activated item, reinstall its activation behavior so it can be used again (if it remains in inventory after its useOn)
+			// need to use a new item ref so that we don't literally try to hook back into the activeItem handle, which we're about to nullify
+			const item = this.activeItem;
+			listItemTag.onclick = () => {
+				this.activateItem(item);
+			};
 			listItemTag.classList.remove('highlight_simple');
-			Libifels.findInventoryItem(this.storyViewController.charactersDict.mole, activeItemId).useOn(this, targetString);
-			this.activeItemId = null;
+			Libifels.findInventoryItem(this.storyViewController.charactersDict.mole, this.activeItem.id).useOn(this, targetString);
+			this.activeItem = null;
 		}
 	}
 	/**
@@ -611,12 +622,13 @@ export class ItemManager {
 			this.storyViewController.writeParagraph(item.descriptor.descriptionString);	
 			break;
 		}
-		// reinstall activateItem as onclick behavior and remove highlight/active id
+		// reinstall activateItem as onclick behavior and remove highlight
 		const listItemTag = document.getElementById(item.id);
 		listItemTag.onclick = () => {
 			this.activateItem(item);
 		};
 		listItemTag.classList.remove('highlight_simple');
-		this.activeItemId = null;
+		// remove active item handle as we've effectively made use of the outgoing activation status by rendering the description
+		this.activeItem = null;
 	}
 }
