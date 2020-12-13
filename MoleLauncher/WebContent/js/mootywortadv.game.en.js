@@ -185,7 +185,12 @@ undum.game.situations = {
 				{
 					optionText: "You OK, buddy?",
 					enter: function (character, system, from) {
-						system.printBuffer = "The caterpillar stops wiggling when you speak and his head twisssssts ever so slowly around to face you... 270 degrees.  He's an invertebrate and all, but that's not really a thing caterpillars usually do, right?  \"Greetings, moleson.  I am better than ever before, for today I know the glory of the Rapturous Rumble!\"";
+						const story = undum.game.storyViewController;
+						story.writeParagraph("The caterpillar stops wiggling when you speak and his head twisssssts ever so slowly around to face you... 270 degrees.  He's an invertebrate and all, but that's not really a thing caterpillars usually do, right?  \"Greetings, moleson.  I am better than ever before, for today I know the glory of the Rapturous Rumble!\"");
+						if(!story.eventFlags.caterpillar_concern_mana_pot_got) {
+							story.writeParagraph("He tilts his head slowly and jerkily, studying you from every extant angle as well as some invented ones that shouldn't be.  Your eyes have trouble following his physically incongruous undulations.  \"I do greatly appreciate the concern of the scion, tho; take this, and may it help you realize your destiny!\"  A vial of irridescent glowing liquid appears from somewhere with a troubling squelch, and he proffers it to you.  It's only a little drippy, and the smell will probably go away.");
+							undum.game.itemManager.addItem(character.mole, new Items.PuddleOManaPotion());
+						}
 						// in this case, since it's really sort of a forked helper situation that has no standalone capabilities and is short, it makes sense to hop right over to the merge point
 						system.doLink("basement1_fuzzy_caterpillar_rapture");
 					},
@@ -197,7 +202,7 @@ undum.game.situations = {
 				{
 					optionText: "Heya.  What's so interesting?",
 					enter: function (character, system, from) {
-						system.printBuffer = "\"Why the rumbliest rumbly rumble, of course!  Can't you feel it calling? The Rapturous Rumble is calling us all, but it wants you most of all.  You must feel the scintillating harmonics!\"  The caterpillar taps several dozen feet in time with some sort you cannot hear and clacks his mandibles at you in a smile that suggests murderous envy.";
+						undum.game.storyViewController.writeParagraph("\"Why the rumbliest rumbly rumble, of course!  Can't you feel it calling? The Rapturous Rumble is calling us all, but it wants you most of all.  You must feel the scintillating harmonics!\"  The caterpillar taps several dozen feet in time with some sort you cannot hear and clacks his mandibles at you in a smile that suggests murderous envy.");
 
 						// in this case, since it's really sort of a forked helper situation that has no standalone capabilities and is short, it makes sense to hop right over to the merge point
 						system.doLink("basement1_fuzzy_caterpillar_rapture");
@@ -216,7 +221,7 @@ undum.game.situations = {
 							system.setQuality("sanity", character.mole.stats.sanity);
 						}
 						system.write(
-								"<p>" + system.printBuffer + "</p>  <p>He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
+								"<p>He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
 						);
 						system.doLink("basement1_fuzzy_caterpillar_hub");
 					},

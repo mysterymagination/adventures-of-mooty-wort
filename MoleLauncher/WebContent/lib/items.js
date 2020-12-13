@@ -303,11 +303,11 @@ export class MinorHealthPotion extends Item {
 /**
  * Minor Mana Potion restores 25% MP
  */
-export class MinorManaPotion extends Item {
+export class PuddleOManaPotion extends Item {
 	constructor() {
 		super();
 		this.id = "minor_mana_potion";
-		this.name = "Minor Mana Potion";
+		this.name = "Puddle o' Mana Potion";
 		this.descriptor = {
 			"useOn": [
 				{
@@ -340,11 +340,11 @@ export class MinorManaPotion extends Item {
 /**
  * Major Mana Potion restores 100% MP
  */
-export class MajorManaPotion extends Item {
+export class FontOManaPotion extends Item {
 	constructor() {
 		super();
 		this.id = "major_mana_potion";
-		this.name = "Major Mana Potion";
+		this.name = "Font o' Mana Potion";
 		this.descriptor = {
 			"useOn": [
 				{
@@ -493,7 +493,7 @@ export class ItemManager {
 		const listItemTag = document.createElement('li');
 		listItemTag.id = item.id;
 		listItemTag.onclick = () => {
-			this.activateItem(item.id);
+			this.activateItem(item);
 		}
 		const anchorTag = document.createElement('a');
 		const textNode = document.createTextNode(item.name);
@@ -571,12 +571,14 @@ export class ItemManager {
 	}
 	/**
 	 * Marks an item as the active item in use in ItemManager and highlights it in the UI
-	 * @param itemId the id string of the item we want to activate
+	 * @param item the Item object we want to activate
 	 */
-	activateItem(itemId) {
-		this.activeItemId = itemId;
-		const listItemTag = document.getElementById(itemId);
+	activateItem(item) {
+		this.activeItemId = item.id;
+		const listItemTag = document.getElementById(item.id);
 		listItemTag.className = 'highlight_simple';
+		// install a new onclick which prints descriptor; effectively a useon -> self sort of thing
+		listItemTag.onclick = this.describeItem(item);
 	}
 	/**
 	 * Uses the active item on the given string target
@@ -594,15 +596,20 @@ export class ItemManager {
 	/**
 	 * Write out the item's description
 	 */
-	describeItem(descriptionString) {
+	describeItem(item) {
 		switch(this.feedbackContext) {
 		case "combat":
-			CombatViewController.combatLogPrint(descriptionString, CombatViewController.MessageCat.CAT_ABILITY_HINT);
+			CombatViewController.combatLogPrint(item.descriptionString, CombatViewController.MessageCat.CAT_ABILITY_HINT);
 			break;
 		case "story":
 		default:
-			this.storyViewController.writeParagraph(descriptionString);	
+			this.storyViewController.writeParagraph(item.descriptionString);	
 			break;
 		}
+		// reinstall activateItem as onclick behavior and remove highlight/active id
+		const listItemTag = document.getElementById(item.id);
+		listItemTag.onclick = this.activateItem();
+		listItemTag.classList.remove('highlight_simple');
+		this.activeItemId = null;
 	}
 }
