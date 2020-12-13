@@ -5,12 +5,6 @@ import {Libifels} from "../lib/libifels.js";
 export class StoryViewController {
 	constructor(configObj) {
 		this.name = configObj.name;
-		this.itemManager = new Items.ItemManager();
-		/**
-		 * A string indicating which visual context the user is in, story or combat, which modifies the UI elements story changes are printed to.  
-		 * todo: this blends story and combat VC a bit, but not too badly.  Moving a lot fo the item handlers up to ItemManager and having handles to our storyVC and combatVC in ItemManager along with a flag dictating how/to whom item usage should be reported might be better. 
-		 */
-		this.feedbackContext = "story";
 		this.charactersDict = {
 			"mole": new Characters.Mole(),
 			"yawning_god": new Characters.YawningGod(),
@@ -48,114 +42,6 @@ export class StoryViewController {
 		this.choiceStringArray.push(choiceString);
 	}
 	/**
-	 * Adds the given item to the given character's inventory in model and view
-	 * @param character the Character object who should be receiving the Item
-	 * @param item the Item object we want to add to the Character
-	 */
-	addItem(character, item) {
-		// todo: check that they don't already have something with this id
-		const listItemTag = document.createElement('li');
-		listItemTag.id = item.id;
-		listItemTag.onclick = () => {
-			this.activateItem(item.id);
-		}
-		const anchorTag = document.createElement('a');
-		const textNode = document.createTextNode(item.name);
-		anchorTag.appendChild(textNode);
-		listItemTag.appendChild(anchorTag);
-		const listTag = document.getElementById('items_list');
-		listTag.appendChild(listItemTag);
-		character.inventory.push(item);
-	}
-	/**
-	 * Removes the given Item object from the given Character's inventory
-	 * @param character Character whose inventory we want to modify
-	 * @param item Item object to match and remove from the inventory
-	 */
-	removeItem(character, item) {
-		// todo: check if the character actually has an item with this id
-		const listItemTag = document.getElementById(item.id);
-		while (listItemTag.firstChild) {
-			listItemTag.removeChild(listItemTag.lastChild);
-		}
-		listItemTag.remove();
-		if(this.itemManager.activeItemId === item.id) {
-			this.itemManager.activeItemId = null;
-		}
-		Libifels.removeItemFromInventory(character, item.id);
-	}
-	/**
-	 * Adds a piece of Equipment to the character's inventory and also equips it to them
-	 * @param character the Character object who should be receiving the Item
-	 * @param equipment the Equipment object we want to equip to the Character
-	 */
-	addEquipment(character, equipment) {
-		this.addItem(character, equipment);
-		this.equipItem(character, equipment);
-	}
-	/**
-	 * Removes a piece of Equipment from the character's inventory and also unequips it from them
-	 * @param character the Character object who should be receiving the Item
-	 * @param equipment the Equipment object we want to equip to the Character
-	 */
-	removeEquipment(character, equipment) {
-		this.removeItem(character, equipment);
-		this.unequipItem(character, equipment);
-	}
-	/**
-	 * Equips an item to a character and updates the model and view accordingly
-	 * @param character Character object to equip
-	 * @param equipment Equipment object in question
-	 */
-	equipItem(character, equipment) {
-		// view
-		const listItemTag = document.createElement('li');
-		listItemTag.id = equipment.id;
-		const textNode = document.createTextNode(equipment.name);
-		listItemTag.appendChild(textNode);
-		const listTag = document.getElementById('equipment_list');
-		listTag.appendChild(listItemTag);
-		// model
-		equipment.equipEffect(character);
-	}
-	/**
-	 * Unequips equipment from a character and updates the model and view accordingly
-	 * @param character Character object to equip
-	 * @param equipment Equipment object in question
-	 */
-	unequipItem(character, equipment) {
-		// view
-		const listItemTag = document.getElementById(equipment.id);
-		while (listItemTag.firstChild) {
-			listItemTag.removeChild(listItemTag.lastChild);
-		}
-		listItemTag.remove();
-		// model
-		equipment.unequipEffect(character);
-	}
-	/**
-	 * Marks an item as the active item in use in ItemManager and highlights it in the UI
-	 * @param itemId the id string of the item we want to activate
-	 */
-	activateItem(itemId) {
-		this.itemManager.activeItemId = itemId;
-		const listItemTag = document.getElementById(itemId);
-		listItemTag.className = 'highlight_simple';
-	}
-	/**
-	 * Uses the active item on the given string target
-	 * @param targetString a text string from the story that is to be the target Y of a 'use X on Y' scenario
-	 */
-	activeItemUseOn(targetString) {
-		const activeItemId = this.itemManager.activeItemId;
-		if(activeItemId) {
-			const listItemTag = document.getElementById(activeItemId);
-			listItemTag.classList.remove('highlight_simple');
-			Libifels.findInventoryItem(this.charactersDict.mole, activeItemId).useOn(this, targetString);
-			this.itemManager.activeItemId = null;
-		}
-	}
-	/**
 	 * Adds the value to a character quality in the story viewmodel
 	 * @param qualityId string id of a character quality to change
 	 * @param value number value to add to the quality
@@ -185,15 +71,7 @@ export class UndumStoryViewController extends StoryViewController {
 	 * @param passageString the text to print
 	 */
 	writeParagraph(passageString) {
-		switch(this.feedbackContext) {
-		case "combat":
-			CombatViewController.printCombatLog(passageString, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
-			break;
-		case "story":
-			default:
-			this.undumSystem.write("<p>"+passageString+"</p>");
-			break;
-		}
+		this.undumSystem.write("<p>"+passageString+"</p>");
 	}
 	appendChoice(choiceString) {
 		super.appendChoice(choiceString);
@@ -203,11 +81,15 @@ export class UndumStoryViewController extends StoryViewController {
 		switch(qualityId) {
 		case "health":
 			this.charactersDict.mole.stats.hp += value; 
-			this.undumSystem.setQuality("health", story.charactersDict.mole.stats.hp);
+			this.undumSystem.setQuality("health", this.charactersDict.mole.stats.hp);
+			break;
+		case "mana":
+			this.charactersDict.mole.stats.mp += value; 
+			this.undumSystem.setQuality("mana", this.charactersDict.mole.stats.mp);
 			break;
 		case "sanity":
 			this.charactersDict.mole.stats.sanity += value; 
-			this.undumSystem.setQuality("sanity", story.charactersDict.mole.stats.sanity);
+			this.undumSystem.setQuality("sanity", this.charactersDict.mole.stats.sanity);
 			break;
 		}
 	}
@@ -216,6 +98,10 @@ export class UndumStoryViewController extends StoryViewController {
 		case "health":
 			this.charactersDict.mole.stats.hp -= value; 
 			this.undumSystem.setQuality("health", this.charactersDict.mole.stats.hp);
+			break;
+		case "mana":
+			this.charactersDict.mole.stats.mp -= value; 
+			this.undumSystem.setQuality("mana", this.charactersDict.mole.stats.mp);
 			break;
 		case "sanity":
 			this.charactersDict.mole.stats.sanity -= value; 

@@ -643,7 +643,7 @@ class CombatViewController {
 	 */
 	createBattleUi(combatModel) {
 		// hide the normal Undum UI
-		var undumPage = document.getElementById("page");
+		var undumPage = document.getElementById("mid_panel");//"page");
 		undumPage.style.display = "none";
 		// show the combat mode modal
 		var combatUI = document.getElementById("combatModal");
@@ -1108,11 +1108,11 @@ class CombatViewController {
 			);
 			// install onclick handler in the door image that hides div combatModal and shows div page
 			overlayCanvas.onclick = (clickEvent) => {
-				if(clickEvent.clientX >= doorDestX && clickEvent.clientX <= doorDestX + doorWidth &&
-						clickEvent.clientY >= doorDestY && clickEvent.clientY <= doorDestY+doorHeight) {
+				if(clickEvent.offsetX >= doorDestX && clickEvent.offsetX <= doorDestX + doorWidth &&
+						clickEvent.offsetY >= doorDestY && clickEvent.offsetY <= doorDestY+doorHeight) {
 					var combatModal = document.getElementById('combatModal');
 					combatModal.style.display = 'none';
-					var undumPage = document.getElementById('page');
+					var undumPage = document.getElementById('mid_panel');
 					undumPage.style.display = 'block';
 					endAudio.pause();
 					context2d.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
@@ -1262,7 +1262,11 @@ CombatViewController.MessageCat = Object.freeze(
 			/**
 			 * A message regarding general info
 			 */
-			CAT_INFO: 4
+			CAT_INFO: 4,
+			/**
+			 * A message describing an ability or giving other generic info
+			 */
+			CAT_ABILITY_HINT: 5
 		}
 );
 export {CombatViewController};

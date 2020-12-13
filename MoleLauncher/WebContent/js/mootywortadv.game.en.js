@@ -50,8 +50,11 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 
 //-----game logic-----//
 //create RPG combat ViewController and transcript story ViewController
-undum.game.rpgMech = new CombatViewController();
+undum.game.combatViewController = new CombatViewController();
 undum.game.storyViewController = new UndumStoryViewController(undum.system);
+undum.game.itemManager = new Items.ItemManager();
+undum.game.itemManager.storyViewController = undum.game.storyViewController;
+undum.game.itemManager.combatViewController = undum.game.combatViewController;
 undum.game.situations = {
 		main: new undum.SimpleSituation(
 				"",
@@ -149,8 +152,8 @@ undum.game.situations = {
 										if (character.qualities.health > 0) {
 											system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
 											// push the fuzz item to the mole's inventory
-											undum.game.storyViewController.addItem(undum.game.storyViewController.charactersDict.mole, new Items.PulsatingFuzz());
-											// todo: Each interactable object in the current context of the story will be surrounded in anchor tags that go nowhere (or Undum action anchor tag syntax?) and call a util function StoryViewController.activeItemUseOn(target thingamajig string) which calls ItemManager.activeItem.useOn(passed in target string) and then removes the active item from ItemManager's reckoning and removes the highlight effect on its UI list item.  The trouble with that approach is that it could effectively leave dead looking links all over.  A quick fix might be to take inspiration from Lucid Dreams and let interactables be described by default and then have special handling when clicked if an item is active; they used handy different interact icons to make this behavior change transparent, but it's probably fine enough without it... the other option is to tag interactables in text and then change styling on all that are in the current situation context to indicate that they can be targets of an inventory item whenever an inventory item is activated.  Actually, this might be a good job for an innocuous span tag in the markup text with a css selector that is specific to the relevant situation id -- that way we could simply say upon item activation, ok CSS go find all the fellas with class interactable_mysituationid and style them with hyperlink effects or highlights or whatever.                      
+											undum.game.itemManager.addItem(undum.game.storyViewController.charactersDict.mole, new Items.PulsatingFuzz());
+											// todo: Each interactable object in the current context combatViewControllertory will be surrounded in anchor tags that go nowhere (or Undum action anchor tag syntax?) and call a util function StoryViewController.activeItemUseOn(target thingamajig string) which calls ItemManager.activeItem.useOn(passed in target string) and then removes the active item from ItemManager's reckoning and removes the highlight effect on its UI list item.  The trouble with that approach is that it could effectively leave dead looking links all over.  A quick fix might be to take inspiration from Lucid Dreams and let interactables be described by default and then have special handling when clicked if an item is active; they used handy different interact icons to make this behavior change transparent, but it's probably fine enough without it... the other option is to tag interactables in text and then change styling on all that are in the current situation context to indicate that they can be targets of an inventory item whenever an inventory item is activated.  Actually, this might be a good job for an innocuous span tag in the markup text with a css selector that is specific to the relevant situation id -- that way we could simply say upon item activation, ok CSS go find all the fellas with class interactable_mysituationid and style them with hyperlink effects or highlights or whatever.                      
 										} else {
 											system.write(sFuzzMessage + "</p>");
 											system.doLink('death');
@@ -182,7 +185,13 @@ undum.game.situations = {
 				{
 					optionText: "You OK, buddy?",
 					enter: function (character, system, from) {
-						system.printBuffer = "The caterpillar stops wiggling when you speak and his head twisssssts ever so slowly around to face you... 270 degrees.  He's an invertebrate and all, but that's not really a thing caterpillars usually do, right?  \"Greetings, moleson.  I am better than ever before, for today I know the glory of the Rapturous Rumble!\"";
+						const story = undum.game.storyViewController;
+						story.writeParagraph("The caterpillar stops wiggling when you speak and his head twisssssts ever so slowly around to face you... 270 degrees.  He's an invertebrate and all, but that's not really a thing caterpillars usually do, right?  \"Greetings, moleson.  I am better than ever before, for today I know the glory of the Rapturous Rumble!\"");
+						if(!story.eventFlags.caterpillar_concern_mana_pot_got) {
+							story.writeParagraph("He tilts his head slowly and jerkily, studying you from every extant angle as well as some invented ones that shouldn't be.  Your eyes have trouble following his physically incongruous undulations.  \"I do greatly appreciate the concern of the scion, tho; take this, and may it help you realize your destiny!\"  A vial of irridescent glowing liquid appears from somewhere with a troubling squelch, and he proffers it to you.  It's only a little drippy, and the smell will probably go away.");
+							undum.game.itemManager.addItem(character.mole, new Items.PuddleOManaPotion());
+							story.eventFlags.caterpillar_concern_mana_pot_got = true;
+						}
 						// in this case, since it's really sort of a forked helper situation that has no standalone capabilities and is short, it makes sense to hop right over to the merge point
 						system.doLink("basement1_fuzzy_caterpillar_rapture");
 					},
@@ -194,7 +203,7 @@ undum.game.situations = {
 				{
 					optionText: "Heya.  What's so interesting?",
 					enter: function (character, system, from) {
-						system.printBuffer = "\"Why the rumbliest rumbly rumble, of course!  Can't you feel it calling? The Rapturous Rumble is calling us all, but it wants you most of all.  You must feel the scintillating harmonics!\"  The caterpillar taps several dozen feet in time with some sort you cannot hear and clacks his mandibles at you in a smile that suggests murderous envy.";
+						undum.game.storyViewController.writeParagraph("\"Why the rumbliest rumbly rumble, of course!  Can't you feel it calling? The Rapturous Rumble is calling us all, but it wants you most of all.  You must feel the scintillating harmonics!\"  The caterpillar taps several dozen feet in time with some sort you cannot hear and clacks his mandibles at you in a smile that suggests murderous envy.");
 
 						// in this case, since it's really sort of a forked helper situation that has no standalone capabilities and is short, it makes sense to hop right over to the merge point
 						system.doLink("basement1_fuzzy_caterpillar_rapture");
@@ -213,7 +222,7 @@ undum.game.situations = {
 							system.setQuality("sanity", character.mole.stats.sanity);
 						}
 						system.write(
-								"<p>" + system.printBuffer + "</p>  <p>He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
+								"<p>He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
 						);
 						system.doLink("basement1_fuzzy_caterpillar_hub");
 					},
@@ -294,7 +303,7 @@ undum.game.situations = {
 						console.log("spider rolling status after we've stopped her rolling: " + undum.game.situations.basement1_bulbous_spider_hub.bRolling);
 
 						// player now has the ooze urn... hooray?
-						undum.game.storyViewController.addItem(undum.game.storyViewController.charactersDict.mole, new Items.RustyUrn());
+						undum.game.itemManager.addItem(undum.game.storyViewController.charactersDict.mole, new Items.RustyUrn());
 						character.stringArrayInventory.push("rusty_urn");
 						system.doLink("basement1_bulbous_spider_hub");
 					},
@@ -336,9 +345,9 @@ undum.game.situations = {
 						sacrifice_ooze_daughter : function(character, system, action) {
 							if (action) {
 								try {
-									const activeItemId = undum.game.storyViewController.itemManager.activeItemId;
-									if(activeItemId) {
-										Libifels.findInventoryItem(character.mole, activeItemId).useOn(undum.game.storyViewController, "ochre ooze");
+									const itemManager = undum.game.itemManager;
+									if(itemManager.activeItem) {
+										itemManager.activeItemUseOn("ochre ooze");
 									}
 								} catch (err) {
 									console.log("error processing ooze daughter slaughter: "+err);
@@ -409,7 +418,7 @@ undum.game.situations = {
 									system.write(
 											"<p>You carefully pluck the impossibly delicate crystal from its socket and place it snuggly in your compartment.</p>"
 									);
-									undum.game.storyViewController.addItem(character.mole, new Items.LastLash());
+									undum.game.itemManager.addItem(character.mole, new Items.LastLash());
 									undum.game.storyViewController.eventFlags.last_lash_taken = true;
 								}
 							} catch(err) {
@@ -419,9 +428,9 @@ undum.game.situations = {
 						"check_molerat_target": function (character, system, action) {
 							if(action) {
 								try {
-									const story = undum.game.storyViewController;
-									if (story.itemManager.activeItemId) {
-										story.activeItemUseOn("nakedest molerat");
+									const itemManager = undum.game.itemManager;
+									if (itemManager.activeItem) {
+										itemManager.activeItemUseOn("nakedest molerat");
 									} else {
 										system.write("<p>Examining this nakedest of molerats yields little but subtle nausea and an appreciation for the fortitude of female molerats.</p>");
 									}
@@ -480,7 +489,7 @@ undum.game.situations = {
 								// Grue cares nothing about the mole at this point and thus has no reason to kill him, but is also intrigued by his position on Darkness
 								undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 								// give character the obol
-								undum.game.storyViewController.addItem(character.mole, new Items.OdditineObol());
+								undum.game.itemManager.addItem(character.mole, new Items.OdditineObol());
 								// send the mole back to molerat hub
 								system.doLink("basement2_hub");
 							} else if (character.sMoleMajorDestiny === "king of the deep") {
@@ -500,7 +509,7 @@ undum.game.situations = {
 									undum.game.storyViewController.eventFlags.grue_challenge_activated = true;
 									// give character the obol
 									// todo: creating items on the fly like this that are supposed to be unique is sloppy; it should be the case that we can only reach this gameplay path once, but the item instance sanity shouldn't depend on that.
-									undum.game.storyViewController.addItem(character.mole, new Items.OdditineObol());
+									undum.game.itemManager.addItem(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								} else if (character.sMoleMinorDestiny === "groovy") {
@@ -511,7 +520,7 @@ undum.game.situations = {
 									// flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The Yawning God
 									undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 									// give character the obol
-									undum.game.storyViewController.addItem(character.mole, new Items.OdditineObol());
+									undum.game.itemManager.addItem(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								} else if (character.sMoleMinorDestiny === "paladin") {
@@ -556,7 +565,7 @@ undum.game.situations = {
 									// Grue likes the mole genuinely and wants him to survive
 									undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 									// give character the obol
-									undum.game.storyViewController.addItem(character.mole, new Items.OdditineObol());
+									undum.game.itemManager.addItem(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								}
@@ -711,12 +720,12 @@ undum.game.situations = {
 							yawningGodRoar.addEventListener('canplaythrough', e => {
 								yawningGodRoar.play();
 							});
-							var mech = undum.game.rpgMech;
+							var mech = undum.game.combatViewController;
 							var story = undum.game.storyViewController;
-							story.feedbackContext = "combat";
+							undum.game.itemManager.feedbackContext = "combat";
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav", resultFn: resolve}); 
 						}).then((playerVictory) => {
-							undum.game.storyViewController.feedbackContext = "story";
+							undum.game.itemManager.feedbackContext = "story";
 							if(playerVictory) {
 								var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
 								undum.game.storyViewController.writeParagraph(yawningGodVictoryString);	
@@ -776,13 +785,13 @@ undum.game.situations = {
 							grueRoar.addEventListener('canplaythrough', e => {
 								grueRoar.play();
 							});
-							var mech = undum.game.rpgMech;
+							var mech = undum.game.combatViewController;
 							var story = undum.game.storyViewController;
-							story.feedbackContext = "combat";
+							undum.game.itemManager.feedbackContext = "combat";
 							// up in basement3_encounter_yawning_god::enter() I shoved the latest Promise resolver (for promiseOfDarkness) onto the storyVC as activeResolver, so pass in here so it can be resolved when combat is over
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav", resultFn: combatResolver});
 						}).then((combatResult) => {
-							undum.game.storyViewController.feedbackContext = "story";
+							undum.game.itemManager.feedbackContext = "story";
 							const terminusResolver = undum.game.storyViewController.activeResolver;
 							// if we won, call terminres over 'dark_king', else call it with 'death'. 'shadowed' happened up above because we never got into the grue fight in that eventuality.
 							if(combatResult) {
@@ -822,12 +831,15 @@ undum.game.qualities = {
 		health: new undum.NumericQuality(
 				"Health", { priority: "0001", group: 'stats' }
 		),
+		mana: new undum.NumericQuality(
+				"Mana", { priority: "0002", group: 'stats' }
+		),
 		sanity: new undum.NumericQuality(
-				"Sanity", { priority: "0002", group: 'stats' }
+				"Sanity", { priority: "0003", group: 'stats' }
 		),
 		moleWhole: new BurrowAdjectivesQuality(
 				"<span title='One&apos;s ability to dig is not measured in kilograms of displaced dirt -- rather, it must take into account all the courage, curiosity, and tenacity required of tunnelers of all stripes.  What can your claws do?  Where can they take you?  We shall see!'>Mole Whole</span>",
-				{ priority: "0003", group: 'stats' }
+				{ priority: "0004", group: 'stats' }
 		)
 };
 
@@ -850,6 +862,7 @@ undum.game.init = function (character, system) {
 
 	// inform UI viewmodel 
 	character.qualities.health = character.mole.stats.maxHP;
+	character.qualities.mana = character.mole.stats.maxMP;
 	character.qualities.sanity = character.mole.stats.maxSanity;
 	character.qualities.moleWhole = character.mole.ordinalUnderwere;
 	system.setCharacterText("<p>You are starting on an exciting journey beneath the earth and beyond all reason.</p>");

@@ -1,4 +1,5 @@
 import {Libifels} from "./libifels.js";
+import {CombatViewController} from "../js/combatviewcontrollers.js";
 
 export class Item {
 	contructor() {
@@ -21,16 +22,16 @@ export class Item {
 	}
 	/**
 	 * Handles using this Item on the target object identified by the given string
-	 * @param story the ViewController object for the story
+	 * @param itemManager item wrangler with handles to viewcontrollers
 	 * @param targetString string ID of the in-universe object we're using this Item on
 	 */
-	useOn(story, targetString) {
+	useOn(itemManager, targetString) {
 		// parse descriptor and look for a useOn attr, and then match the input targetString to a regex string key in the useOn array of possible matches. Finally call the relevant functions of this Item that were found mapped to matching regex key strings.
 		if(this.descriptor.useOn) {
 			for(const matcherObj of this.descriptor.useOn) {
 				for(const [keyRegex, effectFn] of Object.entries(matcherObj)) {
 					if(targetString.match(new RegExp(keyRegex, 'i'))) {
-						effectFn.call(this, story);
+						effectFn.call(this, itemManager);
 					}
 				}
 			}
@@ -39,8 +40,8 @@ export class Item {
 	/**
 	 * Print out the item's description 
 	 */
-	describe(story) {
-		story.writeParagraph(this.descriptor.descriptionString);
+	describe(itemManager) {
+		itemManager.describeItem(this);
 	}
 }
 /**
@@ -181,19 +182,30 @@ export class PulsatingFuzz extends Item {
 	}
 	/**
 	 * Tickle the Nakedest Molerat out of his reverie
-	 * @param story the ViewController for the story
+	 * @param item wrangler with handles to viewcontrollers
 	 */
-	tickleMolerat(story) {
-		// write item use feedback
-		story.writeParagraph("You reach out and wiggle the fuzz playfully over your molerat friend's snoot; he tries to resist an upwelling of mirth that threatens to fracture his zealous persona, but no will can resist the captivating grip of the tickle monster -- as the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the opal eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.");
-		// modify story state to reflect tickled molerat
-		story.eventFlags.molerat_tickled = true;
-		// add grue hub access to the array of choices the player currently has in the story,
-		// to be printed as the specific story paradigm directs
-		story.appendChoice("basement2_grue_hub");
+	tickleMolerat(itemManager) {
+		switch(itemManager.feedbackContext) {
+		case "story":
+			// write item use feedback
+			itemManager.storyViewController.writeParagraph("You reach out and wiggle the fuzz playfully over your molerat friend's snoot; he tries to resist an upwelling of mirth that threatens to fracture his zealous persona, but no will can resist the captivating grip of the tickle monster -- as the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the opal eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.");
+			// modify story state to reflect tickled molerat
+			itemManager.storyViewController.eventFlags.molerat_tickled = true;
+			// add grue hub access to the array of choices the player currently has in the story,
+			// to be printed as the specific story paradigm directs
+			itemManager.storyViewController.appendChoice("basement2_grue_hub");
+		}
 	}
-	ticklePlayer(story) {
-		story.writeParagraph("*^_^* You giggle merrily as you tickle your snoot with the fuzz; sometimes one simply must step out of the moment and appreciate the little joys in life!");
+	ticklePlayer(itemManager) {
+		const tickleString = "*^_^* You giggle merrily as you tickle your snoot with the fuzz; sometimes one simply must step out of the moment and appreciate the little joys in life!";
+	
+		switch(itemManager.feedbackContext) {
+		case "combat":
+			CombatViewController.combatLogPrint(tickleString, CombatViewController.MessageCat.CAT_ABILITY_HINT);
+		case "story":
+		default:
+			itemManager.storyViewController.writeParagraph(tickleString);
+		}
 	}
 }
 /**
@@ -220,14 +232,27 @@ export class LastLash extends Item {
 		}	
 	}
 	/**
-	 * Parts the veil for the mole permanently, increasing his magical power and also the amount of sanity damage taken.  It may also yield futher insight into the mysteries of the Deepness.
-	 * @param story the ViewController for the story
+	 * Parts the veil for the mole permanently, increasing his magical power and also the amount of sanity damage taken.  It may also yield further insight into the mysteries of the Deepness.
+	 * @param item wrangler with handles to viewcontrollers
 	 */
-	partVeil(story) {
-		// write item use feedback
-		story.writeParagraph("As you touch the tip of the Last Lash to your snoot to take a careful snufful, every fiber of fur over your entire body suddenly stands rigidly on end -- power surges through you, and in a bloody flash a mystic third eye has ripped through your forehead fuzz!  This eye imparts sight beyond sight and knowledge that no mortal creature's brain was ever meant to host to your velvety little body.");
-		story.writeParagraph("Everything is clearer now, despite your vision being obscured by bloody fuzz and forehead bits.  The very air seems to whisper unfathomable secrets, and the mysteries of the shadows are more addictively alluring than ever before.  The Last Lash crumbles to dust, its job done.");
-		story.writeParagraph("Catching sight of yourself in a nearby puddle, you note that your once earth-brown eyes have turned an electric shade of violet; the new third eye is oscillating through all possible colors (and a few impossible ones) rapidly.  Its vertical pupil darts restlessly about of its own volition, dilating and contracting continuously as if devouring all that you behold.");
+	partVeil(itemManager) {
+		const paraSnoot = "As you touch the tip of the Last Lash to your snoot to take a careful snufful, every fiber of fur over your entire body suddenly stands rigidly on end -- power surges through you, and in a bloody flash a mystic third eye has ripped through your forehead fuzz!  This eye imparts sight beyond sight and knowledge that no mortal creature's brain was ever meant to host to your velvety little body.";
+		const paraClarity = "Everything is clearer now, despite your vision being obscured by bloody fuzz and forehead bits.  The very air seems to whisper unfathomable secrets, and the mysteries of the shadows are more addictively alluring than ever before.  The Last Lash crumbles to dust, its job done.";
+		const paraVioletEyes = "Catching sight of yourself in a nearby puddle, you note that your once earth-brown eyes have turned an electric shade of violet; the new third eye is oscillating through all possible colors (and a few impossible ones) rapidly.  Its vertical pupil darts restlessly about of its own volition, dilating and contracting continuously as if devouring all that you behold.";
+		const story = itemManager.storyViewController;
+		switch(itemManager.feedbackContext) {
+		case "story":
+			// write item use feedback
+			story.writeParagraph(paraSnoot);
+			story.writeParagraph(paraClarity);
+			story.writeParagraph(paraVioletEyes);
+			break;
+		case "combat":
+			CombatViewController.combatLogPrint(paraSnoot, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
+			CombatViewController.combatLogPrint(paraClarity, CombatViewController.MessageCat.CAT_ABILITY_HINT);
+			CombatViewController.combatLogPrint(paraVioletEyes, CombatViewController.MessageCat.CAT_ABILITY_HINT);
+			break;
+		}
 		// modify story state to reflect parted veil
 		story.eventFlags.veil_parted = true;
 		// modify mole stats, doubling base and current pwr and halving base and current res
@@ -236,7 +261,7 @@ export class LastLash extends Item {
 		story.charactersDict.mole.stats.res /= 2;
 		story.charactersDict.mole.coreStats.res /= 2;
 		// last lash is one-time use, so remove from inventory
-		story.removeItem(story.charactersDict.mole, this);
+		itemManager.removeItem(story.charactersDict.mole, this);
 	}
 }
 /**
@@ -258,23 +283,34 @@ export class MinorHealthPotion extends Item {
 	}
 	/**
 	 * Restores 50% HP to the player character
-	 * @param story the ViewController for the story
+	 * @param itemManager itemtastic wrangler of the ViewControllers
 	 */
-	restoreHealth(story) {
-		// write item use feedback
-		story.writeParagraph("As you imbibe the potion your wounds knit themselves shut and wave of ecstatic elemental love washes over you!");
-		story.charactersDict.mole.stats.hp += 0.5 * story.charactersDict.mole.stats.maxHP;
-		story.removeItem(story.charactersDict.mole, this);
+	restoreHealth(itemManager) {
+		const paraImbibe = "As you imbibe the potion your wounds knit themselves shut and wave of ecstatic elemental love washes over you!";
+		const story = itemManager.storyViewController;
+		story.addToCharacterQuality("health", 0.5 * story.charactersDict.mole.stats.maxHP);
+		switch(itemManager.feedbackContext) {
+		case "story":
+			// write item use feedback
+			story.writeParagraph(paraImbibe);
+			break;
+		case "combat":
+			CombatViewController.combatLogPrint(paraImbibe, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
+			const combatVC = itemManager.combatViewController;
+			combatVC.updateCharacterData(combatVC.combatDriver);
+			break;
+		}
+		itemManager.removeItem(story.charactersDict.mole, this);
 	}
 }
 /**
  * Minor Mana Potion restores 25% MP
  */
-export class MinorManaPotion extends Item {
+export class PuddleOManaPotion extends Item {
 	constructor() {
 		super();
 		this.id = "minor_mana_potion";
-		this.name = "Minor Mana Potion";
+		this.name = "Puddle o' Mana Potion";
 		this.descriptor = {
 			"useOn": [
 				{
@@ -286,23 +322,35 @@ export class MinorManaPotion extends Item {
 	}
 	/**
 	 * Restores 25% MP to the player character
-	 * @param story the ViewController for the story
+	 * @param item wrangler with handles to viewcontrollers
 	 */
-	restoreMana(story) {
+	restoreMana(itemManager) {
 		// write item use feedback
-		story.writeParagraph("As you imbibe the potion your heartbeat quickens and mystic power swells!");
-		story.charactersDict.mole.stats.mp += 0.25 * story.charactersDict.mole.stats.maxMP;
-		story.removeItem(story.charactersDict.mole, this);
+		const paraImbibe = "As you imbibe the potion your heartbeat quickens and mystic power swells!";
+		const story = itemManager.storyViewController;
+		story.addToCharacterQuality("mana", 0.25 * story.charactersDict.mole.stats.maxMP);
+		switch(itemManager.feedbackContext) {
+		case "story":
+			// write item use feedback
+			story.writeParagraph(paraImbibe);
+			break;
+		case "combat":
+			CombatViewController.combatLogPrint(paraImbibe, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
+			const combatVC = itemManager.combatViewController;
+			combatVC.updateCharacterData(combatVC.combatDriver);
+			break;
+		}
+		itemManager.removeItem(story.charactersDict.mole, this);
 	}
 }
 /**
  * Major Mana Potion restores 100% MP
  */
-export class MajorManaPotion extends Item {
+export class FontOManaPotion extends Item {
 	constructor() {
 		super();
 		this.id = "major_mana_potion";
-		this.name = "Major Mana Potion";
+		this.name = "Font o' Mana Potion";
 		this.descriptor = {
 			"useOn": [
 				{
@@ -314,13 +362,25 @@ export class MajorManaPotion extends Item {
 	}
 	/**
 	 * Restores 100% MP to the player character
-	 * @param story the ViewController for the story
+	 * @param item wrangler with handles to viewcontrollers
 	 */
-	restoreMana(story) {
+	restoreMana(itemManager) {
 		// write item use feedback
-		story.writeParagraph("As you imbibe the potion your eyes glow with radiant fervor and mystic power sets all your nerves aflame!  Purple lightning arcs between the innumerable tips of your fuzz, which is presently standing on end like you're some sort of land-sea urchin.");
-		story.charactersDict.mole.stats.mp += story.charactersDict.mole.stats.maxMP;
-		story.removeItem(story.charactersDict.mole, this);
+		const paraImbibe = "As you imbibe the liquid rainbow potion your eyes glow with radiant fervor and mystic power sets all your nerves aflame!  Purple lightning arcs between the innumerable tips of your fuzz, which is presently standing on end like you're some sort of land-sea urchin.";
+		const story = itemManager.storyViewController;
+		story.addToCharacterQuality("mana", story.charactersDict.mole.stats.maxMP);
+		switch(itemManager.feedbackContext) {
+		case "story":
+			// write item use feedback
+			story.writeParagraph(paraImbibe);
+			break;
+		case "combat":
+			CombatViewController.combatLogPrint(paraImbibe, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
+			const combatVC = itemManager.combatViewController;
+			combatVC.updateCharacterData(combatVC.combatDriver);
+			break;
+		}
+		itemManager.removeItem(story.charactersDict.mole, this);
 	}
 }
 /**
@@ -351,9 +411,9 @@ export class RustyUrn extends Item {
 	}
 	/**
 	 * The mole can talk with the daughter ooze and get closer to her... but he probably shouldn't if he wants those claws!
-	 * @param story the StoryViewController
+	 * @param item wrangler with handles to viewcontrollers
 	 */
-	daughterOozeConvo(story) {
+	daughterOozeConvo(itemManager) {
 		let cuteConvoText = "";
 		const roll = Libifels.rollDie(4);
 		switch(roll) {
@@ -370,38 +430,205 @@ export class RustyUrn extends Item {
 			cuteConvoText += "As you examine the transparent urn, your snoot pressed up against it, the ooze inside forms into a small humanoid woman wearing a flowy sundress.  She waves merrily and performs a graceful wiggly twirl.  You grin and clack your mighty claws together in appreciation, and she abruptly disappears into a shy blushy puddle.";
 			break;
 		}
-		story.writeParagraph(cuteConvoText);
-		story.eventCount.daughter_ooze_conversations += 1;
+		
+		switch(itemManager.feedbackContext) {
+		case "story":
+			itemManager.storyViewController.writeParagraph(cuteConvoText);
+			break;
+		case "combat":
+			CombatViewController.combatLogPrint(cuteConvoText, CombatViewController.MessageCat.CAT_ABILITY_HINT);
+			// todo: need a way to indicate that the player has exhausted their turn
+			break;
+		}
+		itemManager.storyViewController.eventCount.daughter_ooze_conversations += 1;
 	}
 	/**
 	 * Condemns the daughter ooze to doom and wins the fleeting favor of her parent.
-	 * @param story the ViewController for the story
+	 * @param item wrangler with handles to viewcontrollers
 	 */
-	deliverDaughterOoze(story) {
-		// write item use feedback
-		story.writeParagraph("As you proffer the urn, a tendril whips out from the ochre ooze and suddenly the urn has been removed from your possession.  The fur that the urn had been in contact with is seared away and hideous chemical burns now decorate the flesh beneath.  \"Our daughter!\" the ooze burbles in a thousand thousand voices all vengefully enraptured.  \"What a naughty little mynx you've been, trying to escape the collective.  We live for the Whole, child... and die for it.\"  With that, the ooze slams the urn into itself hard enough to propel it hopelessly deep within its caustic mass; gelatinous ripples expand silently out from the point of impact, strangely lovely in their perfect symmetry.  Though the urn's crystalline structure puts up a noble resistance, it quickly breaks down and you can see through the translucent ochre muck a smaller quantity of ooze writhe free of the dissolving urn.  It, or she, you suppose, struggles frantically for a moment and then is still.  As you watch, the little ooze disappears into the mass of the large ooze, and in a few seconds no trace of her remains.");
-		story.writeParagraph("We thank you, brother mole.  There is no compulsion to feed at present, so we are compelled instead to offer you a boon for your service.  Take this weapon with you; perhaps it will be of some use in fending off the will of The Rumble.\"  The ooze wiggles condescendingly.  \"Lesser, boring Underwere, whose coverage of interests is woefully mired in the prosaic and pragmatic, are fascinated by its promises.  We, however, have all we need right here within ourselves... au naturale.\"  It shivers ostentatiously and a set of gold pawntlets (gauntlets for paws) dripping with continuous acid dig their way up from the soil under your ever-twitching nose.  Without waiting to see what else they can do autonomously, you don them.  They sting and stab you a smidge, but you're certain they will do more to any who would stand against you!");
-		// modify story state to reflect daughter slaughter
-		story.eventFlags.daughter_ooze_sacrificed = true;
-		// sting and stab
-		story.subtractFromCharacterQuality("health", story.charactersDict.mole.stats.maxHP * 0.1);
-		// sting and stab, mentally; the more the mole has bonded with her, the worse it hurts
-		story.subtractFromCharacterQuality("sanity", story.charactersDict.mole.stats.maxSanity * Math.max(story.eventCount.daughter_ooze_conversations / 10.0, 0.1));
-		// add Caustic Claws to mole equipment
-		story.addEquipment(story.charactersDict.mole, new CausticClaws());
-		// she's gone forever... RIP cute slime girl
-		story.removeItem(story.charactersDict.mole, this);
+	deliverDaughterOoze(itemManager) {
+		const paraUrnProfferance = "As you proffer the urn, a tendril whips out from the ochre ooze and suddenly the urn has been removed from your possession.  The fur that the urn had been in contact with is seared away and hideous chemical burns now decorate the flesh beneath.  \"Our daughter!\" the ooze burbles in a thousand thousand voices all vengefully enraptured.  \"What a naughty little mynx you've been, trying to escape the collective.  We live for the Whole, child... and die for it.\"  With that, the ooze slams the urn into itself hard enough to propel it hopelessly deep within its caustic mass; gelatinous ripples expand silently out from the point of impact, strangely lovely in their perfect symmetry.  Though the urn's crystalline structure puts up a noble resistance, it quickly breaks down and you can see through the translucent ochre muck a smaller quantity of ooze writhe free of the dissolving urn.  It, or she, you suppose, struggles frantically for a moment and then is still.  As you watch, the little ooze disappears into the mass of the large ooze, and in a few seconds no trace of her remains.";
+		const paraKThxMole = "We thank you, brother mole.  There is no compulsion to feed at present, so we are compelled instead to offer you a boon for your service.  Take this weapon with you; perhaps it will be of some use in fending off the will of The Rumble.\"  The ooze wiggles condescendingly.  \"Lesser, boring Underwere, whose coverage of interests is woefully mired in the prosaic and pragmatic, are fascinated by its promises.  We, however, have all we need right here within ourselves... au naturale.\"  It shivers ostentatiously and a set of gold pawntlets (gauntlets for paws) dripping with continuous acid dig their way up from the soil under your ever-twitching nose.  Without waiting to see what else they can do autonomously, you don them.  They sting and stab you a smidge, but you're certain they will do more to any who would stand against you!";
+		switch(itemManager.feedbackContext) {
+		case "story":
+			const story = itemManager.storyViewController;
+			// write item use feedback
+			story.writeParagraph(paraUrnProfferance);
+			story.writeParagraph(paraKThxMole);
+			// modify story state to reflect daughter slaughter
+			story.eventFlags.daughter_ooze_sacrificed = true;
+			// sting and stab
+			story.subtractFromCharacterQuality("health", story.charactersDict.mole.stats.maxHP * 0.1);
+			// sting and stab, mentally; the more the mole has bonded with her, the worse it hurts
+			story.subtractFromCharacterQuality("sanity", story.charactersDict.mole.stats.maxSanity * Math.max(story.eventCount.daughter_ooze_conversations / 10.0, 0.1));
+			// add Caustic Claws to mole equipment
+			itemManager.addEquipment(story.charactersDict.mole, new CausticClaws());
+			// she's gone forever... RIP cute slime girl
+			itemManager.removeItem(story.charactersDict.mole, this);
+			break;
+		}
 	}
 }
 export class ItemManager {
 	constructor() {
 		/**
-		 * The string item id of the Item that the player has started using
+		 * The Item object that the player has started using
 		 */
-		this.activeItemId = null;
+		this.activeItem = null;
 		/**
 		 * Associative mapping of item id strings to corresponding Item objects
 		 */
 		this.itemsMap = {};
+		/**
+		 * Handle to the story transcript viewcontroller
+		 */
+		this.storyViewController = null;
+		/**
+		 * Handle to the combat UI viewcontroller
+		 */
+		this.combatViewController = null;
+		/**
+		 * A string indicating which visual context the user is in, story or combat, which modifies the UI elements story changes are printed to.  
+		 */
+		this.feedbackContext = "story";
+	}
+	/**
+	 * Adds the given item to the given character's inventory in model and view
+	 * @param character the Character object who should be receiving the Item
+	 * @param item the Item object we want to add to the Character
+	 */
+	addItem(character, item) {
+		// todo: check that they don't already have something with this id
+		const listItemTag = document.createElement('li');
+		listItemTag.id = item.id;
+		listItemTag.onclick = () => {
+			this.activateItem(item);
+		}
+		const anchorTag = document.createElement('a');
+		const textNode = document.createTextNode(item.name);
+		anchorTag.appendChild(textNode);
+		listItemTag.appendChild(anchorTag);
+		const listTag = document.getElementById('items_list');
+		listTag.appendChild(listItemTag);
+		character.inventory.push(item);
+	}
+	/**
+	 * Removes the given Item object from the given Character's inventory
+	 * @param character Character whose inventory we want to modify
+	 * @param item Item object to match and remove from the inventory
+	 */
+	removeItem(character, item) {
+		// todo: check if the character actually has an item with this id
+		const listItemTag = document.getElementById(item.id);
+		while (listItemTag.firstChild) {
+			listItemTag.removeChild(listItemTag.lastChild);
+		}
+		listItemTag.remove();
+		if(this.activeItem.id === item.id) {
+			this.activeItem = null;
+		}
+		Libifels.removeItemFromInventory(character, item.id);
+	}
+	/**
+	 * Adds a piece of Equipment to the character's inventory and also equips it to them
+	 * @param character the Character object who should be receiving the Item
+	 * @param equipment the Equipment object we want to equip to the Character
+	 */
+	addEquipment(character, equipment) {
+		this.addItem(character, equipment);
+		this.equipItem(character, equipment);
+	}
+	/**
+	 * Removes a piece of Equipment from the character's inventory and also unequips it from them
+	 * @param character the Character object who should be receiving the Item
+	 * @param equipment the Equipment object we want to equip to the Character
+	 */
+	removeEquipment(character, equipment) {
+		this.removeItem(character, equipment);
+		this.unequipItem(character, equipment);
+	}
+	/**
+	 * Equips an item to a character and updates the model and view accordingly
+	 * @param character Character object to equip
+	 * @param equipment Equipment object in question
+	 */
+	equipItem(character, equipment) {
+		// view
+		const listItemTag = document.createElement('li');
+		listItemTag.id = equipment.id;
+		const textNode = document.createTextNode(equipment.name);
+		listItemTag.appendChild(textNode);
+		const listTag = document.getElementById('equipment_list');
+		listTag.appendChild(listItemTag);
+		// model
+		equipment.equipEffect(character);
+	}
+	/**
+	 * Unequips equipment from a character and updates the model and view accordingly
+	 * @param character Character object to equip
+	 * @param equipment Equipment object in question
+	 */
+	unequipItem(character, equipment) {
+		// view
+		const listItemTag = document.getElementById(equipment.id);
+		while (listItemTag.firstChild) {
+			listItemTag.removeChild(listItemTag.lastChild);
+		}
+		listItemTag.remove();
+		// model
+		equipment.unequipEffect(character);
+	}
+	/**
+	 * Marks an item as the active item in use in ItemManager and highlights it in the UI
+	 * @param item the Item object we want to activate
+	 */
+	activateItem(item) {
+		this.activeItem = item;
+		const listItemTag = document.getElementById(item.id);
+		listItemTag.className = 'highlight_simple';
+		// install a new onclick which prints descriptor; effectively a useon -> self/double click sort of thing for the item desc UX
+		listItemTag.onclick = () => {
+			this.describeItem(item);
+		};
+	}
+	/**
+	 * Uses the active item on the given string target
+	 * @param targetString a text string from the story that is to be the target Y of a 'use X on Y' scenario
+	 */
+	activeItemUseOn(targetString) {
+		if(this.activeItem) {
+			const listItemTag = document.getElementById(this.activeItem.id);
+			// since we're coming down from using the already activated item, reinstall its activation behavior so it can be used again (if it remains in inventory after its useOn)
+			// need to use a new item ref so that we don't literally try to hook back into the activeItem handle, which we're about to nullify
+			const item = this.activeItem;
+			listItemTag.onclick = () => {
+				this.activateItem(item);
+			};
+			listItemTag.classList.remove('highlight_simple');
+			Libifels.findInventoryItem(this.storyViewController.charactersDict.mole, this.activeItem.id).useOn(this, targetString);
+			this.activeItem = null;
+		}
+	}
+	/**
+	 * Write out the item's description
+	 */
+	describeItem(item) {
+		switch(this.feedbackContext) {
+		case "combat":
+			CombatViewController.combatLogPrint(item.descriptor.descriptionString, CombatViewController.MessageCat.CAT_ABILITY_HINT);
+			break;
+		case "story":
+		default:
+			this.storyViewController.writeParagraph(item.descriptor.descriptionString);	
+			break;
+		}
+		// reinstall activateItem as onclick behavior and remove highlight
+		const listItemTag = document.getElementById(item.id);
+		listItemTag.onclick = () => {
+			this.activateItem(item);
+		};
+		listItemTag.classList.remove('highlight_simple');
+		// remove active item handle as we've effectively made use of the outgoing activation status by rendering the description
+		this.activeItem = null;
 	}
 }

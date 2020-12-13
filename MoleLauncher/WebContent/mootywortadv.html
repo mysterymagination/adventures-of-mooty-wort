@@ -75,7 +75,7 @@
         </div>
 
         <div id="character_panel" class="tools right">
-          <h1><a onclick="undum.game.storyViewController.activeItemUseOn('character')">Character</a></h1>
+          <h1><a onclick="undum.game.itemManager.activeItemUseOn('character')">Character</a></h1>
           <div id="character">
             <div id="character_text">
               <div id="character_text_content"></div>
@@ -112,6 +112,8 @@
             <p class="click_message">click to begin</p>
           </div>
         </div>
+        
+        
 
         <div id="content_wrapper">
           <div id="content">
@@ -128,37 +130,14 @@
           <!-- This line is totally optional. -->
           <p>Created with <a href="http://idmillington.github.io/undum/">Undum</a>.</p>
         </div>
-      </div>
+      </div> <!-- end of mid_panel div -->
+      
+      
     </div> <!-- End of div.page -->
-
-    <!-- Holds UI elements that will be cloned and placed in the main
-         page. This block itself is always hidden. -->
-    <div id="ui_library">
-      <div id="quality" class="quality">
-        <span class="name" data-attr="name"></span>
-        <span class="value" data-attr="value"></span>
-      </div>
-
-      <div id="quality_group" class="quality_group">
-        <h2 data-attr="title"></h2>
-        <div class="qualities_in_group">
-        </div>
-      </div>
-
-      <div id="progress_bar" class="progress_bar">
-        <span class="name" data-attr="name"></span>
-        <span class="value" data-attr="value"></span>
-        <div class="progress_bar_track">
-          <div class="progress_bar_color" data-attr="width">
-          </div>
-        </div>
-        <span class="left_label" data-attr="left_label"></span>
-        <span class="right_label" data-attr="right_label"></span>
-      </div>
-
-      <hr id="turn_separator">
-    </div>
-    <!-- combat UI -->
+    
+    
+    <!-- TODO: I think the mid panel is centered between the side panels simply with margin and similar offsets (as opposed to constraints of any sort); need to try adding same to CSS class modal -->
+      <!-- combat UI -->
 	<div id="combatModal" class="modal">
 	  <!-- spell effect overlay -->
 	  <canvas id="effectsOverlayCanvas"></canvas>
@@ -188,8 +167,37 @@
 	    	<!-- player character text and stat progress go here -->
 	    	</div>
 	    </div>
-	  </div> <!-- total of 81% of model-content height is all that should be consumed -->
-	</div>
+	  </div> 
+	</div> <!-- end of combat modal div -->
+
+    <!-- Holds UI elements that will be cloned and placed in the main
+         page. This block itself is always hidden. -->
+    <div id="ui_library">
+      <div id="quality" class="quality">
+        <span class="name" data-attr="name"></span>
+        <span class="value" data-attr="value"></span>
+      </div>
+
+      <div id="quality_group" class="quality_group">
+        <h2 data-attr="title"></h2>
+        <div class="qualities_in_group">
+        </div>
+      </div>
+
+      <div id="progress_bar" class="progress_bar">
+        <span class="name" data-attr="name"></span>
+        <span class="value" data-attr="value"></span>
+        <div class="progress_bar_track">
+          <div class="progress_bar_color" data-attr="width">
+          </div>
+        </div>
+        <span class="left_label" data-attr="left_label"></span>
+        <span class="right_label" data-attr="right_label"></span>
+      </div>
+
+      <hr id="turn_separator">
+    </div>
+    
 
     <!-- Load the libraries we depend on -->
     <script type="text/javascript" src="lib/jquery-2.1.3.min.js"></script>
