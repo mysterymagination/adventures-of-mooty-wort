@@ -190,6 +190,7 @@ undum.game.situations = {
 						if(!story.eventFlags.caterpillar_concern_mana_pot_got) {
 							story.writeParagraph("He tilts his head slowly and jerkily, studying you from every extant angle as well as some invented ones that shouldn't be.  Your eyes have trouble following his physically incongruous undulations.  \"I do greatly appreciate the concern of the scion, tho; take this, and may it help you realize your destiny!\"  A vial of irridescent glowing liquid appears from somewhere with a troubling squelch, and he proffers it to you.  It's only a little drippy, and the smell will probably go away.");
 							undum.game.itemManager.addItem(character.mole, new Items.PuddleOManaPotion());
+							story.eventFlags.caterpillar_concern_mana_pot_got = true;
 						}
 						// in this case, since it's really sort of a forked helper situation that has no standalone capabilities and is short, it makes sense to hop right over to the merge point
 						system.doLink("basement1_fuzzy_caterpillar_rapture");

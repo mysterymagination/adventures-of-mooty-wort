@@ -41,7 +41,7 @@ export class Item {
 	 * Print out the item's description 
 	 */
 	describe(itemManager) {
-		itemManager.describeItem(this.descriptor.descriptionString);
+		itemManager.describeItem(this);
 	}
 }
 /**
@@ -287,16 +287,17 @@ export class MinorHealthPotion extends Item {
 	 */
 	restoreHealth(itemManager) {
 		const paraImbibe = "As you imbibe the potion your wounds knit themselves shut and wave of ecstatic elemental love washes over you!";
+		const story = itemManager.storyViewController;
 		switch(itemManager.feedbackContext) {
 		case "story":
 			// write item use feedback
-			itemManager.storyViewController.writeParagraph(paraImbibe);
+			story.writeParagraph(paraImbibe);
 			break;
 		case "combat":
 			CombatViewController.combatLogPrint(paraImbibe, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
 			break;
 		}
-		itemManager.storyViewController.addToCharacterQuality("health", 0.5 * story.charactersDict.mole.stats.maxHP);
+		story.addToCharacterQuality("health", 0.5 * story.charactersDict.mole.stats.maxHP);
 		itemManager.removeItem(story.charactersDict.mole, this);
 	}
 }
@@ -324,16 +325,17 @@ export class PuddleOManaPotion extends Item {
 	restoreMana(itemManager) {
 		// write item use feedback
 		const paraImbibe = "As you imbibe the potion your heartbeat quickens and mystic power swells!";
+		const story = itemManager.storyViewController;
 		switch(itemManager.feedbackContext) {
 		case "story":
 			// write item use feedback
-			itemManager.storyViewController.writeParagraph(paraImbibe);
+			story.writeParagraph(paraImbibe);
 			break;
 		case "combat":
 			CombatViewController.combatLogPrint(paraImbibe, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
 			break;
 		}
-		itemManager.storyViewController.addToCharacterQuality("mana", 0.25 * story.charactersDict.mole.stats.maxMP);
+		story.addToCharacterQuality("mana", 0.25 * story.charactersDict.mole.stats.maxMP);
 		itemManager.removeItem(story.charactersDict.mole, this);
 	}
 }
@@ -361,16 +363,17 @@ export class FontOManaPotion extends Item {
 	restoreMana(itemManager) {
 		// write item use feedback
 		const paraImbibe = "As you imbibe the liquid rainbow potion your eyes glow with radiant fervor and mystic power sets all your nerves aflame!  Purple lightning arcs between the innumerable tips of your fuzz, which is presently standing on end like you're some sort of land-sea urchin.";
+		const story = itemManager.storyViewController;
 		switch(itemManager.feedbackContext) {
 		case "story":
 			// write item use feedback
-			itemManager.storyViewController.writeParagraph(paraImbibe);
+			story.writeParagraph(paraImbibe);
 			break;
 		case "combat":
 			CombatViewController.combatLogPrint(paraImbibe, CombatViewController.MessageCat.CAT_PLAYER_ACTION);
 			break;
 		}
-		itemManager.storyViewController.addToCharacterQuality("mana", story.charactersDict.mole.stats.maxMP);
+		story.addToCharacterQuality("mana", story.charactersDict.mole.stats.maxMP);
 		itemManager.removeItem(story.charactersDict.mole, this);
 	}
 }
@@ -578,7 +581,9 @@ export class ItemManager {
 		const listItemTag = document.getElementById(item.id);
 		listItemTag.className = 'highlight_simple';
 		// install a new onclick which prints descriptor; effectively a useon -> self sort of thing
-		listItemTag.onclick = this.describeItem(item);
+		listItemTag.onclick = () => {
+			this.describeItem(item);
+		};
 	}
 	/**
 	 * Uses the active item on the given string target
@@ -599,16 +604,18 @@ export class ItemManager {
 	describeItem(item) {
 		switch(this.feedbackContext) {
 		case "combat":
-			CombatViewController.combatLogPrint(item.descriptionString, CombatViewController.MessageCat.CAT_ABILITY_HINT);
+			CombatViewController.combatLogPrint(item.descriptor.descriptionString, CombatViewController.MessageCat.CAT_ABILITY_HINT);
 			break;
 		case "story":
 		default:
-			this.storyViewController.writeParagraph(item.descriptionString);	
+			this.storyViewController.writeParagraph(item.descriptor.descriptionString);	
 			break;
 		}
 		// reinstall activateItem as onclick behavior and remove highlight/active id
 		const listItemTag = document.getElementById(item.id);
-		listItemTag.onclick = this.activateItem();
+		listItemTag.onclick = () => {
+			this.activateItem(item);
+		};
 		listItemTag.classList.remove('highlight_simple');
 		this.activeItemId = null;
 	}
