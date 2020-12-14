@@ -24,6 +24,7 @@ export class Item {
 	 * Handles using this Item on the target object identified by the given string
 	 * @param itemManager item wrangler with handles to viewcontrollers
 	 * @param targetString string ID of the in-universe object we're using this Item on
+	 * @return true if we matched the targetString with our regex keys and could run useOn behavior; otherwise false
 	 */
 	useOn(itemManager, targetString) {
 		// parse descriptor and look for a useOn attr, and then match the input targetString to a regex string key in the useOn array of possible matches. Finally call the relevant functions of this Item that were found mapped to matching regex key strings.
@@ -32,10 +33,13 @@ export class Item {
 				for(const [keyRegex, effectFn] of Object.entries(matcherObj)) {
 					if(targetString.match(new RegExp(keyRegex, 'i'))) {
 						effectFn.call(this, itemManager);
+						return true;
 					}
 				}
 			}
 		}
+		// we want to hit stuff up above as the success exit condition; if we get here, we didn't find a match or couldn't search for one so just return false
+		return false;
 	}
 	/**
 	 * Print out the item's description 
@@ -603,6 +607,7 @@ export class ItemManager {
 	/**
 	 * Uses the active item on the given string target
 	 * @param targetString a text string from the story that is to be the target Y of a 'use X on Y' scenario
+	 * @return true if we were able to try use th ative item (if any) on this targetString and there was handling for it; false otherwise. 
 	 */
 	activeItemUseOn(targetString) {
 		if(this.activeItem) {
@@ -614,8 +619,16 @@ export class ItemManager {
 				this.activateItem(item);
 			};
 			listItemTag.classList.remove('highlight_simple');
-			Libifels.findInventoryItem(this.storyViewController.charactersDict.mole, this.activeItem.id).useOn(this, targetString);
+			const item = Libifels.findInventoryItem(this.storyViewController.charactersDict.mole, this.activeItem.id);
+			// store whether our useOn fn matched the targetString with its regex key
+			let matchedUseOn = false;
+			if(item) {
+				matchedUseOn = item.useOn(this, targetString);
+			} 
 			this.activeItem = null;
+			return matchedUseOn;
+		} else {
+			return false;
 		}
 	}
 	/**

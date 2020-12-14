@@ -152,8 +152,7 @@ undum.game.situations = {
 										if (character.qualities.health > 0) {
 											system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
 											// push the fuzz item to the mole's inventory
-											undum.game.itemManager.addItem(undum.game.storyViewController.charactersDict.mole, new Items.PulsatingFuzz());
-											// todo: Each interactable object in the current context combatViewControllertory will be surrounded in anchor tags that go nowhere (or Undum action anchor tag syntax?) and call a util function StoryViewController.activeItemUseOn(target thingamajig string) which calls ItemManager.activeItem.useOn(passed in target string) and then removes the active item from ItemManager's reckoning and removes the highlight effect on its UI list item.  The trouble with that approach is that it could effectively leave dead looking links all over.  A quick fix might be to take inspiration from Lucid Dreams and let interactables be described by default and then have special handling when clicked if an item is active; they used handy different interact icons to make this behavior change transparent, but it's probably fine enough without it... the other option is to tag interactables in text and then change styling on all that are in the current situation context to indicate that they can be targets of an inventory item whenever an inventory item is activated.  Actually, this might be a good job for an innocuous span tag in the markup text with a css selector that is specific to the relevant situation id -- that way we could simply say upon item activation, ok CSS go find all the fellas with class interactable_mysituationid and style them with hyperlink effects or highlights or whatever.                      
+											undum.game.itemManager.addItem(undum.game.storyViewController.charactersDict.mole, new Items.PulsatingFuzz());                     
 										} else {
 											system.write(sFuzzMessage + "</p>");
 											system.doLink('death');
@@ -235,10 +234,12 @@ undum.game.situations = {
 					enter: function (character, system, from) {
 						var sDesc = "";
 						// if we just entered for the first time, give the full deal
-						if (!undum.game.situations.basement1_bulbous_spider_hub.actions.bVisited) {
+						const actionsObj = undum.game.situations.basement1_bulbous_spider_hub.actions;
+						if (!actionsObj.bVisited) {
 							sDesc = "As you shovel pebbles away from your questing snout, the vision of a rolly-polly spider struggling with some sort of urn enters your reality.  The urn is transparent and you can see a viscous rusty liquid sloshing lazily about inside.  It's sealed by a stone stopper that glows red as the heart of all magma when the spider strains against it.  Before you can speak, she slips on the slick soil and rolls onto her voluminous backside... and keeps rolling: the tunnel you've entered has a gentle but insistent curvature that seems just right to keep the poor arachnid rolling forever.  Well, not forever of course, as that would be physically impossible, but longer than a spider's lifespan so the point is kinda moot.";
+							actionsObj.bVisited = true;
 						} else {
-							if (this.bRolling) {
+							if (actionsObj.bRolling) {
 								sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
 							} else {
 								sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two, from a safe and creepingly increasing distance from the urn in your compartment.";
@@ -247,6 +248,10 @@ undum.game.situations = {
 						system.write(
 								"<p>" + sDesc + "</p>"
 						);
+						const story = undum.game.storyViewController;
+						if(!story.eventFlags.phantasmalloy_vault_opened) {
+							story.writeParagraph("There's a shimmer of silvery white like crystallized moonlight in the center of the floor; shoveling a bit of soil away reveals the top of a mostly <a href='check_phantasmalloy_vault'>buried vault</a>.  It's smallish, but ghastly heavy.  The material appears to be phantasmalloy, a seamless blend of metal and magic from beyond the common cosmos.  There seems to be no door on it, either -- your claws may be mighty, but they're not quite up to rending magic-infused metal.");
+						}
 						system.writeChoices(system.getSituationIdChoices("#spider_sayings").concat("basement1_hub"));
 					},
 					actions: {
@@ -254,14 +259,29 @@ undum.game.situations = {
 						bRolling: true,
 						sRollingDesc: "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...",
 						sUnrolledDesc: "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...",
+						check_phantasmalloy_vault: function(character, system, action) {
+							if(action) {
+								const story = undum.game.storyViewController;
+								if(!story.eventFlags.phantasmalloy_vault_opened) {
+									const itemManager = undum.game.itemManager;
+									// if we did hit with useOn, the item specific handling will report the story.  We just need to handle default failure case here.
+									if(!itemManager.activeItemUseOn("buried vault")) {
+										story.writeParagraph("The phantasmalloy vault remains a stubbornly impenetrable enigma.");
+									}
+								} else {
+									story.writeParagraph("The phantasmalloy vault is a shredded ruin now, a majestic empty shell.");
+								}
+							}
+						},
 						/**
 						 * Determines and returns the appropriate option text (choice title) for this situation
 						 */
 						calculateHeading: function () {
-							if (!this.bVisited) {
+							const actionsObj = undum.game.situations.basement1_bulbous_spider_hub.actions;
+							if (!actionsObj.bVisited) {
 								return "A massive spider rolls back and forth across the curve of the tunnel; her thicket of frantically scrabbling legs is strangely hypnotic.";
 							} else {
-								if (this.bRolling) {
+								if (actionsObj.bRolling) {
 									return this.sRollingDesc;
 								} else {
 									return this.sUnrolledDesc;
@@ -272,11 +292,12 @@ undum.game.situations = {
 						 * Updates the host situation's optionText field
 						 */
 						updateOptionText: function () {
-							console.log("updateOptionText; this.bRolling says: " + this.bRolling);
-							if (this.bRolling) {
-								undum.game.situations.basement1_bulbous_spider_hub.optionText = this.sRollingDesc;
+							const actionsObj = undum.game.situations.basement1_bulbous_spider_hub.actions;
+							console.log("updateOptionText; bRolling says: " + actionsObj.bRolling);
+							if (actionsObj.bRolling) {
+								undum.game.situations.basement1_bulbous_spider_hub.optionText = actionsObj.sRollingDesc;
 							} else {
-								undum.game.situations.basement1_bulbous_spider_hub.optionText = this.sUnrolledDesc;
+								undum.game.situations.basement1_bulbous_spider_hub.optionText = actionsObj.sUnrolledDesc;
 							}
 						}
 					},
