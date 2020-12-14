@@ -189,6 +189,8 @@ export class PulsatingFuzz extends Item {
 		case "story":
 			// write item use feedback
 			itemManager.storyViewController.writeParagraph("You reach out and wiggle the fuzz playfully over your molerat friend's snoot; he tries to resist an upwelling of mirth that threatens to fracture his zealous persona, but no will can resist the captivating grip of the tickle monster -- as the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the opal eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.");
+			itemManager.storyViewController.writeParagraph("A crimson flash catches your eye as you search about the molerat's erstwhile territory; brushing some dust away with your wiggly snoot, you uncover a boiling potion vial of velvety red gel, which you pocket.");
+			itemManager.addItem(itemManager.storyViewController.charactersDict.mole, new MinorHealthPotion());
 			// modify story state to reflect tickled molerat
 			itemManager.storyViewController.eventFlags.molerat_tickled = true;
 			// add grue hub access to the array of choices the player currently has in the story,
@@ -430,17 +432,20 @@ export class RustyUrn extends Item {
 			cuteConvoText += "As you examine the transparent urn, your snoot pressed up against it, the ooze inside forms into a small humanoid woman wearing a flowy sundress.  She waves merrily and performs a graceful wiggly twirl.  You grin and clack your mighty claws together in appreciation, and she abruptly disappears into a shy blushy puddle.";
 			break;
 		}
-		
+		let cuteConvos = itemManager.storyViewController.eventCount.daughter_ooze_conversations;
+		cuteConvos += 1;
+		if(cuteConvos >= 4 && !itemManager.storyViewController.eventFlags.daughter_ooze_gift) {
+			cuteConvoText += "She gloops up against the wall of the urn to ensure she has your attention.  \"Have I mentioned yet that I love you more than anything?\"  She blinks beamingly up at you and when you wink back at her she literally melts into a happy pool of neon pink ripples.  Where her erect mass had been, there now stands a pulsing scarlet vial.  You take it greatfully."
+			itemManager.addItem(itemManager.storyViewController.charactersDict.mole, new MinorHealthPotion());
+		}
 		switch(itemManager.feedbackContext) {
 		case "story":
 			itemManager.storyViewController.writeParagraph(cuteConvoText);
 			break;
 		case "combat":
 			CombatViewController.combatLogPrint(cuteConvoText, CombatViewController.MessageCat.CAT_ABILITY_HINT);
-			// todo: need a way to indicate that the player has exhausted their turn
 			break;
 		}
-		itemManager.storyViewController.eventCount.daughter_ooze_conversations += 1;
 	}
 	/**
 	 * Condemns the daughter ooze to doom and wins the fleeting favor of her parent.
@@ -448,13 +453,15 @@ export class RustyUrn extends Item {
 	 */
 	deliverDaughterOoze(itemManager) {
 		const paraUrnProfferance = "As you proffer the urn, a tendril whips out from the ochre ooze and suddenly the urn has been removed from your possession.  The fur that the urn had been in contact with is seared away and hideous chemical burns now decorate the flesh beneath.  \"Our daughter!\" the ooze burbles in a thousand thousand voices all vengefully enraptured.  \"What a naughty little mynx you've been, trying to escape the collective.  We live for the Whole, child... and die for it.\"  With that, the ooze slams the urn into itself hard enough to propel it hopelessly deep within its caustic mass; gelatinous ripples expand silently out from the point of impact, strangely lovely in their perfect symmetry.  Though the urn's crystalline structure puts up a noble resistance, it quickly breaks down and you can see through the translucent ochre muck a smaller quantity of ooze writhe free of the dissolving urn.  It, or she, you suppose, struggles frantically for a moment and then is still.  As you watch, the little ooze disappears into the mass of the large ooze, and in a few seconds no trace of her remains.";
-		const paraKThxMole = "We thank you, brother mole.  There is no compulsion to feed at present, so we are compelled instead to offer you a boon for your service.  Take this weapon with you; perhaps it will be of some use in fending off the will of The Rumble.\"  The ooze wiggles condescendingly.  \"Lesser, boring Underwere, whose coverage of interests is woefully mired in the prosaic and pragmatic, are fascinated by its promises.  We, however, have all we need right here within ourselves... au naturale.\"  It shivers ostentatiously and a set of gold pawntlets (gauntlets for paws) dripping with continuous acid dig their way up from the soil under your ever-twitching nose.  Without waiting to see what else they can do autonomously, you don them.  They sting and stab you a smidge, but you're certain they will do more to any who would stand against you!";
+		const paraKThxMole = "We thank you, brother mole.  There is no compulsion to feed at present, so we are compelled instead to offer you blessings for your service.  Take this weapon and tonic with you; perhaps they will be of some use in fending off the will of The Rumble.\"  The ooze wiggles condescendingly.  \"Lesser, boring Underwere, whose coverage of interests is woefully mired in the prosaic and pragmatic, are fascinated by its promises.  We, however, have all we need right here within ourselves... au naturale.\"";
+		const paraGifts = "It shivers ostentatiously and a set of gold clawntlets (gauntlets for paws with claws) dripping with continuous acid dig their way up from the soil under your ever-twitching nose.  Gripped carefully in the left clawntlet is a delicate vial glowing with eery blue-green light.  As you watch wonderingly, the clawnlet artfully flips the vial up between its foreclaws and offers it up to you.  Without waiting to see what else these weapons can do autonomously, you tuck the vial away in your compartment and don them.  They sting and stab you a smidge, but you're certain they will do more to any who would stand against you!";
 		switch(itemManager.feedbackContext) {
 		case "story":
 			const story = itemManager.storyViewController;
 			// write item use feedback
 			story.writeParagraph(paraUrnProfferance);
 			story.writeParagraph(paraKThxMole);
+			story.writeParagraph(paraGifts);
 			// modify story state to reflect daughter slaughter
 			story.eventFlags.daughter_ooze_sacrificed = true;
 			// sting and stab
@@ -463,6 +470,8 @@ export class RustyUrn extends Item {
 			story.subtractFromCharacterQuality("sanity", story.charactersDict.mole.stats.maxSanity * Math.max(story.eventCount.daughter_ooze_conversations / 10.0, 0.1));
 			// add Caustic Claws to mole equipment
 			itemManager.addEquipment(story.charactersDict.mole, new CausticClaws());
+			// add a minor mana potion
+			itemManager.addItem(story.charactersDict.mole, new PuddleOManaPotion());
 			// she's gone forever... RIP cute slime girl
 			itemManager.removeItem(story.charactersDict.mole, this);
 			break;
