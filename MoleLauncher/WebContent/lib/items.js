@@ -109,10 +109,27 @@ export class CausticClaws extends Weapon {
 		super();
 		this.id = "caustic_claws";
 		this.name = "Dripping Caustic Claws";
-		this.descriptor = {};
+		this.descriptor = {
+				"useOn": [
+					{
+						"vault": this.rendPhantasmalloy
+					}
+				],
+				"descriptionString": "The "+this.name+" gleam brilliantly, caustic green slime dripping languidly from each claw tip."
+		};
 		this.atkBuf = 25;
 		this.acidDmg = 0;
 	}
+	/**
+	 * Rends the phantasmalloy vault asunder and reveals its treasure to the mole
+	 * @param itemManager the ItemManager object directing our usage
+	 */
+	rendPhantasmalloy(itemManager) {
+		const story = itemManager.storyViewController;
+		story.writeParagraph("The "+this.name+" rend the vault's indefatigable structure asunder like a hot knife slices through butter, oddly creating exactly the same sort of delicious molten gold drizzle.  Inside there is a small velvet cushion with a glass vial resting on it.  Inside the vial is a blindingly beautiful liquid rainbow -- just gazing upon it thrills you endlessly!");
+		itemManager.addItem(story.charactersDict.mole, new FontOManaPotion());
+	}
+	// todo: need mech for un/re/equipping
 	/**
 	 * Deals extra acid damage based on the attacker's pwr stat
 	 * @param attackingCharacter the attacking Character object
@@ -436,11 +453,12 @@ export class RustyUrn extends Item {
 			cuteConvoText += "As you examine the transparent urn, your snoot pressed up against it, the ooze inside forms into a small humanoid woman wearing a flowy sundress.  She waves merrily and performs a graceful wiggly twirl.  You grin and clack your mighty claws together in appreciation, and she abruptly disappears into a shy blushy puddle.";
 			break;
 		}
-		let cuteConvos = itemManager.storyViewController.eventCount.daughter_ooze_conversations;
-		cuteConvos += 1;
-		if(cuteConvos >= 4 && !itemManager.storyViewController.eventFlags.daughter_ooze_gift) {
-			cuteConvoText += "She gloops up against the wall of the urn to ensure she has your attention.  \"Have I mentioned yet that I love you more than anything?\"  She blinks beamingly up at you and when you wink back at her she literally melts into a happy pool of neon pink ripples.  Where her erect mass had been, there now stands a pulsing scarlet vial.  You take it greatfully."
+		const eventCount = itemManager.storyViewController.eventCount;
+		eventCount.daughter_ooze_conversations++;
+		if(eventCount.daughter_ooze_conversations >= 4 && !itemManager.storyViewController.eventFlags.daughter_ooze_gift) {
+			cuteConvoText += "<p>She gloops up against the wall of the urn to ensure she has your attention.  \"Have I mentioned yet that I love you more than anything?\"  She blinks beamingly up at you and when you wink back at her she literally melts into a happy pool of neon pink ripples.  Where her erect mass had been, there now stands a pulsing scarlet vial.  You take it greatfully.</p>"
 			itemManager.addItem(itemManager.storyViewController.charactersDict.mole, new MinorHealthPotion());
+			itemManager.storyViewController.eventFlags.daughter_ooze_gift = true;
 		}
 		switch(itemManager.feedbackContext) {
 		case "story":
@@ -619,11 +637,11 @@ export class ItemManager {
 				this.activateItem(item);
 			};
 			listItemTag.classList.remove('highlight_simple');
-			const item = Libifels.findInventoryItem(this.storyViewController.charactersDict.mole, this.activeItem.id);
+			const invItem = Libifels.findInventoryItem(this.storyViewController.charactersDict.mole, item.id);
 			// store whether our useOn fn matched the targetString with its regex key
 			let matchedUseOn = false;
-			if(item) {
-				matchedUseOn = item.useOn(this, targetString);
+			if(invItem) {
+				matchedUseOn = invItem.useOn(this, targetString);
 			} 
 			this.activeItem = null;
 			return matchedUseOn;

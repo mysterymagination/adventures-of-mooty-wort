@@ -250,7 +250,7 @@ undum.game.situations = {
 						);
 						const story = undum.game.storyViewController;
 						if(!story.eventFlags.phantasmalloy_vault_opened) {
-							story.writeParagraph("There's a shimmer of silvery white like crystallized moonlight in the center of the floor; shoveling a bit of soil away reveals the top of a mostly <a href='check_phantasmalloy_vault'>buried vault</a>.  It's smallish, but ghastly heavy.  The material appears to be phantasmalloy, a seamless blend of metal and magic from beyond the common cosmos.  There seems to be no door on it, either -- your claws may be mighty, but they're not quite up to rending magic-infused metal.");
+							story.writeParagraph("There's a shimmer of silvery white like crystallized moonlight in the center of the floor; shoveling a bit of soil away reveals the top of a mostly <a href='./check_phantasmalloy_vault'>buried vault</a>.  It's smallish, but ghastly heavy.  The material appears to be phantasmalloy, a seamless blend of metal and magic from beyond the common cosmos.  There seems to be no door on it, either -- your claws may be mighty, but they're not quite up to rending magic-infused metal.");
 						}
 						system.writeChoices(system.getSituationIdChoices("#spider_sayings").concat("basement1_hub"));
 					},
@@ -260,17 +260,21 @@ undum.game.situations = {
 						sRollingDesc: "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...",
 						sUnrolledDesc: "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...",
 						check_phantasmalloy_vault: function(character, system, action) {
-							if(action) {
-								const story = undum.game.storyViewController;
-								if(!story.eventFlags.phantasmalloy_vault_opened) {
-									const itemManager = undum.game.itemManager;
-									// if we did hit with useOn, the item specific handling will report the story.  We just need to handle default failure case here.
-									if(!itemManager.activeItemUseOn("buried vault")) {
-										story.writeParagraph("The phantasmalloy vault remains a stubbornly impenetrable enigma.");
+							try {
+								if(action) {
+									const story = undum.game.storyViewController;
+									if(!story.eventFlags.phantasmalloy_vault_opened) {
+										const itemManager = undum.game.itemManager;
+										// if we did hit with useOn, the item specific handling will report the story.  We just need to handle default failure case here.
+										if(!itemManager.activeItemUseOn("buried vault")) {
+											story.writeParagraph("The phantasmalloy vault remains a stubbornly impenetrable enigma.");
+										}
+									} else {
+										story.writeParagraph("The phantasmalloy vault is a shredded ruin now, a majestic empty shell.");
 									}
-								} else {
-									story.writeParagraph("The phantasmalloy vault is a shredded ruin now, a majestic empty shell.");
 								}
+							} catch(err) {
+								console.log("error during phantasmalloy check: "+err);
 							}
 						},
 						/**
