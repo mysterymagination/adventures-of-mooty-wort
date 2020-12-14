@@ -384,7 +384,7 @@ img.float_left {
 .modal {
   display: none; /* Hidden by default */
   position: absolute; /*constrained by parent*/
-  width: 48%;
+  width: 45%;
   height: 90%; 
   margin-bottom: 0;
   margin-left: -0.4em; /*somebody up the hierarchy wants to push us right, idk*/
