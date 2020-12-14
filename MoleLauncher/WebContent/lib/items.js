@@ -128,6 +128,7 @@ export class CausticClaws extends Weapon {
 		const story = itemManager.storyViewController;
 		story.writeParagraph("The "+this.name+" rend the vault's indefatigable structure asunder like a hot knife slices through butter, oddly creating exactly the same sort of delicious molten gold drizzle.  Inside there is a small velvet cushion with a glass vial resting on it.  Inside the vial is a blindingly beautiful liquid rainbow -- just gazing upon it thrills you endlessly!");
 		itemManager.addItem(story.charactersDict.mole, new FontOManaPotion());
+		story.eventFlags.phantasmalloy_vault_opened = true;
 	}
 	// todo: need mech for un/re/equipping
 	/**

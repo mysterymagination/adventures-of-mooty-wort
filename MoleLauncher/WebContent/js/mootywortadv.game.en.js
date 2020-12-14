@@ -251,6 +251,8 @@ undum.game.situations = {
 						const story = undum.game.storyViewController;
 						if(!story.eventFlags.phantasmalloy_vault_opened) {
 							story.writeParagraph("There's a shimmer of silvery white like crystallized moonlight in the center of the floor; shoveling a bit of soil away reveals the top of a mostly <a href='./check_phantasmalloy_vault'>buried vault</a>.  It's smallish, but ghastly heavy.  The material appears to be phantasmalloy, a seamless blend of metal and magic from beyond the common cosmos.  There seems to be no door on it, either -- your claws may be mighty, but they're not quite up to rending magic-infused metal.");
+						} else {
+							story.writeParagraph("The phantasmalloy vault is a shredded ruin now, a majestic empty shell.");
 						}
 						system.writeChoices(system.getSituationIdChoices("#spider_sayings").concat("basement1_hub"));
 					},
