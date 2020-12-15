@@ -218,6 +218,7 @@ export class PulsatingFuzz extends Item {
 			// add grue hub access to the array of choices the player currently has in the story,
 			// to be printed as the specific story paradigm directs
 			itemManager.storyViewController.appendChoice("basement2_grue_hub");
+			itemManager.storyViewController.showChoices();
 		}
 	}
 	ticklePlayer(itemManager) {
@@ -499,6 +500,45 @@ export class RustyUrn extends Item {
 			itemManager.removeItem(story.charactersDict.mole, this);
 			break;
 		}
+	}
+}
+/**
+ * The Dark Mantle represents the primal clawing mad power of the Depths, which is essential as a force of nature but corrosive to the sapient psyche; it was not meant to be worn by mortals.
+ */
+export class DarkMantle extends Item {
+	constructor() {
+		super();
+		this.id = "dark_mantle";
+		this.name = "A Dark Passenger"; // shoutout to Dexter :)
+		this.descriptor = {
+			"useOn": [
+				{
+					"character": this.gazeIntoAbyss
+				},
+				{
+					"nakedest.*molerat": this.moleratAbsolution
+				},
+				{
+					"spider": this.spiderSeduction
+				},
+				{
+					"ochre.*ooze": this.oozeAbsorb
+				},
+				{
+					"caterpillar": this.caterpillarFuzz
+				}
+			],
+			"descriptionString": this.name+" is with you now, watching and waiting, eager to unleash the infinite power of chaos itself at your direction."
+		}	
+	}
+	/**
+	 * The mole has chosen to address the mantle directly, and must then choose whether to embrace it fully or give it up.
+	 * @param itemManager the item wrangler
+	 */
+	gazeIntoAbyss(itemManager) {
+		// todo: so for each of these dark mantle usages, we want to present the player with two or more choices; paragon/renegade and all that at least.  Doing so via Undum Situations (via StoryViewController abstraction) is the obvious route, but that could be a bit awkward?  Maybe not, but having the choice generation here and then having to go to the situation to find out what actually happens is a little annoying.  Alternative would be to gen up my own HTML/CSS UI elements for choices in a new modal or something and promises etc. could then let the code appear to be synchronously all here.
+		itemManager.storyViewController.appendChoices(["mole_dark_mantle_accept", "mole_dark_mantle_reject"]);
+		itemManager.storyViewController.showChoices();
 	}
 }
 export class ItemManager {

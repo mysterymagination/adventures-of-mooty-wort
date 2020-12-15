@@ -242,7 +242,7 @@ undum.game.situations = {
 							if (actionsObj.bRolling) {
 								sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
 							} else {
-								sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two, from a safe and creepingly increasing distance from the urn in your compartment.";
+								sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two and the giant spider seems to creep closer without actually moving, as if drawn directly by your raw animal magnetism.  For a smoldery velvet fellow like yourself, this can be an issue with the ladies.";
 							}
 						}
 						system.write(
@@ -320,7 +320,7 @@ undum.game.situations = {
 					enter: function (character, system, from) {
 						system.write(
 								"<p>As she comes down the far side of the tunnel, and as soon after her direction reverses as you can manage, you shove your shovel-like claw beneath her spinnerets.  With a *crunch*, the memory of which will sicken you for years to come, her mighty momentum is zeroed out on your paw.  As soon as she has a good few legs on the ground she hops away as if burned.</p>\
-								<p>\"Ooh, wow!  Watch that wandering paw, mister.  But, um, thank you for rescuing me!\" she chitters, her fangs and complicated-looking razor-edged mouth-parts clacking upsettingly and a blush the fell scarlet of moonlit blood spreading over her cephalothorax.  \"This blasted urn has brought me nothing but trouble.  Would you like it?  Here, take it with my compliments!\" She hastily shoves the rusty urn into your compartment and skuttles away, her eyes still rolling in the cycle of her erstwhile dizzy purgatory.</p>"
+								<p>\"Ooh, wow!  Watch that wandering paw, mister.  But, um, thank you for rescuing me!\" she chitters, her fangs and complicated-looking razor-edged mouth-parts clacking upsettingly and a blush the fell scarlet of moonlit blood spreading over her cephalothorax.  \"This blasted urn has brought me nothing but trouble.  Would you like it?  Here, take it with my compliments!\" She hastily shoves the rusty urn into your compartment, taking liberties with her frisking of your svelte potato morphology on the way.  Before you can speak, she squeals shyly and skuttles away, her eyes still rolling in the cycle of her erstwhile dizzy purgatory.  With her face buried in four of her legs, she continues staring at you in fascination from the shadows despite her embarrassment; specifically, at your muscular rump.</p>"
 						);
 						undum.game.storyViewController.subtractFromCharacterQuality("health", character.mole.stats.maxHP * 0.4);
 

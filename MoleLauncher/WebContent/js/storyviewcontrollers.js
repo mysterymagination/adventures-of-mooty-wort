@@ -42,6 +42,19 @@ export class StoryViewController {
 		this.choiceStringArray.push(choiceString);
 	}
 	/**
+	 * Append an array of choice strings to the player's game context
+	 * @param choiceStringArray string array of new choices
+	 */
+	appendChoices(choiceStringArray) {
+		this.choiceStringArray.concat(choiceStringArray);
+	}
+	/**
+	 * Displays the current choice string array to the player in a manner dictated by the specific story paradigm
+	 */
+	showChoices() {
+		console.log("No known way to display current choices: "+this.choiceStringArray);
+	}
+	/**
 	 * Adds the value to a character quality in the story viewmodel
 	 * @param qualityId string id of a character quality to change
 	 * @param value number value to add to the quality
@@ -73,8 +86,10 @@ export class UndumStoryViewController extends StoryViewController {
 	writeParagraph(passageString) {
 		this.undumSystem.write("<p>"+passageString+"</p>");
 	}
-	appendChoice(choiceString) {
-		super.appendChoice(choiceString);
+	/**
+	 * Uses the Undum System.writeChoices() API to write out this.choiceStringArray (which is expected to be an array of Situation ID strings)
+	 */
+	showChoices() {
 		this.undumSystem.writeChoices(this.choiceStringArray);
 	}
 	addToCharacterQuality(qualityId, value) {
