@@ -519,25 +519,63 @@ export class DarkMantle extends Item {
 					"nakedest.*molerat": this.moleratAbsolution
 				},
 				{
-					"spider": this.spiderSeduction
+					"spider": this.spiderHeartHandling
 				},
 				{
-					"ochre.*ooze": this.oozeAbsorb
+					"ochre.*ooze": this.oozeJudgement
 				},
 				{
-					"caterpillar": this.caterpillarFuzz
+					"caterpillar": this.caterpillarFuzziness
 				}
 			],
-			"descriptionString": this.name+" is with you now, watching and waiting, eager to unleash the infinite power of chaos itself at your direction."
+			"descriptionString": this.name+" is with you now, watching and waiting, eager to unleash the infinite power of chaos itself at your direction.  You sense this power is itself malign but subservient; perhaps your iron will can put it to whatever use you wish?"
 		}	
 	}
 	/**
-	 * The mole has chosen to address the mantle directly, and must then choose whether to embrace it fully or give it up.
-	 * @param itemManager the item wrangler
+	 * The mole has chosen to address the mantle directly, and must then choose whether to embrace it fully or give it up.  This is the terminal condition of the epilogue, granting a final massive boost to paragon or renegade.
+	 * @param itemManager the item wrangler, which hosts our viewcontroller handles
 	 */
 	gazeIntoAbyss(itemManager) {
-		// todo: so for each of these dark mantle usages, we want to present the player with two or more choices; paragon/renegade and all that at least.  Doing so via Undum Situations (via StoryViewController abstraction) is the obvious route, but that could be a bit awkward?  Maybe not, but having the choice generation here and then having to go to the situation to find out what actually happens is a little annoying.  Alternative would be to gen up my own HTML/CSS UI elements for choices in a new modal or something and promises etc. could then let the code appear to be synchronously all here.
-		itemManager.storyViewController.appendChoices(["mole_dark_mantle_accept", "mole_dark_mantle_reject"]);
+		itemManager.storyViewController.appendChoices(["dark_mantle_mole_accept", "dark_mantle_mole_reject"]);
+		itemManager.storyViewController.showChoices();
+	}
+	/**
+	 * The mole has the opportunity to make the molerat his blindly devoted servant, or to open his eyes to something truly worth of reverence. 
+	 * @param itemManager the item wrangler, which hosts our viewcontroller handles
+	 */
+	moleratAbsolution(itemManager) {
+		itemManager.storyViewController.appendChoices(["dark_mantle_molerat_worship", "dark_mantle_molerat_clarity"]);
+		itemManager.storyViewController.showChoices();
+	}
+	/**
+	 * The mole can disdainfully flash his newfound power at his spider admirer, blinding her and blasting her mind to flinders.  Or, he can be kind and turn her down gently.  Or, if he's into her, he can ask her out!
+	 * @param itemManager the item wrangler, which hosts our viewcontroller handles
+	 */
+	spiderHeartHandling(itemManager) {
+		itemManager.storyViewController.appendChoices(["dark_mantle_spider_flash", "dark_mantle_spider_gentle_no_thx", "dark_mantle_spider_manyfold_embrace"]);
+		itemManager.storyViewController.showChoices();
+	}
+	/**
+	 * The mole can: 
+	 * 1. exact vengeance upon the ooze and/or covet its power, simply absorbing it into his own form. 
+	 * 2. (if Gel has been sacrificed) visit justice upon the ooze in the best possible way, reconstituting Gel within him and then inverting their control of the larger ooze structure.
+	 * 3. (if Gel is spared) listen to Gel's plea that they spare her parent and just leave the old blowhard alone in its hole to wiggle in solitude forever.  She would also recommend, however, that the mole erect a forcefield around the ooze's chamber to ensure nothing falls in again.
+	 * @param itemManager the item wrangler, which hosts our viewcontroller handles
+	 */
+	oozeJudgement(itemManager) {
+		itemManager.storyViewController.appendChoices(["dark_mantle_ooze_devour", "dark_mantle_ooze_gel_inverse_resurrection", "dark_mantle_ooze_imprison"]);
+		itemManager.storyViewController.showChoices();
+	}
+	/**
+	 * The mole says:
+	 * 1. Strip the caterpillar of his remaining fuzz and help him realize his full metamorphosis from worm to terrorizing wyrm.
+	 * 2. Reapply the caterpillar's lost fuzz and clear the venom from his veins, restoring his kindly ol' nature.
+	 * 3. Force finish his metamorphosis into a butterfly; this isn't wise given they're still underground.  
+	 * 		3.1 If the mole goes this route, he can follow up with another usage on the caterpillar to either transform him back into a fuzzy caterpillar (which grants a lesser paragon boon than directly doing #2) or to just watch him struggle (which gives a further boost to renegade).
+	 * @param itemManager the item wrangler, which hosts our viewcontroller handles
+	 */
+	caterpillarFuzziness(itemManager) {
+		itemManager.storyViewController.appendChoices(["dark_mantle_caterpillar_worm_to_wyrm", "dark_mantle_caterpillar_fuzzy", "dark_mantle_caterpillar_entombed_flight"]);
 		itemManager.storyViewController.showChoices();
 	}
 }
