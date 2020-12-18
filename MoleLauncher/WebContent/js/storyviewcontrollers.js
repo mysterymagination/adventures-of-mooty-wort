@@ -106,6 +106,11 @@ export class UndumStoryViewController extends StoryViewController {
 			this.charactersDict.mole.stats.sanity += value; 
 			this.undumSystem.setQuality("sanity", this.charactersDict.mole.stats.sanity);
 			break;
+		case "moleWhole":
+			this.charactersDict.mole.stats.shovelry += value;
+			// every 10 points of shovelry increases moleWhole by 1 rank
+			this.undumSystem.setQuality("moleWhole", Math.floor(this.charactersDict.mole.stats.shovelry/10.0));
+			break;
 		}
 	}
 	subtractFromCharacterQuality(qualityId, value) {
@@ -121,6 +126,11 @@ export class UndumStoryViewController extends StoryViewController {
 		case "sanity":
 			this.charactersDict.mole.stats.sanity -= value; 
 			this.undumSystem.setQuality("sanity", this.charactersDict.mole.stats.sanity);
+			break;
+		case "moleWhole":
+			this.charactersDict.mole.stats.shovelry -= value;
+			// every 10 points of shovelry lost decreases moleWhole by 1 rank
+			this.undumSystem.setQuality("moleWhole", Math.floor(this.charactersDict.mole.stats.shovelry/10.0));
 			break;
 		}
 	}

@@ -268,6 +268,7 @@ export class Mole extends Character {
 		this.stats["pwr"] = 5;
 		this.stats["res"] = 20; // eldritch things know better than to mess with moles
 		this.stats["spd"] = 1; // the mole is not fast
+		this.stats["shovelry"] = 0; // every mole is shovelrous, but we're talking real hero stuff
         Object.assign(this.coreStats, this.stats);
 		this.entity = new Spells.Burrower();
 		this.spriteIdx = 0;

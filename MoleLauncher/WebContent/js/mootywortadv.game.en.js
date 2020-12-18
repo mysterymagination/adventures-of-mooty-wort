@@ -37,8 +37,8 @@ undum.game.slideUpSpeed = 500
  */
 var BurrowAdjectivesQuality = function (title, opts) {
 	undum.WordScaleQuality.call(this, title, [
-		"surfacer".l(), "noodler".l(), "wornclawed".l(),
-		"underwere".l(), "tunnelfish".l(), "digger".l(), "delver".l()
+		"Crawling Chaos".l(), "Darkness Beyond".l(), "Eldritch Entity".l(),
+		"Plain Underwere".l(), "Mighty Digger".l(), "Burrow Master".l(), "Eldritch Delver".l()
 		], opts);
 	if (!('offset' in opts)) this.offset = -3;
 };
@@ -73,7 +73,6 @@ undum.game.situations = {
 					},
 					actions: {
 						'fight-humans': function (character, system, action) {
-							console.log("testMethod for main situation says: " + undum.game.situations.main.actions.testMethod());
 							system.write(
 									"<p>You cock your snout at the approaching human questioningly, crossing your little paws with their giant claws in a peaceful but steadfast manner.  As the human reaches you and raises his shovel to strike, you realize he cares nothing for diplomacy and is intent on bringing violence to your non-violent protest. You must defend yourself!</p>\
 									<p>With all the fury a 100g velvety-fuzzed body can muster, you leap directly at The Human.  Of course, all animals have the firmware necessary to calculate the most efficient vector to a human face for face-offs such as this, and you take his sight with your great digging claws before he pulls you off and smashes you to squelchy flinders on the merciless pavement of his driveway.</p>"
@@ -232,6 +231,7 @@ undum.game.situations = {
 				"",
 				{
 					enter: function (character, system, from) {
+						const story = undum.game.storyViewController;
 						var sDesc = "";
 						// if we just entered for the first time, give the full deal
 						const actionsObj = undum.game.situations.basement1_bulbous_spider_hub.actions;
@@ -239,16 +239,19 @@ undum.game.situations = {
 							sDesc = "As you shovel pebbles away from your questing snout, the vision of a rolly-polly spider struggling with some sort of urn enters your reality.  The urn is transparent and you can see a viscous rusty liquid sloshing lazily about inside.  It's sealed by a stone stopper that glows red as the heart of all magma when the spider strains against it.  Before you can speak, she slips on the slick soil and rolls onto her voluminous backside... and keeps rolling: the tunnel you've entered has a gentle but insistent curvature that seems just right to keep the poor arachnid rolling forever.  Well, not forever of course, as that would be physically impossible, but longer than a spider's lifespan so the point is kinda moot.";
 							actionsObj.bVisited = true;
 						} else {
-							if (actionsObj.bRolling) {
-								sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
+							if(!story.eventFlag.spider_flashed) {
+								if (actionsObj.bRolling) {
+									sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
+								} else {
+									sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two and the <a href='./check_spider'>giant spider</a> seems to creep closer without actually moving, as if drawn directly by your raw animal magnetism.  For a smoldery velvet fellow like yourself, this can be an issue with the ladies.";
+								}
 							} else {
-								sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two and the giant spider seems to creep closer without actually moving, as if drawn directly by your raw animal magnetism.  For a smoldery velvet fellow like yourself, this can be an issue with the ladies.";
+								sDesc = "Your erstwhile arachnid ladyfriend has been reduced to a gibbering shell of her former self, having beheld your terrible magnificence.  You have no further use for her.";
 							}
 						}
 						system.write(
 								"<p>" + sDesc + "</p>"
 						);
-						const story = undum.game.storyViewController;
 						if(!story.eventFlags.phantasmalloy_vault_opened) {
 							story.writeParagraph("There's a shimmer of silvery white like crystallized moonlight in the center of the floor; shoveling a bit of soil away reveals the top of a mostly <a href='./check_phantasmalloy_vault'>buried vault</a>.  It's smallish, but ghastly heavy.  The material appears to be phantasmalloy, a seamless blend of metal and magic from beyond the common cosmos.  There seems to be no door on it, either -- your claws may be mighty, but they're not quite up to rending magic-infused metal.");
 						} else {
@@ -261,6 +264,20 @@ undum.game.situations = {
 						bRolling: true,
 						sRollingDesc: "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...",
 						sUnrolledDesc: "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...",
+						sGibberingDesc: "The spider stares at nothing now, her world reduced to the abyss.",
+						check_spider: function(character, system, action) {
+							try {
+								console.log("check_spider; the action says "+action);
+								if(action) {
+									const itemManager = undum.game.itemManager;
+									if(!itemManager.activeItemUseOn("giant spider")) {
+										undum.game.storyViewController.writeParagraph("She's really quite cute despite all the terribly varied and razor-sharp multitudinous mouthparts... no, because of them!  Also her moonlit-blood blush.  And those leeeegs for daaaays, eight times over!  Plus it's hard to even mention That Abdomen in polite conversation.  Ooh ooh, and her spinnerets are just begging for kisses!");
+									}
+								}
+							} catch (err) {
+								console.log("checking spider failed with: "+err);
+							}
+						},
 						check_phantasmalloy_vault: function(character, system, action) {
 							try {
 								if(action) {
@@ -287,10 +304,14 @@ undum.game.situations = {
 							if (!actionsObj.bVisited) {
 								return "A massive spider rolls back and forth across the curve of the tunnel; her thicket of frantically scrabbling legs is strangely hypnotic.";
 							} else {
-								if (actionsObj.bRolling) {
-									return this.sRollingDesc;
+								if(!undum.game.storyViewController.eventFlags.spider_flashed) {
+									if (actionsObj.bRolling) {
+										return this.sRollingDesc;
+									} else {
+										return this.sUnrolledDesc;
+									}
 								} else {
-									return this.sUnrolledDesc;
+									return this.sGibberingDesc;
 								}
 							}
 						},
@@ -736,8 +757,6 @@ undum.game.situations = {
 					//  the expected modal over transcript up to that point.  Also, there seems to potentially be
 					//  auto saving/loading since I definitely hit this without even being able to hit load.
 					enter: function (character, system, from) {
-						// todo: so I read the Promise docs... and I think I'm still somewhat sane. Anyway, take home point is that a promise doesn't 'activate' and start towards resolving until a then() is called on it and passes in resolve/reject handlers.  So for the issue of pausing here until combat resolves, we could maybe wrap the combat call in a new Promise and pass in a resolve functor to combat which we can go ahead and call only when combat his finished -- that miiight mean that a chained then() which could contain the code we want to run here in the event of combat victory/defeat for the player.
-
 						var promiseOfWar = new Promise((resolve) => {
 
 
@@ -756,7 +775,6 @@ undum.game.situations = {
 							if(playerVictory) {
 								var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
 								undum.game.storyViewController.writeParagraph(yawningGodVictoryString);	
-								// todo: so the dark Promises approach works, but it's wretchedly unintuitive for what we're making it do here specifically, and Undum story paradigm in general.  Simply passing a string id indicating what location/context the player should be returned to after combat (situation id in Undum) into combat and then call a storyViewController abstraction like travelTo(id) which for Undum would inoke doLink(situation id) would be much easier and clearer.
 								var promiseOfDarkness = new Promise((resolver) => {
 									if(undum.game.storyViewController.eventFlags.grue_challenge_activated) {
 										// transition to the grue fight 
@@ -783,10 +801,12 @@ undum.game.situations = {
 								system.doLink('death');
 								break;
 							case "shadowed":
-								// todo: hint that something vile remains in the Deepness, a cheschire cat grin all of teeth flashing out of the distant void for an instant.
+								// hint that something vile remains in the Deepness, a cheschire cat grin all of teeth flashing out of the distant void for an instant.
+								undum.game.storyViewController.writeParagraph("The threat is neutralized, but you feel an almost overwhelming sense of dread still hanging in the air... in every shadow you see a glimmer of glittering fangs bared in a rictus grin, just for an instant.  You're almost certain you're not insane, though upon checking you never find anything there.  Well, these things will happen in the Deep places of the world.");
 								break;
 							case "dark_king":
-								// todo: reduce sanity cost of Dark Mole powers by half; this combined with the Odditine Obol is the only circumstance where the player can achieve a score in the best hero/villain ending threshold!
+								// reduce sanity cost of Dark Mole powers by half; this combined with the Odditine Obol is the only circumstance where the player can achieve a score in the best hero/villain ending threshold!
+								undum.game.storyViewController.eventFlags.madness_mail = true;
 								break;
 							}
 							if(resultString !== "death") {
@@ -795,6 +815,7 @@ undum.game.situations = {
 								undum.game.storyViewController.writeParagraph(deepOneString);
 								undum.game.storyViewController.writeParagraph(breachTheDeepString);
 								undum.game.storyViewController.eventFlags.dark_mole = true;
+								undum.game.itemManager.addItem(character.mole, new Items.DarkMantle());
 								system.doLink("basement2_hub");
 							}
 						});
@@ -831,6 +852,20 @@ undum.game.situations = {
 					optionText: "Something stirs just out of sight, and shadows slither closer...  Show this new abomination what a mole is made of!"
 				}
 		),
+		dark_mantle_spider_flash: new undum.SimpleSituation(
+				"",
+				{
+					onEnter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						story.writeParagraph("You stalk towards the blushing spider and she shies away, sensing more aggression than she anticipated from one of your woolly ilk.  There is no escape from inevitability itself, however, and a chittering shriek escapes her quivering fangs as you activate the Dark Mantle and bear your newly realized true form to her.");
+						story.writeParagraph("Mind-bending angles, impossible polyhedra, and a nest of hook-beaked tentacles writhing in a multitude to shame any earthly cephalopod fill her sight, and the flash of fiery magnificence wreathing the lot burns away her many staring eyes.  Incidentally, most spiders don't have tear ducts, or the emotional capacity to make use of them, but this special lady did.  It's worth noting because they've now been cauterized -- judging by the hissing steam rising from them now as if from volcanic wounds, if she could be weeping at once with transcendent joy and infinite despair, she would be.");  
+						story.writeParagraph("The glimpse she caught of your majesty has shattered her mind to bouncing razor-edged fragments, rending her to bits from the inside out.  You don your mole-y disguise once more and leave her to her suffering.");
+						story.eventFlags.spider_flashed = true;
+						// todo: massive renegade hit
+					},
+				optionText: "She is clearly infatuated with you, and rightly so, but the poor little lustful mortal dear can't know the power she's flirting with... Enlighten her!"
+				}
+				),
 		death: new undum.SimpleSituation(
 				"<strong>💀 IT IS A SAD THING THAT YOUR ADVENTURES HAVE ENDED HERE 💀</strong>\
 				<div class='transient'><a href='main'>Oh, Mother of Moles!  Try Again?</a></div>\
@@ -854,7 +889,6 @@ undum.game.start = "main";
  * possess. We don't have to be exhaustive, but if we miss one out then
  * that quality will never show up in the character bar in the UI. */
 undum.game.qualities = {
-		// todo: add inventory quality that renders as a nice unordered list and can ideally by clicked to effect a 'use clicked item' action
 		health: new undum.NumericQuality(
 				"Health", { priority: "0001", group: 'stats' }
 		),
