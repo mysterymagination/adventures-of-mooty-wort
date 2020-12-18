@@ -10,7 +10,9 @@ export class Combat {
 	constructor(config) {
 		this.playerParty = config.playerParty;
         this.enemyParty = config.enemyParty;
-        this.resetPartyStatuses();
+        if(!config.persistStats) {
+        	this.resetPartyStatuses();
+        }
         this.controllerState = Combat.ControllerState.beginNewRound;
         this.combatResult = undefined;
         

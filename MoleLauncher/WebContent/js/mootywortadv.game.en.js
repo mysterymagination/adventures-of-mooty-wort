@@ -144,9 +144,7 @@ undum.game.situations = {
 									const sFuzzMessage = "As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!";
 
 									if (!Libifels.isItemInInventory(character.mole, "pulsating_fuzz")) {
-										// system.setQuality() will update the value and its UI representation together
-										character.mole.stats.hp -= character.mole.stats.maxHP * 0.1;
-										system.setQuality("health", character.mole.stats.hp);
+										undum.game.storyViewController.subtractFromCharacterQuality("health", character.mole.stats.maxHP * 0.1);
 										console.log("health is " + character.qualities.health);
 										if (character.qualities.health > 0) {
 											system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
@@ -216,8 +214,7 @@ undum.game.situations = {
 						// from is given as the string id of the situation we came from
 						if (from === "basement1_fuzzy_caterpillar_you_ok") {
 							// the cost of befriending madness is... fairly predictable
-							character.mole.stats.sanity -= character.mole.stats.maxSanity * 0.25;
-							system.setQuality("sanity", character.mole.stats.sanity);
+							undum.game.storyViewController.subtractFromCharacterQuality("sanity", character.mole.stats.maxSanity * 0.25);
 						}
 						system.write(
 								"<p>He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
@@ -271,7 +268,7 @@ undum.game.situations = {
 								if(action) {
 									const itemManager = undum.game.itemManager;
 									if(!itemManager.activeItemUseOn("giant spider")) {
-										undum.game.storyViewController.writeParagraph("She's really quite cute despite all the terribly varied and razor-sharp multitudinous mouthparts... no, because of them!  Also her moonlit-blood blush.  And those leeeegs for daaaays, eight times over!  Plus it's hard to even mention That Abdomen in polite conversation.  Ooh ooh, and her spinnerets are just begging for kisses!");
+										undum.game.storyViewController.writeParagraph("She's really quite cute despite all the terribly varied and razor-sharp multitudinous mouthparts... no, because of them!  She would definitely be an interesting kisser.  Also her moonlit-blood blush.  And those leeeegs for daaaays, eight times over!  Plus it's hard to even mention That Abdomen in polite conversation.  Ooh ooh, and her spinnerets are just begging to be teased!");
 									}
 								}
 							} catch (err) {
@@ -343,17 +340,19 @@ undum.game.situations = {
 								"<p>As she comes down the far side of the tunnel, and as soon after her direction reverses as you can manage, you shove your shovel-like claw beneath her spinnerets.  With a *crunch*, the memory of which will sicken you for years to come, her mighty momentum is zeroed out on your paw.  As soon as she has a good few legs on the ground she hops away as if burned.</p>\
 								<p>\"Ooh, wow!  Watch that wandering paw, mister.  But, um, thank you for rescuing me!\" she chitters, her fangs and complicated-looking razor-edged mouth-parts clacking upsettingly and a blush the fell scarlet of moonlit blood spreading over her cephalothorax.  \"This blasted urn has brought me nothing but trouble.  Would you like it?  Here, take it with my compliments!\" She hastily shoves the rusty urn into your compartment, taking liberties with her frisking of your svelte potato morphology on the way.  Before you can speak, she squeals shyly and skuttles away, her eyes still rolling in the cycle of her erstwhile dizzy purgatory.  With her face buried in four of her legs, she continues staring at you in fascination from the shadows despite her embarrassment; specifically, at your muscular rump.</p>"
 						);
-						undum.game.storyViewController.subtractFromCharacterQuality("health", character.mole.stats.maxHP * 0.4);
+						// need to wrap post-unrolled behavior in a possible death block as damage is dealt
+						if(!undum.game.storyViewController.subtractFromCharacterQuality("health", character.mole.stats.maxHP * 0.4)) {
 
-						// now that she's been unrolled, we want to update the flag and option text
-						undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling = false;
-						//undum.game.situations.basement1_bulbous_spider_hub.actions.updateOptionText();
-						console.log("spider rolling status after we've stopped her rolling: " + undum.game.situations.basement1_bulbous_spider_hub.bRolling);
-
-						// player now has the ooze urn... hooray?
-						undum.game.itemManager.addItem(undum.game.storyViewController.charactersDict.mole, new Items.RustyUrn());
-						character.stringArrayInventory.push("rusty_urn");
-						system.doLink("basement1_bulbous_spider_hub");
+							// now that she's been unrolled, we want to update the flag and option text
+							undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling = false;
+							//undum.game.situations.basement1_bulbous_spider_hub.actions.updateOptionText();
+							console.log("spider rolling status after we've stopped her rolling: " + undum.game.situations.basement1_bulbous_spider_hub.bRolling);
+	
+							// player now has the ooze urn... hooray?
+							undum.game.itemManager.addItem(undum.game.storyViewController.charactersDict.mole, new Items.RustyUrn());
+							character.stringArrayInventory.push("rusty_urn");
+							system.doLink("basement1_bulbous_spider_hub");
+						}
 					},
 					canView: function (character, system, host) {
 						console.log("spider rolling status is " + undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling);
@@ -363,7 +362,6 @@ undum.game.situations = {
 					tags: ["spider_sayings"]
 				}
 		),
-		// todo: add some more spider sayings so we can see the hooves heading
 		"basement1_ochre_ooze_first_entry": new undum.SimpleSituation(
 				"",
 				{
@@ -769,7 +767,7 @@ undum.game.situations = {
 							var mech = undum.game.combatViewController;
 							var story = undum.game.storyViewController;
 							undum.game.itemManager.feedbackContext = "combat";
-							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav", resultFn: resolve}); 
+							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav", persistStats: true, resultFn: resolve}); 
 						}).then((playerVictory) => {
 							undum.game.itemManager.feedbackContext = "story";
 							if(playerVictory) {

@@ -94,11 +94,6 @@ class CombatViewController {
 	 * @return the current combat controller state
 	 */
 	stepCombat(combatModel) {
-		// todo: add numeric results after effects affecting stats go off,
-		//  e.g. don't say that the enemy used dark_star but do say the mole suffered
-		//  N damage; that way it's more clear when abilities actually fire and the player
-		//  doesn't have to do their own arithmetic after the fact to figure out how effective 
-		//  something was.
 		var state = combatModel.controllerState;
 		if(state === Combat.ControllerState.beginNewRound) {
 			// clear out any existing targeted functions

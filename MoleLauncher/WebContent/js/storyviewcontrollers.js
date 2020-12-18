@@ -105,6 +105,11 @@ export class UndumStoryViewController extends StoryViewController {
 	showChoices() {
 		this.undumSystem.writeChoices(this.choiceStringArray);
 	}
+	/**
+	 * Adds the given value to the given player quality id string via Undum's System.setQuality, which will update the character side panel
+	 * @param qualityId the quality id string
+	 * @param value a number to be added to the named quality
+	 */ 
 	addToCharacterQuality(qualityId, value) {
 		switch(qualityId) {
 		case "health":
@@ -126,16 +131,23 @@ export class UndumStoryViewController extends StoryViewController {
 			break;
 		}
 	}
+	/**
+	 * Subtracts the given value from the given player quality id string via Undum's System.setQuality, which will update the character side panel
+	 * @param qualityId the quality id string
+	 * @param value a number to be subtracted from the named quality
+	 * @return true if a terminal condition has been met after the subtraction, false otherwise
+	 */
 	subtractFromCharacterQuality(qualityId, value) {
 		switch(qualityId) {
 		case "health":
 			this.charactersDict.mole.stats.hp -= value; 
 			this.undumSystem.setQuality("health", this.charactersDict.mole.stats.hp);
-			this.checkTerminals();
+			return this.checkTerminals();
 			break;
 		case "mana":
 			this.charactersDict.mole.stats.mp -= value; 
 			this.undumSystem.setQuality("mana", this.charactersDict.mole.stats.mp);
+			return false;
 			break;
 		case "sanity":
 			// madness mail halves sanity damage
@@ -144,12 +156,13 @@ export class UndumStoryViewController extends StoryViewController {
 			}
 			this.charactersDict.mole.stats.sanity -= value; 
 			this.undumSystem.setQuality("sanity", this.charactersDict.mole.stats.sanity);
-			this.checkTerminals();
+			return this.checkTerminals();
 			break;
 		case "moleWhole":
 			this.charactersDict.mole.stats.shovelry -= value;
 			// every 10 points of shovelry lost decreases moleWhole by 1 rank
 			this.undumSystem.setQuality("moleWhole", Math.floor(this.charactersDict.mole.stats.shovelry/10.0));
+			return false;
 			break;
 		}
 	}
@@ -165,9 +178,9 @@ export class UndumStoryViewController extends StoryViewController {
 	 */
 	syncPlayerQualities() {
 		const stats = this.charactersDict.mole.stats;
-		this.undumSystem.setQuality("health", stats.hp);
-		this.undumSystem.setQuality("mana", stats.mp);
-		this.undumSystem.setQuality("sanity", stats.sanity);
+		this.undumSystem.setQuality("health", Math.ceil(stats.hp));
+		this.undumSystem.setQuality("mana", Math.ceil(stats.mp));
+		this.undumSystem.setQuality("sanity", Math.ceil(stats.sanity));
 		this.checkTerminals();
 	}
 	/**
