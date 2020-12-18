@@ -43,10 +43,10 @@ export class StoryViewController {
 	}
 	/**
 	 * Append an array of choice strings to the player's game context
-	 * @param choiceStringArray string array of new choices
+	 * @param additionalChoicesArray string array of new choices
 	 */
-	appendChoices(choiceStringArray) {
-		this.choiceStringArray.concat(choiceStringArray);
+	appendChoices(additionalChoicesArray) {
+		this.choiceStringArray = this.choiceStringArray.concat(additionalChoicesArray);
 	}
 	/**
 	 * Displays the current choice string array to the player in a manner dictated by the specific story paradigm

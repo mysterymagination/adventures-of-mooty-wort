@@ -239,7 +239,7 @@ undum.game.situations = {
 							sDesc = "As you shovel pebbles away from your questing snout, the vision of a rolly-polly spider struggling with some sort of urn enters your reality.  The urn is transparent and you can see a viscous rusty liquid sloshing lazily about inside.  It's sealed by a stone stopper that glows red as the heart of all magma when the spider strains against it.  Before you can speak, she slips on the slick soil and rolls onto her voluminous backside... and keeps rolling: the tunnel you've entered has a gentle but insistent curvature that seems just right to keep the poor arachnid rolling forever.  Well, not forever of course, as that would be physically impossible, but longer than a spider's lifespan so the point is kinda moot.";
 							actionsObj.bVisited = true;
 						} else {
-							if(!story.eventFlag.spider_flashed) {
+							if(!story.eventFlags.spider_flashed) {
 								if (actionsObj.bRolling) {
 									sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
 								} else {
