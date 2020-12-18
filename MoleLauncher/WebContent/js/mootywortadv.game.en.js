@@ -50,8 +50,8 @@ undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 
 //-----game logic-----//
 //create RPG combat ViewController and transcript story ViewController
-undum.game.combatViewController = new CombatViewController();
 undum.game.storyViewController = new UndumStoryViewController(undum.system);
+undum.game.combatViewController = new CombatViewController(undum.game.storyViewController);
 undum.game.itemManager = new Items.ItemManager();
 undum.game.itemManager.storyViewController = undum.game.storyViewController;
 undum.game.itemManager.combatViewController = undum.game.combatViewController;
@@ -798,7 +798,7 @@ undum.game.situations = {
 						}).then((resultString) => {
 							switch(resultString) {
 							case "death":
-								system.doLink('death');
+								//system.doLink('death'); // we'll link up to death in the health quality processing over in UndumStoryViewController
 								break;
 							case "shadowed":
 								// hint that something vile remains in the Deepness, a cheschire cat grin all of teeth flashing out of the distant void for an instant.
@@ -861,11 +861,13 @@ undum.game.situations = {
 						story.writeParagraph("Mind-bending angles, impossible polyhedra, and a nest of hook-beaked tentacles writhing in a multitude to shame any earthly cephalopod fill her sight, and the flash of fiery magnificence wreathing the lot burns away her many staring eyes.  Incidentally, most spiders don't have tear ducts, or the emotional capacity to make use of them, but this special lady did.  It's worth noting because they've now been cauterized -- judging by the hissing steam rising from them now as if from volcanic wounds, if she could be weeping at once with transcendent joy and infinite despair, she would be.");  
 						story.writeParagraph("The glimpse she caught of your majesty has shattered her mind to bouncing razor-edged fragments, rending her to bits from the inside out.  You don your mole-y disguise once more and leave her to her suffering.");
 						story.eventFlags.spider_flashed = true;
-						// todo: massive renegade hit
+						// massive renegade hit & sanity crush
+						story.subtractFromCharacterQuality("moleWhole", 10);
+						story.subtractFromCharacterQuality("sanity", 40);
 					},
 				optionText: "She is clearly infatuated with you, and rightly so, but the poor little lustful mortal dear can't know the power she's flirting with... Enlighten her!"
 				}
-				),
+		),
 		death: new undum.SimpleSituation(
 				"<strong>💀 IT IS A SAD THING THAT YOUR ADVENTURES HAVE ENDED HERE 💀</strong>\
 				<div class='transient'><a href='main'>Oh, Mother of Moles!  Try Again?</a></div>\
@@ -878,9 +880,6 @@ undum.game.situations = {
 				</ul>"
 		)
 }
-
-//todo: combat UI; I'm thinking a Situation to handle it with a custom set of HTML widgets added into the bg of the Situation (if that's possible)
-//(iframe?) or maybe more simply a div that we can shove into the transcript UI someplace or maybe overlay on top of it like a modal.
 
 /* The id of the starting situation. */
 undum.game.start = "main";

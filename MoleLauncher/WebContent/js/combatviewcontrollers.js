@@ -16,7 +16,7 @@ import {PassStunned} from "../lib/spellbook.js";
  * Class responsible for defining the RPG combat mechanics of the Mooty Wort adventure and running combat
  */
 class CombatViewController {
-	constructor() {
+	constructor(storyViewController) {
 		/**
 		 * Object literal association of Character ids to associated UI objects sack
 		 */
@@ -43,6 +43,10 @@ class CombatViewController {
 		 * Combat data model
 		 */
 		this.combatDriver = null;
+		/**
+		 * Handle to story viewcontroller so we can keep combat and story stat views in sync
+		 */
+		this.storyViewController = storyViewController;
 	}
 
 	/**
@@ -787,6 +791,7 @@ class CombatViewController {
 	 * @param combatModel current Combat object
 	 */
 	updateCharacterData(combatModel) {
+		this.storyViewController.syncPlayerQualities();
 		for(const player of combatModel.playerParty) {
 			let uiHandle = this.characterUiDict[player.id];
 			uiHandle.hpElement.innerHTML = Math.ceil(player.stats["hp"]);

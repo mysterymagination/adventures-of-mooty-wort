@@ -70,6 +70,19 @@ export class StoryViewController {
 	subtractFromCharacterQuality(qualityId, value) {
 		console.log("There is no known way to subtract from character quality "+qualityId+" by "+value);
 	}
+	/**
+	 * Warps player to the given location
+	 * @param locationString string identifying a location
+	 */
+	travelTo(locationString) {
+		console.log("There is no known way to travel to "+locationString);
+	}
+	/**
+	 * Ensures the player character stats views are up to date with its data model
+	 */
+	syncPlayerQualities() {
+		console.log("There is no known way to sync player quality views");
+	}
 }
 /**
  * StoryViewController subclass for writing story text passages into an Undum transcript
@@ -118,20 +131,59 @@ export class UndumStoryViewController extends StoryViewController {
 		case "health":
 			this.charactersDict.mole.stats.hp -= value; 
 			this.undumSystem.setQuality("health", this.charactersDict.mole.stats.hp);
+			this.checkTerminals();
 			break;
 		case "mana":
 			this.charactersDict.mole.stats.mp -= value; 
 			this.undumSystem.setQuality("mana", this.charactersDict.mole.stats.mp);
 			break;
 		case "sanity":
+			// madness mail halves sanity damage
+			if(this.eventFlags.madness_mail) {
+				value /= 2;
+			}
 			this.charactersDict.mole.stats.sanity -= value; 
 			this.undumSystem.setQuality("sanity", this.charactersDict.mole.stats.sanity);
+			this.checkTerminals();
 			break;
 		case "moleWhole":
 			this.charactersDict.mole.stats.shovelry -= value;
 			// every 10 points of shovelry lost decreases moleWhole by 1 rank
 			this.undumSystem.setQuality("moleWhole", Math.floor(this.charactersDict.mole.stats.shovelry/10.0));
 			break;
+		}
+	}
+	/**
+	 * Invokes Undum's system.doLink(location)
+	 * @param locationString Situation id string 
+	 */
+	travelTo(locationString) {
+		this.undumSystem.doLink(locationString);
+	}
+	/**
+	 * Calls Undum System.setQuality() on health, mana, and sanity to keep us in sync with combat
+	 */
+	syncPlayerQualities() {
+		const stats = this.charactersDict.mole.stats;
+		this.undumSystem.setQuality("health", stats.hp);
+		this.undumSystem.setQuality("mana", stats.mp);
+		this.undumSystem.setQuality("sanity", stats.sanity);
+		this.checkTerminals();
+	}
+	/**
+	 * Checks to see if player character qualities health and/or sanity have reached their terminal level, ending the game in death
+	 * @return true if a terminal quality condition is met, false otherwise
+	 */
+	checkTerminals() {
+		// story death/madness processing
+		if(this.charactersDict.mole.stats.hp <= 0) {
+			this.writeParagraph("Your lifeblood has run out...");
+			this.travelTo("death");
+			return true;
+		} else if(this.charactersDict.mole.stats.sanity <= 0) {
+			this.writeParagraph("There's an audible *SNAP* as your mind breaks apart in a fractal pattern of ruination...");
+			this.travelTo("death");
+			return true;
 		}
 	}
 }
