@@ -91,6 +91,11 @@ export class UndumStoryViewController extends StoryViewController {
 	constructor(undumSystem) {
 		super({name: "UndumStoryViewController"});
 		this.undumSystem = undumSystem;
+		/**
+		 * *sigh* good ol' tech debt... this is much easier than trying to marshal my calls to updateCharacterData in the combat VC more carefully.
+		 * todo: look into removing the call to updateCHaracterData in the bottom of enemy spell VFX proc since we know we'll be proceeding to new round state anyway? 
+		 */
+		this.terminalMessagePrinted = false;
 	}
 	/**
 	 * Writes the given string in a paragraph to either the story transcript or the combat log, depending on the current feedback context

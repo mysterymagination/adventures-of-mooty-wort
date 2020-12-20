@@ -746,9 +746,9 @@ class CombatViewController {
 
 		// now that modal content is loaded, do centering calc
 		// todo: call this from window resize events
-		this.centerElementInWindow(combatUI);
+		//this.centerElementInWindow(combatUI);
 		// center the center of combat log vertically
-		this.alignByElementCenterOnY(document.getElementById("combatLog"));
+		//this.alignByElementCenterOnY(document.getElementById("combatLog"));
 	}
 
 	/**

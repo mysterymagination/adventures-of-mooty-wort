@@ -207,7 +207,7 @@ img.float_left {
 #tools_wrapper {
     position: fixed;
     width: 100%;
-    max-width: 56em;
+    /*max-width: 56em;*/
     top: 2.2em;
     left: 0;
     right: 0;
@@ -383,12 +383,14 @@ img.float_left {
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */
-  position: absolute; /*constrained by parent*/
-  width: 45%;
+  position: fixed;/*absolute; /*constrained by parent*/
+  /*left: 9.3em;
+  right: 9.3em;*/
+  /*width: 100%;/*30em;/*45%;*/
+  /*max-width: 30em;*/
   height: 90%; 
-  margin-bottom: 0;
-  margin-left: -0.4em; /*somebody up the hierarchy wants to push us right, idk*/
-  margin-right: 0;
+  left: 15em; /*auto*/
+  right: 15em; /*auto*/
   overflow: auto; /* Enable scroll if needed */
   justify-content: center;
   align-items: center;
@@ -496,6 +498,7 @@ img.float_left {
   max-height: 40%;
   position: absolute;
   bottom: 0px;
+  top: 65%; /*align with bottom of combat log, whose top offset 50% + its max height of 15%*/
 }
 
 .character-data {
