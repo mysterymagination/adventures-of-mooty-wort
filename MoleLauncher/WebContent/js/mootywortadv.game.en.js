@@ -268,7 +268,7 @@ undum.game.situations = {
 								if(action) {
 									const itemManager = undum.game.itemManager;
 									if(!itemManager.activeItemUseOn("giant spider")) {
-										undum.game.storyViewController.writeParagraph("She's really quite cute despite all the terribly varied and razor-sharp multitudinous mouthparts... no, because of them!  She would definitely be an interesting kisser.  Also her moonlit-blood blush.  And those leeeegs for daaaays, eight times over!  Plus it's hard to even mention That Abdomen in polite conversation.  Ooh ooh, and her spinnerets are just begging to be teased!");
+										undum.game.storyViewController.writeParagraph("She's really quite cute despite all the terribly varied and razor-sharp multitudinous mouthparts... no, because of them!  She would definitely be an interesting kisser.  Also her moonlit-blood blush.  And those leeeegs for daaaays, eight times over!  Plus it's hard to even mention That Abdomen in polite conversation.  Ooh ooh, and her spinnerets would be a wonder to tease!");
 									}
 								}
 							} catch (err) {
