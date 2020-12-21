@@ -203,6 +203,7 @@ export class UndumStoryViewController extends StoryViewController {
 		this.undumSystem.setQuality("health", Math.ceil(stats.hp));
 		this.undumSystem.setQuality("mana", Math.ceil(stats.mp));
 		this.undumSystem.setQuality("sanity", Math.ceil(stats.sanity));
+		this.undumSystem.setQuality("moleWhole", Math.floor(this.charactersDict.mole.stats.shovelry/10.0));
 		this.checkTerminals();
 	}
 	/**

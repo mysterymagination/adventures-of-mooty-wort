@@ -244,17 +244,6 @@ export class Mole extends Character {
 		 * String array of item names comprising the mole's inventory
 		 */
 		this.stringArrayInventory = [];
-		/**
-		 * An ordinal label describing the mole's categorical caliber as an Underwere:
-		 * -3 -> "surfacer", one who really shouldn't be under anyplace much less Underwere. 
-		 * -2 -> "noodler", one who dabbles in delving without much skill.
-		 * -1 -> "wornclawed", one who is experienced (although experience does not equate to skill) in dabbling at delving and has learned from MANY mistakes. 
-		 * 0 -> "underwere", a competent traveler of the Deepness.
-		 * 1 -> "tunnelfish", one who is naturally at home burrowing.
-		 * 2 -> "digger", a true artisan of burrows; one who is both skilled at digging and understands the philosophy of delving deep dwellings.
-		 * 3 -> "delver", a subterranean adventurer extraordinaire!
-		 */
-		this.ordinalUnderwere = 0;
 		
 		// rpg mech props
 		this.stats["maxHP"] = 100;
@@ -274,6 +263,15 @@ export class Mole extends Character {
 		this.spriteIdx = 0;
 		this.baseOpacity = 0.85;
 		this.battleSprites = [this.battleSpritePath+"/mole/stoic_determination.jpg"];
+	}
+	/**
+	 * Reset this player character instance's combat fields and player specific stats like sanity
+	 */
+	resetCombatStatus() {
+		super.resetCombatStatus();
+		this.stats["maxSanity"] = this.coreStats["maxSanity"];
+		this.stats["sanity"] = this.coreStats["maxSanity"];
+		this.stats["shovelry"] = 0;
 	}
 }
 

@@ -915,12 +915,6 @@ undum.game.qualityGroups = {
 undum.game.init = function (character, system) {
 	character.mole = undum.game.storyViewController.charactersDict.mole;
 	undum.game.storyViewController.resetStory();
-
-	// inform UI viewmodel 
-	character.qualities.health = character.mole.stats.maxHP;
-	character.qualities.mana = character.mole.stats.maxMP;
-	character.qualities.sanity = character.mole.stats.maxSanity;
-	character.qualities.moleWhole = character.mole.ordinalUnderwere;
 	system.setCharacterText("<p>You are starting on an exciting journey beneath the earth and beyond all reason.</p>");
 };
 //-----end game logic-----//
