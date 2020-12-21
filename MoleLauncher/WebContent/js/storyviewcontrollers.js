@@ -26,6 +26,32 @@ export class StoryViewController {
 		this.choiceStringArray = [];
 	}
 	/**
+	 * Empties the boolean eventFlags map and resets the counts of everything in eventCount
+	 */
+	resetStoryEvents() {
+		this.eventFlags = {};
+		for(const eventId in this.eventCount) {
+			this.eventCount[eventId] = 0;
+		}
+	}
+	/**
+	 * Resets the state of all Characters in charactersDict
+	 */
+	resetStoryCharacters() {
+		for(const [characterId, character] of Object.entries(this.charactersDict)) {
+			this.charactersDict[characterId].resetStatus();
+		}
+	}
+	/**
+	 * Resets all story object models and views in preparation for a new game session
+	 */
+	resetStory() {
+		this.resetStoryEvents();
+		this.resetStoryCharacters();
+		this.choiceStringArray = [];
+		this.syncPlayerQualities();
+	}
+	/**
 	 * Writes a given text string out to the story text; what this means and exactly
 	 * how it works will be determined by the current StoryViewController subclass's override
 	 * of this function and what its story text display paradigm is.
@@ -91,11 +117,6 @@ export class UndumStoryViewController extends StoryViewController {
 	constructor(undumSystem) {
 		super({name: "UndumStoryViewController"});
 		this.undumSystem = undumSystem;
-		/**
-		 * *sigh* good ol' tech debt... this is much easier than trying to marshal my calls to updateCharacterData in the combat VC more carefully.
-		 * todo: look into removing the call to updateCHaracterData in the bottom of enemy spell VFX proc since we know we'll be proceeding to new round state anyway? 
-		 */
-		this.terminalMessagePrinted = false;
 	}
 	/**
 	 * Writes the given string in a paragraph to either the story transcript or the combat log, depending on the current feedback context
@@ -148,12 +169,10 @@ export class UndumStoryViewController extends StoryViewController {
 			this.charactersDict.mole.stats.hp -= value; 
 			this.undumSystem.setQuality("health", this.charactersDict.mole.stats.hp);
 			return this.checkTerminals();
-			break;
 		case "mana":
 			this.charactersDict.mole.stats.mp -= value; 
 			this.undumSystem.setQuality("mana", this.charactersDict.mole.stats.mp);
 			return false;
-			break;
 		case "sanity":
 			// madness mail halves sanity damage
 			if(this.eventFlags.madness_mail) {
@@ -162,13 +181,11 @@ export class UndumStoryViewController extends StoryViewController {
 			this.charactersDict.mole.stats.sanity -= value; 
 			this.undumSystem.setQuality("sanity", this.charactersDict.mole.stats.sanity);
 			return this.checkTerminals();
-			break;
 		case "moleWhole":
 			this.charactersDict.mole.stats.shovelry -= value;
 			// every 10 points of shovelry lost decreases moleWhole by 1 rank
 			this.undumSystem.setQuality("moleWhole", Math.floor(this.charactersDict.mole.stats.shovelry/10.0));
 			return false;
-			break;
 		}
 	}
 	/**
@@ -194,14 +211,22 @@ export class UndumStoryViewController extends StoryViewController {
 	 */
 	checkTerminals() {
 		// story death/madness processing
-		if(this.charactersDict.mole.stats.hp <= 0) {
-			this.writeParagraph("Your lifeblood has run out...");
-			this.travelTo("death");
-			return true;
-		} else if(this.charactersDict.mole.stats.sanity <= 0) {
-			this.writeParagraph("There's an audible *SNAP* as your mind breaks apart in a fractal pattern of ruination...");
-			this.travelTo("death");
-			return true;
+		/**
+		 * *sigh* good ol' tech debt... this is much easier than trying to marshal my calls to updateCharacterData in the combat VC more carefully.
+		 * todo: look into removing the call to updateCharacterData in the bottom of enemy spell VFX proc since we know we'll be proceeding to new round state anyway? 
+		 */
+		if(!this.eventFlags.terminal_message_printed) {
+			if(this.charactersDict.mole.stats.hp <= 0) {
+				this.writeParagraph("Your lifeblood has run out...");
+				this.travelTo("death");
+				this.eventFlags.terminal_message_printed = true;
+			} else if(this.charactersDict.mole.stats.sanity <= 0) {
+				this.writeParagraph("There's an audible *SNAP* as your mind breaks apart in a fractal pattern of ruination...");
+				this.travelTo("death");
+				this.eventFlags.terminal_message_printed = true;
+			}
 		}
+		// coerce to bool
+		return !!this.eventFlags.terminal_message_printed;
 	}
 }

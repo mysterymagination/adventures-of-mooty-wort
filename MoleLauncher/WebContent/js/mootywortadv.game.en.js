@@ -853,7 +853,7 @@ undum.game.situations = {
 		dark_mantle_spider_flash: new undum.SimpleSituation(
 				"",
 				{
-					onEnter: function(character, system, from) {
+					enter: function(character, system, from) {
 						const story = undum.game.storyViewController;
 						story.writeParagraph("You stalk towards the blushing spider and she shies away, sensing more aggression than she anticipated from one of your woolly ilk.  There is no escape from inevitability itself, however, and a chittering shriek escapes her quivering fangs as you activate the Dark Mantle and bear your newly realized true form to her.");
 						story.writeParagraph("Mind-bending angles, impossible polyhedra, and a nest of hook-beaked tentacles writhing in a multitude to shame any earthly cephalopod fill her sight, and the flash of fiery magnificence wreathing the lot burns away her many staring eyes.  Incidentally, most spiders don't have tear ducts, or the emotional capacity to make use of them, but this special lady did.  It's worth noting because they've now been cauterized -- judging by the hissing steam rising from them now as if from volcanic wounds, if she could be weeping at once with transcendent joy and infinite despair, she would be.");  
@@ -867,9 +867,7 @@ undum.game.situations = {
 				}
 		),
 		death: new undum.SimpleSituation(
-				"<strong>💀 IT IS A SAD THING THAT YOUR ADVENTURES HAVE ENDED HERE 💀</strong>\
-				<div class='transient'><a href='main'>Oh, Mother of Moles!  Try Again?</a></div>\
-				"
+				"<strong>💀 IT IS A SAD THING THAT YOUR ADVENTURES HAVE ENDED HERE 💀</strong> <div class='transient'><a href='main'>Oh, Mother of Moles!  Try Again?</a></div>"
 		),
 		credits: new undum.SimpleSituation(
 				"<ul>\
@@ -916,7 +914,7 @@ undum.game.qualityGroups = {
  * to configure the character at the start of play. */
 undum.game.init = function (character, system) {
 	character.mole = undum.game.storyViewController.charactersDict.mole;
-	character.mole.resetStatus();
+	undum.game.storyViewController.resetStory();
 
 	// inform UI viewmodel 
 	character.qualities.health = character.mole.stats.maxHP;
