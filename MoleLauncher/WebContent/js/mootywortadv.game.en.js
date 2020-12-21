@@ -261,14 +261,14 @@ undum.game.situations = {
 						bRolling: true,
 						sRollingDesc: "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...",
 						sUnrolledDesc: "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...",
-						sGibberingDesc: "The spider stares at nothing now, her world reduced to the abyss.",
+						sGibberingDesc: "The spider stares at nothing now, her world reduced to the memory of your mind-searing visage looming ever on the abyssal void's infinite horizon.",
 						check_spider: function(character, system, action) {
 							try {
 								console.log("check_spider; the action says "+action);
 								if(action) {
 									const itemManager = undum.game.itemManager;
 									if(!itemManager.activeItemUseOn("giant spider")) {
-										undum.game.storyViewController.writeParagraph("She's really quite cute despite all the terribly varied and razor-sharp multitudinous mouthparts... no, because of them!  She would definitely be an interesting kisser.  Also her moonlit-blood blush.  And those leeeegs for daaaays, eight times over!  Plus it's hard to even mention That Abdomen in polite conversation.  Ooh ooh, and her spinnerets would be a wonder to tease!");
+										undum.game.storyViewController.writeParagraph("She's really quite cute despite all the terribly varied and razor-sharp multitudinous mouthparts... no, because of them!  She would definitely be an interesting kisser.  Also her moonlit-blood blush.  And those leeeegs for daaaays, eight times over!  Plus it's hard to even mention That Abdomen in polite conversation.  Ooh ooh, and her spinnerets would be wonder itself to tease!");
 									}
 								}
 							} catch (err) {

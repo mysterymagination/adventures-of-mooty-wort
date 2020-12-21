@@ -142,17 +142,20 @@ export class CausticClaws extends Weapon {
 		defendingCharacter.stats.hp -= this.acidDmg;
 		return this.acidDmg;
 	} 
+	// todo: modding core stats is a silly hack that prevents our equipment effect from being wiped by character stat reset at the beginning of non-persist combat; better approach would be to track stat mods with associated mod source and only remove/reset what makes sense.  Since there's not currently UI for unqeuipping equipment anyway, modding core stats for a perma buff when equipment is equipped is fine enough; I just wanna make sure we get to acid-claw the grue, especially since the cost of the claws is our lovely Gel! 
 	/**
 	 * Effect that equipping this item has on the character
 	 */
 	equipEffect(equippedCharacter) {
 		equippedCharacter.stats.atk += this.atkBuf;
+		equippedCharacter.coreStats.atk += this.atkBuf;
 	}
 	/**
 	 * Effect that removing this equipped item has on the character
 	 */
 	unequipEffect(unequippedCharacter) {
 		unequippedCharacter.stats.atk -= this.atkBuf;
+		unequippedCharacter.coreStats.atk -= this.atkBuf;
 	}
 }
 export class OdditineObol extends Equipment {
@@ -168,12 +171,14 @@ export class OdditineObol extends Equipment {
 	 */
 	equipEffect(equippedCharacter) {
 		equippedCharacter.stats.res *= this.resBuf;
+		equippedCharacter.coreStats.res *= this.resBuf;
 	}
 	/**
 	 * Effect that removing this equipped item has on the character
 	 */
 	unequipEffect(unequippedCharacter) {
 		unequippedCharacter.stats.res /= this.resBuf;
+		unequippedCharacter.coreStats.res /= this.resBuf;
 	}
 }
 /**

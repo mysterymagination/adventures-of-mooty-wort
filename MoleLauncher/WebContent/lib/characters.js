@@ -267,8 +267,8 @@ export class Mole extends Character {
 	/**
 	 * Reset this player character instance's combat fields and player specific stats like sanity
 	 */
-	resetCombatStatus() {
-		super.resetCombatStatus();
+	resetStatus() {
+		super.resetStatus();
 		this.stats["maxSanity"] = this.coreStats["maxSanity"];
 		this.stats["sanity"] = this.coreStats["maxSanity"];
 		this.stats["shovelry"] = 0;

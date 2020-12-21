@@ -140,15 +140,15 @@ export class UndumStoryViewController extends StoryViewController {
 		switch(qualityId) {
 		case "health":
 			this.charactersDict.mole.stats.hp += value; 
-			this.undumSystem.setQuality("health", this.charactersDict.mole.stats.hp);
+			this.undumSystem.setQuality("health", Math.ceil(this.charactersDict.mole.stats.hp));
 			break;
 		case "mana":
 			this.charactersDict.mole.stats.mp += value; 
-			this.undumSystem.setQuality("mana", this.charactersDict.mole.stats.mp);
+			this.undumSystem.setQuality("mana", Math.ceil(this.charactersDict.mole.stats.mp));
 			break;
 		case "sanity":
 			this.charactersDict.mole.stats.sanity += value; 
-			this.undumSystem.setQuality("sanity", this.charactersDict.mole.stats.sanity);
+			this.undumSystem.setQuality("sanity", Math.ceil(this.charactersDict.mole.stats.sanity));
 			break;
 		case "moleWhole":
 			this.charactersDict.mole.stats.shovelry += value;
@@ -167,11 +167,11 @@ export class UndumStoryViewController extends StoryViewController {
 		switch(qualityId) {
 		case "health":
 			this.charactersDict.mole.stats.hp -= value; 
-			this.undumSystem.setQuality("health", this.charactersDict.mole.stats.hp);
+			this.undumSystem.setQuality("health", Math.ceil(this.charactersDict.mole.stats.hp));
 			return this.checkTerminals();
 		case "mana":
 			this.charactersDict.mole.stats.mp -= value; 
-			this.undumSystem.setQuality("mana", this.charactersDict.mole.stats.mp);
+			this.undumSystem.setQuality("mana", Math.ceil(this.charactersDict.mole.stats.mp));
 			return false;
 		case "sanity":
 			// madness mail halves sanity damage
@@ -179,7 +179,7 @@ export class UndumStoryViewController extends StoryViewController {
 				value /= 2;
 			}
 			this.charactersDict.mole.stats.sanity -= value; 
-			this.undumSystem.setQuality("sanity", this.charactersDict.mole.stats.sanity);
+			this.undumSystem.setQuality("sanity", Math.ceil(this.charactersDict.mole.stats.sanity));
 			return this.checkTerminals();
 		case "moleWhole":
 			this.charactersDict.mole.stats.shovelry -= value;
