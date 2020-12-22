@@ -835,6 +835,30 @@ class CombatViewController {
 	updateCharacterBattleImages(combatModel) {
 		// todo: load up player and enemy sprites appropriate for current state of combat,
 		// e.g. darkened eyes of Grue as it takes damage, hide HTML elements for dead characters
+		for(const character of combatModel.playerParty.concat(combatModel.enemyParty)) {
+			// advance sprites' battle damage progression in units of 20ish% health loss, with the first chunk being the index 0 sprite and continuing on from there... look, I only actually want this for the Grue who I gave an awkward 6 battle images to for some reason but I didn't want to hardcode anything about specific characters here.  So, I did this -- the bottom 10% fellas will be rare easter eggs, sure.
+			// todo: bah!  generalize this 
+			let baseSpriteFraction = 1.0/character.battleSprites.length;
+			if(character.stats.hp > 0.6 * character.stats.maxHP 
+			&& character.stats.hp <= 0.8 * character.stats.maxHP) {
+				character.advanceBattleImage(1);
+			} else if(character.stats.hp > 0.4 * character.stats.maxHP 
+			&& character.stats.hp <= 0.6 * character.stats.maxHP) {
+				character.advanceBattleImage(2);
+			} else if(character.stats.hp > 0.2 * character.stats.maxHP
+			&& character.stats.hp <= 0.4 * character.stats.maxHP) {
+				character.advanceBattleImage(3);
+			} else if(character.stats.hp > 0.1 * character.stats.maxHP 
+			&& character.stats.hp <= 0.2 * character.stats.maxHP) {
+				character.advanceBattleImage(4);
+			} else if(character.stats.hp <= 0.1 * character.stats.maxHP) {
+				character.advanceBattleImage(5);
+			}
+			
+			if(character.battleOverlaySprites) {
+				let overlaySpriteFraction = 1.0/character.battleOverlaySprites.length;
+			}
+		}
 	}
 	/**
 	 * Populate the command list UI with player command strings

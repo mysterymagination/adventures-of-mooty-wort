@@ -213,6 +213,24 @@ export class Character {
 	runAI(combat, role) {
 		throw "runAI; AI behavior unset -- Character subclasses should override this method";
 	}
+	/**
+	 * Changes the index of the battle sprite we're loading for this character
+	 * @param index is the 0-based number indicating the index of battleSprites we should be pointing at with spriteIdx 
+	 */
+	advanceBattleImage(index) {
+		// base sprite stepping
+		if(this.battleSprites) {
+			if(this.battleSprites.length-1 >= index) {
+				this.spriteIdx = index;
+			}
+		}
+		// overlay stepping
+		if(this.battleOverlaySprites) {
+			if(this.battleOverlaySprites.length-1 >= index) {
+				this.overlaySpriteIdx = index;
+			}
+		}
+	}
 } // end Character class def
 
 Character.CombatFlags = Object.freeze(
