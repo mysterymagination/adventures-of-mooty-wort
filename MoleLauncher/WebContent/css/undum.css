@@ -585,3 +585,14 @@ img.float_left {
   100% { transform: translate(11px, -4px) rotate(-6deg); }
 }
 
+@keyframes crit_flash {
+  0%   {background-color: #f08080;}
+  25%  {background-color: #ffd700;}
+  50%  {background-color: #8b008b;}
+  100% {background-color: red;}
+}
+
+@keyframes crit_flash_throb {
+  from {background-color: #f08080;}
+  to {background-color: #8b0000;}
+}

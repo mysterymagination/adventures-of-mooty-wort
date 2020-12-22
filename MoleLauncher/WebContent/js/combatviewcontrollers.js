@@ -833,30 +833,32 @@ class CombatViewController {
 	 * @param combatModel current Combat object
 	 */
 	updateCharacterBattleImages(combatModel) {
-		// todo: load up player and enemy sprites appropriate for current state of combat,
-		// e.g. darkened eyes of Grue as it takes damage, hide HTML elements for dead characters
 		for(const character of combatModel.playerParty.concat(combatModel.enemyParty)) {
-			// advance sprites' battle damage progression in units of 20ish% health loss, with the first chunk being the index 0 sprite and continuing on from there... look, I only actually want this for the Grue who I gave an awkward 6 battle images to for some reason but I didn't want to hardcode anything about specific characters here.  So, I did this -- the bottom 10% fellas will be rare easter eggs, sure.
-			// todo: bah!  generalize this 
-			let baseSpriteFraction = 1.0/character.battleSprites.length;
-			if(character.stats.hp > 0.6 * character.stats.maxHP 
-			&& character.stats.hp <= 0.8 * character.stats.maxHP) {
-				character.advanceBattleImage(1);
-			} else if(character.stats.hp > 0.4 * character.stats.maxHP 
-			&& character.stats.hp <= 0.6 * character.stats.maxHP) {
-				character.advanceBattleImage(2);
-			} else if(character.stats.hp > 0.2 * character.stats.maxHP
-			&& character.stats.hp <= 0.4 * character.stats.maxHP) {
-				character.advanceBattleImage(3);
-			} else if(character.stats.hp > 0.1 * character.stats.maxHP 
-			&& character.stats.hp <= 0.2 * character.stats.maxHP) {
-				character.advanceBattleImage(4);
-			} else if(character.stats.hp <= 0.1 * character.stats.maxHP) {
-				character.advanceBattleImage(5);
+			// setup a 2D array, an array of sprite base/overlay image arrays
+			const spriteArrays = [];
+			if(character.battleSprites) {
+				spriteArrays.push(character.battleSprites);
 			}
-			
 			if(character.battleOverlaySprites) {
-				let overlaySpriteFraction = 1.0/character.battleOverlaySprites.length;
+				spriteArrays.push(character.battleOverlaySprites);
+			}
+			for(const spriteArray of spriteArrays) {
+				// determine the fraction of HP for this character that will constitute a given battle sprite health range
+				let spritesFraction = 1.0/spriteArray.length;
+				let currentExMin = character.stats.maxHP - character.stats.maxHP * spritesFraction;
+				let currentInMax = character.stats.maxHP;
+				let rangeIndex = 0;
+				// figure out what sprite range the character's HP falls in 
+				while(rangeIndex < spriteArray.length-1) {
+					if(character.stats.hp > currentExMin && character.stats.hp <= currentInMax) {
+						// todo: here's the trouble... I went through the trouble of abstracting away what sort of image array we're dealing with so I could use a general while loop in the same function, but now we need to know which image array we're dealing with.  I guess use an object literal mapping instead of 2D array and give useful keys.
+						character.advanceBattleImage(rangeIndex);
+					} else {
+						rangeIndex++;
+						currentInMax = currentExMin;
+						currentExMin = currentExMin - character.stats.maxHP * spritesFraction;
+					}
+				}
 			}
 		}
 	}
