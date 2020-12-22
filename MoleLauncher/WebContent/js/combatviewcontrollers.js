@@ -835,15 +835,16 @@ class CombatViewController {
 	updateCharacterBattleImages(combatModel) {
 		for(const character of combatModel.playerParty.concat(combatModel.enemyParty)) {
 			// setup a 2D array, an array of sprite base/overlay image arrays
-			const spriteArrays = [];
+			const spriteArrayDict = {};
 			if(character.battleSprites) {
-				spriteArrays.push(character.battleSprites);
+				spriteArrayDict.battleSprites = character.battleSprites;
 			}
 			if(character.battleOverlaySprites) {
-				spriteArrays.push(character.battleOverlaySprites);
+				spriteArrayDict.battleOverlaySprites = character.battleOverlaySprites;
 			}
-			for(const spriteArray of spriteArrays) {
+			for(const spriteArrayName in spriteArrayDict) {
 				// determine the fraction of HP for this character that will constitute a given battle sprite health range
+				let spriteArray = spriteArrayDict[spriteArrayName];
 				let spritesFraction = 1.0/spriteArray.length;
 				let currentExMin = character.stats.maxHP - character.stats.maxHP * spritesFraction;
 				let currentInMax = character.stats.maxHP;
@@ -851,8 +852,15 @@ class CombatViewController {
 				// figure out what sprite range the character's HP falls in 
 				while(rangeIndex < spriteArray.length-1) {
 					if(character.stats.hp > currentExMin && character.stats.hp <= currentInMax) {
-						// todo: here's the trouble... I went through the trouble of abstracting away what sort of image array we're dealing with so I could use a general while loop in the same function, but now we need to know which image array we're dealing with.  I guess use an object literal mapping instead of 2D array and give useful keys.
-						character.advanceBattleImage(rangeIndex);
+						// move along the idx into the relevant array
+						switch(spriteArrayName) {
+						case "battleSprites":
+							character.advanceBattleImage(rangeIndex);
+							break;
+						case "battleOverlaySprites":
+							character.advanceBattleOverlayImage(rangeIndex);
+							break;
+						}
 					} else {
 						rangeIndex++;
 						currentInMax = currentExMin;

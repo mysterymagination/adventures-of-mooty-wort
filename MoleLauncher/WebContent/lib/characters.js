@@ -214,7 +214,7 @@ export class Character {
 		throw "runAI; AI behavior unset -- Character subclasses should override this method";
 	}
 	/**
-	 * Changes the index of the battle sprite we're loading for this character
+	 * Changes the index of the base battle sprite we're loading for this character
 	 * @param index is the 0-based number indicating the index of battleSprites we should be pointing at with spriteIdx 
 	 */
 	advanceBattleImage(index) {
@@ -224,6 +224,12 @@ export class Character {
 				this.spriteIdx = index;
 			}
 		}
+	}
+	/**
+	 * Changes the index of the overlay battle sprite we're loading for this character
+	 * @param index is the 0-based number indicating the index of battleOverlaySprites we should be pointing at with overlaySpriteIdx 
+	 */
+	advanceBattleOverlayImage(index) {
 		// overlay stepping
 		if(this.battleOverlaySprites) {
 			if(this.battleOverlaySprites.length-1 >= index) {
