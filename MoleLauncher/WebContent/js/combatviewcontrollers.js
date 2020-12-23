@@ -720,7 +720,6 @@ class CombatViewController {
 			let enemyCharacterSprite_Canvas = document.createElement("canvas");
 			enemyCharacterSprite_Canvas.id = enemyCharacter.id;
 			enemyCharacterSprite_Canvas.className = "character-image-enemy";
-			
 			enemyCharacterSprite_Span.appendChild(enemyCharacterSprite_Canvas);
 
 			let enemyCharacterName_Span = document.createElement("span");
@@ -866,6 +865,21 @@ class CombatViewController {
 						currentExMin = currentExMin - character.stats.maxHP * spritesFraction;
 					}
 				}
+			}
+			
+			// crit flash!
+			let canvas = this.characterUiDict[character.id].canvasElement;
+			if(character.stats.hp > 0.2 * character.stats.maxHP
+					&& character.stats.hp <= 0.4 * character.stats.maxHP) {
+				canvas.style.animation = "crit_flash 0.75s";
+				canvas.style.animationIterationCount = "infinite";
+			} else if(character.stats.hp <= 0.2 * character.stats.maxHP) {
+				canvas.style.animation = "crit_flash_throb 0.35s";
+				canvas.style.animationIterationCount = "infinite";
+			} else {
+				// we healed out of crit ranges
+				canvas.style.animation = "";
+				canvas.style.animationIterationCount = "";
 			}
 		}
 	}

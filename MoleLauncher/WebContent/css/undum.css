@@ -594,5 +594,5 @@ img.float_left {
 
 @keyframes crit_flash_throb {
   from {background-color: #f08080;}
-  to {background-color: #8b0000;}
+  to {background-color: red;}
 }
