@@ -107,8 +107,6 @@ class CombatViewController {
 			// print anything that happened during top o' the round
 			CombatViewController.combatLogPrint(combatModel.combatLogContent, CombatViewController.MessageCat.CAT_INFO);
 			combatModel.combatLogContent = "";
-			// update character portraits with status info
-			this.updateCharacterBattleImages(combatModel);
 			// sync character stat display with data model
 			this.updateCharacterData(combatModel);
 			this.updateCharacterStatusStacks(combatModel);
@@ -388,6 +386,7 @@ class CombatViewController {
 	playPainAnimation(characters, callbackFunction) {
 		// track completed animations
 		var completedAnimationsCounter = 0;
+		var combatViewController = this;
 
 		for(const character of characters) {
 			let postEffectFn = (baseImage, overlayImage, canvas) => {
@@ -436,6 +435,7 @@ class CombatViewController {
 						canvas.style.animationIterationCount = "";
 						completedAnimationsCounter++;
 						if(completedAnimationsCounter == characters.length && callbackFunction) {
+							combatViewController.updateCharacterBattleImages(combatViewController.combatDriver);
 							callbackFunction();
 						}
 					} else {
@@ -782,7 +782,7 @@ class CombatViewController {
 		}
 	}
 	/**
-	 * Update the Character stat display based on combat data model
+	 * Update the Character views based on combat data model
 	 * @param combatModel current Combat object
 	 */
 	updateCharacterData(combatModel) {
@@ -834,7 +834,7 @@ class CombatViewController {
 	 */
 	updateCharacterBattleImages(combatModel) {
 		for(const character of combatModel.playerParty.concat(combatModel.enemyParty)) {
-			// setup a 2D array, an array of sprite base/overlay image arrays
+			// setup a dictionary of our sprite arrays
 			const spriteArrayDict = {};
 			if(character.battleSprites) {
 				spriteArrayDict.battleSprites = character.battleSprites;
@@ -853,11 +853,10 @@ class CombatViewController {
 				while(rangeIndex < spriteArray.length-1) {
 					if(character.stats.hp > currentExMin && character.stats.hp <= currentInMax) {
 						// move along the idx into the relevant array
-						switch(spriteArrayName) {
-						case "battleSprites":
+						if(spriteArrayName === "battleSprites") {
 							character.advanceBattleImage(rangeIndex);
 							break;
-						case "battleOverlaySprites":
+						} else if(spriteArrayName === "battleOverlaySprites") {
 							character.advanceBattleOverlayImage(rangeIndex);
 							break;
 						}
