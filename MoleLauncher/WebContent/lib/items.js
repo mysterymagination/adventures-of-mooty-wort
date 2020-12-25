@@ -117,7 +117,7 @@ export class CausticClaws extends Weapon {
 				],
 				"descriptionString": "The "+this.name+" gleam brilliantly, caustic green slime dripping languidly from each claw tip."
 		};
-		this.atkBuf = 25;
+		this.atkBuf = 13;
 		this.acidDmg = 0;
 	}
 	/**
@@ -753,6 +753,24 @@ export class ItemManager {
 		};
 		listItemTag.classList.remove('highlight_simple');
 		// remove active item handle as we've effectively made use of the outgoing activation status by rendering the description
+		this.activeItem = null;
+	}
+	/**
+	 * Deletes all item lists in the UI and clears any active item
+	 */
+	resetItems() {
+		const invListElement = document.getElementById('items_list');
+		if(invListElement) {
+			while (invListElement.firstChild) {
+				invListElement.removeChild(invListElement.lastChild);
+			}
+		}
+		const eqListElement = document.getElementById('equipment_list');
+		if(eqListElement) {
+			while (eqListElement.firstChild) {
+				eqListElement.removeChild(eqListElement.lastChild);
+			}
+		}
 		this.activeItem = null;
 	}
 }

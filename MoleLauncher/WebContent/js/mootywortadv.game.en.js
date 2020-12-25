@@ -486,8 +486,8 @@ undum.game.situations = {
 							}
 						},
 						calculateHeading: function () {
-							if (this.bTickled) {
-								return "The nakedest molerat rolls about in the musty dust, desperately euphoric in the throes of tickles";
+							if (undum.game.storyViewController.eventFlags.molerat_tickled) {
+								return "The nakedest molerat rolls about in the musty dust, desperately euphoric in the throes of Tickles";
 							} else {
 								return "A naked molerat scrabbles furiously at an opal nearby, a decoration of broken claw bits and streaks of blood his only impact on it";
 							}
@@ -914,6 +914,8 @@ undum.game.qualityGroups = {
  * to configure the character at the start of play. */
 undum.game.init = function (character, system) {
 	character.mole = undum.game.storyViewController.charactersDict.mole;
+	// todo: currently need to reset items before resetting character models because we've got some items (e.g. CausticClaws modifying the character core stats)
+	undum.game.itemManager.resetItems();
 	undum.game.storyViewController.resetStory();
 	system.setCharacterText("<p>You are starting on an exciting journey beneath the earth and beyond all reason.</p>");
 };
