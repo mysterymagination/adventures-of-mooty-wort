@@ -601,7 +601,7 @@ class CombatViewController {
 			baseImage.addEventListener('load', function() {
 				resolver(baseImage);
 			});
-			baseImage.src = character.battleSprites[0];
+			baseImage.src = character.battleSprites[character.spriteIdx];
 		}).then((baseSpriteImage) => {
 			// base sprite load image promise has resolved, so we can setup the canvas dimens and render the base image
 			canvas.width = baseSpriteImage.width;
@@ -841,6 +841,7 @@ class CombatViewController {
 			if(character.battleOverlaySprites) {
 				spriteArrayDict.battleOverlaySprites = character.battleOverlaySprites;
 			}
+			// todo: since these ranges don't change at runtime, it would be better to gen up a static table at init and then here (or at HP view mod) perform a direct mapping of current HP % to the range table and associated sprites index.  Basically I don't super like the fact that we're blindly whileing every combat frame, discarding what we learn at the end of the function.
 			for(const spriteArrayName in spriteArrayDict) {
 				// determine the fraction of HP for this character that will constitute a given battle sprite health range
 				let spriteArray = spriteArrayDict[spriteArrayName];
@@ -849,7 +850,7 @@ class CombatViewController {
 				let currentInMax = character.stats.maxHP;
 				let rangeIndex = 0;
 				// figure out what sprite range the character's HP falls in 
-				while(rangeIndex < spriteArray.length-1) {
+				while(rangeIndex < spriteArray.length) {
 					if(character.stats.hp > currentExMin && character.stats.hp <= currentInMax) {
 						// move along the idx into the relevant array
 						if(spriteArrayName === "battleSprites") {
@@ -866,6 +867,9 @@ class CombatViewController {
 					}
 				}
 			}
+			
+			// load updated sprites
+			this.loadCharacterSprites(this.characterUiDict[character.id]);
 			
 			// crit flash!
 			let canvas = this.characterUiDict[character.id].canvasElement;
