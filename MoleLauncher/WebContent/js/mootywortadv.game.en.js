@@ -777,6 +777,8 @@ undum.game.situations = {
 								undum.game.storyViewController.writeParagraph(yawningGodVictoryString);	
 								var promiseOfDarkness = new Promise((resolver) => {
 									if(undum.game.storyViewController.eventFlags.grue_challenge_activated) {
+										// scroll us to the latest transcript pos after the last fight
+										undum.game.storyViewController.restoreStoryYPos();
 										// transition to the grue fight 
 										var grueApproachethString = "Something's veeeery wrong; the darkness surrounding you and the ruins of your smitten foe is purring.  Your insticts beg you to flee, but a quick glance around reveals that the darkness has solidified betwixt you and the exit tunnel whence you came into this outré nightmare.";
 										undum.game.storyViewController.writeParagraph(grueApproachethString);	
