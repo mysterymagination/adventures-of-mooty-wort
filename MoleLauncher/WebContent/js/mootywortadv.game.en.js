@@ -767,8 +767,10 @@ undum.game.situations = {
 							var mech = undum.game.combatViewController;
 							var story = undum.game.storyViewController;
 							undum.game.itemManager.feedbackContext = "combat";
+							undum.game.storyViewController.saveStoryYPos();
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav", persistStats: true, resultFn: resolve}); 
 						}).then((playerVictory) => {
+							console.log("thenning PromiseOfWar; playerVictory is "+playerVictory);
 							undum.game.itemManager.feedbackContext = "story";
 							if(playerVictory) {
 								var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
@@ -779,7 +781,7 @@ undum.game.situations = {
 										var grueApproachethString = "Something's veeeery wrong; the darkness surrounding you and the ruins of your smitten foe is purring.  Your insticts beg you to flee, but a quick glance around reveals that the darkness has solidified betwixt you and the exit tunnel whence you came into this outré nightmare.";
 										undum.game.storyViewController.writeParagraph(grueApproachethString);	
 										system.writeChoices(["basement3_encounter_grue"]);
-										// pass resolver to basement3_encounter_grue situation somehow... maybe just a common undum.game.story property that holds an active resolver reference?  Seems weird and stupid but I'm not sure how else you'd handle a situation like this where you wanna mix async via promises with required pause step to consume user input (i.e. clicking the grue encounter choice so that we have the chance to show new text explaining what's coming)
+										// todo: does this actually keep the promise from being resolved until the resolver is called?  There's some very weird behavior in the docs re: automatic promise resolving when a behavior function exits in certain cases...
 										undum.game.storyViewController.activeResolver = resolver;
 									} else {
 										// grue was not angered, so we resolve immediately with grue death arg false
@@ -794,6 +796,7 @@ undum.game.situations = {
 								return promiseOfDeath;
 							}
 						}).then((resultString) => {
+							console.log("thenning PromiseOfDarkness; resultString is "+resultString);
 							switch(resultString) {
 							case "death":
 								//system.doLink('death'); // we'll link up to death in the health quality processing over in UndumStoryViewController
@@ -814,12 +817,23 @@ undum.game.situations = {
 								undum.game.storyViewController.writeParagraph(breachTheDeepString);
 								undum.game.storyViewController.eventFlags.dark_mole = true;
 								undum.game.itemManager.addItem(character.mole, new Items.DarkMantle());
-								system.doLink("basement2_hub");
+								// now that our transcript is visible again, scroll to top of new content pos
+								undum.game.storyViewController.restoreStoryYPos();
+								system.writeChoices(["basement2_return_from_depths"]);
 							}
 						});
 //						todo: dark mole epilogue: send player to basement2 hub and let them do as they please with new skull of mondain style evil actions with each character AND magical good actions e.g. curing them of their Rumbly corruption; each usage costs sanity but adds to the hero/villain scores greatly.  Characters should recognize him as the source of the rapturous rumble now, too.  Player can do with them as they see fit, and upon surfacing they can choose to wash off the Darkness in the sunlight or harness it to darken the sky and wage war upon the humans and other surfacers...
 					},
 					optionText: "Burrow towards the Deepest Deepness"
+				}
+		),
+		"basement2_return_from_depths": new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						system.doLink("basement2_hub");
+					},
+					optionText: "Shake off the dust of the depths..."
 				}
 		),
 		"basement3_encounter_grue": new undum.SimpleSituation(
@@ -835,6 +849,7 @@ undum.game.situations = {
 							var story = undum.game.storyViewController;
 							undum.game.itemManager.feedbackContext = "combat";
 							// up in basement3_encounter_yawning_god::enter() I shoved the latest Promise resolver (for promiseOfDarkness) onto the storyVC as activeResolver, so pass in here so it can be resolved when combat is over
+							undum.game.storyViewController.saveStoryYPos();
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav", resultFn: combatResolver});
 						}).then((combatResult) => {
 							undum.game.itemManager.feedbackContext = "story";

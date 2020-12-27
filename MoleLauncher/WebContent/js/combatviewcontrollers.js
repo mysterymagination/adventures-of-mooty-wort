@@ -1128,11 +1128,9 @@ class CombatViewController {
 	/**
 	 * Hides the combat UI and draws the combat result message on the spell FX overlay canvas
 	 * @param resultString a string to replace the UI with
-	 * @param endAudio an Audio element that will already by loading/loaded and may be playing, and which must be paused
-	 *        when the player clicks the exit image
-     * @param resolverFn a Promise resolver function that our handleCombatResult execution will be awaiting on; to be called when the user presses the exit door image
+	 * @param endAudio an Audio element that will already by loading/loaded and may be playing, and which must be paused when the player clicks the exit image
 	 */ 
-	async displayResult(resultString, endAudio, resolverFn) {
+	async displayResult(resultString, endAudio) {
 		// prepare overlay and hide combat UI
 		this.showSpellEffectOverlay();
 		this.hideModalContent();
@@ -1145,36 +1143,39 @@ class CombatViewController {
 		this.multiLineFillText(overlayCanvas, 30, resultString);
 		// draw exit door image at the bottom center of the overlay canvas
 		var exitDoorImage = new Image();
-		exitDoorImage.addEventListener('load', () => {
-			var doorWidth = overlayCanvas.width/3;
-			var doorHeight = overlayCanvas.height/3;
-			var doorDestX = overlayCanvas.width/2 - doorWidth/2;
-			var doorDestY = overlayCanvas.height - doorHeight;
-			context2d.drawImage(
-					exitDoorImage,
-					doorDestX,
-					doorDestY,
-					doorWidth,
-					doorHeight
-			);
-			// install onclick handler in the door image that hides div combatModal and shows div page
-			overlayCanvas.onclick = (clickEvent) => {
-				if(clickEvent.offsetX >= doorDestX && clickEvent.offsetX <= doorDestX + doorWidth &&
-						clickEvent.offsetY >= doorDestY && clickEvent.offsetY <= doorDestY+doorHeight) {
-					var combatModal = document.getElementById('combatModal');
-					combatModal.style.display = 'none';
-					var undumPage = document.getElementById('mid_panel');
-					undumPage.style.display = 'block';
-					endAudio.pause();
-					context2d.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-					this.hideSpellEffectOverlay();
-					
-					// settle our handleCombatResult promiseOfResults
-					resolverFn();
-				}
-			};
-		});
-		exitDoorImage.src = 'images/cave_exit.png';
+		const doorClickedPromise = new Promise((resolve, reject) => {
+			exitDoorImage.addEventListener('load', () => {
+				var doorWidth = overlayCanvas.width/3;
+				var doorHeight = overlayCanvas.height/3;
+				var doorDestX = overlayCanvas.width/2 - doorWidth/2;
+				var doorDestY = overlayCanvas.height - doorHeight;
+				context2d.drawImage(
+						exitDoorImage,
+						doorDestX,
+						doorDestY,
+						doorWidth,
+						doorHeight
+				);
+				// install onclick handler in the door image that hides div combatModal and shows div page
+				overlayCanvas.onclick = (clickEvent) => {
+					if(clickEvent.offsetX >= doorDestX && clickEvent.offsetX <= doorDestX + doorWidth &&
+							clickEvent.offsetY >= doorDestY && clickEvent.offsetY <= doorDestY+doorHeight) {
+						var combatModal = document.getElementById('combatModal');
+						combatModal.style.display = 'none';
+						var undumPage = document.getElementById('mid_panel');
+						undumPage.style.display = 'block';
+						endAudio.pause();
+						context2d.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+						this.hideSpellEffectOverlay();
+						// settle our handleCombatResult promise of results
+						resolve();
+					}
+				};
+			}); // end of door image loaded event cb
+			// kick off image load
+			exitDoorImage.src = 'images/cave_exit.png';
+		});// end of door load promise
+		await doorClickedPromise;
 	}
 	/**
 	 * Calls fillText() multiple times on the given canvas' context2d until the complete
@@ -1248,36 +1249,39 @@ class CombatViewController {
 		this.battleMusic.pause();
 		// init end music element
 		var endAudio = new Audio();
+		endAudio.addEventListener('canplaythrough', event => {
+			endAudio.play();
+		})
 		// display results!
 		switch(enumCombatResult) {
 		case Combat.CombatResultEnum.playerVictory:
 			// load victory fanfare
 			endAudio.src = 'audio/music/Victory.mp3';
 			// display player victory message and battle exit UI
-			await this.displayResult("🦔 evil is vanquished and the Deepness saved for all time🦉!", endAudio, () => true);
+			await this.displayResult("🦔 evil is vanquished and the Deepness saved for all time🦉!", endAudio);
+			console.log("handleCombatResult; calling result of combat -> story promise in player victory case");
 			this.resultFn(true);
 			break;
 		case Combat.CombatResultEnum.enemyVictory:
 			// load death fanfare
 			endAudio.src = 'audio/music/The World Stood Still.mp3';
 			// display player defeat message and game over UI, ideally a dark soulsy 'you died'
-			await this.displayResult("💀...and with the mole's death, darkness swept o'er all the land...💀", endAudio, () => true);
+			await this.displayResult("💀...and with the mole's death, darkness swept o'er all the land...💀", endAudio);
+			console.log("handleCombatResult; calling result of combat -> story promise in player death defeat case");
 			this.resultFn(false);
 			break;
 		case Combat.CombatResultEnum.draw:
 			// load death fanfare, I guess?
 			endAudio.src = 'audio/music/The World Stood Still.mp3';
 			// display draw message and battle exit UI
-			this.displayResult("💥the titanic clash of the mole and the mighty devil from the depths consumes them both in a conflagration quenched only by the tsunami of shed blood💥", endAudio, () => true);
+			await this.displayResult("💥the titanic clash of the mole and the mighty devil from the depths consumes them both in a conflagration quenched only by the tsunami of shed blood💥", endAudio);
+			console.log("handleCombatResult; calling result of combat -> story promise in draw defeat case");
 			this.resultFn(false);
 			break;
 		default:
 			throw "handleCombatResult called with unrecognized result enum "+enumCombatResult;
 		break;
 		}
-		endAudio.addEventListener('canplaythrough', event => {
-			endAudio.play();
-		})
 	}
 	/**
 	 * Hides one element and makes another visible by setting
