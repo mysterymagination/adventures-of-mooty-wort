@@ -44,13 +44,26 @@ var BurrowAdjectivesQuality = function (title, opts) {
 };
 BurrowAdjectivesQuality.inherits(undum.WordScaleQuality);
 
-//export API with undum
+// export API with undum
 undum.BurrowAdjectivesQuality = BurrowAdjectivesQuality;
 //-----end undum extension-----//
 
 //-----game logic-----//
-//create RPG combat ViewController and transcript story ViewController
+// create RPG combat ViewController and transcript story ViewController
 undum.game.storyViewController = new UndumStoryViewController(undum.system);
+// dealing with Undum's stubborn refusal to scroll the transcript upon showing/hiding menu in mobile view
+document.addEventListener('scroll', (e) => {
+	if(document.getElementById('content_wrapper').style.display === 'block') {
+		if(undum.game.itemManager.feedbackContext === "story") {
+			undum.game.storyViewController.saveStoryYPos();
+		}
+	}
+});
+undum.game.storyViewController.transcriptMutationObserver = new window.MutationObserver(() => {undum.game.storyViewController.checkTranscriptDisplay()});
+undum.game.storyViewController.transcriptMutationObserver.observe(document.getElementById('content_wrapper'), {
+  attributes: true,
+  attributeFilter: ['style', 'class']
+});
 undum.game.combatViewController = new CombatViewController(undum.game.storyViewController);
 undum.game.itemManager = new Items.ItemManager();
 undum.game.itemManager.storyViewController = undum.game.storyViewController;
@@ -767,7 +780,7 @@ undum.game.situations = {
 							var mech = undum.game.combatViewController;
 							var story = undum.game.storyViewController;
 							undum.game.itemManager.feedbackContext = "combat";
-							undum.game.storyViewController.saveStoryYPos();
+							//undum.game.storyViewController.saveStoryYPos();
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav", persistStats: true, resultFn: resolve}); 
 						}).then((playerVictory) => {
 							console.log("thenning PromiseOfWar; playerVictory is "+playerVictory);
@@ -851,7 +864,7 @@ undum.game.situations = {
 							var story = undum.game.storyViewController;
 							undum.game.itemManager.feedbackContext = "combat";
 							// up in basement3_encounter_yawning_god::enter() I shoved the latest Promise resolver (for promiseOfDarkness) onto the storyVC as activeResolver, so pass in here so it can be resolved when combat is over
-							undum.game.storyViewController.saveStoryYPos();
+							//undum.game.storyViewController.saveStoryYPos();
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav", resultFn: combatResolver});
 						}).then((combatResult) => {
 							undum.game.itemManager.feedbackContext = "story";
