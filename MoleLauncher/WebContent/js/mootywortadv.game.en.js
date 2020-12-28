@@ -242,6 +242,7 @@ undum.game.situations = {
 				{
 					enter: function (character, system, from) {
 						const story = undum.game.storyViewController;
+						// todo: respond to darkmantle story switches
 						var sDesc = "";
 						// if we just entered for the first time, give the full deal
 						const actionsObj = undum.game.situations.basement1_bulbous_spider_hub.actions;
@@ -780,7 +781,6 @@ undum.game.situations = {
 							var mech = undum.game.combatViewController;
 							var story = undum.game.storyViewController;
 							undum.game.itemManager.feedbackContext = "combat";
-							//undum.game.storyViewController.saveStoryYPos();
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav", persistStats: true, resultFn: resolve}); 
 						}).then((playerVictory) => {
 							console.log("thenning PromiseOfWar; playerVictory is "+playerVictory);
@@ -864,7 +864,6 @@ undum.game.situations = {
 							var story = undum.game.storyViewController;
 							undum.game.itemManager.feedbackContext = "combat";
 							// up in basement3_encounter_yawning_god::enter() I shoved the latest Promise resolver (for promiseOfDarkness) onto the storyVC as activeResolver, so pass in here so it can be resolved when combat is over
-							//undum.game.storyViewController.saveStoryYPos();
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["grue"]], musicUrl: "audio/music/grue_theme.wav", resultFn: combatResolver});
 						}).then((combatResult) => {
 							undum.game.itemManager.feedbackContext = "story";
@@ -880,6 +879,36 @@ undum.game.situations = {
 					optionText: "Something stirs just out of sight, and shadows slither closer...  Show this new abomination what a mole is made of!"
 				}
 		),
+		dark_mantle_spider_gentle_no_thx: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						story.writeParagraph("You tap into your newfound power just enough to cast a gentle shroud of suggested indifference re: moleflesh upon your admirer as she gazes longingly at you, hoping to dull her passion before you let her down.  \"Sorry miss, I'm flattered but not interested in romance.  Let's exchange soilphone numbers, tho, for sure!  You're fun and I wanna keep in touch.\"  She blinks in a lidless and mildly dejected manner, but bounces back quickly; she takes your number down and assures you she'll text you later so you have hers.  What an odd protocol we conform to for the Rejection Dance.");
+						story.eventFlags.spider_rejected = true;
+						story.addToCharacterQuality("moleWhole", 2.5);
+						story.subtractFromCharacterQuality("sanity", 15);
+						system.doLink("basement1_bulbous_spider_hub");
+					},
+					optionText: "She looks a teensy bit wildly enraptured, like she might get bitey if you turn her down... Maybe just sorta nudge her brain into a more chill place and then let her down gently?"
+				}
+		),
+		dark_mantle_spider_manyfold_embrace: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						story.writeParagraph("You lean in close and nuzzle your muzzle against her venom-drenched mandibles, very carefully, and rumbly-purr, \"I'm so into you... I wish I had, um, even half as many eyes as you do so I could look at you from myriad angles all at once.\"  You wanted to mention the exact number of her eyes to make the comment smoother, but you can't count that high.  She clacks her mandibles rapidly to produce a disturbing chittering vibration, which you hope is her version of a smile.");
+						story.writeParagraph("In the next instant you find yourself wrapped up in a forest of sleek chitony legs a bit like shadowy sexy stockings slid over jagged obsidian.  With no runs!  Her venom proves to actually be quite an interesting cocktail of aphrodisiac and narcotic at just the right dose, delivered by a bitey kiss!  You revel and cavort in this manyfold embrace with her for a bit, and the details are best left to the tortured lanes of unbidden imagination.");
+						story.eventFlags.spider_love = true;
+						story.addToCharacterQuality("moleWhole", 5);
+						story.subtractFromCharacterQuality("health", 10);
+						story.subtractFromCharacterQuality("sanity", 10);
+						system.doLink("basement1_bulbous_spider_hub");
+					},
+					optionText: "Oh fuzz, forget the eldritch thingamajig and just kiss the girl!  Kiss her!  She's only a little pointy and terrifying, it'll be fine.  This is fine."
+				}
+		),
 		dark_mantle_spider_flash: new undum.SimpleSituation(
 				"",
 				{
@@ -892,6 +921,7 @@ undum.game.situations = {
 						// massive renegade hit & sanity crush
 						story.subtractFromCharacterQuality("moleWhole", 10);
 						story.subtractFromCharacterQuality("sanity", 40);
+						system.doLink("basement1_bulbous_spider_hub");
 					},
 				optionText: "She is clearly infatuated with you, and rightly so, but the poor little lustful mortal dear can't know the power she's flirting with... Enlighten her!"
 				}
