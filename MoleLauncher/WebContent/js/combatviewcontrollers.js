@@ -1304,7 +1304,6 @@ class CombatViewController {
 		showElement.style.display = "block";
 	}
 }
-
 /**
  * Enum of combat log message categories
  */

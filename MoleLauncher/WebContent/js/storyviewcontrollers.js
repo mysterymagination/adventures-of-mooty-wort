@@ -109,6 +109,12 @@ export class StoryViewController {
 	syncPlayerQualities() {
 		console.log("There is no known way to sync player quality views");
 	}
+	/**
+	 * Move story view to the newest content
+	 */
+	jumpToNewContent() {
+		console.log("There is no known way to jump to the newest content");
+	}
 }
 /**
  * StoryViewController subclass for writing story text passages into an Undum transcript
@@ -272,5 +278,12 @@ export class UndumStoryViewController extends StoryViewController {
 			console.log("checkTranscriptDisplay; display prop transition from none to block, so restoring Y pos to "+this.transcriptYPos);
 			this.restoreStoryYPos();
 		}
+	}
+	/**
+	 * Scroll transcript down to full content_wrapper height
+	 */
+	jumpToNewContent() {
+		const content = document.getElementById('content_wrapper');
+		content.scrollTo(0, content.scrollHeight);
 	}
 }

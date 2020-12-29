@@ -726,6 +726,9 @@ export class ItemManager {
 			let matchedUseOn = false;
 			if(invItem) {
 				matchedUseOn = invItem.useOn(this, targetString);
+				if(matchedUseOn) {
+					this.storyViewController.jumpToNewContent();
+				}
 			} 
 			this.activeItem = null;
 			return matchedUseOn;
