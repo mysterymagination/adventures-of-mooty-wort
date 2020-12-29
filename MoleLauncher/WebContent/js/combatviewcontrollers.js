@@ -1178,6 +1178,14 @@ class CombatViewController {
 		await doorClickedPromise;
 	}
 	/**
+	 * JS strings are encoded as UTF-16, and various characters can take multiple code units to represent.  The string length property only counts code units, for reasons unknown, so it might fib to us and say that we can break at a particular substring index BUT to do so would actually be cutting a big unicode guy in half.
+	 */
+	static getCharacterLength(str) {
+		// The string iterator that is used here iterates over characters,
+		//  not mere code units
+		return [...str].length;
+	}
+	/**
 	 * Calls fillText() multiple times on the given canvas' context2d until the complete
 	 * string has been printed without overrunning horizontally
 	 * @param canvas the Canvas object on which we wish to render text over potentially multiple lines
@@ -1188,7 +1196,7 @@ class CombatViewController {
 	multiLineFillText(canvas, heightPx, bigString) {
 		var context2d = canvas.getContext('2d');
 		var totalWidth = context2d.measureText(bigString).width;
-		var characterWidth = totalWidth/bigString.length;
+		var characterWidth = totalWidth/CombatViewController.getCharacterLength(bigString);
 		var charactersPerLine = Math.floor(canvas.width/characterWidth);
 		var numLines = Math.ceil(totalWidth/canvas.width);
 		var remainderChars = 0;
@@ -1204,7 +1212,7 @@ class CombatViewController {
 			subStr = bigString.substring(startCharacterIndex - remainderChars, startCharacterIndex) + subStr;
 			// now that we've got our final substring, we want to redefine end character index
 			// in reference to it in order to do (correct) arithmetic on it later
-			endCharacterIndex = subStr.length-1;
+			endCharacterIndex = CombatViewController.getCharacterLength(subStr) - 1;
 			// assume we won't have any word break to worry about at all
 			let lastWhitespaceIndex = endCharacterIndex;
 			// only need to worry about word breaks if there's going to be another line break
@@ -1213,7 +1221,7 @@ class CombatViewController {
 				// to facilitate respecting word breaks
 				lastWhitespaceIndex = subStr.lastIndexOf(' ')
 				if(lastWhitespaceIndex !== -1) {
-					// after remainder chars has been consume this iteration, figure out how many non-whitespace 
+					// after remainder chars has been consumed this iteration, figure out how many non-whitespace 
 					// characters we skipped if any; they'll be consumed by the next iteration
 					remainderChars = endCharacterIndex - lastWhitespaceIndex;
 					// -1 since we don't care to make room for the whitespace itself at the end of this line

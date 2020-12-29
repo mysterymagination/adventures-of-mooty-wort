@@ -247,21 +247,18 @@ export class UndumStoryViewController extends StoryViewController {
 	 * Notes the current content height of the transcript element so we can scroll back to it after combat
 	 */
 	saveStoryYPos() {
-		this.transcriptYPos = window.scrollY;//document.getElementById('content_wrapper').scrollHeight;
-		console.log("saveStoryYPos; Y pos: "+this.transcriptYPos);
+		this.transcriptYPos = window.scrollY;
 	}
 	/**
 	 * Scrolls back to the saved transcriptYPos vertical value.
 	 */
 	restoreStoryYPos() {
-		//document.getElementById('content_wrapper').scrollTo(0, this.transcriptYPos);
 		const topPos = this.transcriptYPos;
 		window.scroll({
 		  top: topPos,
 		  left: 0,
 		  behavior: 'smooth'
 		});
-		console.log("restoreStoryYPos; Y pos: "+this.transcriptYPos);
 	}
 	/**
 	 * Callback for DOM mutation to the style attr of the content_wrapper div

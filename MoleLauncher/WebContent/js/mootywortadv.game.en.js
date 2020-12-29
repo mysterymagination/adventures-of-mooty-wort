@@ -250,15 +250,21 @@ undum.game.situations = {
 							sDesc = "As you shovel pebbles away from your questing snout, the vision of a rolly-polly spider struggling with some sort of urn enters your reality.  The urn is transparent and you can see a viscous rusty liquid sloshing lazily about inside.  It's sealed by a stone stopper that glows red as the heart of all magma when the spider strains against it.  Before you can speak, she slips on the slick soil and rolls onto her voluminous backside... and keeps rolling: the tunnel you've entered has a gentle but insistent curvature that seems just right to keep the poor arachnid rolling forever.  Well, not forever of course, as that would be physically impossible, but longer than a spider's lifespan so the point is kinda moot.";
 							actionsObj.bVisited = true;
 						} else {
-							if(!story.eventFlags.spider_flashed) {
+							// dark mantle cases
+							if(story.eventFlags.spider_flashed) {
+								sDesc = "Your erstwhile arachnid ladyfriend has been reduced to a gibbering shell of her former self, having beheld your terrible magnificence.  You have no further use for her.";
+							} else if(story.eventFlags.spider_rejected) {
+								sDesc = "The spider winces gently as she catches sight of you and offers only a furtive nod before she skuttles off, determinedly busying herself with other things.";
+							} else if(story.eventFlags.spider_loved) {
+								sDesc = "Your new best girlfriend fairly pounces on you as you enter her demesne, snuggling her infinite staring moleful eyes right up against your two soulful ones and tickling your noodle with her fangs.  She purrs (somehow) as you cuddle her close.";
+							} else {
+								// normal action details cases
 								if (actionsObj.bRolling) {
 									sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
 								} else {
 									sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two and the <a href='./check_spider'>giant spider</a> seems to creep closer without actually moving, as if drawn directly by your raw animal magnetism.  For a smoldery velvet fellow like yourself, this can be an issue with the ladies.";
 								}
-							} else {
-								sDesc = "Your erstwhile arachnid ladyfriend has been reduced to a gibbering shell of her former self, having beheld your terrible magnificence.  You have no further use for her.";
-							}
+							} 
 						}
 						system.write(
 								"<p>" + sDesc + "</p>"
@@ -275,7 +281,9 @@ undum.game.situations = {
 						bRolling: true,
 						sRollingDesc: "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...",
 						sUnrolledDesc: "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...",
-						sGibberingDesc: "The spider stares at nothing now, her world reduced to the memory of your mind-searing visage looming ever on the abyssal void's infinite horizon.",
+						sGibberingHeading: "The spider stares at nothing now, her world reduced to the memory of your mind-searing visage looming ever on the abyssal void's infinite horizon.",
+						sAwkwardHeading: "Like a shy shadow, the spider melts into obscurity the moment she catches sight of you.",
+						sLoveyDoveyHeading: "A tidal wave of chiton, fang, and enthusiasm crash into you, wrapping you in an exponential hug!",
 						check_spider: function(character, system, action) {
 							try {
 								console.log("check_spider; the action says "+action);
@@ -315,14 +323,18 @@ undum.game.situations = {
 							if (!actionsObj.bVisited) {
 								return "A massive spider rolls back and forth across the curve of the tunnel; her thicket of frantically scrabbling legs is strangely hypnotic.";
 							} else {
-								if(!undum.game.storyViewController.eventFlags.spider_flashed) {
+								if(undum.game.storyViewController.eventFlags.spider_flashed) {
+									return this.sGibberingHeading;
+								} else if(undum.game.storyViewController.eventFlags.spider_rejected) {
+									return this.sAwkwardHeading;
+								} else if(undum.game.storyViewController.eventFlags.spider_loved) {
+									return this.sLoveyDoveyHeading;
+								} else {
 									if (actionsObj.bRolling) {
 										return this.sRollingDesc;
 									} else {
 										return this.sUnrolledDesc;
 									}
-								} else {
-									return this.sGibberingDesc;
 								}
 							}
 						},
@@ -832,10 +844,10 @@ undum.game.situations = {
 								undum.game.storyViewController.writeParagraph(breachTheDeepString);
 								undum.game.storyViewController.eventFlags.dark_mole = true;
 								undum.game.itemManager.addItem(character.mole, new Items.DarkMantle());
-								// now that our transcript is visible again, scroll to top of new content pos
-								undum.game.storyViewController.restoreStoryYPos();
 								system.writeChoices(["basement2_return_from_depths"]);
 							}
+							// now that our transcript is visible again, scroll to top of new content pos
+							undum.game.storyViewController.restoreStoryYPos();
 						});
 //						todo: dark mole epilogue: send player to basement2 hub and let them do as they please with new skull of mondain style evil actions with each character AND magical good actions e.g. curing them of their Rumbly corruption; each usage costs sanity but adds to the hero/villain scores greatly.  Characters should recognize him as the source of the rapturous rumble now, too.  Player can do with them as they see fit, and upon surfacing they can choose to wash off the Darkness in the sunlight or harness it to darken the sky and wage war upon the humans and other surfacers...
 					},
@@ -900,7 +912,7 @@ undum.game.situations = {
 						const story = undum.game.storyViewController;
 						story.writeParagraph("You lean in close and nuzzle your muzzle against her venom-drenched mandibles, very carefully, and rumbly-purr, \"I'm so into you... I wish I had, um, even half as many eyes as you do so I could look at you from myriad angles all at once.\"  You wanted to mention the exact number of her eyes to make the comment smoother, but you can't count that high.  She clacks her mandibles rapidly to produce a disturbing chittering vibration, which you hope is her version of a smile.");
 						story.writeParagraph("In the next instant you find yourself wrapped up in a forest of sleek chitony legs a bit like shadowy sexy stockings slid over jagged obsidian.  With no runs!  Her venom proves to actually be quite an interesting cocktail of aphrodisiac and narcotic at just the right dose, delivered by a bitey kiss!  You revel and cavort in this manyfold embrace with her for a bit, and the details are best left to the tortured lanes of unbidden imagination.");
-						story.eventFlags.spider_love = true;
+						story.eventFlags.spider_loved = true;
 						story.addToCharacterQuality("moleWhole", 5);
 						story.subtractFromCharacterQuality("health", 10);
 						story.subtractFromCharacterQuality("sanity", 10);
