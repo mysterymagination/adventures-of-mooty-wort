@@ -39,6 +39,7 @@ export class Item {
 			}
 		}
 		// we want to hit stuff up above as the success exit condition; if we get here, we didn't find a match or couldn't search for one so just return false
+		itemManager.storyViewController.writeParagraph(this.name+" has no effect on "+targetString);
 		return false;
 	}
 	/**
@@ -726,9 +727,7 @@ export class ItemManager {
 			let matchedUseOn = false;
 			if(invItem) {
 				matchedUseOn = invItem.useOn(this, targetString);
-				if(matchedUseOn) {
-					this.storyViewController.jumpToNewContent();
-				}
+				this.storyViewController.jumpToNewContent();
 			} 
 			this.activeItem = null;
 			return matchedUseOn;

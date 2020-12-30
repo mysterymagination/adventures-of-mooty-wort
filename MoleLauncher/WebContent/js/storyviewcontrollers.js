@@ -280,10 +280,13 @@ export class UndumStoryViewController extends StoryViewController {
 		}
 	}
 	/**
-	 * Scroll transcript down to full content_wrapper height
+	 * Scroll transcript down to full window height
 	 */
 	jumpToNewContent() {
-		const content = document.getElementById('content_wrapper');
-		content.scrollTo(0, content.scrollHeight);
+		window.scroll({
+			top: document.body.scrollHeight,
+			left: 0,
+			behavior: 'smooth'
+		});
 	}
 }

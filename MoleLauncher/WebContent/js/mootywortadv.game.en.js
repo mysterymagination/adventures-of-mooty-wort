@@ -501,9 +501,7 @@ undum.game.situations = {
 							if(action) {
 								try {
 									const itemManager = undum.game.itemManager;
-									if (itemManager.activeItem) {
-										itemManager.activeItemUseOn("nakedest molerat");
-									} else {
+									if (!itemManager.activeItemUseOn("nakedest molerat")) {
 										system.write("<p>Examining this nakedest of molerats yields little but subtle nausea and an appreciation for the fortitude of female molerats.</p>");
 									}
 								} catch(err) {
