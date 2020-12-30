@@ -170,6 +170,7 @@ undum.game.situations = {
 									} else {
 										system.write("<p>The fuzz already in your pack is vibrating in a worrisome manner; you don't need more of the stuff.</p>");
 									}
+									undum.game.storyViewController.jumpToNewContent();
 								}
 							} catch(err) {
 								console.log("take-fuzz action error says: "+err);
@@ -292,6 +293,7 @@ undum.game.situations = {
 									if(!itemManager.activeItemUseOn("giant spider")) {
 										undum.game.storyViewController.writeParagraph("She's really quite cute despite all the terribly varied and razor-sharp multitudinous mouthparts... no, because of them!  She would definitely be an interesting kisser.  Also her moonlit-blood blush.  And those leeeegs for daaaays, eight times over!  Plus it's hard to even mention That Abdomen in polite conversation.  Ooh ooh, and her spinnerets would be wonder itself to tease!");
 									}
+									undum.game.storyViewController.jumpToNewContent();
 								}
 							} catch (err) {
 								console.log("checking spider failed with: "+err);
@@ -310,6 +312,7 @@ undum.game.situations = {
 									} else {
 										story.writeParagraph("The phantasmalloy vault is a shredded ruin now, a majestic empty shell.");
 									}
+									undum.game.storyViewController.jumpToNewContent();
 								}
 							} catch(err) {
 								console.log("error during phantasmalloy check: "+err);
@@ -418,9 +421,10 @@ undum.game.situations = {
 							if (action) {
 								try {
 									const itemManager = undum.game.itemManager;
-									if(itemManager.activeItem) {
-										itemManager.activeItemUseOn("ochre ooze");
+									if(!itemManager.activeItemUseOn("ochre ooze")) {
+										undum.game.storyViewController.writeParagraph("The massive ooze wiggles condescendingly at the world in general.  You do note several tendrils sweeping out around at its base, however, that seem to be searching for something...");
 									}
+									undum.game.storyViewController.jumpToNewContent();
 								} catch (err) {
 									console.log("error processing ooze daughter slaughter: "+err);
 								}
@@ -468,20 +472,27 @@ undum.game.situations = {
 					},
 					actions: {
 						"examine_oracle_opal": function (character, system, action) {
-							system.write(
-									"<p>Beneath the nakedest molerat's pathetic pawing and the resultant trails of dried blood you can make out an archaic script carved into the gem.  You could have sworn at first glance that it was unintelligible, but as you gaze longer it seems to resolve into the familiar common script of Underwere, if a bit more formal and stuffy than you're used to. It reads: </p>\
-									<div class='featured_text_centered'>\
-									Seek me in the darkest ways<br />\
-									Where all that is twists into a maze<br />\
-									Take of my flesh a horned crown<br />\
-									'Neath sea of night all light shall drown\
-									</div>\
-									<p>A quiver runs down your spine as you read these words, and something atavistic in your innermost being stirs.  Peering at the edges of the gem, where it is hidden again by impassable slate, you can make out what could be a fold of flesh with minute slots that suggest hair follicles.  An eyelid, perhaps, and the gem itself a gargantuan eye?</p>"
-									); 
-							if(!undum.game.storyViewController.eventFlags.last_lash_taken) {
-								system.write(
-									"<p>A lone gossamer strand of cultivated amethyst remains as its <a href='./take_eyelash'>last eyelash</a>.</p>"
-								);
+							try {
+								if(action) {
+									system.write(
+											"<p>Beneath the nakedest molerat's pathetic pawing and the resultant trails of dried blood you can make out an archaic script carved into the gem.  You could have sworn at first glance that it was unintelligible, but as you gaze longer it seems to resolve into the familiar common script of Underwere, if a bit more formal and stuffy than you're used to. It reads: </p>\
+											<div class='featured_text_centered'>\
+											Seek me in the darkest ways<br />\
+											Where all that is twists into a maze<br />\
+											Take of my flesh a horned crown<br />\
+											'Neath sea of night all light shall drown\
+											</div>\
+											<p>A quiver runs down your spine as you read these words, and something atavistic in your innermost being stirs.  Peering at the edges of the gem, where it is hidden again by impassable slate, you can make out what could be a fold of flesh with minute slots that suggest hair follicles.  An eyelid, perhaps, and the gem itself a gargantuan eye?</p>"
+											); 
+									if(!undum.game.storyViewController.eventFlags.last_lash_taken) {
+										system.write(
+											"<p>A lone gossamer strand of cultivated amethyst remains as its <a href='./take_eyelash'>last eyelash</a>.</p>"
+										);
+									}
+									undum.game.storyViewController.jumpToNewContent();
+								}
+							} catch(err) {
+								console.log("examine_oracle_opal; error occurred: "+err);
 							}
 						},
 						"take_eyelash": function (character, system, action) {
@@ -492,6 +503,7 @@ undum.game.situations = {
 									);
 									undum.game.itemManager.addItem(character.mole, new Items.LastLash());
 									undum.game.storyViewController.eventFlags.last_lash_taken = true;
+									undum.game.storyViewController.jumpToNewContent();
 								}
 							} catch(err) {
 								console.log("error taking Last Lash: "+err);
@@ -504,6 +516,7 @@ undum.game.situations = {
 									if (!itemManager.activeItemUseOn("nakedest molerat")) {
 										system.write("<p>Examining this nakedest of molerats yields little but subtle nausea and an appreciation for the fortitude of female molerats.</p>");
 									}
+									undum.game.storyViewController.jumpToNewContent();
 								} catch(err) {
 									console.log(err);
 								}
