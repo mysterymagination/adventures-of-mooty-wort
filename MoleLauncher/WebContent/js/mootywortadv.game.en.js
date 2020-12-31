@@ -974,7 +974,7 @@ undum.game.situations = {
 					story.writeParagraph("You can sense Gel inside the ooze.  Her constituent atoms, actually, but you're confident you can stitch her back together just as she was, probably, from the ooze's mass.  Maybe you could even make her the dominant personality.  With a wiggle of your snoot and a whisper of whiskers you mark every bit of Gel within the ooze and smash them together!");
 					story.writeParagraph("With utmost care, of course.  You knew her well and can (now) perfectly map out her neural network and the state it was in when she died.  Memories, feelings, personality -- you can see each facet of her being, written in the complexities of neurochemistry that you suddenly have at your beckon call.  It's alarmingly simple to reassemble her body and soul, while the ooze shrieks in agony.");
 					story.writeParagraph("The ooze exhibits a curious inversion: it depletes into a tiny droplet as you wave your whiskers and claws about, directing its bits through the air like the conductor of a surgical symphony, and slowly starts to expand again as you rewrite it to the tune of Gel.  Expanding her brain to span the ooze's entire mass is simplicity itself since ooze neurogenics scale gracefully, especially if you're not concerned with preserving the existing consciousness.");
-					story.writeParagraph("In short order the ooze is reformed with Gel alive and well and at the conn!  \"What happened?\" she asks, surprise rippling across her morphology.  \"My progenitor had me and I... I was in pain, then everything went dark!  I should be dead.  How am I here?  And why am I so big?\"  She forms a pair of eyestalks and examines herself, wiggling and waggling experimentally.  \"Wowie, now those are geodesic curves!\"");
+					story.writeParagraph("In short order the ooze is reformed with Gel alive and well and at the conn!  \"What happened?\" she asks, surprise rippling across her morphology.  \"My progenitor consumed me and I... I was in pain, then everything went dark!  I should be dead.  How am I here?  And why am I so big?\"  She forms a pair of eyestalks and examines herself, wiggling and waggling experimentally.  \"Wowie, now those are geodesic curves!\"");
 					story.writeParagraph("You give her a grin, tap your noodle respectfully, and toddle off without further comment.");
 					story.eventFlags.curvy_gel = true;
 					story.subtractFromCharacterQuality("sanity", 10);
@@ -983,6 +983,7 @@ undum.game.situations = {
 				optionText: "With your new Awareness, you can sense that your wiggly jiggly galpal Gel is still inside the ooze, albeit in pieces.  Maybe you could bring her back..."
 			}
 		),
+		/*
 		dark_mantle_ooze_gel_merciful_prison:
 		*/
 		death: new undum.SimpleSituation(
