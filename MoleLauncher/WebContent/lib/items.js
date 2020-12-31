@@ -569,7 +569,15 @@ export class DarkMantle extends Item {
 	 * @param itemManager the item wrangler, which hosts our viewcontroller handles
 	 */
 	oozeJudgement(itemManager) {
-		itemManager.storyViewController.appendChoices(["dark_mantle_ooze_devour", "dark_mantle_ooze_gel_inverse_resurrection", "dark_mantle_ooze_gel_merciful_prison"]);
+		const oozeChoices = ["dark_mantle_ooze_devour"];
+		if(itemManager.storyViewController.eventFlags.daughter_ooze_gift) {
+			if(itemManager.storyViewController.eventFlags.daughter_ooze_sacrificed) {
+				oozeChoices.push("dark_mantle_ooze_gel_inverse_resurrection");
+			} else {
+				oozeChoices.push("dark_mantle_ooze_gel_merciful_prison");
+			}
+		}
+		itemManager.storyViewController.appendChoices(oozeChoices);
 		itemManager.storyViewController.showChoices();
 	}
 	/**
