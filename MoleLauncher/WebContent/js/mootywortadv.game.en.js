@@ -946,9 +946,29 @@ undum.game.situations = {
 						story.subtractFromCharacterQuality("sanity", 40);
 						system.doLink("basement1_bulbous_spider_hub");
 					},
-				optionText: "She is clearly infatuated with you, and rightly so, but the poor little lustful mortal dear can't know the power she's flirting with... Enlighten her!"
+					optionText: "She is clearly infatuated with you, and rightly so, but the poor little lustful mortal dear can't know the power she's flirting with... Enlighten her!"
 				}
 		),
+		dark_mantle_ooze_devour: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						story.writeParagraph("Noting your staring lack of genuflection, the ooze wobbles as it roars, \"Who goes there?  What manner of beast stands before my wiggly magnificence when kings with gods for mounts make it a habit to kneel?  I wonder what such brazen arrogance tastes like...\"");
+						story.writeParagraph("Not bothering to waste your precious breath on this filth, you silently tap into your dark inheritance and coerce a pair of eyes onto the creature's hide; you want it to see what comes next.  The ooze howls in rage and confusion as its form is forcefully mutated, but this wailing is mere gentle humming to the symphony of despair you crave.  Transforming into your true form, one of lashing shadow tendrils at once black as night and blindingly, searing bright, you grin at the ooze.  The countless mismatched teeth this action bares from the mouths that cover nearly every square centimeter of your body seem to upset your quarry.");
+						story.writeParagraph("In a moment that feels like a serrated eternity wrapped in the boundless voidscape of forever, you rend the ooze asunder.  You toss every drop of its amorphous mass into the air playfully before snapping it down.  Each bead of wild life has a different flavor and you allow each to roll languidly down your many, many barbed tongues like molten gemdrops of honey.  Before you can blink any of your innumerable eye-like constructs, the ooze is no more than a lingering stench in its erstwhile cave; a lonely wind whispers over the dais upon which it sat in wobbledy sovereignty, a symphony of glorious emptiness.");
+						story.eventFlags.ooze_devoured = true;
+						story.addToCharacterQuality("health", character.mole.stats.maxHP);
+						story.subtractFromCharacterQuality("sanity", 25);
+						story.subtractFromCharacterQuality("moleWhole", 15);
+					},
+					optionText: "The natural order has been shaken -- prove it by devouring this apex predator and taking the power of its myriad absorbed prey souls into yourself!"
+				}
+		), 
+		/*
+		dark_mantle_ooze_gel_inverse_resurrection:
+		dark_mantle_ooze_gel_merciful_prison:
+		*/
 		death: new undum.SimpleSituation(
 				"<strong>💀 IT IS A SAD THING THAT YOUR ADVENTURES HAVE ENDED HERE 💀</strong> <div class='transient'><a href='main'>Oh, Mother of Moles!  Try Again?</a></div>"
 		),
