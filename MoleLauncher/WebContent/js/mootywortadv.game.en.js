@@ -408,13 +408,21 @@ undum.game.situations = {
 				"",
 				{
 					enter: function (character, system, from) {
-						system.write(
-								"<p>Atop its crystal platform, the <a href='./sacrifice_ooze_daughter'>ochre ooze</a> quivers and bubbles and burbles with interest.  Hunger will erode its curiosity, however, and with it will go civility.  Best hurry up and get gone from here.</p>"
-						);
-						if(Libifels.isItemInInventory(character.mole, "rusty_urn")) {
-							undum.game.storyViewController.writeParagraph("The rusty urn you got from the spider vibrates violently in your compartment; its frantic vibrations seem to be tugging you away from the writhing monstrous mass and you're almost certain you hear a smol voice whispering \"Please, no!\".");
+						if(undum.game.storyViewController.eventFlags.ooze_prisoner) {
+							
+						} else if(undum.game.storyViewController.eventFlags.ooze_devoured) {
+							
+						} else if(undum.game.storyViewController.eventFlags.curvy_gel) {
+							
+						} else {
+							system.write(
+									"<p>Atop its crystal platform, the <a href='./sacrifice_ooze_daughter'>ochre ooze</a> quivers and bubbles and burbles with interest.  Hunger will erode its curiosity, however, and with it will go civility.  Best hurry up and get gone from here.</p>"
+							);
+							if(Libifels.isItemInInventory(character.mole, "rusty_urn")) {
+								undum.game.storyViewController.writeParagraph("The rusty urn you got from the spider vibrates violently in your compartment; its frantic vibrations seem to be tugging you away from the writhing monstrous mass and you're almost certain you hear a smol voice whispering \"Please, no!\".");
+							}
+							system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
 						}
-						system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
 					},
 					actions: {
 						sacrifice_ooze_daughter : function(character, system, action) {
@@ -957,10 +965,12 @@ undum.game.situations = {
 						story.writeParagraph("Noting your staring lack of genuflection, the ooze wobbles as it roars, \"Who goes there?  What manner of beast stands before my wiggly magnificence when kings with gods for mounts make it a habit to kneel?  I wonder what such brazen arrogance tastes like...\"");
 						story.writeParagraph("Not bothering to waste your precious breath on this filth, you silently tap into your dark inheritance and coerce a pair of eyes onto the creature's hide; you want it to see what comes next.  The ooze howls in rage and confusion as its form is forcefully mutated, but this wailing is mere gentle humming to the symphony of despair you crave.  Transforming into your true form, one of lashing shadow tendrils at once black as night and blindingly, searing bright, you grin at the ooze.  The countless mismatched teeth this action bares from the mouths that cover nearly every square centimeter of your body seem to upset your quarry.");
 						story.writeParagraph("In a moment that feels like a serrated eternity wrapped in the boundless voidscape of forever, you rend the ooze asunder.  You toss every drop of its amorphous mass into the air playfully before snapping it down.  Each bead of wild life has a different flavor and you allow each to roll languidly down your many, many barbed tongues like molten gemdrops of honey.  Before you can blink any of your innumerable eye-like constructs, the ooze is no more than a lingering stench in its erstwhile cave; a lonely wind whispers over the dais upon which it sat in wobbledy sovereignty, a symphony of glorious emptiness.");
+						story.writeParagraph("You feel renewed power flood your vitals as the ooze's essence is digested, though blood also flows freely from your snout -- this may relate to the relentless thunderbolts of pain now raging through your brain.");
 						story.eventFlags.ooze_devoured = true;
 						story.addToCharacterQuality("health", character.mole.stats.maxHP);
 						story.subtractFromCharacterQuality("sanity", 25);
 						story.subtractFromCharacterQuality("moleWhole", 5);
+						system.doLink("basement1_ochre_ooze_hub");
 					},
 					optionText: "The natural order has been shaken -- prove it by devouring this apex predator and taking the power of its myriad absorbed prey souls into yourself!"
 				}
@@ -975,17 +985,48 @@ undum.game.situations = {
 					story.writeParagraph("With utmost care, of course.  You knew her well and can (now) perfectly map out her neural network and the state it was in when she died.  Memories, feelings, personality -- you can see each facet of her being, written in the complexities of neurochemistry that you suddenly have at your beckon call.  It's alarmingly simple to reassemble her body and soul, while the ooze shrieks in agony.");
 					story.writeParagraph("The ooze exhibits a curious inversion: it depletes into a tiny droplet as you wave your whiskers and claws about, directing its bits through the air like the conductor of a surgical symphony, and slowly starts to expand again as you rewrite it to the tune of Gel.  Expanding her brain to span the ooze's entire mass is simplicity itself since ooze neurogenics scale gracefully, especially if you're not concerned with preserving the existing consciousness.");
 					story.writeParagraph("In short order the ooze is reformed with Gel alive and well and at the conn!  \"What happened?\" she asks, surprise rippling across her morphology.  \"My progenitor consumed me and I... I was in pain, then everything went dark!  I should be dead.  How am I here?  And why am I so big?\"  She forms a pair of eyestalks and examines herself, wiggling and waggling experimentally.  \"Wowie, now those are geodesic curves!  Now I know why they're called GREAT circle arcs.\"  She blushes neon pink through-and-through, and shivery quivers of pleasure have her practically vibrating.");
-					story.writeParagraph("You give her a grin, tap your noodle respectfully, and toddle off without further comment.");
+					story.writeParagraph("You give her a grin, tap your noodle respectfully, and toddle off without further comment.  There's only a minor twinge as the opposed force generated by a reality that stubbornly fought your whimsy before bending to it rebounds endlessly inside your skull.");
 					story.eventFlags.curvy_gel = true;
 					story.subtractFromCharacterQuality("sanity", 10);
 					story.addToCharacterQuality("moleWhole", 5);
+					system.doLink("basement1_ochre_ooze_hub");
 				},
 				optionText: "With your new Awareness, you can sense that your wiggly jiggly galpal Gel is still inside the ooze, albeit in pieces.  Maybe you could bring her back..."
 			}
 		),
-		/*
-		dark_mantle_ooze_gel_merciful_prison:
-		*/
+		dark_mantle_ooze_gel_merciful_prison: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						story.writeParagraph("Setting aside your rage and dredging up mercy for the sake of your beloved Gel, you tear your eyes away from the vile and vulnerable ooze.  With a flourish of mighty digging claws, you cast a shimmering forcefield around the ooze's throne.  The field forms a beautiful swirling starscape mesh, far more glorious a prison than this vermin deserves, but still it rails and rages against its confines the instant they appear.");
+						story.writeParagraph("Not even the power of the legendary ooze can shake your cosmic construction, however, so in short order the ooze collapses into a blue puddle of defeat. \"Release me, mole!  You have no right to imprison a force of nature, a primal god such as we!\"  You turn your back on it disdainfully, and grin as its quaking tantrum resumes.  It will never starve, but hunger will gnaw at its core until the end of time.  Gel performs a wobbledy twirl in thanks, but seems a bit subdued as she catches sight of your glee.");
+						story.eventFlags.ooze_prisoner = true;
+						story.subtractFromCharacterQuality("sanity", 10);
+						story.addToCharacterQuality("moleWhole", 10);
+						system.doLink("basement1_ochre_ooze_hub");
+					},
+					optionText: "Gel wobbles in her urn, piping up, \"It is ruthless and voracious, true, but the ooze is still my parent.  Could we spare it and maybe just lock it up, please?  Regardless, I love you *^_^*!\""
+				}
+		),
+		dark_mantle_molerat_worship: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+					},
+					optionText: "Show this pathetic little creature the majesty he yearns for!"
+				}
+		),
+		dark_mantle_molerat_clarity: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+					},
+					optionText: "Whatever has come upon you, you remain a mere mole -- explain your normalcy to the molerat, and teach him that everyday wonders are those most worthy of worship."
+				}
+		),
 		death: new undum.SimpleSituation(
 				"<strong>💀 IT IS A SAD THING THAT YOUR ADVENTURES HAVE ENDED HERE 💀</strong> <div class='transient'><a href='main'>Oh, Mother of Moles!  Try Again?</a></div>"
 		),
