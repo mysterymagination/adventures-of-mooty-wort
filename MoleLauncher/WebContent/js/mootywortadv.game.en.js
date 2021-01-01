@@ -391,19 +391,6 @@ undum.game.situations = {
 					tags: ["spider_sayings"]
 				}
 		),
-		"basement1_ochre_ooze_first_entry": new undum.SimpleSituation(
-				"",
-				{
-					enter: function (character, system, from) {
-						system.write(
-								"<p>As you snuffle at the cracks to calculate their stability, the point rapidly renders itself moot when the floor collapses!  You tumble gracefully as a subterranean ballerina into a large cavern, landing solidly on your mighty rump and seamlessly rolling down onto all fours ready for action.  It seems you've dropped into the antechamber of an ooze warren; these creatures are notorious amongst Underwere for being voracious and none-too-particular about their diet.  Kind of eat first and consider indigestion-adjacent consequences later sort of fellows.  Lucky for you, this warren is mostly deserted, save for one massive blob of an ochre ooze bubbling away idly atop a dais of sorts made of pulsing rainbow crystal.  Considering the fact that you're still alive, it's likely this one isn't terribly hungry at the moment.</p>"
-						);
-						system.doLink("basement1_ochre_ooze_hub");
-					},
-					optionText: "With a *squelch* and a *fizz*, an ooze creature of some sort bubbles ponderously on the far side of some cracks in the soil beneath your paws",
-					tags: ["basement1_creatures"]
-				}
-		),
 		"basement1_ochre_ooze_hub": new undum.SimpleSituation(
 				"",
 				{
@@ -416,13 +403,18 @@ undum.game.situations = {
 						} else if(story.eventFlags.curvy_gel) {
 							story.writeParagraph("\"Hoi ~ヾ(＾∇＾)\", Gel shouts as you enter, waving several of her flagella in your general direction.  The underground will be a much friendlier place with her in oozey power!");
 						} else {
-							system.write(
-									"<p>Atop its crystal platform, the <a href='./sacrifice_ooze_daughter'>ochre ooze</a> quivers and bubbles and burbles with interest.  Hunger will erode its curiosity, however, and with it will go civility.  Best hurry up and get gone from here.</p>"
-							);
-							if(Libifels.isItemInInventory(character.mole, "rusty_urn")) {
-								undum.game.storyViewController.writeParagraph("The rusty urn you got from the spider vibrates violently in your compartment; its frantic vibrations seem to be tugging you away from the writhing monstrous mass and you're almost certain you hear a smol voice whispering \"Please, no!\".");
+							if(!story.eventFlags.ooze_visited) {
+								story.writeParagraph("<p>As you snuffle at the cracks to calculate their stability, the point rapidly renders itself moot when the floor collapses!  You tumble gracefully as a subterranean ballerina into a large cavern, landing solidly on your mighty rump and seamlessly rolling down onto all fours ready for action.  It seems you've dropped into the antechamber of an ooze warren; these creatures are notorious amongst Underwere for being voracious and none-too-particular about their diet.  Kind of eat first and consider indigestion-adjacent consequences later sort of fellows.  Lucky for you, this warren is mostly deserted, save for one massive blob of an ochre ooze bubbling away idly atop a dais of sorts made of pulsing rainbow crystal.  Considering the fact that you're still alive, it's likely this one isn't terribly hungry at the moment.</p>");
+								story.eventFlags.ooze_visited = true;
+							} else {
+								system.write(
+										"<p>Atop its crystal platform, the <a href='./sacrifice_ooze_daughter'>ochre ooze</a> quivers and bubbles and burbles with interest.  Hunger will erode its curiosity, however, and with it will go civility.  Best hurry up and get gone from here.</p>"
+								);
+								if(Libifels.isItemInInventory(character.mole, "rusty_urn")) {
+									undum.game.storyViewController.writeParagraph("The rusty urn you got from the spider vibrates violently in your compartment; its frantic vibrations seem to be tugging you away from the writhing monstrous mass and you're almost certain you hear a smol voice whispering \"Please, no!\".");
+								}
+								system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
 							}
-							system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
 						}
 					},
 					actions: {
@@ -458,8 +450,14 @@ undum.game.situations = {
 					heading: function () {
 						return undum.game.situations.basement1_ochre_ooze_hub.actions.calculateHeading();
 					},
-					optionText: "The ooze oozes, patiently (at least for so long as it isn't hungry)...",
-					tags: ["character_interaction_hub"]
+					optionText: () => {
+						if(!story.eventFlags.ooze_prisoner && !story.eventFlags.ooze_devoured && !story.eventFlags.curvy_gel) {
+							return "With a *squelch* and a *fizz*, an ooze creature of some sort bubbles ponderously on the far side of some cracks in the soil beneath your paws."
+						} else {
+							return "The conquered ooze chamber lies beyond, significantly friendlier now!";
+						}
+					},
+					tags: ["character_interaction_hub", "basement1_creatures"]
 				}
 		),
 		"basement2_hub": new undum.SimpleSituation(
