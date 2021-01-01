@@ -413,8 +413,8 @@ undum.game.situations = {
 								if(Libifels.isItemInInventory(character.mole, "rusty_urn")) {
 									undum.game.storyViewController.writeParagraph("The rusty urn you got from the spider vibrates violently in your compartment; its frantic vibrations seem to be tugging you away from the writhing monstrous mass and you're almost certain you hear a smol voice whispering \"Please, no!\".");
 								}
-								system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
 							}
+							system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
 						}
 					},
 					actions: {
@@ -432,6 +432,7 @@ undum.game.situations = {
 							}
 						},
 						calculateHeading: function () {
+							const story = undum.game.storyViewController;
 							if(story.eventFlags.ooze_prisoner) {
 								return "The monstrous ooze flails pathetically in its prison.";
 							} else if(story.eventFlags.ooze_devoured) {
@@ -451,6 +452,7 @@ undum.game.situations = {
 						return undum.game.situations.basement1_ochre_ooze_hub.actions.calculateHeading();
 					},
 					optionText: () => {
+						const story = undum.game.storyViewController;
 						if(!story.eventFlags.ooze_prisoner && !story.eventFlags.ooze_devoured && !story.eventFlags.curvy_gel) {
 							return "With a *squelch* and a *fizz*, an ooze creature of some sort bubbles ponderously on the far side of some cracks in the soil beneath your paws."
 						} else {
