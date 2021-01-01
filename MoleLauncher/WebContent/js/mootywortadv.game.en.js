@@ -408,12 +408,13 @@ undum.game.situations = {
 				"",
 				{
 					enter: function (character, system, from) {
-						if(undum.game.storyViewController.eventFlags.ooze_prisoner) {
-							
-						} else if(undum.game.storyViewController.eventFlags.ooze_devoured) {
-							
-						} else if(undum.game.storyViewController.eventFlags.curvy_gel) {
-							
+						const story = undum.game.storyViewController;
+						if(story.eventFlags.ooze_prisoner) {
+							story.writeParagraph("The ooze continues its fruitless struggle against the star system sealing it for all time.");
+						} else if(story.eventFlags.ooze_devoured) {
+							story.writeParagraph("The crystal plinth stands empty now, and the memory of its former royal inhabitant conjures nothing more than mild indigestion from you.");
+						} else if(story.eventFlags.curvy_gel) {
+							story.writeParagraph("\"Hoi ~ヾ(＾∇＾)\", Gel shouts as you enter, waving several of her flagella in your general direction.  The underground will be a much friendlier place with her in oozey power!");
 						} else {
 							system.write(
 									"<p>Atop its crystal platform, the <a href='./sacrifice_ooze_daughter'>ochre ooze</a> quivers and bubbles and burbles with interest.  Hunger will erode its curiosity, however, and with it will go civility.  Best hurry up and get gone from here.</p>"
@@ -439,10 +440,18 @@ undum.game.situations = {
 							}
 						},
 						calculateHeading: function () {
-							if (undum.game.storyViewController.eventFlags.daughter_ooze_sacrificed) {
-								return "The monstrous amalgamate ooze swells and contracts contentedly, ignoring you";
-							} else {
-								return "An ochre ooze quivers nearby, somehow looking at your hungrily despite lacking eyes";
+							if(story.eventFlags.ooze_prisoner) {
+								return "The monstrous ooze flails pathetically in its prison.";
+							} else if(story.eventFlags.ooze_devoured) {
+								return "The ooze's throne stands empty, forevermore.";
+							} else if(story.eventFlags.curvy_gel) {
+								return "Gel wiggles wonderingly as she explores the infinite dimensions of her new morphology.";
+							} else { 
+								if (undum.game.storyViewController.eventFlags.daughter_ooze_sacrificed) {
+									return "The monstrous amalgamate ooze swells and contracts contentedly, ignoring you";
+								} else {
+									return "An ochre ooze quivers nearby, somehow looking at your hungrily despite lacking eyes";
+								}
 							}
 						}
 					},
