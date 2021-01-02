@@ -577,6 +577,7 @@ export class DarkMantle extends Item {
 				oozeChoices.push("dark_mantle_ooze_gel_merciful_prison");
 			}
 		}
+		
 		itemManager.storyViewController.appendChoices(oozeChoices);
 		itemManager.storyViewController.showChoices();
 	}

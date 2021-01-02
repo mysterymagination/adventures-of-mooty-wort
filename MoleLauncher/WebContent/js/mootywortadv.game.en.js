@@ -473,7 +473,6 @@ undum.game.situations = {
 								system.write(
 										"<p>The molerat's riotous laughter shatters the chamber's calm, stabbing into the cool darkness like thorns through a rose assaulting a curious nose.  He's rolled well away from the <a href='./examine_oracle_opal'>massive carved opal</a> breaching outward from the ancient walls.</p>"
 								);
-								story.appendChoice("basement2_grue_hub");
 							} else {
 								system.write(
 										"<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a <a href='./check_molerat_target'>naked molerat</a>, perhaps the nakedest you've seen, twitching and clawing feebly at the gently convex surface of a <a href='./examine_oracle_opal'>massive carved opal</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
