@@ -466,13 +466,14 @@ undum.game.situations = {
 				"",
 				{
 					enter: function (character, system, from) {
-						undum.game.storyViewController.choiceStringArray = ["basement1_hub", "basement3_encounter_yawning_god"];
-						if (!undum.game.storyViewController.eventFlags.dark_mole) {
-							if (undum.game.storyViewController.eventFlags.molerat_tickled) {
+						const story = undum.game.storyViewController;
+						story.choiceStringArray = ["basement1_hub", "basement3_encounter_yawning_god"];
+						if (!story.eventFlags.dark_mole) {
+							if (story.eventFlags.molerat_tickled) {
 								system.write(
 										"<p>The molerat's riotous laughter shatters the chamber's calm, stabbing into the cool darkness like thorns through a rose assaulting a curious nose.  He's rolled well away from the <a href='./examine_oracle_opal'>massive carved opal</a> breaching outward from the ancient walls.</p>"
 								);
-								undum.game.storyViewController.choiceStringArray.concat("basement2_grue_hub");
+								story.appendChoice("basement2_grue_hub");
 							} else {
 								system.write(
 										"<p>As your wiggly snout pushes through the last of the dry, acidic soil indicative of the near-surface Deepness and your whiskers sweep into the loamy goodness below, a strange sight greets you: there is a <a href='./check_molerat_target'>naked molerat</a>, perhaps the nakedest you've seen, twitching and clawing feebly at the gently convex surface of a <a href='./examine_oracle_opal'>massive carved opal</a> buried in the wall.  His claws have worn away to bloody stubs, but he persists all the same.</p>  <p>\"It calls to me...\"  He whimpers.  \"Sweet rumbly music, take my mind into your legion!  This corpse is a prison!\"</p><p>He seems frozen in place, his legs at once paralyzed and in ceaseless spasming motion.  No matter what you say, he doesn't acknowledge your presence.</p>"
@@ -480,12 +481,17 @@ undum.game.situations = {
 							}
 						} else {
 							// the depths are sealed... for now
-							undum.game.storyViewController.choiceStringArray = ["basement1_hub"];
-							// todo: molerat interaction options now that player has the powers of a Dark Mole
+							story.choiceStringArray = ["basement1_hub"];
+							if(story.eventFlags.molerat_devotee) {
+								story.writeParagraph("The molerat is feverishly busy writing what he imagines are your commandments on the walls in his own blood; a fine show of support from your first disciple.");
+							} else if(story.eventFlags.molerat_actualized) {
+								story.writeParagraph("The molerat tips his snout to you politely, then returns to exploring the simple pleasures abundant in basic grooming and self-care.");
+							} else {
 							var awestruckMoleratString = "The Nakedest Molerat's laughter has ceased.  He cowers in a corner, his beady bloodshot eyes fixed, unblinking, upon you. \"You are... not what I was expecting.  Perhaps this form is intended to make your splendor comprehensible to my limited intellect?  It matters not -- please, free me!\"  He prostrates himself before you as best as his still-bleeding claw-stumps will allow.";
-							undum.game.storyViewController.writeParagraph(awestruckMoleratString);
+							story.writeParagraph(awestruckMoleratString);
+							}
 						}
-						system.writeChoices(undum.game.storyViewController.choiceStringArray);
+						story.showChoices();
 					},
 					actions: {
 						"examine_oracle_opal": function (character, system, action) {
@@ -540,10 +546,17 @@ undum.game.situations = {
 							}
 						},
 						calculateHeading: function () {
-							if (undum.game.storyViewController.eventFlags.molerat_tickled) {
-								return "The nakedest molerat rolls about in the musty dust, desperately euphoric in the throes of Tickles";
+							const story = undum.game.storyViewController;
+							if(story.eventFlags.molerat_devotee) {
+								return "Brandishing a freshly gashed paw-stump, the Nakedest Molerat scrawls your praises upon the earth"
+							} else if(story.eventFlags.molerat_actualized) {
+								return "Calmness and an air of introspection has chased away the desperate fervor of the Nakedest Molerat's lair";
 							} else {
-								return "A naked molerat scrabbles furiously at an opal nearby, a decoration of broken claw bits and streaks of blood his only impact on it";
+								if (story.eventFlags.molerat_tickled) {
+									return "The nakedest molerat rolls about in the musty dust, desperately euphoric in the throes of Tickles";
+								} else {
+									return "A naked molerat scrabbles furiously at an opal nearby, a decoration of broken claw bits and streaks of blood his only impact on it";
+								}
 							}
 						}
 					},
@@ -1023,6 +1036,13 @@ undum.game.situations = {
 				{
 					enter: function(character, system, from) {
 						const story = undum.game.storyViewController;
+						story.writeParagraph("\"I will free you from your mundane prison, molerat.  In return, you will serve as my Voice among the Deep Folk.  You will spread the Word of Mole, as you shall hear it spoken in your brain presently!\"  With this impromptu proclamation and no particular plan, you transform into your true form.");
+						story.writeParagraph("The nakedest molerat cowers away from your magnificence at first, but then crawls nearer to bask in your outré grandeur.  Innumerable wings dripping liquid shadow unfold from your amorphous form, beating at the air in supercilious indifference.  The molerat's cheeks flap as you buffet him with eldritch winds, and he glories in your presence.");
+						story.writeParagraph("Shooting four of your tendrils directly into his brain, you communicate the myriad visions of alien majesty and the secrets of unknowable dimensions.  His eyes go wide and his jaw slackens, and you hum gently in pleasure.  When his glimpse of the wild new reality following you like the wake of a tsunami threatens to melt his mind, you disengage.  Returning to moleform, you pat the molerat on the head with a heavy claw, assuring him that his reverence will be rewarded in the new order.");
+						story.eventFlags.molerat_devotee = true;
+						story.subtractFromCharacterQuality("sanity", 25);
+						story.subtractFromCharacterQuality("moleWhole", 10);
+						system.doLink("basement2_hub");
 					},
 					optionText: "Show this pathetic little creature the majesty he yearns for!"
 				}
@@ -1032,6 +1052,14 @@ undum.game.situations = {
 				{
 					enter: function(character, system, from) {
 						const story = undum.game.storyViewController;
+						story.writeParagraph("You sit the molerat down and gently start bandaging his paws. \"Feels good, no?  What do you think about that?\" you ask him, leadingly.");
+						story.writeParagraph("He huffs and turns his quivering snout away from yours. \"Yes it feels fine, but what does any of it matter?!  You're no god at all, are you?  There never was one!  The Rumble is already fading... I can't even remember its glory.  What greater power is there for we lowly worthless crawling critters of the earth to venorate now?  And in the absence of Something Greater to serve, what reason have we to continue struggling on?  Existence is pain and noiseome fury, and I am so very weary.\"");
+						story.writeParagraph("He collapses, sobbing, against your woolly stout shoulder, lamenting the dearth of esoteric magic in his life.  You pat his head soothingly, and in time his grief abates somewhat.  Rushing in to fill its place, of course, comes the dreadful calm of existential emptiness that presages true tragedy.  Recognizing the rising scourge, you plant yourself steadfastly between the molerat and oblivion's hungry grasp. \"Easy now, friend.  Feel my paw, listen to my heartbeat.  Being healed and comforted by a friend feels good.  Snacking with a friend feels good.\"");
+						story.writeParagraph("You draw a juicy grub from your compartment and break off a segment for the molerat, chowing down on the slime-dripping remainder yourself.  \"This may seem axiomatic and therefore, perhaps, pointless, but the fundamental pleasant truth of these everyday experiential treasures is their magic!  Using these wonderful little quanta as building blocks, we can construct grand soaring cathedral matrices of meaning; love and family and precious friendship in arbitrary abundance, whatever we're willing to work for together!  So, toss your notions of what sort of eldritch grandeur from beyond a thing requires to be worthwhile, and explore the magic we have to work with all around us.  Start with a big ol' hug, and carry on wherever that takes you!  Adventure!\"");
+						story.writeParagraph("Driving your point home, you wrap the molerat up in a bonecrushing embrace, tweak the snout at the end of his confused-but-thoughtful face fondly, and then waddle on off to continue your own adventure.");
+						story.eventFlags.molerat_actualized = true;
+						story.addToCharacterQuality("moleWhole", 10);
+						system.doLink("basement2_molerat_hub");
 					},
 					optionText: "Whatever has come upon you, you remain a mere mole -- explain your normalcy to the molerat, and teach him that everyday wonders are those most worthy of worship."
 				}
