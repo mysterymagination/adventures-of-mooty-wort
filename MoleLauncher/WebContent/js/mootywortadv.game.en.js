@@ -486,8 +486,8 @@ undum.game.situations = {
 							} else if(story.eventFlags.molerat_actualized) {
 								story.writeParagraph("The molerat tips his snout to you politely, then returns to exploring the simple pleasures abundant in basic grooming and self-care.");
 							} else {
-							var awestruckMoleratString = "The Nakedest Molerat's laughter has ceased.  He cowers in a corner, his beady bloodshot eyes fixed, unblinking, upon you. \"You are... not what I was expecting.  Perhaps this form is intended to make your splendor comprehensible to my limited intellect?  It matters not -- please, free me!\"  He prostrates himself before you as best as his still-bleeding claw-stumps will allow.";
-							story.writeParagraph(awestruckMoleratString);
+								var awestruckMoleratString = "The <a href='./check_molerat_target'>Nakedest Molerat's</a> laughter has ceased.  He cowers in a corner, his beady bloodshot eyes fixed, unblinking, upon you. \"You are... not what I was expecting.  Perhaps this form is intended to make your splendor comprehensible to my limited intellect?  It matters not -- please, free me!\"  He prostrates himself before you as best as his still-bleeding claw-stumps will allow.";
+								story.writeParagraph(awestruckMoleratString);
 							}
 						}
 						story.showChoices();
@@ -551,10 +551,14 @@ undum.game.situations = {
 							} else if(story.eventFlags.molerat_actualized) {
 								return "Calmness and an air of introspection has chased away the desperate fervor of the Nakedest Molerat's lair";
 							} else {
-								if (story.eventFlags.molerat_tickled) {
-									return "The nakedest molerat rolls about in the musty dust, desperately euphoric in the throes of Tickles";
+								if(story.eventFlags.dark_mole) {
+									return "The Nakedest Molerat stands in awe of your whole mole presence";
 								} else {
-									return "A naked molerat scrabbles furiously at an opal nearby, a decoration of broken claw bits and streaks of blood his only impact on it";
+									if (story.eventFlags.molerat_tickled) {
+										return "The nakedest molerat rolls about in the musty dust, desperately euphoric in the throes of Tickles";
+									} else {
+										return "A naked molerat scrabbles furiously at an opal nearby, a decoration of broken claw bits and streaks of blood his only impact on it";
+									}
 								}
 							}
 						}
@@ -1058,7 +1062,7 @@ undum.game.situations = {
 						story.writeParagraph("Driving your point home, you wrap the molerat up in a bonecrushing embrace, tweak the snout at the end of his confused-but-thoughtful face fondly, and then waddle on off to continue your own adventure.");
 						story.eventFlags.molerat_actualized = true;
 						story.addToCharacterQuality("moleWhole", 10);
-						system.doLink("basement2_molerat_hub");
+						system.doLink("basement2_hub");
 					},
 					optionText: "Whatever has come upon you, you remain a mere mole -- explain your normalcy to the molerat, and teach him that everyday wonders are those most worthy of worship."
 				}

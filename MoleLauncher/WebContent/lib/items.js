@@ -213,9 +213,10 @@ export class PulsatingFuzz extends Item {
 	 * @param item wrangler with handles to viewcontrollers
 	 */
 	tickleMolerat(itemManager) {
-		switch(itemManager.feedbackContext) {
-		case "story":
-			// write item use feedback
+		// write item use feedback
+		if(itemManager.storyViewController.eventFlags.molerat_tickled) {
+			itemManager.storyViewController.writeParagraph("The molerat giggles lightly and then shoos away your probing fuzz, having had quite a thorough fit of jubilation already.");
+		} else {
 			itemManager.storyViewController.writeParagraph("You reach out and wiggle the fuzz playfully over your molerat friend's snoot; he tries to resist an upwelling of mirth that threatens to fracture his zealous persona, but no will can resist the captivating grip of the tickle monster -- as the molerat laughs merrily, hugging his roly-poly belly with his bloody paw stumps, he rolls away from the opal eye.  Beneath it, you can now see a small tunnel filled with an oddly beckoning darkness.  Something inside purrs, its bass rumbling turning from barest whisper to veritably roaring contentment as you draw near.");
 			itemManager.storyViewController.writeParagraph("A crimson flash catches your eye as you search about the molerat's erstwhile territory; brushing some dust away with your wiggly snoot, you uncover a boiling potion vial of velvety red gel, which you pocket.");
 			itemManager.addItem(itemManager.storyViewController.charactersDict.mole, new MinorHealthPotion());
