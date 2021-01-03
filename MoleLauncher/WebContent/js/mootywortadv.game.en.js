@@ -134,17 +134,29 @@ undum.game.situations = {
 				"",
 				{
 					enter: function (character, system, from) {
-						this.iDeepnessLevel = 1;
-						var sDesc = "Almost as soon as your claws begin shoveling the slightly more acidic soil away from your path and behind your rotund rump, your tunnel converges with that of one fuzzy caterpillar.";
-						if (!this.bVisited) {
-							this.bVisited = true;
+						const story = undum.game.storyViewController;
+						story.choiceStringArray = [];
+						if(story.eventFlags.caterpillar_entombed_forever) {
+							story.writeParagraph("The butterfly wriggles and cringes as cramped confinement asserts itself.  This is a pain that shall linger.");
+						} else if(story.eventFlags.caterpillar_wyrm) {
+							story.writeParagraph("Your worm wyrm servitor bows his head in salute to your magnificence, as is right and proper.  You should have a saddle rigged up so that he might serve as a burrowing mount...");
+						} else if(story.eventFlags.caterpillar_woolly) {
+							story.writeParagraph("The caterpillar wiggles his tail-end at you fondly, grateful for your help.  He continues the struggle to find himself in the shrouded mist that the Rumble left blanketing his mind, but with your moleful encouragement he's hopeful!");
 						} else {
-							sDesc = "Here again we find ourselves snout to mandibles with a fairly unfuzzy caterpillar.";
+							let sEntryDesc = "";
+							if (!story.eventFlags.caterpillar_visited) {
+								sEntryDesc = "Almost as soon as your claws begin shoveling the slightly more acidic soil away from your path and behind your rotund rump, your tunnel converges with that of one fuzzy caterpillar."
+								story.eventFlags.caterpillar_visited = true;
+							} else {
+								sEntryDesc = "Here again we find ourselves snout to mandibles with a fairly unfuzzy caterpillar.";
+							}
+							system.write(
+									"<p>" + sEntryDesc + "  He wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with <a href='./look-substance'>sickly black veins</a>.</p>"
+							);
+							story.appendChoices(system.getSituationIdChoices(["#caterpillar_queries"]));
 						}
-						system.write(
-								"<p>" + sDesc + "  He wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with <a href='./look-substance'>sickly black veins</a>.</p>"
-						);
-						system.writeChoices(system.getSituationIdChoices(["#caterpillar_queries", "#tunnel_hub_basement" + this.iDeepnessLevel]));
+						story.appendChoice("basement1_hub");
+						story.showChoices();
 					},
 					optionText: function () { return "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body a few mole-lengths behind a patch of musty loam your whiskers just brushed against." },
 
