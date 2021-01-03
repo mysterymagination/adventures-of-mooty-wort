@@ -151,7 +151,7 @@ undum.game.situations = {
 								sEntryDesc = "Here again we find ourselves snout to mandibles with a fairly unfuzzy caterpillar.";
 							}
 							system.write(
-									"<p>" + sEntryDesc + "  He wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with <a href='./look-substance'>sickly black veins</a>.</p>"
+									"<p>" + sEntryDesc + "  The <a href='./check_caterpillar'>unfuzzy caterpillar</a> wiggles wonderingly, clearly gripped by some fascination. He's shedding copious amounts of <a href='./take-fuzz' class='once'>spiny-looking fuzz</a> all over, and is rapidly looking not so very fuzzy at all.  The shed fuzz trembles ominously.  The fuzzless flesh beneath is pallid and striated with <a href='./look-substance'>sickly black veins</a>.</p>"
 							);
 							story.appendChoices(system.getSituationIdChoices(["#caterpillar_queries"]));
 						}
@@ -161,6 +161,17 @@ undum.game.situations = {
 					optionText: function () { return "You can feel the vibrations from the *swish* *swish* *scrunch* of a worm-like body a few mole-lengths behind a patch of musty loam your whiskers just brushed against." },
 
 					actions: {
+						'check_caterpillar': function (character, system, action) {
+							try {
+								if(action) {
+									if(!undum.game.itemManager.activeItemUseOn("caterpillar")) {
+										undum.game.storyViewController.writeParagraph("Caterpillars are renowned for their beauty in a state of undress; with all the pulsing ichor-filled veins, this one does not quite live up to the hype.");
+									}
+								}
+							} catch(err) {
+								console.log("error caught while bopping our caterpillar bud: "+err);
+							}
+						},
 						'take-fuzz': function (character, system, action) {
 							// so apparently Undum's SimpleSituation.prototype.act() will try to just print whatever the value paired with the action key string is if an exception is thrown trying to execute same... any exception.  The thinking, I guess, was that a raw string will throw an exception (TypeError: <insert string here> is not a function) if you try operator call on it, so with that hack you can have either a string or a callable function as the action value.  Trouble is that if you've got a function that is bugged and throws an uncaught exception of its own, Undum will swallow the error AND try to write out the whole function as a string with its own markup magic which leads to very strrrrrange errors.  Point is, wrap your Undum action functions in try/catch to avoid tears.
 							try {
@@ -191,13 +202,18 @@ undum.game.situations = {
 						},
 						'look-substance': function (character, system, action) {
 							system.write("<p>The veins appear to be both above and below the epidermis. They're filled with an oily substance that pulses feverishly when you look upon it, as if sensing your attention and eager to know you; you're almost certain that's not what caterpillars normally look like naked.</p>")
-						},
-						calculateHeading: function () {
-							return "A somewhat fuzzy caterpillar scooches and scrunches rhythmically here";
 						}
 					},
 					heading: function () {
-						return undum.game.situations.basement1_fuzzy_caterpillar_hub.actions.calculateHeading();
+						if(story.eventFlags.caterpillar_entombed_forever) {
+							return "There is no other music so sweet as the futile beating of wings against a cage";
+						} else if(story.eventFlags.caterpillar_wyrm) {
+							return "Biological weaponry waits on your pleasure, eager and wrathful";
+						} else if(story.eventFlags.caterpillar_woolly) {
+							return "A very fuzzy caterpillar scooches and scrunches rhythmically here, warm and joyous once more";
+						} else {
+							return "A somewhat fuzzy caterpillar scooches and scrunches rhythmically here";
+						}
 					},
 					tags: ["basement1_creatures", "character_interaction_hub"]
 				}
