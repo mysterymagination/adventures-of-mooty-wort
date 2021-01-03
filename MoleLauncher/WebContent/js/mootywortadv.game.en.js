@@ -1067,6 +1067,78 @@ undum.game.situations = {
 					optionText: "Whatever has come upon you, you remain a mere mole -- explain your normalcy to the molerat, and teach him that everyday wonders are those most worthy of worship."
 				}
 		),
+		dark_mantle_caterpillar_worm_to_wyrm: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						story.writeParagraph("With a twist of your mind that reality is forced to warp to accommodate, the last of the fuzz is torn from the now fuzzless caterpillar's form.  He shrieks in agony as heavily scaled carapace replaces it, thoughtfully articulated to capitalize on his limitless flexibility while turning him into a crawling tank.  In the space of a few moments, the transformation is complete and the newly formed Crawl Wyrm before you shakes its mighty fanged head to clarify his perception of an abruptly new reality.  You nod to your very own living weapon, indicating that he should ready himself for war.");
+						story.eventFlags.caterpillar_wyrm = true;
+						story.subtractFromCharacterQuality("moleWhole", 10);
+						story.subtractFromCharacterQuality("sanity", 25);
+						system.doLink("basement1_fuzzy_caterpillar_hub");
+					},
+					optionText: "His useless fuzz is almost gone... finish what the Yawning God began and help the caterpillar realize his jagged destiny!"
+				}
+		), 
+		dark_mantle_caterpillar_fuzzy: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						// describe restoring the caterpillar to his old sunny, fuzzy self
+						story.writeParagraph("With a little push and a few stitches in the fabric of spacetime, reality spins off on a friendlier vector: the caterpillar gasps as the black veins beneath his bald flesh recede and a clamness settles over his being.  Fuzz in alternating strips of cool autumn auburn and cozy-hearth warm gold cover his segments, in fuller proportions than ever before!  He wraps his entire length around you in The Woolliest Hug, and plants a grateful kiss on your brow.");
+						story.eventFlags.caterpillar_woolly = true;
+						story.addToCharacterQuality("moleWhole", 5);
+						story.subtractFromCharacterQuality("sanity", 20);
+						system.doLink("basement1_fuzzy_caterpillar_hub");
+					},
+					optionText: "What once was fuzzy can be made so again - bring peace to your scrunchedy fren and restore his wonderful woolly worm form!"
+				}
+		), 
+		dark_mantle_caterpillar_entombed_flight: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						// describe how the whole butterfly kick doesn't work well underground, and this butterfly in particular is all sharp edges and dripping venom that seems to burn its own body
+						story.writeParagraph("\"No, it's too soon!  Not here!\" the caterpillar howls as his flesh rapidly melts away.  Two spiny wings dripping with venom explode in a shower of blood and ichor from his back; the acidic venom burns the surrounding soil and the caterpillar's hide alike.  The wings are covered in gorgeous scales spanning a gradient of velvety midnight blue to soothing mystery purple.  Six spear-like legs thrust forth from his underbelly, each tipped with a complex serrated pincer apparatus.");
+						story.writeParagraph("The newly forged butterfly groans in agony, giving his wings an experimental flap.  There's not even enough room in the cavern to fully unfurl them, and he screams as they're bent by the entombing earth.  \"What've you done, mole?!  I can't escape this place with these wings.  I'll wither to nothing but pain locked away in here!\"");						
+						// slight hit to shovelry since the player should have realized this would not be great underground AND is, as stated, a blighted transformation
+						story.subtractFromCharacterQuality("moleWhole", 2);
+						story.subtractFromCharacterQuality("sanity", 10);
+						system.writeChoices(["dark_mantle_caterpillar_entombed_flight_observation", "dark_mantle_caterpillar_entombed_flight_liberation"]);
+					},
+					optionText: "Perhaps you should nudge along his Becoming -- help him out of his blighted miserable molt by accelerating his transformation, after which he can fly free!"
+				}
+		),
+		dark_mantle_caterpillar_entombed_flight_liberation: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						// describe mole frenziedly fixing his mistake
+						story.writeParagraph("\"Sorry sorry sorry sorry!\" you chant as you quickly suss out the quantum wave functions that must be collapsed to shove your friend into a timeline where you didn't turn him into a butterfly underground.");
+						story.addToCharacterQuality("moleWhole", 5);
+						system.doLink("dark_mantle_caterpillar_fuzzy");
+					},
+					optionText: "Fixitfixitfixitfixit!  Fixitfixitfixitfixit!"
+				}
+		), 
+		dark_mantle_caterpillar_entombed_flight_observation: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						// describe mole deriving perverse pleasure from watching butterfly entombed, purposefully leaving him that way even after witnessing the consequences
+						story.writeParagraph("You watch, a rictus grin spreading from ear to ear, as the butterfly struggles.  He will be trapped here forever, as he predicted, though the pain will be worse than her realizes -- those wings will continue to grow until he can't avoid having them uncrumpled by his prison.  It will be torment everlasting, and your dark soul quivers at the power you will syphon from his suffering.");
+						story.eventFlags.caterpillar_entombed_forever = true;
+						story.subtractFromCharacterQuality("moleWhole", 10);
+						system.doLink("basement1_fuzzy_caterpillar_hub");
+					},
+					optionText: "Watch him flap and flounder for a bit; you enjoy osmotic feeding on the suffering of others, especially when you are the architect thereof."
+				}
+		), 
 		death: new undum.SimpleSituation(
 				"<strong>💀 IT IS A SAD THING THAT YOUR ADVENTURES HAVE ENDED HERE 💀</strong> <div class='transient'><a href='main'>Oh, Mother of Moles!  Try Again?</a></div>"
 		),
