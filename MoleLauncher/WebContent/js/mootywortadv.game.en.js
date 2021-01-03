@@ -205,6 +205,7 @@ undum.game.situations = {
 						}
 					},
 					heading: function () {
+						const story = undum.game.storyViewController;
 						if(story.eventFlags.caterpillar_entombed_forever) {
 							return "There is no other music so sweet as the futile beating of wings against a cage";
 						} else if(story.eventFlags.caterpillar_wyrm) {

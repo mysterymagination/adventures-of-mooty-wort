@@ -425,7 +425,7 @@ export class Defend extends Ability {
         return sourceCharacter.name + " hunkers on down to defend " + sourceCharacter.getPronoun_personal_object()+"self!";
     }
     getHint() {
-		return "Doubles physical defense and magical resistance for one round";
+		return "Doubles physical defense and magical resistance for one round, and allows a respite to draw from the manastream!";
 	}
 }
 
