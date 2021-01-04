@@ -443,8 +443,8 @@ undum.game.situations = {
 									undum.game.storyViewController.writeParagraph("The rusty urn you got from the spider vibrates violently in your compartment; its frantic vibrations seem to be tugging you away from the writhing monstrous mass and you're almost certain you hear a smol voice whispering \"Please, no!\".");
 								}
 							}
-							system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
 						}
+						system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
 					},
 					actions: {
 						check_ooze : function(character, system, action) {
