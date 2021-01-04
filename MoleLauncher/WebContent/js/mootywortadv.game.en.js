@@ -1175,6 +1175,10 @@ undum.game.situations = {
 						const story = undum.game.storyViewController;
 						story.writeParagraph("The time has come!  You lower your mental bulwarks and allow the Darkness to stream endlessly into and through your being.  In the space of an instant, the mole is gone and a dark god has taken his place.  In the name of all deep things, you will lead an assault upon the unsuspecting surfacers -- their sun shall be your first target.  A simple bolt of Elemental Evil will be more than enough to snuff out its tortuous light, after which the entire world will be caught in the deathgrip of eternal night.");
 						story.writeParagraph("With your abyssal retinue in tow and a cacophany of hideous laughter from innumerable unseen wraiths wreathing your charge, you burst forth into hated sunlight.  The Humans have just enough time to scream before a black column of energy explodes from your snoot, vaporizing their precious yard; in an eyeblink it has reached the sun and crept over its surface, casting a permanent pall of darkness over the earth.  Thus begins the reign of eternal darkness!"); // eternal darkness shoutout!
+						// if they left the greater threat in the shadows, give em a little anxiety as parting gift...
+						if(!story.eventFlags.grue_challenge_activated) {
+							story.writeParagraph("As you ride high upon the tide of ravenous things from the deep places of the world, you are bothered for a moment by a whisper of mocking laughter and the flash of a many-toothed smile from the shadows beyond even your awareness.  How odd -- no shadows should be beyond you now.  In an instant, the sensation is gone and you shake it off as merely first-day jitters in your new role as overmole of all creation!");
+						}
 						story.eventFlags.dark_mole_god = true;
 						// go directly through Undum view so we don't trigger insanity death case
 						system.setQuality("sanity", -Infinity);
@@ -1193,7 +1197,11 @@ undum.game.situations = {
 						// todo: more moralistic dimensions, rather than just a evil --- good spectrum
 						story.writeParagraph("Your dark passenger, not unlike the common vampire, requires your invitation to truly infest your being.  You have been flirting with it so far, testing its intentions and your own ability to control its power, but it has become clear no mortal mind can resist its siren song for long.  It whispers constantly that you could set this or that thing right or stamp out some botheration, ever adapting to appeal to its estimation of your character.  The gnawing suggestion that The Humans' lawn could be yours is particularly enticing.");
 						story.writeParagraph("The time has come to formally reject the power and all that it offers, that your mind may be yours alone once more.  You sense a psychic coldness as you mentally turn your back on the Dark Mantle, but it is regretful rather than threatening.  With its hooks into your soul dislodged, it fades away into the ambient voidscape in the deepest recesses of the multiverse.  There it will slumber, hopefully forevermore, as it waits for a likely hero and host to assert themselves upon all realities...");
-						story.writeParagraph("Shaking the dust off your fur, you clamber back into your beloved depths and start burrowing in a new direction -- let's see what's out there!");
+						story.writeParagraph("As the Darkness departs, a great and terrible weight lifts from your brawny shoulders and you feel light as the downy feathers of a penguin chick's pajamas.  Shaking the dust off your fur, you clamber back into your beloved depths and start burrowing in a new direction -- let's see what's out there!");
+						// if they left the greater threat in the shadows, give em a little anxiety as parting gift...
+						if(!story.eventFlags.grue_challenge_activated) {
+							story.writeParagraph("The Deepness has never felt so free and exciting as it does now that you're seeing it in full clarity again after having the veil of the Darkness lifted.  It cast subtle malevolence over everything and sundry, especially you, and the world looked much bleaker through such a duplicitous filter.  That said, you do feel a slight tension in your shoulders and neck that wasn't there before, a nagging worry that something still isn't quite right.  The very moment you acknowledge this sensation, a broad grin full of shining white daggers flashes into view from the distant shadows.  The wind whistles a cadence very much like laughter for an instant, and then both phantasms are gone.  No amount of searching or checking behind you grants any insight or relief.  Shaking yourself rather harder than usual, you put it out of your mind; weird things live here in the Deep, so the inexplicable is to be expected.  Weird is home!  Time to go see what other weird wonderful stuff is out there...");
+						}
 						story.eventFlags.justa_mole = true;
 						// go directly through Undum view so we don't trigger insanity death case
 						system.setQuality("sanity", 100);
@@ -1222,15 +1230,15 @@ undum.game.situations = {
 						} else if(playerStats.shovelry >= 10) {
 							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you did ok, with a fine shovelry of: "+playerStats.shovelry+" and the nice title Mighty Digger!</strong>";
 						} else if(playerStats.shovelry >= 0) {
-							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you made an attempt at goodness, always a good first step, with a shovelry of: "+playerStats.shovelry+" and the pretty average title Plain Underwere.</strong>";
+							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you made an attempt at being good, always a good first step, with a shovelry of: "+playerStats.shovelry+" and the pretty average title Plain Underwere.</strong>";
 						} else if(playerStats.shovelry > -10) {
-							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you made an attempt at evil, always a good (well, bad) first step, with a shovelry of: "+playerStats.shovelry+" and the pretty average title Plain Underwere.</strong>";
+							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you made an attempt at being evil, always a good (well, bad) first step, with a shovelry of: "+playerStats.shovelry+" and the pretty average title Plain Underwere.</strong>";
 						} else if(playerStats.shovelry > -20) {
 							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you did pretty good at being bad, you naughty buttons, with a shovelry of: "+playerStats.shovelry+" and mildly terrifying title Eldritch Entity!</strong>";
 						} else if(playerStats.shovelry > -30) {
 							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you did super good with all your badness, you mischievous mynx, with a shovelry of: "+playerStats.shovelry+" and the dreaded title Darkness Beyond!</strong>";
 						} else {
-							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you are a true paragon of evil, the black wings in the night sky that herald The End of all things, with a shovelry of: "+playerStats.shovelry+" and the dreaded title Crawling Chaos!</strong>";
+							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you've played a true paragon of evil, the black wings in the night sky that herald The End of all things, with a shovelry of: "+playerStats.shovelry+" and the dreaded title Crawling Chaos!</strong>";
 						}
 						valediction += "<div class='transient'><a href='main'>Wanna go again?</a></div>";
 						system.write(valediction);
