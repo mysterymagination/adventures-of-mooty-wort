@@ -32,6 +32,7 @@ export class Item {
 			for(const matcherObj of this.descriptor.useOn) {
 				for(const [keyRegex, effectFn] of Object.entries(matcherObj)) {
 					if(targetString.match(new RegExp(keyRegex, 'i'))) {
+						itemManager.storyViewController.clearChoices();
 						effectFn.call(this, itemManager);
 						return true;
 					}

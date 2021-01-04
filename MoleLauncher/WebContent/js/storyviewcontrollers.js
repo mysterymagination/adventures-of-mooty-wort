@@ -75,6 +75,12 @@ export class StoryViewController {
 		this.choiceStringArray = this.choiceStringArray.concat(additionalChoicesArray);
 	}
 	/**
+	 * Splices out all elements of the choiceStringArray array
+	 */
+	clearChoices() {
+		this.choiceStringArray.splice(0, this.choiceStringArray.length);
+	}
+	/**
 	 * Displays the current choice string array to the player in a manner dictated by the specific story paradigm
 	 */
 	showChoices() {
