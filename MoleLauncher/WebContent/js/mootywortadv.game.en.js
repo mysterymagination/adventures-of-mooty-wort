@@ -1208,7 +1208,34 @@ undum.game.situations = {
 		),
 		// todo: firworks to jazz up the victory state? mrrg, the temptation to just use a gif...
 		victory: new undum.SimpleSituation(
-				"<strong>A WINNER IS YOU!  Thanks for playing; you're the real hero and/or mole! Is there a difference, really?</strong> <div class='transient'><a href='main'>Again, again!</a></div>"
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						const playerStats = character.mole.stats;
+						let valediction = "";
+						// todo: undum seems to have no system.getQuality(), so either add one or make an enum someplace that both moleWhole quality draws from and we can draw from here to fix this hardcoded crumpets
+						if(playerStats.shovelry >= 30) {
+							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you're the real hero and/or mole! Is there a difference, really?  Your incomparable shovelry was a whopping: "+playerStats.shovelry+", earning you the coveted title of Eldritch Delver!</strong>";
+						} else if(playerStats.shovelry >= 20) {
+							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you did good, with a hefty shovelry of: "+playerStats.shovelry+" and the lovely title Burrow Master!</strong>";
+						} else if(playerStats.shovelry >= 10) {
+							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you did ok, with a fine shovelry of: "+playerStats.shovelry+" and the nice title Mighty Digger!</strong>";
+						} else if(playerStats.shovelry >= 0) {
+							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you made an attempt at goodness, always a good first step, with a shovelry of: "+playerStats.shovelry+" and the pretty average title Plain Underwere.</strong>";
+						} else if(playerStats.shovelry > -10) {
+							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you made an attempt at evil, always a good (well, bad) first step, with a shovelry of: "+playerStats.shovelry+" and the pretty average title Plain Underwere.</strong>";
+						} else if(playerStats.shovelry > -20) {
+							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you did pretty good at being bad, you naughty buttons, with a shovelry of: "+playerStats.shovelry+" and mildly terrifying title Eldritch Entity!</strong>";
+						} else if(playerStats.shovelry > -30) {
+							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you did super good with all your badness, you mischievous mynx, with a shovelry of: "+playerStats.shovelry+" and the dreaded title Darkness Beyond!</strong>";
+						} else {
+							valediction = "<strong>A WINNER IS YOU!  Thanks for playing; you are a true paragon of evil, the black wings in the night sky that herald The End of all things, with a shovelry of: "+playerStats.shovelry+" and the dreaded title Crawling Chaos!</strong>";
+						}
+						valediction += "<div class='transient'><a href='main'>Wanna go again?</a></div>";
+						system.write(valediction);
+					}
+				}
 		),
 		credits: new undum.SimpleSituation(
 				"<ul>\
