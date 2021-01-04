@@ -1160,7 +1160,7 @@ undum.game.situations = {
 					enter: function(character, system, from) {
 						const story = undum.game.storyViewController;
 						// describe mole deriving perverse pleasure from watching butterfly entombed, purposefully leaving him that way even after witnessing the consequences
-						story.writeParagraph("You watch, a rictus grin spreading from ear to ear, as the butterfly struggles.  He will be trapped here forever, as he predicted, though the pain will be worse than her realizes -- those wings will continue to grow until he can't avoid having them uncrumpled by his prison.  It will be torment everlasting, and your dark soul quivers at the power you will syphon from his suffering.");
+						story.writeParagraph("You watch, a rictus grin spreading from ear to ear, as the butterfly struggles.  He will be trapped here forever, as he predicted, though the pain will be worse than he realizes -- those wings will continue to grow until he can't avoid having them uncrumpled by his prison.  It will be torment everlasting, and your dark soul quivers at the power you will syphon from his suffering.");
 						story.eventFlags.caterpillar_entombed_forever = true;
 						story.subtractFromCharacterQuality("moleWhole", 10);
 						system.doLink("basement1_fuzzy_caterpillar_hub");
@@ -1168,8 +1168,47 @@ undum.game.situations = {
 					optionText: "Watch him flap and flounder for a bit; you enjoy osmotic feeding on the suffering of others, especially when you are the architect thereof."
 				}
 		), 
+		dark_mantle_mole_accept: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						story.writeParagraph("The time has come!  You lower your mental bulwarks and allow the Darkness to stream endlessly into and through your being.  In the space of an instant, the mole is gone and a dark god has taken his place.  In the name of all deep things, you will lead an assault upon the unsuspecting surfacers -- their sun shall be your first target.  A simple bolt of Elemental Evil will be more than enough to snuff out its tortuous light, after which the entire world will be caught in the deathgrip of eternal night.");
+						story.writeParagraph("With your abyssal retinue in tow and a cacophany of hideous laughter from innumerable unseen wraiths wreathing your charge, you burst forth into hated sunlight.  The Humans have just enough time to scream before a black column of energy explodes from your snoot, vaporizing their precious yard; in an eyeblink it has reached the sun and crept over its surface, casting a permanent pall of darkness over the earth.  Thus begins the reign of eternal darkness!"); // eternal darkness shoutout!
+						story.eventFlags.dark_mole_god = true;
+						// go directly through Undum view so we don't trigger insanity death case
+						system.setQuality("sanity", -Infinity);
+						story.subtractFromCharacterQuality("moleWhole", 15);
+						system.doLink("victory");
+					},
+					optionText: "Embrace the coming tide of Darkness flooding your being and, with it, your destiny!  The Surface will never know what hit it..."
+				}
+		), 
+		dark_mantle_mole_reject: new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						// todo: I've been wanted a daemon thing like TADS has for awhile, and these whispers would be perfect for such a thing.
+						// todo: more moralistic dimensions, rather than just a evil --- good spectrum
+						story.writeParagraph("Your dark passenger, not unlike the common vampire, requires your invitation to truly infest your being.  You have been flirting with it so far, testing its intentions and your own ability to control its power, but it has become clear no mortal mind can resist its siren song for long.  It whispers constantly that you could set this or that thing right or stamp out some botheration, ever adapting to appeal to its estimation of your character.  The gnawing suggestion that The Humans' lawn could be yours is particularly enticing.");
+						story.writeParagraph("The time has come to formally reject the power and all that it offers, that your mind may be yours alone once more.  You sense a psychic coldness as you mentally turn your back on the Dark Mantle, but it is regretful rather than threatening.  With its hooks into your soul dislodged, it fades away into the ambient voidscape in the deepest recesses of the multiverse.  There it will slumber, hopefully forevermore, as it waits for a likely hero and host to assert themselves upon all realities...");
+						story.writeParagraph("Shaking the dust off your fur, you clamber back into your beloved depths and start burrowing in a new direction -- let's see what's out there!");
+						story.eventFlags.justa_mole = true;
+						// go directly through Undum view so we don't trigger insanity death case
+						system.setQuality("sanity", 100);
+						story.addToCharacterQuality("moleWhole", 15);
+						system.doLink("victory");
+					},
+					optionText: "The Darkness riding you is too much for any mortal to handle.  You have borne it well, but its infectious influence is slowly gaining purchase -- cast it off into the void that it may slumber for a thousand thousand ages!"
+				}
+		),
 		death: new undum.SimpleSituation(
 				"<strong>💀 IT IS A SAD THING THAT YOUR ADVENTURES HAVE ENDED HERE 💀</strong> <div class='transient'><a href='main'>Oh, Mother of Moles!  Try Again?</a></div>"
+		),
+		// todo: firworks to jazz up the victory state? mrrg, the temptation to just use a gif...
+		victory: new undum.SimpleSituation(
+				"<strong>A WINNER IS YOU!  Thanks for playing; you're the real hero and/or mole! Is there a difference, really?</strong> <div class='transient'><a href='main'>Again, again!</a></div>"
 		),
 		credits: new undum.SimpleSituation(
 				"<ul>\
