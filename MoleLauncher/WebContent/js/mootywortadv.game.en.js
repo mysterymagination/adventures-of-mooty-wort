@@ -166,6 +166,7 @@ undum.game.situations = {
 								if(action) {
 									if(!undum.game.itemManager.activeItemUseOn("caterpillar")) {
 										undum.game.storyViewController.writeParagraph("Caterpillars are renowned for their beauty in a state of undress; with all the pulsing ichor-filled veins, this one does not quite live up to the hype.");
+										undum.game.storyViewController.jumpToNewContent();
 									}
 								}
 							} catch(err) {
@@ -178,8 +179,8 @@ undum.game.situations = {
 								// action links of CSS class 'once' apparently have their function executed twice, once with real character, system, action args and once from jQuery with unrelated/undefined args?  Anyway, checking for real action arg saves us from exploding over unexpected character object type.
 								if(action) {
 									const story = undum.game.storyViewController;
-									story.writeParagraph("As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!");
 									if (!Libifels.isItemInInventory(character.mole, "pulsating_fuzz")) {
+										story.writeParagraph("As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!");
 										if(!story.subtractFromCharacterQuality("health", character.mole.stats.maxHP * 0.1)) {
 											story.writeParagraph("Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.");
 											// push the fuzz item to the mole's inventory
