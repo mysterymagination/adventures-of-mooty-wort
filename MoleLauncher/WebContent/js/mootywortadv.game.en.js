@@ -177,28 +177,22 @@ undum.game.situations = {
 							try {
 								// action links of CSS class 'once' apparently have their function executed twice, once with real character, system, action args and once from jQuery with unrelated/undefined args?  Anyway, checking for real action arg saves us from exploding over unexpected character object type.
 								if(action) {
-									const sFuzzMessage = "As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!";
-
+									const story = undum.game.storyViewController;
+									story.writeParagraph("As you pluck a discarded fuzz filament off the ground, it twists around of its own accord and stabs you in the snout!");
 									if (!Libifels.isItemInInventory(character.mole, "pulsating_fuzz")) {
-										undum.game.storyViewController.subtractFromCharacterQuality("health", character.mole.stats.maxHP * 0.1);
-										console.log("health is " + character.qualities.health);
-										if (character.qualities.health > 0) {
-											system.write("<p>" + sFuzzMessage + "Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.</p>");
+										if(!story.subtractFromCharacterQuality("health", character.mole.stats.maxHP * 0.1)) {
+											story.writeParagraph("Stinging pain shoots through your body as the caterpillar's venom spreads, but you're a hardy bloke and shake it off easily.  Tucking the fuzz away in your compartment, you turn to the caterpillar and his wiggliness.");
 											// push the fuzz item to the mole's inventory
-											undum.game.itemManager.addItem(undum.game.storyViewController.charactersDict.mole, new Items.PulsatingFuzz());                     
-										} else {
-											system.write(sFuzzMessage + "</p>");
-											system.doLink('death');
-										}
+											undum.game.itemManager.addItem(story.charactersDict.mole, new Items.PulsatingFuzz());                     
+										} 
 									} else {
-										system.write("<p>The fuzz already in your pack is vibrating in a worrisome manner; you don't need more of the stuff.</p>");
+										story.writeParagraph("The fuzz already in your pack is vibrating in a worrisome manner; you don't need more of the stuff.");
 									}
-									undum.game.storyViewController.jumpToNewContent();
+									story.jumpToNewContent();
 								}
 							} catch(err) {
 								console.log("take-fuzz action error says: "+err);
 							}
-
 						},
 						'look-substance': function (character, system, action) {
 							system.write("<p>The veins appear to be both above and below the epidermis. They're filled with an oily substance that pulses feverishly when you look upon it, as if sensing your attention and eager to know you; you're almost certain that's not what caterpillars normally look like naked.</p>")
@@ -226,13 +220,18 @@ undum.game.situations = {
 					enter: function (character, system, from) {
 						const story = undum.game.storyViewController;
 						story.writeParagraph("The caterpillar stops wiggling when you speak and his head twisssssts ever so slowly around to face you... 270 degrees.  He's an invertebrate and all, but that's not really a thing caterpillars usually do, right?  \"Greetings, moleson.  I am better than ever before, for today I know the glory of the Rapturous Rumble!\"");
-						if(!story.eventFlags.caterpillar_concern_mana_pot_got) {
-							story.writeParagraph("He tilts his head slowly and jerkily, studying you from every extant angle as well as some invented ones that shouldn't be.  Your eyes have trouble following his physically incongruous undulations.  \"I do greatly appreciate the concern of the scion, tho; take this, and may it help you realize your destiny!\"  A vial of irridescent glowing liquid appears from somewhere with a troubling squelch, and he proffers it to you.  It's only a little drippy, and the smell will probably go away.");
-							undum.game.itemManager.addItem(character.mole, new Items.PuddleOManaPotion());
-							story.eventFlags.caterpillar_concern_mana_pot_got = true;
+						story.writeParagraph("He tilts his head slowly and jerkily, studying you from every extant angle as well as some invented ones that shouldn't be.  Your eyes have trouble following his physically incongruous undulations.  \"I do greatly appreciate the concern of the scion, tho; take this, and may it help you realize your destiny!\"  A vial of irridescent glowing liquid appears from somewhere with a troubling squelch, and he proffers it to you.  It's only a little drippy, and the smell will probably go away.");
+						story.addToCharacterQuality("moleWhole", 2);
+						undum.game.itemManager.addItem(character.mole, new Items.PuddleOManaPotion());
+						story.eventFlags.caterpillar_concern_mana_pot_got = true;
+						// the cost of befriending madness is... fairly predictable
+						if(!story.subtractFromCharacterQuality("sanity", character.mole.stats.maxSanity * 0.25)) {
+							// in this case, since it's really sort of a forked helper situation that has no standalone capabilities and is short, it makes sense to hop right over to the merge point
+							system.doLink("basement1_fuzzy_caterpillar_rapture");
 						}
-						// in this case, since it's really sort of a forked helper situation that has no standalone capabilities and is short, it makes sense to hop right over to the merge point
-						system.doLink("basement1_fuzzy_caterpillar_rapture");
+					},
+					canView(character, system, hostSituation) {
+						return !undum.game.storyViewController.eventFlags.caterpillar_concern_mana_pot_got
 					},
 					tags: ["caterpillar_queries"]
 				}
@@ -254,11 +253,6 @@ undum.game.situations = {
 				"",
 				{
 					enter: function (character, system, from) {
-						// from is given as the string id of the situation we came from
-						if (from === "basement1_fuzzy_caterpillar_you_ok") {
-							// the cost of befriending madness is... fairly predictable
-							undum.game.storyViewController.subtractFromCharacterQuality("sanity", character.mole.stats.maxSanity * 0.25);
-						}
 						system.write(
 								"<p>He lies down on the ground and extends his many feet toward the tunnel walls in an effort to maximize the surface area of his flesh in contact with the soil. \"It begins, mighty mole.  You are the key to it all, the keystone in the arch leading to everlasting paradise and power for Dwellers in the Deep!  Can't you feel it whispering your name?!  Oh how I envy you!\"  With this he begins rolling around, leaving behind swathes of fuzz.</p>"
 						);
@@ -398,6 +392,7 @@ undum.game.situations = {
 								"<p>As she comes down the far side of the tunnel, and as soon after her direction reverses as you can manage, you shove your shovel-like claw beneath her spinnerets.  With a *crunch*, the memory of which will sicken you for years to come, her mighty momentum is zeroed out on your paw.  As soon as she has a good few legs on the ground she hops away as if burned.</p>\
 								<p>\"Ooh, wow!  Watch that wandering paw, mister.  But, um, thank you for rescuing me!\" she chitters, her fangs and complicated-looking razor-edged mouth-parts clacking upsettingly and a blush the fell scarlet of moonlit blood spreading over her cephalothorax.  \"This blasted urn has brought me nothing but trouble.  Would you like it?  Here, take it with my compliments!\" She hastily shoves the rusty urn into your compartment, taking liberties with her frisking of your svelte potato morphology on the way.  Before you can speak, she squeals shyly and skuttles away, her eyes still rolling in the cycle of her erstwhile dizzy purgatory.  With her face buried in four of her legs, she continues staring at you in fascination from the shadows despite her embarrassment; specifically, at your muscular rump.</p>"
 						);
+						undum.game.storyViewController.addToCharacterQuality("moleWhole", 5);
 						// need to wrap post-unrolled behavior in a possible death block as damage is dealt
 						if(!undum.game.storyViewController.subtractFromCharacterQuality("health", character.mole.stats.maxHP * 0.4)) {
 
@@ -489,6 +484,19 @@ undum.game.situations = {
 						}
 					},
 					tags: ["character_interaction_hub", "basement1_creatures"]
+				}
+		),
+		"basement1_ochre_ooze_daughter_slaughter": new undum.SimpleSituation(
+				"",
+				{
+					enter: function(character, system, from) {
+						const story = undum.game.storyViewController;
+						// sting and stab physically and mentally; the more the mole has bonded with her, the worse it hurts the ol' mole mind
+						if(!story.subtractFromCharacterQuality("health", story.charactersDict.mole.stats.maxHP * 0.1) 
+								&& story.subtractFromCharacterQuality("sanity", story.charactersDict.mole.stats.maxSanity * Math.max(story.eventCount.daughter_ooze_conversations / 10.0, 0.1))) {
+							system.doLink("basement1_ochre_ooze_hub");
+						}
+					}
 				}
 		),
 		"basement2_hub": new undum.SimpleSituation(
@@ -972,8 +980,9 @@ undum.game.situations = {
 						story.writeParagraph("You tap into your newfound power just enough to cast a gentle shroud of suggested indifference re: moleflesh upon your admirer as she gazes longingly at you, hoping to dull her passion before you let her down.  \"Sorry miss, I'm flattered but not interested in romance.  Let's exchange soilphone numbers, tho, for sure!  You're fun and I wanna keep in touch.\"  She blinks in a lidless and mildly dejected manner, but bounces back quickly; she takes your number down and assures you she'll text you later so you have hers.  What an odd protocol we conform to for the Rejection Dance.");
 						story.eventFlags.spider_rejected = true;
 						story.addToCharacterQuality("moleWhole", 2.5);
-						story.subtractFromCharacterQuality("sanity", 15);
-						system.doLink("basement1_bulbous_spider_hub");
+						if(!story.subtractFromCharacterQuality("sanity", 15)) {
+							system.doLink("basement1_bulbous_spider_hub");
+						}
 					},
 					optionText: "She looks a teensy bit wildly enraptured, like she might get bitey if you turn her down... Maybe just sorta nudge her brain into a more chill place and then let her down gently?"
 				}
@@ -987,9 +996,9 @@ undum.game.situations = {
 						story.writeParagraph("In the next instant you find yourself wrapped up in a forest of sleek chitony legs a bit like shadowy sexy stockings slid over jagged obsidian.  With no runs!  Her venom proves to actually be quite an interesting cocktail of aphrodisiac and narcotic at just the right dose, delivered by a bitey kiss!  You revel and cavort in this manyfold embrace with her for a bit, and the details are best left to the tortured lanes of unbidden imagination.");
 						story.eventFlags.spider_loved = true;
 						story.addToCharacterQuality("moleWhole", 5);
-						story.subtractFromCharacterQuality("health", 10);
-						story.subtractFromCharacterQuality("sanity", 10);
-						system.doLink("basement1_bulbous_spider_hub");
+						if(!story.subtractFromCharacterQuality("health", 10) && !story.subtractFromCharacterQuality("sanity", 10)) {
+							system.doLink("basement1_bulbous_spider_hub");
+						}
 					},
 					optionText: "Oh fuzz, forget the eldritch thingamajig and just kiss the girl!  Kiss her!  She's only a little pointy and terrifying, it'll be fine.  This is fine."
 				}
@@ -1005,8 +1014,9 @@ undum.game.situations = {
 						story.eventFlags.spider_flashed = true;
 						// massive renegade hit & sanity crush
 						story.subtractFromCharacterQuality("moleWhole", 10);
-						story.subtractFromCharacterQuality("sanity", 40);
-						system.doLink("basement1_bulbous_spider_hub");
+						if(!story.subtractFromCharacterQuality("sanity", 40)) {
+							system.doLink("basement1_bulbous_spider_hub");
+						}
 					},
 					optionText: "She is clearly infatuated with you, and rightly so, but the poor little lustful mortal dear can't know the power she's flirting with... Enlighten her!"
 				}
@@ -1022,9 +1032,10 @@ undum.game.situations = {
 						story.writeParagraph("You feel renewed power flood your vitals as the ooze's essence is digested, though blood also flows freely from your snout -- this may relate to the relentless thunderbolts of pain now raging through your brain.");
 						story.eventFlags.ooze_devoured = true;
 						story.addToCharacterQuality("health", character.mole.stats.maxHP);
-						story.subtractFromCharacterQuality("sanity", 25);
 						story.subtractFromCharacterQuality("moleWhole", 5);
-						system.doLink("basement1_ochre_ooze_hub");
+						if(!story.subtractFromCharacterQuality("sanity", 25)) {
+							system.doLink("basement1_ochre_ooze_hub");
+						}
 					},
 					optionText: "The natural order has been shaken -- prove it by devouring this apex predator and taking the power of its myriad absorbed prey souls into yourself!"
 				}
@@ -1041,9 +1052,10 @@ undum.game.situations = {
 					story.writeParagraph("In short order the ooze is reformed with Gel alive and well and at the conn!  \"What happened?\" she asks, surprise rippling across her morphology.  \"My progenitor consumed me and I... I was in pain, then everything went dark!  I should be dead.  How am I here?  And why am I so big?\"  She forms a pair of eyestalks and examines herself, wiggling and waggling experimentally.  \"Wowie, now those are geodesic curves!  Now I know why they're called GREAT circle arcs.\"  She blushes neon pink through-and-through, and shivery quivers of pleasure have her practically vibrating.");
 					story.writeParagraph("You give her a grin, tap your noodle respectfully, and toddle off without further comment.  There's only a minor twinge as the opposed force generated by a reality that stubbornly fought your whimsy before bending to it rebounds endlessly inside your skull.");
 					story.eventFlags.curvy_gel = true;
-					story.subtractFromCharacterQuality("sanity", 10);
 					story.addToCharacterQuality("moleWhole", 5);
-					system.doLink("basement1_ochre_ooze_hub");
+					if(!story.subtractFromCharacterQuality("sanity", 10)) {
+						system.doLink("basement1_ochre_ooze_hub");
+					}
 				},
 				optionText: "With your new Awareness, you can sense that your wiggly jiggly galpal Gel is still inside the ooze, albeit in pieces.  Maybe you could bring her back..."
 			}
@@ -1056,9 +1068,10 @@ undum.game.situations = {
 						story.writeParagraph("Setting aside your rage and dredging up mercy for the sake of your beloved Gel, you tear your eyes away from the vile and vulnerable ooze.  With a flourish of mighty digging claws, you cast a shimmering forcefield around the ooze's throne.  The field forms a beautiful swirling starscape mesh, far more glorious a prison than this vermin deserves, but still it rails and rages against its confines the instant they appear.");
 						story.writeParagraph("Not even the power of the legendary ooze can shake your cosmic construction, however, so in short order the ooze collapses into a blue puddle of defeat. \"Release me, mole!  You have no right to imprison a force of nature, a primal god such as we!\"  You turn your back on it disdainfully, and grin as its quaking tantrum resumes.  It will never starve, but hunger will gnaw at its core until the end of time.  Gel performs a wobbledy twirl in thanks, but seems a bit subdued as she catches sight of your glee.");
 						story.eventFlags.ooze_prisoner = true;
-						story.subtractFromCharacterQuality("sanity", 10);
 						story.addToCharacterQuality("moleWhole", 10);
-						system.doLink("basement1_ochre_ooze_hub");
+						if(!story.subtractFromCharacterQuality("sanity", 10)) {
+							system.doLink("basement1_ochre_ooze_hub");
+						}
 					},
 					optionText: "Gel wobbles in her urn, piping up, \"It is ruthless and voracious, true, but the ooze is still my parent.  Could we spare it and maybe just lock it up, please?  Regardless, I love you *^_^*!\""
 				}
@@ -1072,9 +1085,10 @@ undum.game.situations = {
 						story.writeParagraph("The nakedest molerat cowers away from your magnificence at first, but then crawls nearer to bask in your outré grandeur.  Innumerable wings dripping liquid shadow unfold from your amorphous form, beating at the air in supercilious indifference.  The molerat's cheeks flap as you buffet him with eldritch winds, and he glories in your presence.");
 						story.writeParagraph("Shooting four of your tendrils directly into his brain, you communicate the myriad visions of alien majesty and the secrets of unknowable dimensions.  His eyes go wide and his jaw slackens, and you hum gently in pleasure.  When his glimpse of the wild new reality following you like the wake of a tsunami threatens to melt his mind, you disengage.  Returning to moleform, you pat the molerat on the head with a heavy claw, assuring him that his reverence will be rewarded in the new order.");
 						story.eventFlags.molerat_devotee = true;
-						story.subtractFromCharacterQuality("sanity", 25);
 						story.subtractFromCharacterQuality("moleWhole", 10);
-						system.doLink("basement2_hub");
+						if(!story.subtractFromCharacterQuality("sanity", 25)) {
+							system.doLink("basement2_hub");
+						}
 					},
 					optionText: "Show this pathetic little creature the majesty he yearns for!"
 				}
@@ -1104,8 +1118,9 @@ undum.game.situations = {
 						story.writeParagraph("With a twist of your mind that reality is forced to warp to accommodate, the last of the fuzz is torn from the now fuzzless caterpillar's form.  He shrieks in agony as heavily scaled carapace replaces it, thoughtfully articulated to capitalize on his limitless flexibility while turning him into a crawling tank.  In the space of a few moments, the transformation is complete and the newly formed Crawl Wyrm before you shakes its mighty fanged head to clarify his perception of an abruptly new reality.  You nod to your very own living weapon, indicating that he should ready himself for war.");
 						story.eventFlags.caterpillar_wyrm = true;
 						story.subtractFromCharacterQuality("moleWhole", 10);
-						story.subtractFromCharacterQuality("sanity", 25);
-						system.doLink("basement1_fuzzy_caterpillar_hub");
+						if(!story.subtractFromCharacterQuality("sanity", 25)) {
+							system.doLink("basement1_fuzzy_caterpillar_hub");
+						}
 					},
 					optionText: "His useless fuzz is almost gone... finish what the Yawning God began and help the caterpillar realize his jagged destiny!"
 				}
@@ -1119,8 +1134,9 @@ undum.game.situations = {
 						story.writeParagraph("With a little push and a few stitches in the fabric of spacetime, reality spins off on a friendlier vector: the caterpillar gasps as the black veins beneath his bald flesh recede and a clamness settles over his being.  Fuzz in alternating strips of cool autumn auburn and cozy-hearth warm gold cover his segments, in fuller proportions than ever before!  He wraps his entire length around you in The Woolliest Hug, and plants a grateful kiss on your brow.");
 						story.eventFlags.caterpillar_woolly = true;
 						story.addToCharacterQuality("moleWhole", 5);
-						story.subtractFromCharacterQuality("sanity", 20);
-						system.doLink("basement1_fuzzy_caterpillar_hub");
+						if(!story.subtractFromCharacterQuality("sanity", 20)) {
+							system.doLink("basement1_fuzzy_caterpillar_hub");
+						}
 					},
 					optionText: "What once was fuzzy can be made so again - bring peace to your scrunchedy fren and restore his wonderful woolly worm form!"
 				}
@@ -1135,8 +1151,9 @@ undum.game.situations = {
 						story.writeParagraph("The newly forged butterfly groans in agony, giving his wings an experimental flap.  There's not even enough room in the cavern to fully unfurl them, and he screams as they're bent by the entombing earth.  \"What've you done, mole?!  I can't escape this place with these wings.  I'll wither to nothing but pain locked away in here!\"");						
 						// slight hit to shovelry since the player should have realized this would not be great underground AND is, as stated, a blighted transformation
 						story.subtractFromCharacterQuality("moleWhole", 2);
-						story.subtractFromCharacterQuality("sanity", 10);
-						system.writeChoices(["dark_mantle_caterpillar_entombed_flight_observation", "dark_mantle_caterpillar_entombed_flight_liberation"]);
+						if(!story.subtractFromCharacterQuality("sanity", 10)) {
+							system.writeChoices(["dark_mantle_caterpillar_entombed_flight_observation", "dark_mantle_caterpillar_entombed_flight_liberation"]);
+						}
 					},
 					optionText: "Perhaps you should nudge along his Becoming -- help him out of his blighted miserable molt by accelerating his transformation, after which he can fly free!"
 				}
