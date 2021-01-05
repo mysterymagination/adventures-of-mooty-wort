@@ -565,7 +565,7 @@ undum.game.situations = {
 							} catch(err) {
 								console.log("read_opal_scrawl; exception caught: "+err);
 							}
-						}
+						},
 						"take_eyelash": function (character, system, action) {
 							try {
 								if(action) {
