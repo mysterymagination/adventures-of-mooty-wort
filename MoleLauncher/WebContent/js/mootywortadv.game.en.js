@@ -534,6 +534,7 @@ undum.game.situations = {
 						"examine_oracle_opal": function (character, system, action) {
 							try {
 								if(action) {
+									// todo: add commentary scrawled in blood below the poem saying "'For the sake of sanity itself, humor the one who comes when the last light goes out!  He has a powerful ward that will help you face the impossibilities to come... remember, he wants--' the annotation slides off into an incomprehensible smear of blood thereafter.  You note, however, that there is a crude image of a king chess piece scratched into the stone above the word 'one' and a knight over 'you'." 
 									system.write(
 											"<p>Beneath the nakedest molerat's pathetic pawing and the resultant trails of dried blood you can make out an archaic script carved into the gem.  You could have sworn at first glance that it was unintelligible, but as you gaze longer it seems to resolve into the familiar common script of Underwere, if a bit more formal and stuffy than you're used to. It reads: </p>\
 											<div class='featured_text_centered'>\
@@ -542,7 +543,7 @@ undum.game.situations = {
 											Take of my flesh a horned crown<br />\
 											'Neath sea of night all light shall drown\
 											</div>\
-											<p>A quiver runs down your spine as you read these words, and something atavistic in your innermost being stirs.  Peering at the edges of the gem, where it is hidden again by impassable slate, you can make out what could be a fold of flesh with minute slots that suggest hair follicles.  An eyelid, perhaps, and the gem itself a gargantuan eye?</p>"
+											<p>A quiver runs down your spine as you read these words, and something atavistic in your innermost being stirs.  Peering at the edges of the gem, where it is hidden again by impassable slate, you can make out what could be a fold of flesh with minute slots that suggest hair follicles.  An eyelid, perhaps, and the gem itself a gargantuan eye?  On the inside of the fold, you can just make out <a href='./read_opal_scrawl'>minute scrawling</a> that looks like words written in blood, and haste.</p>"
 											); 
 									if(!undum.game.storyViewController.eventFlags.last_lash_taken) {
 										system.write(
@@ -555,6 +556,16 @@ undum.game.situations = {
 								console.log("examine_oracle_opal; error occurred: "+err);
 							}
 						},
+						"read_opal_scrawl": function(character, system, action) {
+							try {
+								if(action) {
+									undum.game.storyViewController.writeParagraph("Squinting carefully, you read the tiny script: 'For the sake of sanity itself, humor the one who comes when the last light goes out!  He has a powerful ward that will help you face the impossibilities to come.  Take care, he's quick to violent anger.  Whatever you do, bear in mind that he wants--' the annotation slides off into an incomprehensible smear of ancient blood like rust on the gears of history thereafter.  You note, however, that there is a crude image of a king chess piece scratched into the stone above the word 'one' and a knight over 'you'.");
+									undum.game.storyViewController.jumpToNewContent();
+								}
+							} catch(err) {
+								console.log("read_opal_scrawl; exception caught: "+err);
+							}
+						}
 						"take_eyelash": function (character, system, action) {
 							try {
 								if(action) {
@@ -621,9 +632,8 @@ undum.game.situations = {
 		/**
 		 * The grue is like a more evil cheschire cat entity, whimsical and ambivalent, but with a definite agenda -- it wants The Yawning God to be toppled that its own dominion might expand throughout The Deepness.  It cares nothing for the surface world, and while dark ambition is its core motivator it does experience a sort of muted empathy for other Underwere.  This means it appreciates amiability indicators as well as resonant curiosity about The Deepness and its nature. 
 		 * 
-		 * The purpose of the conversation, in addition to flavor, is to decide whether the grue will give the mole his Odditine Obol.  This item reduces the sanity damage from The Encounter by 25%, and the grue will only gift it to one he believes will help him achieve his own end -- namely to remove The Yawning God without taking its place, and not proccing as a credible threat to the Grue's reign.  He's looking for a stalwart mole unafraid of eldritch horror but for whom such things hold at most a passing interest, who is also strong enough to vanquish The Yawning God.  If the mole seems either a fan of keeping the crown for himself OR too good for his own good, the grue will attack him after he vanquishes The Yawning God (easter egg finaler boss!).
+		 * The purpose of the conversation, in addition to flavor, is to decide whether the grue will give the mole his Odditine Obol.  This item multiplies res by 2, which crucially cuts sanity damage in half, and the grue will only gift it to one he believes will help him achieve his own end -- namely to remove The Yawning God without taking its place, and not proccing as a credible threat to the Grue's reign.  He's looking for a stalwart mole unafraid of eldritch horror but for whom such things hold at most a passing interest, who is also strong enough to vanquish The Yawning God.  If the mole seems either a fan of keeping the crown for himself OR too good for his own good, the grue will attack him after he vanquishes The Yawning God (easter egg finaler boss!).
 		 */
-		// todo: at the end of Grue convo that either gets the Grue as the finaler boss and/or gets the Odditine Obol, moleWhole increments
 		"basement2_grue_hub": new undum.SimpleSituation(
 				"",
 				{
