@@ -165,7 +165,9 @@ export class OdditineObol extends Equipment {
 		super();
 		this.id = "odditine_obol";
 		this.name = "Odditine Obol";
-		this.descriptor = {}
+		this.descriptor = {
+				"descriptionString": "The "+this.name+" glistens in the molelight, subtley hypnotic.  Grasping it close helps to focus your mind and ward off the encroaching howl of hunting madness that hounds you... that's normal, right?"
+		}
 		this.resBuf = 2;
 	}
 	/**

@@ -643,7 +643,7 @@ undum.game.situations = {
 								// Grue cares nothing about the mole at this point and thus has no reason to kill him, but is also intrigued by his position on Darkness
 								undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 								// give character the obol
-								undum.game.itemManager.addItem(character.mole, new Items.OdditineObol());
+								undum.game.itemManager.addEquipment(character.mole, new Items.OdditineObol());
 								// send the mole back to molerat hub
 								system.doLink("basement2_hub");
 							} else if (character.sMoleMajorDestiny === "king of the deep") {
