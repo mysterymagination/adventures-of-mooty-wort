@@ -494,7 +494,7 @@ undum.game.situations = {
 						const story = undum.game.storyViewController;
 						// sting and stab physically and mentally; the more the mole has bonded with her, the worse it hurts the ol' mole mind
 						if(!story.subtractFromCharacterQuality("health", story.charactersDict.mole.stats.maxHP * 0.1) 
-								&& story.subtractFromCharacterQuality("sanity", story.charactersDict.mole.stats.maxSanity * Math.max(story.eventCount.daughter_ooze_conversations / 10.0, 0.1))) {
+								&& !story.subtractFromCharacterQuality("sanity", story.charactersDict.mole.stats.maxSanity * Math.max(story.eventCount.daughter_ooze_conversations / 10.0, 0.1))) {
 							system.doLink("basement1_ochre_ooze_hub");
 						}
 					}
