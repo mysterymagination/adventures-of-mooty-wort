@@ -435,9 +435,9 @@ undum.game.situations = {
 								system.write(
 										"<p>Atop its crystal platform, the <a href='./check_ooze'>ochre ooze</a> quivers and bubbles and burbles with interest.  Hunger will erode its curiosity, however, and with it will go civility.  Best hurry up and get gone from here.</p>"
 								);
-								if(Libifels.isItemInInventory(character.mole, "rusty_urn")) {
-									undum.game.storyViewController.writeParagraph("The rusty urn you got from the spider vibrates violently in your compartment; its frantic vibrations seem to be tugging you away from the writhing monstrous mass and you're almost certain you hear a smol voice whispering \"Please, no!\".");
-								}
+							}
+							if(Libifels.isItemInInventory(character.mole, "rusty_urn")) {
+								undum.game.storyViewController.writeParagraph("The rusty urn you got from the spider vibrates violently in your compartment; its frantic vibrations seem to be tugging you away from the writhing monstrous mass and you're almost certain you hear a smol voice whispering \"Please, no!\".");
 							}
 						}
 						system.writeChoices(system.getSituationIdChoices("#ooze_oratory").concat("basement1_hub"));
@@ -495,6 +495,8 @@ undum.game.situations = {
 						// sting and stab physically and mentally; the more the mole has bonded with her, the worse it hurts the ol' mole mind
 						if(!story.subtractFromCharacterQuality("health", story.charactersDict.mole.stats.maxHP * 0.1) 
 								&& !story.subtractFromCharacterQuality("sanity", story.charactersDict.mole.stats.maxSanity * Math.max(story.eventCount.daughter_ooze_conversations / 10.0, 0.1))) {
+							
+							story.subtractFromCharacterQuality("moleWhole", 2 * Math.max(story.eventCount.daughter_ooze_conversations, 1));
 							system.doLink("basement1_ochre_ooze_hub");
 						}
 					}
