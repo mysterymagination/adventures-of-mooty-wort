@@ -441,7 +441,7 @@ export class RustyUrn extends Item {
 					"mooty.*wort": this.daughterOozeConvo
 				}
 			],
-			"descriptionString": this.name+" wiggles gently when left to its own devices and sloshes worryingly when touched."
+			"descriptionString": this.name+" wiggles gently when left to its own devices and sloshes excitedly when touched.  A faint whimsical humming floats merrily up from the urn at all times, and an amorphous silhouette dances to and fro inside."
 		}	
 	}
 	/**
