@@ -559,7 +559,7 @@ undum.game.situations = {
 						"read_opal_scrawl": function(character, system, action) {
 							try {
 								if(action) {
-									undum.game.storyViewController.writeParagraph("Squinting carefully, you read the tiny script: 'For the sake of sanity itself, humor the one who comes when the last light goes out!  He has a powerful ward that will help you face the impossibilities to come.  Take care, he's quick to violent anger.  Whatever you do, bear in mind that he wants--' the annotation slides off into an incomprehensible smear of ancient blood like rust on the gears of history thereafter.  You note, however, that there is a crude image of a king chess piece scratched into the stone above the word 'one' and a knight over 'you'.  It's a lucky thing all moles are chess enthusiasts!");
+									undum.game.storyViewController.writeParagraph("Squinting carefully, you read the tiny script: 'For the sake of sanity itself, humor the one who comes when the last light goes out!  He has a powerful ward that will help you face the impossibilities to come.  Take care, he's quick to violent anger.  Whatever you do, bear in mind that he wants--' the annotation slides off into an incomprehensible smear of ancient blood like rust on the gears of history thereafter.  You note, however, that there is a crude image of a king chess piece <span style='font-family:pecita'>♚</span> scratched into the stone above the word 'one' and a knight <span style='font-family:pecita'>♞</span> over 'you'.  It's a lucky thing all moles are chess enthusiasts!");
 									undum.game.storyViewController.jumpToNewContent();
 								}
 							} catch(err) {

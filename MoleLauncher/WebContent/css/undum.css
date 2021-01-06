@@ -596,3 +596,8 @@ img.float_left {
   from {background-color: #f08080;}
   to {background-color: red;}
 }
+
+@font-face {
+  font-family: pecita;
+  src: url(../fonts/Pecita.otf);
+}
