@@ -1171,7 +1171,7 @@ undum.game.situations = {
 						const story = undum.game.storyViewController;
 						// describe mole frenziedly fixing his mistake
 						story.writeParagraph("\"Sorry sorry sorry sorry!\" you chant as you quickly suss out the quantum wave functions that must be collapsed to shove your friend into a timeline where you didn't turn him into a butterfly underground.");
-						story.addToCharacterQuality("moleWhole", 2.5);
+						story.addToCharacterQuality("moleWhole", 1);
 						system.doLink("dark_mantle_caterpillar_fuzzy");
 					},
 					optionText: "Fixitfixitfixitfixit!  Fixitfixitfixitfixit!"
