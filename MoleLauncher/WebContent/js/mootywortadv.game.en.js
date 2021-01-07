@@ -675,7 +675,7 @@ undum.game.situations = {
 									undum.game.storyViewController.eventFlags.grue_challenge_activated = true;
 									// give character the obol
 									// todo: creating items on the fly like this that are supposed to be unique is sloppy; it should be the case that we can only reach this gameplay path once, but the item instance sanity shouldn't depend on that.
-									undum.game.itemManager.addItem(character.mole, new Items.OdditineObol());
+									undum.game.itemManager.addEquipment(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								} else if (character.sMoleMinorDestiny === "groovy") {
@@ -686,7 +686,7 @@ undum.game.situations = {
 									// flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The Yawning God
 									undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 									// give character the obol
-									undum.game.itemManager.addItem(character.mole, new Items.OdditineObol());
+									undum.game.itemManager.addEquipment(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								} else if (character.sMoleMinorDestiny === "paladin") {
@@ -731,7 +731,7 @@ undum.game.situations = {
 									// Grue likes the mole genuinely and wants him to survive
 									undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 									// give character the obol
-									undum.game.itemManager.addItem(character.mole, new Items.OdditineObol());
+									undum.game.itemManager.addEquipment(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								}

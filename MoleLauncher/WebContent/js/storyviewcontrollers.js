@@ -179,6 +179,7 @@ export class UndumStoryViewController extends StoryViewController {
 			this.charactersDict.mole.stats.shovelry += value;
 			// every 10 points of shovelry increases moleWhole by 1 rank
 			this.undumSystem.setQuality("moleWhole", Math.floor(this.charactersDict.mole.stats.shovelry/10.0));
+			console.log("addToCharacterQuality; shovelry is now "+this.charactersDict.mole.stats.shovelry);
 			break;
 		}
 	}
@@ -210,6 +211,7 @@ export class UndumStoryViewController extends StoryViewController {
 			this.charactersDict.mole.stats.shovelry -= value;
 			// every 10 points of shovelry lost decreases moleWhole by 1 rank
 			this.undumSystem.setQuality("moleWhole", Math.floor(this.charactersDict.mole.stats.shovelry/10.0));
+			console.log("subtractFromCharacterQuality; shovelry is now "+this.charactersDict.mole.stats.shovelry);
 			return false;
 		}
 	}
