@@ -631,7 +631,6 @@ export class ShadowFlare extends Spell {
 	    targetChar.stats["hp"] -= this.dmg * targetChar.elemAffinities[this.element];
 	    // ensure we didn't heal the Grue up to an impossible value... todo: should be clamping on stats everywhere
 	    targetChar.stats["hp"] = Libifels.clampInRange(targetChar.stats["hp"], 0, targetChar.stats["maxHP"]);
-	    console.log(targetChar.name+" hp is now "+targetChar.stats["hp"]+" after clamping");
 	    targetChar.stats["res"] -= 10;
 
 	    // MP cost

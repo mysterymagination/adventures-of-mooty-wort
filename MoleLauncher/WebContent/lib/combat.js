@@ -114,15 +114,12 @@ export class Combat {
                     } 
                 	
                     effect.tickDown();
-                    console.log("ticking down "+enemyCharacter.name+"'s "+effect.name+" to "+effect.ticks);
-                    // lt 0 because we don't want to count the turn in which the effect is applied
                     if (effect.ticks <= 0) {
                         // reverse the effect now that it is over
                         effect.reverseEffect(enemyCharacter);
                     } else {
                     	// apply same-turn interrupts etc.
                     	if (effect.id === "stun") {
-                        	console.log(enemyCharacter.name+" takes no action due to "+enemyCharacter.getPronoun_possessive()+" limbs being paralyzed by corruscating electricity!");
                         	this.currentAISelectedAbility = new PassStunned();
                         }
                     }
@@ -145,7 +142,6 @@ export class Combat {
                     }
 
                     effect.tickDown();
-                    console.log("ticking down "+playerCharacter.name+"'s "+effect.name+" to "+effect.ticks);
                     if (effect.ticks <= 0) {
                         // reverse the effect now that it is over
                         effect.reverseEffect(playerCharacter);

@@ -311,7 +311,6 @@ undum.game.situations = {
 						sLoveyDoveyHeading: "A tidal wave of chiton, fang, and enthusiasm crash into you, wrapping you in an exponential hug!",
 						check_spider: function(character, system, action) {
 							try {
-								console.log("check_spider; the action says "+action);
 								if(action) {
 									const itemManager = undum.game.itemManager;
 									if(!itemManager.activeItemUseOn("giant spider")) {
@@ -370,7 +369,6 @@ undum.game.situations = {
 						 */
 						updateOptionText: function () {
 							const actionsObj = undum.game.situations.basement1_bulbous_spider_hub.actions;
-							console.log("updateOptionText; bRolling says: " + actionsObj.bRolling);
 							if (actionsObj.bRolling) {
 								undum.game.situations.basement1_bulbous_spider_hub.optionText = actionsObj.sRollingDesc;
 							} else {
@@ -399,9 +397,7 @@ undum.game.situations = {
 
 							// now that she's been unrolled, we want to update the flag and option text
 							undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling = false;
-							//undum.game.situations.basement1_bulbous_spider_hub.actions.updateOptionText();
-							console.log("spider rolling status after we've stopped her rolling: " + undum.game.situations.basement1_bulbous_spider_hub.bRolling);
-	
+							
 							// player now has the ooze urn... hooray?
 							undum.game.itemManager.addItem(undum.game.storyViewController.charactersDict.mole, new Items.RustyUrn());
 							character.stringArrayInventory.push("rusty_urn");
@@ -409,7 +405,6 @@ undum.game.situations = {
 						}
 					},
 					canView: function (character, system, host) {
-						console.log("spider rolling status is " + undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling);
 						return undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling;
 					},
 					optionText: "Step in and lend a massive digging claw to interrupt the cycle (she's a little thicc so it could be painful)",
@@ -889,7 +884,6 @@ undum.game.situations = {
 							undum.game.itemManager.feedbackContext = "combat";
 							mech.enterCombat({playerParty: [story.charactersDict["mole"]], enemyParty: [story.charactersDict["yawning_god"]], musicUrl: "audio/music/yawning_god_theme.wav", persistStats: true, resultFn: resolve}); 
 						}).then((playerVictory) => {
-							console.log("thenning PromiseOfWar; playerVictory is "+playerVictory);
 							undum.game.itemManager.feedbackContext = "story";
 							if(playerVictory) {
 								var yawningGodVictoryString = "The behemoth out of all the world's collective nightmare falls before your mighty digging claws, naught but a smoking ruin.  Your equally mighty tummy rumbles as the cavern is suffused with the scent of roasted fish-thing.";
@@ -917,7 +911,6 @@ undum.game.situations = {
 								return promiseOfDeath;
 							}
 						}).then((resultString) => {
-							console.log("thenning PromiseOfDarkness; resultString is "+resultString);
 							switch(resultString) {
 							case "death":
 								//system.doLink('death'); // we'll link up to death in the health quality processing over in UndumStoryViewController

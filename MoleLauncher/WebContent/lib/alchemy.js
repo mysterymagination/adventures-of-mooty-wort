@@ -34,15 +34,12 @@ export class Defended extends StatusEffect {
 		Defended.prototype.imageUrl = 'images/status_effects/defended_effect.png';
 	}
 	effect(targetChar) {
-	    //console.log("defending mole's core def is "+targetChar.coreStats.def+" and core res is "+targetChar.coreStats.res);
 	    targetChar.stats["def"] *= 2;
 	    targetChar.stats["res"] *= 2;
-	    //console.log("defended mole's def is now "+targetChar.stats.def+" and res is "+targetChar.stats.res);
 	}
 	reverseEffect(targetChar) {
 	    targetChar.stats["def"] = targetChar.coreStats.def;
 	    targetChar.stats["res"] = targetChar.coreStats.res;
-	    //console.log("defended no longer, mole's def is now "+targetChar.stats.def+" and res is "+targetChar.stats.res);
 	}
 }
 
@@ -67,12 +64,10 @@ export class WoolilyShielded extends StatusEffect {
 	    targetChar.stats["res"] += Libifels.prettyDarnRound(
 	    	Math.max(Math.max(this.sourceCharacter.stats["def"], this.sourceCharacter.stats["res"]), 1) * 2
 	    );
-	    //console.log("woolily shielded mole def is now "+targetChar.stats.def+"; core def is "+targetChar.coreStats.def);
 	}
 	reverseEffect(targetChar) {
 	    targetChar.stats["def"] = targetChar.coreStats.def;
 	    targetChar.stats["res"] = targetChar.coreStats.res;
-	    //console.log("woolily shielded no longer, the mole's def is now "+targetChar.stats.def);
 	}
 }
 
@@ -165,7 +160,6 @@ export class Regen extends StatusEffect {
 		Regen.prototype.imageUrl = 'images/status_effects/regen_effect.png';
 	}
 	effect(targetChar) {
-	    //console.log("Wounds close and gaping wounds knit themselves shut as " + targetChar.name + " regenerates " + targetChar.stats["res"] + " HP!");
 	    targetChar.stats["hp"] += targetChar.stats["res"];
 	}
 	reverseEffect(targetChar) {}

@@ -257,7 +257,6 @@ class CombatViewController {
 		request.open('GET', spell.fxDataFileName);
 		request.responseType = 'json';
 		request.onload = function() {
-			console.log("XHR status says "+request.status);
 			if(request.status == 200) {
 				var overlayCanvas = rpgMechHandle.showSpellEffectOverlay();
 				// since we indicated responseType json, our response should already by a JS object defining our FX data
@@ -478,20 +477,15 @@ class CombatViewController {
 	 *        icon stack has been removed
 	 */
 	processStatusEffectStack(character, statusEffect, tickedOffEffectIds) {
-		console.log(statusEffect.id+" has "+statusEffect.ticks+" ticks remaining");
 		var targetCanvasContainer = this.characterUiDict[character.id].canvasContainerElement;
 		var stackId = character.id+'_'+statusEffect.id+'_icon_stack';
 		var stackDiv = document.getElementById(stackId);
 		if(stackDiv) {
-			console.log("status stack; removing stack div "+stackDiv+" with id "+stackId);
 			stackDiv.remove();
-		} else {
-			console.log("status stack; no stack div to remove for id "+stackId);
-		}
+		} 
 		// only bother with icon images if remaining duration is gt 0; else we'll just remove the stack
 		// and do nothing more
 		if(statusEffect.ticks > 0) {
-			console.log("status stack; preparing to add stackdiv for "+statusEffect.id+", who still has "+statusEffect.ticks+" ticks left");
 			// load up the image icon; it's dupped for each icon in the stack, so we only need
 			// the one resource
 			var effectImage = new Image();
@@ -502,29 +496,21 @@ class CombatViewController {
 				// load cb timeline
 				var stackDiv = document.getElementById(stackId);
 				if(stackDiv) {
-					console.log("status stack; inside load cb, removing stack div "+stackDiv+" with id "+stackId);
 					stackDiv.remove();
-				} else {
-					console.log("status stack; no stack div to remove for id "+stackId);
-				}
+				} 
 				// need to check again that we haven't expired between the image req and the actual load;
 				// that can happen pretty easily between bottom of a round and top of the next round -- see issue #16
 				if(statusEffect.ticks > 0) {
 					// create the DIV that will be our stack column
-					console.log("status stack; about to create a new stack with id "+stackId+" and "+(document.getElementById(stackId) !== null ? "whoops there already is one... toss another comment onto the issue #19 fire" : "there isn't one already so we're ok"));
 					stackDiv = document.createElement('div');
 					stackDiv.id = stackId;
 					stackDiv.className = 'character-status-effect-stack';
 					targetCanvasContainer.appendChild(stackDiv);
-					console.log("status stack; adding stackdiv for "+statusEffect.id+", who still has "+statusEffect.ticks+" ticks left, with offset dimens "+stackDiv.offsetWidth+"x"+stackDiv.offsetHeight+
-							" to targetcanvascontainer with offset dimens "+targetCanvasContainer.offsetWidth+"x"+targetCanvasContainer.offsetHeight);
 					// offset stack div from left by its index in the character's status effect array
 					var effectIndex = character.statusEffects.findIndex(element => {
 						return element.id === statusEffect.id;
 					});
-					console.log("status stack; effect with id "+statusEffect.id+(effectIndex === -1 ? " was not found in the status effect array" : "was found at "+effectIndex+" of the status effect array"));
 					stackDiv.style.left = (stackDiv.offsetWidth * effectIndex)+'px';
-					console.log("status stack; stack div left is "+stackDiv.style.left+" based on offsetWidth "+stackDiv.offsetWidth+" * effect index "+effectIndex);
 					for(let durationIdx = 0; durationIdx < statusEffect.ticks; durationIdx++) {
 						// create our icon canvasi tag and set its src to the Image we loaded earlier
 						let icon = document.createElement('canvas');
@@ -537,11 +523,8 @@ class CombatViewController {
 						icon.width = icon.offsetWidth;
 						icon.height = icon.offsetHeight;
 						icon.getContext('2d').drawImage(effectImage, 0, 0, icon.offsetWidth, icon.offsetHeight);
-						console.log("status stack; drawing duration index "+durationIdx+" of status effect stack for "+statusEffect.id+" with "+statusEffect.ticks+" ticks remaining");
 					}
-				} else {
-					console.log("status stack; status effect icon for "+statusEffect.id+" is not needed as the effect has expired");
-				}
+				} 
 			});
 			effectImage.src = statusEffect.imageUrl;
 		} else {
@@ -810,7 +793,6 @@ class CombatViewController {
 			}
 			for(const id of tickedOffEffectIds) {
 				// we're done with this status effect in the ui, so go ahead and remove from model
-				console.log("status stack; removing status "+id+" from "+player.name);
 				Libifels.removeStatusEffectById(player, id);
 			}
 			tickedOffEffectIds.splice(0, tickedOffEffectIds.length);
@@ -821,7 +803,6 @@ class CombatViewController {
 			}
 			for(const id of tickedOffEffectIds) {
 				// we're done with this status effect in the ui, so go ahead and remove from model
-				console.log("status stack; removing status "+id+" from "+enemy.name);
 				Libifels.removeStatusEffectById(enemy, id);
 			}
 			tickedOffEffectIds.splice(0, tickedOffEffectIds.length);
@@ -1267,7 +1248,6 @@ class CombatViewController {
 			endAudio.src = 'audio/music/Victory.mp3';
 			// display player victory message and battle exit UI
 			await this.displayResult("🦔 evil is vanquished and the Deepness saved for all time🦉!", endAudio);
-			console.log("handleCombatResult; calling result of combat -> story promise in player victory case");
 			this.resultFn(true);
 			break;
 		case Combat.CombatResultEnum.enemyVictory:
@@ -1275,7 +1255,6 @@ class CombatViewController {
 			endAudio.src = 'audio/music/The World Stood Still.mp3';
 			// display player defeat message and game over UI, ideally a dark soulsy 'you died'
 			await this.displayResult("💀...and with the mole's death, darkness swept o'er all the land...💀", endAudio);
-			console.log("handleCombatResult; calling result of combat -> story promise in player death defeat case");
 			this.resultFn(false);
 			break;
 		case Combat.CombatResultEnum.draw:
@@ -1283,7 +1262,6 @@ class CombatViewController {
 			endAudio.src = 'audio/music/The World Stood Still.mp3';
 			// display draw message and battle exit UI
 			await this.displayResult("💥the titanic clash of the mole and the mighty devil from the depths consumes them both in a conflagration quenched only by the tsunami of shed blood💥", endAudio);
-			console.log("handleCombatResult; calling result of combat -> story promise in draw defeat case");
 			this.resultFn(false);
 			break;
 		default:

@@ -278,12 +278,9 @@ export class UndumStoryViewController extends StoryViewController {
 	 * Callback for DOM mutation to the style attr of the content_wrapper div
 	 */
 	checkTranscriptDisplay() {
-		// todo: when we save the Y pos, we've already gone to display none so the scrollheight comes up as 0...
 		const prevDisplay = this.transcriptDisplayProp;
 		this.transcriptDisplayProp = document.getElementById('content_wrapper').style.display;
-		console.log("checkTranscriptDisplay; display prop says "+this.transcriptDisplayProp);
 		if(prevDisplay === 'none' && this.transcriptDisplayProp === 'block') {
-			console.log("checkTranscriptDisplay; display prop transition from none to block, so restoring Y pos to "+this.transcriptYPos);
 			this.restoreStoryYPos();
 		}
 	}

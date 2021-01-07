@@ -659,8 +659,6 @@ export class YawningGod extends Character {
                 } // end if abl needs a target
                 /// end target installation block ///
                 
-                console.log("The Yawning God's chosen abl is " + chosenAbility.name
-                		+ (chosenTarget ? ", targeting "+chosenTarget.name : ""));
                 combat.currentAISelectedAbility = chosenAbility;
                 combat.currentTargetCharacter = chosenTarget;
                 return chosenAbility;
