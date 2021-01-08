@@ -222,7 +222,7 @@ undum.game.situations = {
 						const story = undum.game.storyViewController;
 						story.writeParagraph("The caterpillar stops wiggling when you speak and his head twisssssts ever so slowly around to face you... 270 degrees.  He's an invertebrate and all, but that's not really a thing caterpillars usually do, right?  \"Greetings, moleson.  I am better than ever before, for today I know the glory of the Rapturous Rumble!\"");
 						story.writeParagraph("He tilts his head slowly and jerkily, studying you from every extant angle as well as some invented ones that shouldn't be.  Your eyes have trouble following his physically incongruous undulations.  \"I do greatly appreciate the concern of the scion, tho; take this, and may it help you realize your destiny!\"  A vial of irridescent glowing liquid appears from somewhere with a troubling squelch, and he proffers it to you.  It's only a little drippy, and the smell will probably go away.");
-						story.addToCharacterQuality("moleWhole", 2);
+						story.addToCharacterQuality("moleWhole", 3);
 						undum.game.itemManager.addItem(character.mole, new Items.PuddleOManaPotion());
 						story.eventFlags.caterpillar_concern_mana_pot_got = true;
 						// the cost of befriending madness is... fairly predictable
@@ -1160,7 +1160,7 @@ undum.game.situations = {
 						// describe restoring the caterpillar to his old sunny, fuzzy self
 						story.writeParagraph("With a little push and a few stitches in the fabric of spacetime, reality spins off on a friendlier vector: the caterpillar gasps as the black veins beneath his bald flesh recede and a clamness settles over his being.  Fuzz in alternating strips of cool autumn auburn and cozy-hearth warm gold cover his segments, in fuller proportions than ever before!  He wraps his entire length around you in The Woolliest Hug, and plants a grateful kiss on your brow.");
 						story.eventFlags.caterpillar_woolly = true;
-						story.addToCharacterQuality("moleWhole", 4);
+						story.addToCharacterQuality("moleWhole", 5);
 						if(!story.subtractFromCharacterQuality("sanity", 25)) {
 							system.doLink("basement1_fuzzy_caterpillar_hub");
 						}
