@@ -678,7 +678,7 @@ undum.game.situations = {
 									system.write(
 											"<p>Silence reigns for an uncomfortable span.  Soon your fur stands on end as you get the distinct impression that you are being heavily considered by an unknown and likely dangerous observer; it's the same feeling you get when passing a serpent's den.  Finally, a humid sigh issuing from much, much too close passes over you and frizzes your fur 'til you're a spherical fluffball.  \"How interesting, moleson.  Well, they always say those who do not desire leadership are the best leaders; don't pass up the opportunity too lightly if it comes your way... Take this coin with you -- it will help you to ground your mind even when psychic gravity turns off!\"</p><p>A heavy weight drops into your compartment, and in the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
 									)
-									// flip toggles to say that grue wants to be finaler boss but will give obol since the mole sounds worthy of confronting The Yawning God
+									// flip toggles to say that grue does not want to be finaler boss but will give obol since the mole sounds worthy of confronting The Yawning God
 									undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
 									// give character the obol
 									undum.game.itemManager.addEquipment(character.mole, new Items.OdditineObol());
@@ -693,6 +693,18 @@ undum.game.situations = {
 									// No obol this time since the Grue will recognize the mole as a dangerous enemy and would prefer that he go mad and fail 
 									// to inherit The Yawning God's power rather than become a potentially insurmountable foe
 									undum.game.storyViewController.eventFlags.grue_challenge_activated = true;
+									// send the mole back to molerat hub
+									system.doLink("basement2_hub");
+								} else if (character.sMoleMinorDestiny === "knight") {
+									// grue follow-up for a promising black knight
+									system.write(
+											"<p>A humming emanates from the shadows all around you as something unseen takes a thoughtful moment. \"I had not considered the histrionic aspect of absolute power; I suppose we shy creatures of the depths tend to avoid such things, eh?\"  A sudden rush of air like a stormfront's salutation and suddenly something very large but still unseen is directly in front of your face -- you can tell by the hot breath, which smells of rotting meat and what must have been a fine cheese indeed, and leaves foul dew upon your fur.  You'll need a good soak in the lava tube hotsprings after this.  Maybe that Spider'd like to come along...  A booming voice that blows back your fur and echoes maddeningly inside your skull interrupts your reverie, \"Have no fear little mole.  Serve your beloved deepness well and truly, and soon there shall be no light left anywhere to pollute the darkness!\"</p><p>In the next instant you are beside the Nakedest Molerat again.  The tunnel beneath the eye is gone; not collapsed but disappeared.  Digging in the area yields nothing but dirty claws.</p>"
+									)
+									// flip toggles to say that grue does not want to be finaler boss since the mole seems a likely knight, and he will grant obol for the same reason
+									undum.game.storyViewController.eventFlags.grue_challenge_activated = false;
+									// give character the obol
+									// todo: creating items on the fly like this that are supposed to be unique is sloppy; it should be the case that we can only reach this gameplay path once, but the item instance sanity shouldn't depend on that.
+									undum.game.itemManager.addEquipment(character.mole, new Items.OdditineObol());
 									// send the mole back to molerat hub
 									system.doLink("basement2_hub");
 								}
@@ -836,6 +848,20 @@ undum.game.situations = {
 					},
 					optionText: function (character, system, situation) {
 						return "I'm not one for rulership; kinda too much trouble TBH.  If I had to tho, I guess I'd strive for peaceful diplomatic relations between the Layers of The Deepness and the surface.  Cooler heads should always prevail!"
+					},
+					tags: ["grue_gab_crown"]
+				}
+		),
+		"basement2_grue_convo_crown_servant": new undum.SimpleSituation(
+				"<p></p>",
+				{
+					enter: function (character, system, from) {
+						// mod character to reflect the moleson's desire to follow a strong leader
+						character.sMoleMinorDestiny = "knight";
+						system.doLink("basement2_grue_hub");
+					},
+					optionText: function (character, system, situation) {
+						return "I'm a simple mole, really.  I prefer to be a follower; my claws are for digging, not scratching out edicts and dictating the destiny of deep folk.  Much too much attention on leaders -- almost like being in a spotlight!  I prefer the shadows.  I would grant the crown to a leader I deemed worthy, and serve them with all the stalwart tenacity a mole can manage.  Which is a lot.";
 					},
 					tags: ["grue_gab_crown"]
 				}
