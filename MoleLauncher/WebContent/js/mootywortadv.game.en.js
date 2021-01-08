@@ -267,13 +267,10 @@ undum.game.situations = {
 				{
 					enter: function (character, system, from) {
 						const story = undum.game.storyViewController;
-						// todo: respond to darkmantle story switches
 						var sDesc = "";
-						// if we just entered for the first time, give the full deal
-						const actionsObj = undum.game.situations.basement1_bulbous_spider_hub.actions;
-						if (!actionsObj.bVisited) {
+						if (!story.eventFlags.spider_visited) {
 							sDesc = "As you shovel pebbles away from your questing snout, the vision of a rolly-polly spider struggling with some sort of urn enters your reality.  The urn is transparent and you can see a viscous rusty liquid sloshing lazily about inside.  It's sealed by a stone stopper that glows red as the heart of all magma when the spider strains against it.  Before you can speak, she slips on the slick soil and rolls onto her voluminous backside... and keeps rolling: the tunnel you've entered has a gentle but insistent curvature that seems just right to keep the poor arachnid rolling forever.  Well, not forever of course, as that would be physically impossible, but longer than a spider's lifespan so the point is kinda moot.";
-							actionsObj.bVisited = true;
+							story.eventFlags.spider_visited = true;
 						} else {
 							// dark mantle cases
 							if(story.eventFlags.spider_flashed) {
@@ -284,7 +281,7 @@ undum.game.situations = {
 								sDesc = "Your new best girlfriend fairly pounces on you as you enter her demesne, snuggling her infinite staring moleful eyes right up against your two soulful ones and tickling your noodle with her fangs.  She purrs (somehow) as you cuddle her close.";
 							} else {
 								// normal action details cases
-								if (actionsObj.bRolling) {
+								if (!story.eventFlags.spider_rescued) {
 									sDesc = "The poor dear is still helpless on her back; you could intervene if you wanted to be a gentlemole.";
 								} else {
 									sDesc = "Innumerable glittering eyes blacker than the void between stars gaze adoringly into your own beady two and the <a href='./check_spider'>giant spider</a> seems to creep closer without actually moving, as if drawn directly by your raw animal magnetism.  For a smoldery velvet fellow like yourself, this can be an issue with the ladies.";
@@ -302,8 +299,6 @@ undum.game.situations = {
 						system.writeChoices(system.getSituationIdChoices("#spider_sayings").concat("basement1_hub"));
 					},
 					actions: {
-						bVisited: false,
-						bRolling: true,
 						sRollingDesc: "The spider's clawed hooves dig furiously and fruitlessly at the air as she flounders...",
 						sUnrolledDesc: "The spider stares at you adoringly from innumerable eyes, each one sparkling like a dark gemstone in moonlight...",
 						sGibberingHeading: "The spider stares at nothing now, her world reduced to the memory of your mind-searing visage looming ever on the abyssal void's infinite horizon.",
@@ -345,8 +340,8 @@ undum.game.situations = {
 						 * Determines and returns the appropriate option text (choice title) for this situation
 						 */
 						calculateHeading: function () {
-							const actionsObj = undum.game.situations.basement1_bulbous_spider_hub.actions;
-							if (!actionsObj.bVisited) {
+							const story = undum.game.storyViewController;
+							if (!story.eventFlags.spider_visited) {
 								return "A massive spider rolls back and forth across the curve of the tunnel; her thicket of frantically scrabbling legs is strangely hypnotic.";
 							} else {
 								if(undum.game.storyViewController.eventFlags.spider_flashed) {
@@ -356,7 +351,7 @@ undum.game.situations = {
 								} else if(undum.game.storyViewController.eventFlags.spider_loved) {
 									return this.sLoveyDoveyHeading;
 								} else {
-									if (actionsObj.bRolling) {
+									if (!story.eventFlags.spider_rescued) {
 										return this.sRollingDesc;
 									} else {
 										return this.sUnrolledDesc;
@@ -368,8 +363,8 @@ undum.game.situations = {
 						 * Updates the host situation's optionText field
 						 */
 						updateOptionText: function () {
-							const actionsObj = undum.game.situations.basement1_bulbous_spider_hub.actions;
-							if (actionsObj.bRolling) {
+							const story = undum.game.storyViewController;
+							if (!story.eventFlags.spider_rescued) {
 								undum.game.situations.basement1_bulbous_spider_hub.optionText = actionsObj.sRollingDesc;
 							} else {
 								undum.game.situations.basement1_bulbous_spider_hub.optionText = actionsObj.sUnrolledDesc;
@@ -395,8 +390,8 @@ undum.game.situations = {
 						// need to wrap post-unrolled behavior in a possible death block as damage is dealt
 						if(!undum.game.storyViewController.subtractFromCharacterQuality("health", character.mole.stats.maxHP * 0.4)) {
 
-							// now that she's been unrolled, we want to update the flag and option text
-							undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling = false;
+							// now that she's been unrolled, we want to update the flag
+							undum.game.storyViewController.eventFlags.spider_rescued = true;
 							
 							// player now has the ooze urn... hooray?
 							undum.game.itemManager.addItem(undum.game.storyViewController.charactersDict.mole, new Items.RustyUrn());
@@ -405,7 +400,7 @@ undum.game.situations = {
 						}
 					},
 					canView: function (character, system, host) {
-						return undum.game.situations.basement1_bulbous_spider_hub.actions.bRolling;
+						return !undum.game.storyViewController.eventFlags.spider_rescued;
 					},
 					optionText: "Step in and lend a massive digging claw to interrupt the cycle (she's a little thicc so it could be painful)",
 					tags: ["spider_sayings"]
