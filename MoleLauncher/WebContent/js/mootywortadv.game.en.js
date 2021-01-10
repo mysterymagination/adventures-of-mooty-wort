@@ -222,7 +222,7 @@ undum.game.situations = {
 						const story = undum.game.storyViewController;
 						story.writeParagraph("The caterpillar stops wiggling when you speak and his head twisssssts ever so slowly around to face you... 270 degrees.  He's an invertebrate and all, but that's not really a thing caterpillars usually do, right?  \"Greetings, moleson.  I am better than ever before, for today I know the glory of the Rapturous Rumble!\"");
 						story.writeParagraph("He tilts his head slowly and jerkily, studying you from every extant angle as well as some invented ones that shouldn't be.  Your eyes have trouble following his physically incongruous undulations.  \"I do greatly appreciate the concern of the scion, tho; take this, and may it help you realize your destiny!\"  A vial of irridescent glowing liquid appears from somewhere with a troubling squelch, and he proffers it to you.  It's only a little drippy, and the smell will probably go away.");
-						story.addToCharacterQuality("moleWhole", 3);
+						story.addToCharacterQuality("moleWhole", 2.5);
 						undum.game.itemManager.addItem(character.mole, new Items.PuddleOManaPotion());
 						story.eventFlags.caterpillar_concern_mana_pot_got = true;
 						// the cost of befriending madness is... fairly predictable
@@ -1095,8 +1095,8 @@ undum.game.situations = {
 						story.writeParagraph("Setting aside your rage and dredging up mercy for the sake of your beloved Gel, you tear your eyes away from the vile and vulnerable ooze.  With a flourish of mighty digging claws, you cast a shimmering forcefield around the ooze's throne.  The field forms a beautiful swirling starscape mesh, far more glorious a prison than this vermin deserves, but still it rails and rages against its confines the instant they appear.");
 						story.writeParagraph("Not even the power of the legendary ooze can shake your cosmic construction, however, so in short order the ooze collapses into a blue puddle of defeat. \"Release me, mole!  You have no right to imprison a force of nature, a primal god such as we!\"  You turn your back on it disdainfully, and grin as its quaking tantrum resumes.  It will never starve, but hunger will gnaw at its core until the end of time.  Gel performs a wobbledy twirl in thanks, but seems a bit subdued as she catches sight of your glee.");
 						story.eventFlags.ooze_prisoner = true;
-						story.addToCharacterQuality("moleWhole", 4);
-						if(!story.subtractFromCharacterQuality("sanity", 10)) {
+						story.addToCharacterQuality("moleWhole", 2);
+						if(!story.subtractFromCharacterQuality("sanity", 35)) {
 							system.doLink("basement1_ochre_ooze_hub");
 						}
 					},
