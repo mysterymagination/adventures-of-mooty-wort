@@ -486,7 +486,7 @@ undum.game.situations = {
 						if(!story.subtractFromCharacterQuality("health", story.charactersDict.mole.stats.maxHP * 0.1) 
 								&& !story.subtractFromCharacterQuality("sanity", 10* Math.max(story.eventCount.daughter_ooze_conversations, 1))) {
 							
-							story.subtractFromCharacterQuality("moleWhole", 2 * Math.max(story.eventCount.daughter_ooze_conversations, 1));
+							story.subtractFromCharacterQuality("moleWhole", 2.5 * Math.max(story.eventCount.daughter_ooze_conversations, 1));
 							system.doLink("basement1_ochre_ooze_hub");
 						}
 					}
@@ -1040,7 +1040,7 @@ undum.game.situations = {
 						story.writeParagraph("The glimpse she caught of your majesty has shattered her mind to bouncing razor-edged fragments, rending her to bits from the inside out.  You don your mole-y disguise once more and leave her to her suffering.");
 						story.eventFlags.spider_flashed = true;
 						// massive renegade hit & sanity crush
-						story.subtractFromCharacterQuality("moleWhole", 6);
+						story.subtractFromCharacterQuality("moleWhole", 7);
 						if(!story.subtractFromCharacterQuality("sanity", 30)) {
 							system.doLink("basement1_bulbous_spider_hub");
 						}
@@ -1059,7 +1059,7 @@ undum.game.situations = {
 						story.writeParagraph("You feel renewed power flood your vitals as the ooze's essence is digested, though blood also flows freely from your snout -- this may relate to the relentless thunderbolts of pain now raging through your brain.");
 						story.eventFlags.ooze_devoured = true;
 						story.addToCharacterQuality("health", character.mole.stats.maxHP);
-						story.subtractFromCharacterQuality("moleWhole", 1.5);
+						story.subtractFromCharacterQuality("moleWhole", 2.5);
 						if(!story.subtractFromCharacterQuality("sanity", 20)) {
 							system.doLink("basement1_ochre_ooze_hub");
 						}
@@ -1177,8 +1177,8 @@ undum.game.situations = {
 						story.writeParagraph("\"No, it's too soon!  Not here!\" the caterpillar howls as his flesh rapidly melts away.  Two spiny wings dripping with venom explode in a shower of blood and ichor from his back; the acidic venom burns the surrounding soil and the caterpillar's hide alike.  The wings are covered in gorgeous scales spanning a gradient of velvety midnight blue to soothing mystery purple.  Six spear-like legs thrust forth from his underbelly, each tipped with a complex serrated pincer apparatus.");
 						story.writeParagraph("The newly forged butterfly groans in agony, giving his wings an experimental flap.  There's not even enough room in the cavern to fully unfurl them, and he screams as they're bent by the entombing earth.  \"What've you done, mole?!  I can't escape this place with these wings.  I'll wither to nothing but pain locked away in here!\"");						
 						// slight hit to shovelry since the player should have realized this would not be great underground AND is, as stated, a blighted transformation
-						story.subtractFromCharacterQuality("moleWhole", 1);
-						if(!story.subtractFromCharacterQuality("sanity", 10)) {
+						story.subtractFromCharacterQuality("moleWhole", 3.5);
+						if(!story.subtractFromCharacterQuality("sanity", 20)) {
 							system.writeChoices(["dark_mantle_caterpillar_entombed_flight_observation", "dark_mantle_caterpillar_entombed_flight_liberation"]);
 						}
 					},
@@ -1192,7 +1192,7 @@ undum.game.situations = {
 						const story = undum.game.storyViewController;
 						// describe mole frenziedly fixing his mistake
 						story.writeParagraph("\"Sorry sorry sorry sorry!\" you chant as you quickly suss out the quantum wave functions that must be collapsed to shove your friend into a timeline where you didn't turn him into a butterfly underground.");
-						story.addToCharacterQuality("moleWhole", 1);
+						story.addToCharacterQuality("moleWhole", 3.5);
 						system.doLink("dark_mantle_caterpillar_fuzzy");
 					},
 					optionText: "Fixitfixitfixitfixit!  Fixitfixitfixitfixit!"
