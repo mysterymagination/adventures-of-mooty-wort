@@ -257,14 +257,6 @@ export class Mole extends Character {
 		 */
 		this.gender = "male";
 		/**
-		 * The mole's secondary type, a lesser destiny that modifies the primary
-		 */
-		this.sMoleMinorDestiny = "";
-		/**
-		 * The mole's primary type, and destiny he must fulfill
-		 */
-		this.sMoleMajorDestiny = "";
-		/**
 		 * String array of item names comprising the mole's inventory
 		 */
 		this.stringArrayInventory = [];

@@ -21,6 +21,10 @@ export class StoryViewController {
 			"daughter_ooze_conversations": 0
 		};
 		/**
+		 * Dictionary of event string keys to arbitrary values intended to indicate the result of the keyed event e.g. "divined_destiny" : "lover"
+		 */
+		this.eventDict = {};
+		/**
 		 * An array of strings representing choices available to the player
 		 */
 		this.choiceStringArray = [];
@@ -30,6 +34,7 @@ export class StoryViewController {
 	 */
 	resetStoryEvents() {
 		this.eventFlags = {};
+		this.eventDict = {};
 		for(const eventId in this.eventCount) {
 			this.eventCount[eventId] = 0;
 		}
