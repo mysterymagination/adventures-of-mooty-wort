@@ -200,8 +200,8 @@ export class UndumStoryViewController extends StoryViewController {
 			this.undumSystem.setQuality("mana", Math.ceil(this.charactersDict.mole.stats.mp));
 			return false;
 		case "sanity":
-			// madness mail halves sanity damage
-			if(this.eventFlags.madness_mail) {
+			// obol halves sanity damage
+			if(Libifels.isItemInInventory(this.charactersDict.mole, "odditine_obol")) {
 				value /= 2;
 			}
 			this.charactersDict.mole.stats.sanity -= value; 

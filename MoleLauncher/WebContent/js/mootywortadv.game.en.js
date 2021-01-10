@@ -941,8 +941,8 @@ undum.game.situations = {
 								undum.game.storyViewController.writeParagraph("The threat is neutralized, but you feel an almost overwhelming sense of dread still hanging in the air... in every shadow you see a glimmer of glittering fangs bared in a rictus grin, just for an instant.  You're almost certain you're not insane, though upon checking you never find anything there.  Well, these things will happen in the Deep places of the world.");
 								break;
 							case "dark_king":
-								// reduce sanity cost of Dark Mole powers by half; this combined with the Odditine Obol is the only circumstance where the player can achieve a score in the best hero/villain ending threshold!
-								undum.game.storyViewController.eventFlags.madness_mail = true;
+								// reduce sanity cost of Dark Mole powers by half; this combined with the Odditine Obol is the only circumstance where the player can achieve a score in the best hero/villain ending threshold! EDIT: well actually I forgot all about this and focused balancing just on the obol.  Anyway, I'm pretty happy with the matter of the grue being entirely and optional boss and anxiety poke at the end if they didn't get 'im sort of thing.
+								//undum.game.storyViewController.eventFlags.madness_mail = true;
 								break;
 							}
 							if(resultString !== "death") {
