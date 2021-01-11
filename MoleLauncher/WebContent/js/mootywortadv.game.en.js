@@ -1071,7 +1071,7 @@ undum.game.situations = {
 						story.eventFlags.ooze_devoured = true;
 						story.addToCharacterQuality("health", character.mole.stats.maxHP);
 						story.subtractFromCharacterQuality("moleWhole", 5);
-						if(!story.subtractFromCharacterQuality("sanity", 20)) {
+						if(!story.subtractFromCharacterQuality("sanity", 10)) {
 							system.doLink("basement1_ochre_ooze_hub");
 						}
 					},
