@@ -1070,7 +1070,7 @@ undum.game.situations = {
 						story.writeParagraph("You feel renewed power flood your vitals as the ooze's essence is digested, though blood also flows freely from your snout -- this may relate to the relentless thunderbolts of pain now raging through your brain.");
 						story.eventFlags.ooze_devoured = true;
 						story.addToCharacterQuality("health", character.mole.stats.maxHP);
-						story.subtractFromCharacterQuality("moleWhole", 2.5);
+						story.subtractFromCharacterQuality("moleWhole", 5);
 						if(!story.subtractFromCharacterQuality("sanity", 20)) {
 							system.doLink("basement1_ochre_ooze_hub");
 						}
@@ -1156,7 +1156,7 @@ undum.game.situations = {
 						story.writeParagraph("With a twist of your mind that reality is forced to warp to accommodate, the last of the fuzz is torn from the now fuzzless caterpillar's form.  He shrieks in agony as heavily scaled carapace replaces it, thoughtfully articulated to capitalize on his limitless flexibility while turning him into a crawling tank.  In the space of a few moments, the transformation is complete and the newly formed Crawl Wyrm before you shakes its mighty fanged head to clarify his perception of an abruptly new reality.  You nod to your very own living weapon, indicating that he should ready himself for war.");
 						story.eventFlags.caterpillar_wyrm = true;
 						story.subtractFromCharacterQuality("moleWhole", 4);
-						if(!story.subtractFromCharacterQuality("sanity", 10)) {
+						if(!story.subtractFromCharacterQuality("sanity", 20)) {
 							system.doLink("basement1_fuzzy_caterpillar_hub");
 						}
 					},
