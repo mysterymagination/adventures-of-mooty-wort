@@ -409,15 +409,18 @@ class CombatViewController {
 					// redraw base and overlay sprites
 					// clear rect to prevent unwanted layering the bothers our translucency
 					context2d.clearRect(0, 0, canvas.width, canvas.height);
-					context2d.save();
-					context2d.globalAlpha = character.baseOpacity;
-					context2d.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
-					context2d.restore();
-					context2d.save();
-					context2d.globalAlpha = character.overlayOpacity;
-					context2d.drawImage(overlayImage, 0, 0, canvas.width, canvas.height);
-					context2d.restore();
-				
+					if(baseImage) {
+						context2d.save();
+						context2d.globalAlpha = character.baseOpacity;
+						context2d.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+						context2d.restore();
+					}
+					if(overlayImage) {
+						context2d.save();
+						context2d.globalAlpha = character.overlayOpacity;
+						context2d.drawImage(overlayImage, 0, 0, canvas.width, canvas.height);
+						context2d.restore();
+					}
 					// draw increasingly translucent red over the sprite
 					context2d.save();
 					context2d.fillStyle = "rgba(255, 0, 0, " + alphaPerc + ")";
@@ -572,15 +575,17 @@ class CombatViewController {
 	 * Loads up the character's current base and overlay sprites, and draws them to the canvas
 	 * @param characterUiEntry a viewmodel metadata collection object literal associated with the character whose sprite is to be rendered
 	 * @param postEffectFn optional functor to be run in a finally at the tail of the image load and init render promise chain, e.g. drawing an animation that makes use of the loaded sprite images
+	 * 	 		NB: the overlayImage param of postEffectFn is optional and only defined if the Character object has a battleOverlaySprites array; the postEffectFn is expected to check for truthyness
 	 */
 	loadCharacterSprites(characterUiEntry, postEffectFn) {
 		let character = characterUiEntry.characterObj;
 		let canvas = characterUiEntry.canvasElement;
 		let ctx = canvas.getContext('2d');
-		let baseImage = new Image();
-		let overlayImage = new Image();
+		let baseImage = undefined;
+		let overlayImage = undefined;
 		// kick off image loading promise chain
 		return new Promise((resolver) => {
+			baseImage = new Image();
 			baseImage.addEventListener('load', function() {
 				resolver(baseImage);
 			});
@@ -597,6 +602,7 @@ class CombatViewController {
 			return new Promise((resolver, rejector) => {
 				if(character.battleOverlaySprites) {
 					let overlaySource = character.battleOverlaySprites[character.overlaySpriteIdx];
+					overlayImage = new Image();
 					overlayImage.addEventListener('load', function() {
 						resolver(overlayImage);
 					});
