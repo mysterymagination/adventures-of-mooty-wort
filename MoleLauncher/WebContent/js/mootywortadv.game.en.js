@@ -1034,7 +1034,7 @@ undum.game.situations = {
 						story.writeParagraph("In the next instant you find yourself wrapped up in a forest of sleek chitony legs a bit like shadowy sexy stockings slid over jagged obsidian.  With no runs!  Her venom proves to actually be quite an interesting cocktail of aphrodisiac and narcotic at just the right dose, delivered by a bitey kiss!  You revel and cavort in this manyfold embrace with her for a bit, and the details are best left to the tortured lanes of unbidden imagination.");
 						story.eventFlags.spider_loved = true;
 						story.addToCharacterQuality("moleWhole", 2.5);
-						if(!story.subtractFromCharacterQuality("health", 10) && !story.subtractFromCharacterQuality("sanity", 10)) {
+						if(!story.subtractFromCharacterQuality("health", 10) && !story.subtractFromCharacterQuality("sanity", 15)) {
 							system.doLink("basement1_bulbous_spider_hub");
 						}
 					},
